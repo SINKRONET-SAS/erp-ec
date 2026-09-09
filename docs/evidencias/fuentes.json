@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-09-09T15:25:08.409Z",
+  "sources": [
+    {
+      "name": "SKNOMINA",
+      "root": "C:/proyectos web/nuevo_nomina",
+      "remote": "https://github.com/SINKRONET-SAS/nomina-ec",
+      "head": "3c98df927ae3905fc121e26833b185b9c389a521",
+      "dirty": false,
+      "rulesSha256": "2e0a4597521918fa33626eeb6726aa299b2777a126ea41524c3b3f8711a4834c"
+    },
+    {
+      "name": "SINKRONET FACTURADOR",
+      "root": "C:/proyectos web/sinkroniq-mobile",
+      "remote": "https://github.com/SINKRONET-SAS/sinkroniq-mobile",
+      "head": "84a25643471c512bc37e88d8fc117edfd6298979",
+      "dirty": true,
+      "rulesSha256": "2de4f9c08fd72b14e44974a65eff9db2ab64f6ffb4cb9a77069182c0c7faa28c"
+    }
+  ],
+  "enterprise": {
+    "root": "C:/proyectos web/odoo18-enterprise-main",
+    "gitHistoryAvailable": false,
+    "declaredBuild": "18.0+e-20250823",
+    "authenticityVerified": false
+  },
+  "scope": "Lectura estática local; sin acceso a datos productivos, ejecución fiscal ni pruebas de integración."
+}

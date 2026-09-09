@@ -1,0 +1,15 @@
+# Secretos, datos de clientes y artefactos locales
+.env
+.env.*
+!.env.example
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.cache/
+backups/
+filestore/
+*.p12
+*.pfx
+*.key
+*.dump

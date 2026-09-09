@@ -1,0 +1,442 @@
+{
+  "timestamp": "2026-09-09T15:25:08.409Z",
+  "method": "Extracción estática de manifiestos; no se ejecuta Python. Dependencias declaradas; no incluye importaciones dinámicas ni bibliotecas.",
+  "modules": [
+    {
+      "module": "l10n_ec",
+      "license": "LGPL-3",
+      "dependencies": [
+        "base",
+        "base_iban",
+        "account_debit_note",
+        "l10n_latam_invoice_document",
+        "l10n_latam_base",
+        "account"
+      ],
+      "manifestSha256": "951cf65b97b3e72fb4abc8ff161c2b02b419d7b0eae51b4525fbd6bc365ed97b",
+      "transitiveDependencies": [
+        "account",
+        "account_debit_note",
+        "analytic",
+        "auth_signup",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "onboarding",
+        "portal",
+        "product",
+        "resource",
+        "uom",
+        "web",
+        "web_editor",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": []
+    },
+    {
+      "module": "l10n_ec_edi",
+      "license": "OPL-1",
+      "dependencies": [
+        "account_edi",
+        "certificate",
+        "l10n_ec"
+      ],
+      "manifestSha256": "70823e5e999851b1c87e4713b1187896b331413be1426ca9802a5377206b4ccb",
+      "transitiveDependencies": [
+        "account",
+        "account_debit_note",
+        "account_edi",
+        "analytic",
+        "auth_signup",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "certificate",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "onboarding",
+        "portal",
+        "product",
+        "resource",
+        "uom",
+        "web",
+        "web_editor",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": [
+        {
+          "module": "certificate",
+          "license": "OEEL-1"
+        }
+      ]
+    },
+    {
+      "module": "l10n_ec_edi_pos",
+      "license": "OEEL-1",
+      "dependencies": [
+        "l10n_ec_edi",
+        "point_of_sale"
+      ],
+      "manifestSha256": "9fa4886ca503b0a1afc727f8350bbac7f42991aada827b3c1f110de5547f95b9",
+      "transitiveDependencies": [
+        "account",
+        "account_debit_note",
+        "account_edi",
+        "analytic",
+        "auth_signup",
+        "barcodes",
+        "barcodes_gs1_nomenclature",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "certificate",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_ec_edi",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "onboarding",
+        "phone_validation",
+        "point_of_sale",
+        "portal",
+        "product",
+        "resource",
+        "stock",
+        "stock_account",
+        "uom",
+        "web",
+        "web_editor",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": [
+        {
+          "module": "certificate",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "l10n_ec_edi",
+          "license": "OPL-1"
+        }
+      ]
+    },
+    {
+      "module": "l10n_ec_edi_stock",
+      "license": "OPL-1",
+      "dependencies": [
+        "stock_account",
+        "l10n_ec_edi"
+      ],
+      "manifestSha256": "095914d6c78491be365261bcde363189f4941c3c1119e4869502f07c0d12bd7b",
+      "transitiveDependencies": [
+        "account",
+        "account_debit_note",
+        "account_edi",
+        "analytic",
+        "auth_signup",
+        "barcodes",
+        "barcodes_gs1_nomenclature",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "certificate",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_ec_edi",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "onboarding",
+        "portal",
+        "product",
+        "resource",
+        "stock",
+        "stock_account",
+        "uom",
+        "web",
+        "web_editor",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": [
+        {
+          "module": "certificate",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "l10n_ec_edi",
+          "license": "OPL-1"
+        }
+      ]
+    },
+    {
+      "module": "l10n_ec_reports",
+      "license": "OPL-1",
+      "dependencies": [
+        "l10n_ec",
+        "account_reports"
+      ],
+      "manifestSha256": "9cda387fe25a4258b2f1d576da3a784e985065d2d43677b822ff010bdea5ea20",
+      "transitiveDependencies": [
+        "account",
+        "account_accountant",
+        "account_debit_note",
+        "account_reports",
+        "accountant",
+        "analytic",
+        "auth_signup",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "mail_enterprise",
+        "onboarding",
+        "portal",
+        "product",
+        "resource",
+        "uom",
+        "web",
+        "web_editor",
+        "web_enterprise",
+        "web_mobile",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": [
+        {
+          "module": "account_accountant",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "account_reports",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "accountant",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "mail_enterprise",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "web_enterprise",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "web_mobile",
+          "license": "OEEL-1"
+        }
+      ]
+    },
+    {
+      "module": "l10n_ec_reports_ats",
+      "license": "OPL-1",
+      "dependencies": [
+        "l10n_ec_edi",
+        "l10n_ec_reports"
+      ],
+      "manifestSha256": "1fcbf524c48aae1100adf95de550e3af5a44b7bea7c8b200c6b5d0baf0d8c891",
+      "transitiveDependencies": [
+        "account",
+        "account_accountant",
+        "account_debit_note",
+        "account_edi",
+        "account_reports",
+        "accountant",
+        "analytic",
+        "auth_signup",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "certificate",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_ec_edi",
+        "l10n_ec_reports",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "mail_enterprise",
+        "onboarding",
+        "portal",
+        "product",
+        "resource",
+        "uom",
+        "web",
+        "web_editor",
+        "web_enterprise",
+        "web_mobile",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": [
+        {
+          "module": "account_accountant",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "account_reports",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "accountant",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "certificate",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "l10n_ec_edi",
+          "license": "OPL-1"
+        },
+        {
+          "module": "l10n_ec_reports",
+          "license": "OPL-1"
+        },
+        {
+          "module": "mail_enterprise",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "web_enterprise",
+          "license": "OEEL-1"
+        },
+        {
+          "module": "web_mobile",
+          "license": "OEEL-1"
+        }
+      ]
+    },
+    {
+      "module": "l10n_ec_stock",
+      "license": "LGPL-3",
+      "dependencies": [
+        "l10n_ec",
+        "stock"
+      ],
+      "manifestSha256": "37404cf1c25d6a8cc16e5782359563cb77442639d32e9bd0175a2ff81f3f336d",
+      "transitiveDependencies": [
+        "account",
+        "account_debit_note",
+        "analytic",
+        "auth_signup",
+        "barcodes",
+        "barcodes_gs1_nomenclature",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "contacts",
+        "digest",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "onboarding",
+        "portal",
+        "product",
+        "resource",
+        "stock",
+        "uom",
+        "web",
+        "web_editor",
+        "web_tour"
+      ],
+      "restrictedOrUnknownDependencies": []
+    },
+    {
+      "module": "l10n_ec_website_sale",
+      "license": "LGPL-3",
+      "dependencies": [
+        "website_sale",
+        "l10n_ec"
+      ],
+      "manifestSha256": "de0b5f4b39851f2003b594ac1e977ed5b00181a6f16bb0d4a65880106505bc28",
+      "transitiveDependencies": [
+        "account",
+        "account_debit_note",
+        "account_payment",
+        "analytic",
+        "auth_signup",
+        "base",
+        "base_iban",
+        "base_setup",
+        "base_vat",
+        "bus",
+        "contacts",
+        "delivery",
+        "digest",
+        "google_recaptcha",
+        "html_editor",
+        "http_routing",
+        "l10n_ec",
+        "l10n_latam_base",
+        "l10n_latam_invoice_document",
+        "mail",
+        "onboarding",
+        "payment",
+        "portal",
+        "portal_rating",
+        "product",
+        "rating",
+        "resource",
+        "sale",
+        "sales_team",
+        "social_media",
+        "uom",
+        "utm",
+        "web",
+        "web_editor",
+        "web_tour",
+        "website",
+        "website_mail",
+        "website_payment",
+        "website_sale"
+      ],
+      "restrictedOrUnknownDependencies": []
+    }
+  ]
+}
