@@ -1,0 +1,24 @@
+<odoo>
+<record id="provider_company_rule" model="ir.rule"><field name="name">PayPhone por organización</field><field name="model_id" ref="model_erpec_payphone_provider"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="payment_company_rule" model="ir.rule"><field name="name">Pagos por organización</field><field name="model_id" ref="model_erpec_payphone_payment"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="provider_list" model="ir.ui.view"><field name="name">erpec.payphone.provider.list</field><field name="model">erpec.payphone.provider</field><field name="arch" type="xml"><list><field name="name"/><field name="company_id"/><field name="status"/></list></field></record>
+<record id="provider_form" model="ir.ui.view"><field name="name">erpec.payphone.provider.form</field><field name="model">erpec.payphone.provider</field><field name="arch" type="xml"><form><sheet>
+<h1><field name="name"/></h1><div role="status" class="alert alert-info">Configura aquí las credenciales de SK_ERP en modo Prueba. Este piloto no habilita cobros ni servicios productivos.</div>
+<group><field name="company_id"/><field name="public_url"/><field name="return_url" widget="url"/><field name="store_id"/><field name="token" password="True"/><field name="test_acknowledged"/><field name="status"/></group>
+</sheet></form></field></record>
+<record id="payment_list" model="ir.ui.view"><field name="name">erpec.payphone.payment.list</field><field name="model">erpec.payphone.payment</field><field name="arch" type="xml"><list><field name="subscription_id"/><field name="company_id"/><field name="currency_id" column_invisible="True"/><field name="amount"/><field name="state"/><field name="reconciled"/><field name="last_error"/></list></field></record>
+<record id="payment_form" model="ir.ui.view"><field name="name">erpec.payphone.payment.form</field><field name="model">erpec.payphone.payment</field><field name="arch" type="xml"><form><header>
+<button name="action_prepare" type="object" string="Preparar pago de prueba" class="btn-primary" invisible="state != 'draft'"/>
+<button name="action_open_checkout" type="object" string="Abrir pago en PayPhone" class="btn-primary" invisible="state != 'prepared'"/>
+<button name="action_retry_confirmation" type="object" string="Reintentar conciliación" invisible="state not in ['confirming','review','approved'] or reconciled"/>
+<field name="state" widget="statusbar"/></header><sheet>
+<div role="status" class="alert alert-info">Solo ensayos. El importe y su desglose se acuerdan explícitamente; no se aplica una tarifa ni impuesto automático. Una respuesta del navegador no activa el contrato.</div>
+<group><group><field name="subscription_id" readonly="id" domain="[('billing_owner','=','payphone_test'),('activated_at','=',False)]"/><field name="provider_id" readonly="id"/><field name="company_id"/><field name="reference"/></group><group><field name="currency_id"/><field name="amount_without_tax" readonly="state != 'draft'"/><field name="amount_with_tax" readonly="state != 'draft'"/><field name="tax" readonly="state != 'draft'"/><field name="amount"/></group></group>
+<group string="Confirmación y servicio"><field name="remote_id"/><field name="confirmed_at"/><field name="reconciled"/><field name="attempts"/><field name="last_error"/></group>
+<div role="status" class="alert alert-warning" invisible="state != 'queued'">Preparación en cola. Actualiza esta pantalla en un minuto para abrir el pago.</div>
+</sheet></form></field></record>
+<record id="providers_action" model="ir.actions.act_window"><field name="name">PayPhone · Configuración de pruebas</field><field name="res_model">erpec.payphone.provider</field><field name="view_mode">list,form</field></record>
+<record id="payments_action" model="ir.actions.act_window"><field name="name">PayPhone · Pagos de prueba</field><field name="res_model">erpec.payphone.payment</field><field name="view_mode">list,form</field></record>
+<menuitem id="payments_menu" name="Pagos de prueba" parent="erpec_base.suite_root" action="payments_action" sequence="45" groups="base.group_system"/>
+<menuitem id="providers_menu" name="Configurar PayPhone" parent="erpec_base.suite_root" action="providers_action" sequence="46" groups="base.group_system"/>
+</odoo>

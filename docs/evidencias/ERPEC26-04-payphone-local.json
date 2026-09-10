@@ -1,0 +1,52 @@
+{
+  "phase": "ERPEC26-04",
+  "phaseStatus": "in_progress",
+  "scope": "Piloto Windows local; PayPhone simulado en pruebas automatizadas",
+  "automatedTests": {
+    "passed": 24,
+    "failed": 0,
+    "errors": 0,
+    "modules": [
+      "erpec_suite",
+      "erpec_provision",
+      "erpec_payphone"
+    ],
+    "logSha256": "224db21615dbccb427ffba26f488d49489d0960b0110e3e70fd1fa052f1b5954"
+  },
+  "installedSmoke": {
+    "authenticated": true,
+    "private_configuration_form": true,
+    "providerStatus": "Pendiente: Token, StoreID y confirmación del modo Prueba",
+    "paymentState": "draft",
+    "paymentAmount": 1.0,
+    "reconciled": false,
+    "public_login": 200,
+    "public_return_without_parameters": 400,
+    "second_pilot": 200
+  },
+  "externalPayphoneTransactionVerified": false,
+  "renderDeployed": false,
+  "pending": [
+    "Credenciales privadas y ensayo completo con el probador de PayPhone",
+    "Verificar conciliación e instancia tras pago externo de prueba",
+    "Adaptación y validación Render aplazadas por instrucción del usuario; sin contratación",
+    "Fases 05 a 08 mantienen dependencia de fase 04"
+  ],
+  "auditLock": "Se conserva sin cambios el cierre firmado de fase 03; no se declara fase 04 completada",
+  "fileHashes": {
+    "addons/erpec_payphone/__init__.py": "ccd4f636f19c123c1080e56c6af9292e21dedb8d886ce9dc558e040b49aa8709",
+    "addons/erpec_payphone/__manifest__.py": "608f70f0dc7b8bcafeaf8369178c0b5919d67406748a1ed9247f90a607e4c195",
+    "addons/erpec_payphone/controllers/main.py": "153fcf8e1228a2c9b7421137b2af85d80761470a1bd9f72a8caef0309696696e",
+    "addons/erpec_payphone/controllers/__init__.py": "e0a16a10fd901c56cf37ae9e40931d1ac98dcf6bfbcb05affc5475a56fe490b9",
+    "addons/erpec_payphone/data/cron.xml": "c9f0eae27d80c47bd39abd0ec84893f2924c0164d8d5419c81a3e7b099a46644",
+    "addons/erpec_payphone/models/payphone.py": "b16668f6f87aabe9a74306337e88bce203ad5c133d4bbd72e9c5f585f3166ccf",
+    "addons/erpec_payphone/models/__init__.py": "6d1cf9adcd8ca80c576ed2cdb3257b4573577a169de312b6e4040fb9775cac96",
+    "addons/erpec_payphone/security/ir.model.access.csv": "67a90298ef07cb1c783b2721612bf55b150039679e23d8b6b6c7db04b8d626be",
+    "addons/erpec_payphone/tests/test_payphone.py": "eb8a8c9f08df09b514a18eac13693ae9bd9308ae1a37226060919bad8715086e",
+    "addons/erpec_payphone/tests/__init__.py": "79aafa4420150537ae18918ee9bcfa152a0a6673f25aacafede591ea63abb561",
+    "addons/erpec_payphone/views/payphone.xml": "c7f457849fb83fb8e48740c6175a11dd43dfde1a51e65bb4a3dd290ece37d4ab",
+    "scripts/install-payphone.py": "e2e2d2a948ba791e3cd96eb4562c59bb6a8cb3d831c5ee9a1a75746ec1b2321e",
+    "scripts/verify-payphone.py": "37e65260cb10c3b17f0d4569bbc30f0e76a94ea9ddd57961d8a8840257d54e7e",
+    "docs/PAYPHONE_LOCAL.md": "39eb6759c36443876ceb0a62a94fbd6ab9d4a0ad6411a60db56a0322dbd94c2c"
+  }
+}
