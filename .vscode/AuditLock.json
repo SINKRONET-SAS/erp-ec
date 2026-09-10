@@ -3,7 +3,7 @@
   "planCode": "ERPEC26",
   "phaseCompleted": "ERPEC26-02",
   "status": "completed-pass",
-  "updatedAt": "2026-09-10T00:07:44.841Z",
+  "updatedAt": "2026-09-10T00:08:59.057Z",
   "filesModified": [
     ".gitattributes",
     ".github/CODEX/_CONTEXT.md",
@@ -96,23 +96,23 @@
     "docs/evidencias/ERPEC26-01.md": "8861a2ea54af3b5a67c5ec98dfb8ede10e87baf9f02420ea8d0ca80a86611cd2",
     "docs/evidencias/ERPEC26-02-validacion.json": "0fcca1f4368e2423bcd6624f0362b919d498be19f5763bfbf9b59264284ca0f7",
     "docs/evidencias/ERPEC26-02.md": "b41cfa2c920567f06773d9820e4584d4b71f829d994a35dc8c013da07d8f9550",
-    "docs/evidencias/community-audit.json": "aefb156c44fa06014795fb036009996d1f4e6d07cd79f66225531f90e741869a",
+    "docs/evidencias/community-audit.json": "7723313faf8f8557ab9cfbf18700e2ca4846e5b2ebec9baac51033abbf6e4522",
     "docs/evidencias/fuentes.json": "d91b8fcbeab1ae788b8bb1a372ccf1990ba0ab3bedc15359bc7f4f63c94eb5b8",
     "docs/evidencias/localizacion-ecuador.json": "6113e1e409af5aac8f7e21b3b77ed2b65199c710970562b5d36ba4f5a2b61f61",
-    "docs/evidencias/python-dependencies.json": "3ae81a321596f06c953593f12b9b489b3fb6fc0f360ab00d3fff51bd7d16abf0",
+    "docs/evidencias/python-dependencies.json": "f335c188c7928d0aa1bf480bf4dec930c47717dd75281adb14c343af51de3894",
     "docs/referencias/RULES.FACTURADOR.md": "2de4f9c08fd72b14e44974a65eff9db2ab64f6ffb4cb9a77069182c0c7faa28c",
     "docs/referencias/RULES.SKNOMINA.md": "2e0a4597521918fa33626eeb6726aa299b2777a126ea41524c3b3f8711a4834c",
-    "requirements-windows.txt": "798f4478771afd9e7150c8ddb9071c2033861a3ab69303268fef6e1174520890",
+    "requirements-windows.txt": "29fb74a25f7e2554667f4ac991fbe99df70349fecbb007d10c2277f9edec38f4",
     "scripts/audit-community.py": "17984338a991356b45d6531a7840687b76ed7e268444f8c53f908379fca6098f",
     "scripts/close-phase.cjs": "7a66572bc6814bfe7de9b32b4a88a7b7b46a940b4fbcfae27793cac3258e9549",
     "scripts/manage-odoo.py": "a359e9183a883ef9b09040ac2328cb357e640217f92153eb65a6dd0215e00ba1",
     "scripts/setup-windows.ps1": "da1e17970d83bbc545c35292f8193723aa6dc91d4324e34d505023201e267c13",
-    "scripts/verify-governance.cjs": "6da4264655829eff6a38b8e66985896741be045d8c3b15f227caca8f17f8ac58",
-    "scripts/verify-windows.py": "f76bf8379336f551645605ac6013ca12b6461d18f8b1ff7bdca54aad2c101602",
+    "scripts/verify-governance.cjs": "f8dfeaf0b0a738cdfabef6a22f904b340b0a8562d4b5365acf6920ccc9c8363c",
+    "scripts/verify-windows.py": "54ac7da41756c9baea67df47de7535df043d2aceb6adea89c38c152b065538ec",
     "scripts/windows-local.py": "7294505c0f57ee85ad6408a4ef53497b8f8ec6bcea039dd243974a8336ac4cb0",
     "upstream.json": "cdc7e8f8a393f2d17a840a8a41635c4a85974b4527990f4a8e479471485f3376"
   },
   "previousAuditLockSnapshot": "docs/evidencias/AuditLock.ERPEC26-01.json",
   "previousAuditLockHash": "df78bf6738d3db57e2490e61a31462344e30b99b1e1b46d99742d8828abc2993",
-  "signature": "c0713c4f710672eba5e1da1fa53c22c4c2cd791794a211d5295e81801d164f9f"
+  "signature": "ca880fc233aa23a2c7b2992628ad48bb36546a625eb0a88c3456045649a94bd7"
 }

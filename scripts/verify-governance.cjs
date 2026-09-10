@@ -6,6 +6,7 @@ const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 function read(relative) {
   const absolute = path.resolve(root, relative);
   if (!absolute.startsWith(root + path.sep)) throw Error('Ruta fuera del repositorio: ' + relative);
+  if (process.argv.includes('--git')) return require('child_process').execFileSync('git', ['show', 'HEAD:' + relative], { cwd: root });
   return fs.readFileSync(absolute);
 }
 try {
