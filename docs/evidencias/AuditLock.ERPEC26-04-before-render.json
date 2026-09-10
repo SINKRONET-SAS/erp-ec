@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-10T01:08:08.438Z",
+  "updatedAt": "2026-09-10T00:41:08.160Z",
   "filesModified": [
     ".gitattributes",
     ".github/CODEX_CONTEXT.md",
@@ -50,12 +50,10 @@
     "docs/INSTALACION_WINDOWS.md",
     "docs/MATRIZ_CAPACIDADES.md",
     "docs/PLAN_HAIKY_ERPEC26.md",
-    "docs/PRODUCCION_RENDER_CLOUDFLARE.md",
     "docs/evidencias/AuditLock.ERPEC26-00.json",
     "docs/evidencias/AuditLock.ERPEC26-01.json",
     "docs/evidencias/AuditLock.ERPEC26-02.json",
     "docs/evidencias/AuditLock.ERPEC26-03-before04.json",
-    "docs/evidencias/AuditLock.ERPEC26-04-before-render.json",
     "docs/evidencias/AuditLock.genesis.json",
     "docs/evidencias/ERPEC26-00.md",
     "docs/evidencias/ERPEC26-01-validacion.json",
@@ -97,18 +95,17 @@
     "Pantalla de instancias accesible bajo la compañía autorizada; sin errores JavaScript capturados"
   ],
   "pendingChecks": [
-    "Adaptar y validar el aprovisionamiento en Render/Linux con PostgreSQL administrado y filestore persistente",
-    "Configurar y probar la aplicación PAYPHONE; acceso al proyecto Render pendiente",
-    "Dominio Cloudflare posterior; usar URL HTTPS de Render para el piloto"
+    "Elegir proveedor y ambiente de pagos; validar eventos auténticos y duplicados sin crear otro servicio",
+    "Definir servidor Windows destino y dominio; comprobar HTTPS antes de acceso público"
   ],
   "fileHashes": {
     ".gitattributes": "1be88d240cda89e424a4bd2c37ce48aaaa0df304ed466425aa947a25fc877fde",
-    ".github/CODEX_CONTEXT.md": "5c09bf9c6627ca516b949bfc5b751a1c565094d8c775210b8fa76a05a480f3b8",
+    ".github/CODEX_CONTEXT.md": "047a670c54ebb2f673b2a5000cfb0a9029e23270cf7eed6fe88acd02cc5d9b33",
     ".github/prompts/ERPEC26-00.md": "6168fbecf4b943003eaf50db158a750a1e5cddd2e4208bd5454bedcf70517c94",
     ".github/prompts/ERPEC26-01.md": "e041accd36043873edafd8abff86428b9c77c774f5d9bec262882863a02fa95c",
     ".github/prompts/ERPEC26-02.md": "c5d8a9f8e568873a89fb1ebacecc2c7b8d3655c1083dfe76de03d52d903e4367",
     ".github/prompts/ERPEC26-03.md": "7b6f17a4a633417adf124164b6cef5427696cc54299fb80e0b1b32543050538f",
-    ".github/prompts/ERPEC26-04.md": "5ee9178fc17bf11aab2b32e0cf3bf3582c1baa8a0a85c3c9d1df80dbafef7bea",
+    ".github/prompts/ERPEC26-04.md": "f327d2de0a311ca5dbd88da73740e3de5e823cf00cd637fb79b617822bf49291",
     ".github/prompts/ERPEC26-05.md": "58fa8426c6c89a3259a8d75317833018ca6280750cb4d4a221f14cc8e4ead240",
     ".github/prompts/ERPEC26-06.md": "c2ddf5a84bff404f57871ff7fc050f27f3772a773713104b4a2dcdfc92f4215f",
     ".github/prompts/ERPEC26-07.md": "2933cd512f0a51f9a29b5cf8f388195eb7d2f73d297da95d8a6842f93f5ffffa",
@@ -139,19 +136,17 @@
     "addons/erpec_suite/tests/__init__.py": "da8af6a2d63f8879f1aed87a5d53698c3e0598bc06933f3df3dbbbd85590d27b",
     "addons/erpec_suite/tests/test_commercial.py": "86685f6d9c95db5f99293184145a5dab46fd5f99d4f1dae76490aecd23179e16",
     "addons/erpec_suite/views/commercial.xml": "5b2cdd6f5940956b59202e2817039b5380ec77396fcf58faf10a6e7355233879",
-    "docs/APROVISIONAMIENTO_WINDOWS.md": "be388b4453cbfae8b48f9b4ae165f5350e52bea2af0fcb0493f74138860243f4",
-    "docs/ARQUITECTURA_Y_CONTRATOS.md": "8f90fc60355aab39f9b6c0d89c111439ab1a68dbdd08b8164527eaff00eba94d",
+    "docs/APROVISIONAMIENTO_WINDOWS.md": "2027b8fb144e0d319949118d0b79feb99e4722596835adb5f01c240fd1b797d2",
+    "docs/ARQUITECTURA_Y_CONTRATOS.md": "8f4ed273971449123d872b1b162084b1d5543ce6225980c9b1756578ca0e028b",
     "docs/CONTRATOS_SUITE.md": "77990771df740ccfcfcac93c947a15954caf6b5989cc691f997de489a3153f84",
-    "docs/DECISION_WINDOWS.md": "b85a6806fba3ed8c8ccacdf6fade7427aca8aedb083680c50febb299fe59d474",
+    "docs/DECISION_WINDOWS.md": "707795741649c0551223954625115b393759c39821479970b00d5167571f2a12",
     "docs/INSTALACION_WINDOWS.md": "14067170a4cb06106a7ce4cb07430540885486e62659e62033c5910607118f9b",
     "docs/MATRIZ_CAPACIDADES.md": "12e21e0308393b74e30fdd8febfb1dd7aeac659111b98b30fbf4ddcae5b6b1da",
-    "docs/PLAN_HAIKY_ERPEC26.md": "723c7a688c3344623d5c15eb8d866ace2788a1741e46f05d188c3118ff5b3547",
-    "docs/PRODUCCION_RENDER_CLOUDFLARE.md": "356635a787704e7e6b3133657d0264c6dd88f030092bbeaad21f4b122a569e33",
+    "docs/PLAN_HAIKY_ERPEC26.md": "976581d10e5159661d98b6f796fcf68804bd82bc44b32683acfcc03ace234c36",
     "docs/evidencias/AuditLock.ERPEC26-00.json": "c2083b50468a86b75e87619203c21fe07b3b9e1588c6f9ce048660ad2c75bbbb",
     "docs/evidencias/AuditLock.ERPEC26-01.json": "df78bf6738d3db57e2490e61a31462344e30b99b1e1b46d99742d8828abc2993",
     "docs/evidencias/AuditLock.ERPEC26-02.json": "2d323d4f5de4ed28bda3fb416873587cca493560708758b62b6afa1986dbc1b9",
     "docs/evidencias/AuditLock.ERPEC26-03-before04.json": "056a3ed43a2600a61e5bb1c5e45b67da92d33ce27de4ea0b216aca4b6ec1e932",
-    "docs/evidencias/AuditLock.ERPEC26-04-before-render.json": "e456f1b8747f96c2530d838459c03cac2ff70743469654259971e2f7e969a37e",
     "docs/evidencias/AuditLock.genesis.json": "d4e7dacc233561c750088c9ad80c3857cf7fccd6f588bdf08d1f9a8f6412453d",
     "docs/evidencias/ERPEC26-00.md": "7464f674e202b120b6f781b5a973330e401feb399320b0dd4a25b4b9296dbe28",
     "docs/evidencias/ERPEC26-01-validacion.json": "2501165c31ee5ea4635bf9636869821ff236603b9b0815d3c24231065dad35f0",
@@ -182,11 +177,7 @@
     "scripts/windows-local.py": "7294505c0f57ee85ad6408a4ef53497b8f8ec6bcea039dd243974a8336ac4cb0",
     "upstream.json": "cdc7e8f8a393f2d17a840a8a41635c4a85974b4527990f4a8e479471485f3376"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.ERPEC26-04-before-render.json",
-  "previousAuditLockHash": "e456f1b8747f96c2530d838459c03cac2ff70743469654259971e2f7e969a37e",
-  "signature": "5c19a8362d9b5a01d9c1aac70745c45cc070b885ed3f842a7d1bc756659e6ea0",
-  "documentationChecks": [
-    "Decisión del usuario registrada; Windows local, Render producción, Cloudflare DNS/proxy y PAYPHONE pagos",
-    "Ningún servicio cloud creado ni prueba externa atribuida a esta actualización"
-  ]
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.ERPEC26-03-before04.json",
+  "previousAuditLockHash": "056a3ed43a2600a61e5bb1c5e45b67da92d33ce27de4ea0b216aca4b6ec1e932",
+  "signature": "72e5afb0322fc044460b976e03dceb747a66b1cb86147da3c038b2a923c9453a"
 }

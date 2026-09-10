@@ -24,6 +24,6 @@ Reversión: conservar los archivos privados y respaldos, detener el trabajador, 
 
 ## Pendientes que impiden cerrar la fase 04
 
-El flujo probado parte de una autorización comercial sintética. No existe aún proveedor de pagos configurado ni un evento auténtico validado; tampoco hay servidor público/dominio/HTTPS definidos. No se debe sustituir esa evidencia por el retorno del navegador o por una marca manual de pagado.
+El destino de producción ya está definido: Render, con PostgreSQL administrado; PAYPHONE será el proveedor de pagos y Cloudflare administrará el dominio futuro. Windows permanece como piloto local.
 
-Se necesitan el proveedor y ambiente de pruebas de cobro, y el servidor Windows/dominio destinado al servicio. Las credenciales se configurarán fuera de Git. Hasta superar esos criterios, fase 04 permanece parcial y fases 05–08 no comienzan por dependencia del plan. Para las fases fiscales posteriores también serán necesarios los entornos autorizados de SKNOMINA, Facturador y SRI de pruebas.
+La segunda pasada requiere adaptar el trabajador a Render, configurar la aplicación PAYPHONE de prueba y verificar el despliegue y los pagos reales de prueba. Se puede comenzar con la URL HTTPS de Render antes de comprar el dominio. Véase PRODUCCION_RENDER_CLOUDFLARE.md. El ensayo local documentado no acredita estas nuevas validaciones.

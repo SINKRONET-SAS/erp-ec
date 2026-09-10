@@ -11,3 +11,7 @@ Pago repetido crea una instancia; caída y reintento recuperan el trabajo; fallo
 
 ## Verificación y cierre
 Añadir pruebas significativas y evidencia en docs/evidencias/ERPEC26-04.md, distinguiendo simulación de servicio real. Revisar API, permisos, datos y UI afectada. Ejecutar verificaciones pertinentes de cada repositorio modificado. Definir reversión de código, datos y trabajos pendientes antes de cualquier migración. Preservar bytes del lock anterior, actualizar filesModified, validationChecks, fileHashes, firma y contexto solo al completar. Si falta una credencial, licencia o validación externa, documentar bloqueo y siguiente acción; no marcar aprobado. Commits con phase: ERPEC26-04 y task: ERPEC26-04.N; no publicar secretos ni trabajo ajeno.
+
+## Segunda pasada: decisión de infraestructura vigente
+
+Leer docs/PRODUCCION_RENDER_CLOUDFLARE.md. Producción en Render, PAYPHONE como proveedor de pagos y Cloudflare para el dominio futuro; Windows permanece local. Implementar y verificar el adaptador Render, persistencia de filestore, permisos del PostgreSQL administrado y confirmación de pagos desde servidor. No ejecutar el trabajador Windows como si fuera compatible con Render. Se permite probar con HTTPS onrender.com sin esperar la compra del dominio; no declarar PAYPHONE integrado ni fase cerrada sin evidencia.
