@@ -1,7 +1,7 @@
 # ERPEC26-01 — Procedencia y alcance Ecuador
 
 ## Entrada y alcance
-Leer RULES.md, .github/CODEX/_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 00. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
+Leer RULES.md, .github/CODEX_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 00. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
 
 ## Tareas
 Obtener Community oficial con commit fijo; comparar manifiestos locales, completar licencias transitivas y matriz EC01–EC12. Auditar contratos reales de ambos productos y catalogar qué documentos externos admiten.

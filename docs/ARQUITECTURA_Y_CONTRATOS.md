@@ -12,7 +12,7 @@ Portal de suite → control de organizaciones, planes y aprovisionamiento → in
 | Venta, compra, inventario y asiento contable | Odoo | Solicitud fiscal y recepción de estado; no crear segunda factura por reintento |
 | Empleado, novedades y cálculo de nómina | SKNOMINA | Identificadores y resumen/asiento aprobado; mínima información personal |
 | Clave de acceso, secuencial fiscal, XML y autorización | Facturador | Resultado fiscal vinculado al documento Odoo; no generar dos secuenciales |
-| Cobro del servicio de suite | Un responsable a decidir antes de fase 03 | Evitar doble suscripción/cargo; conservar contratos existentes |
+| Cobro del servicio de suite | Responsable obligatorio por contrato, sin cargo automático (docs/CONTRATOS_SUITE.md) | Evitar doble suscripción/cargo; conservar contratos existentes |
 
 La correspondencia debe incluir organizationId, sknominaTenantId, facturadorEmpresaId, instancia Odoo y companyId. No tratar esos identificadores como intercambiables. Resolver altas y vinculación de cuentas existentes mediante autorización de sus administradores. Definir acceso común con identidad federada; no compartir JWT ni claves maestras entre productos.
 

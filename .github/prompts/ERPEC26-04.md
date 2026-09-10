@@ -1,7 +1,7 @@
 # ERPEC26-04 — Aprovisionamiento SaaS
 
 ## Entrada y alcance
-Leer RULES.md, .github/CODEX/_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 03. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
+Leer RULES.md, .github/CODEX_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 03. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
 
 ## Tareas
 Construir cola durable de creación, salud, dominio, credenciales y suspensión/reactivación; estados visibles y conciliación entre pago y servicio.

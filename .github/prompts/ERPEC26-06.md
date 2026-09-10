@@ -1,7 +1,7 @@
 # ERPEC26-06 — Nómina y contabilidad
 
 ## Entrada y alcance
-Leer RULES.md, .github/CODEX/_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 05. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
+Leer RULES.md, .github/CODEX_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 05. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
 
 ## Tareas
 Conectar SKNOMINA con Odoo; validar capacidades, mapear empleados/cuentas/centros y publicar resultados de nómina mediante contrato específico sin replicar datos innecesarios.

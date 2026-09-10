@@ -4,8 +4,8 @@
 - Solicitud: crear repositorio, plan integral, RULES consolidado, contexto, lock y prompts por fases.
 - Decisión: Odoo Community; revisar localización Ecuador Enterprise como referencia de alcance, sin asumir permiso de reutilización propietaria.
 - Productos: SKNOMINA y SINKRONET FACTURADOR; fuentes y hashes en docs/evidencias/fuentes.json.
-- Fase completada: ERPEC26-02, instalación Windows, aislamiento y restauración.
-- Próxima fase: ERPEC26-03, organizaciones, identidad y planes. Resolver la autoridad única de cobro antes de implementar contratos comerciales. Ejecución de todas las fases, commit y push autorizados por el usuario.
+- Fase completada: ERPEC26-03, catálogo versionado, contratos y vínculos autorizados.
+- Próxima fase: ERPEC26-04, aprovisionamiento durable. Autoridad de cobro obligatoria por contrato; no hay cargo automático. Ejecución de todas las fases, commit y push autorizados por el usuario.
 - Plan: docs/PLAN_HAIKY_ERPEC26.md; prompts ERPEC26-00 a ERPEC26-08.
 - Verificación: node scripts/verify-governance.cjs.
 - Alcance actual: dos pilotos Windows accesibles, interfaz en español, aislamiento y restauración verificados. Sin publicación en nube, pruebas SRI, pagos ni cambios a productos fuente.

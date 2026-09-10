@@ -1,7 +1,7 @@
 # ERPEC26-00 — Gobierno y diagnóstico
 
 ## Entrada y alcance
-Leer RULES.md, .github/CODEX/_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: Ninguna. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
+Leer RULES.md, .github/CODEX_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: Ninguna. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
 
 ## Tareas
 Crear reglas, inventario, arquitectura, fases y cadena de gobierno.

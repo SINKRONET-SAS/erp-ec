@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "checks": [
+    "Cinco pruebas transaccionales Odoo aprobadas en cada una de las dos bases: cero fallos y cero errores",
+    "Alta repetida, suspensión, reactivación, vencimiento, vigencia futura y cuotas verificadas",
+    "Versiones inmutables, sustitución explícita y rechazo de contratos superpuestos verificados",
+    "Lectura y acciones de organización ajena rechazadas con usuario sin privilegios",
+    "Navegación real y formulario de planes en español sin errores JavaScript capturados"
+  ],
+  "scope": "Contratos locales y pruebas sintéticas. Sin cargos ni cambios de acceso en servicios externos."
+}

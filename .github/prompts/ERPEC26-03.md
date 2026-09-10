@@ -1,7 +1,7 @@
 # ERPEC26-03 — Organizaciones, identidad y planes
 
 ## Entrada y alcance
-Leer RULES.md, .github/CODEX/_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 02. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
+Leer RULES.md, .github/CODEX_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 02. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
 
 ## Tareas
 Definir autoridad de cobro, identidad, vinculación autorizada de clientes existentes y derechos de ERP/nómina/facturador. Implementar catálogo y suscripciones sin duplicar cobros.

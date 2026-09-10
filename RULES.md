@@ -76,7 +76,7 @@
 - No afirmar homologación, cumplimiento legal, restauración o despliegue sin evidencia. Importes, impuestos y formatos de la copia de 2025 requieren validación vigente antes de producción.
 
 ## 13. Cadena de gobierno reproducible
-- Lock canónico: .vscode/AuditLock.json; contexto: .github/CODEX/_CONTEXT.md.
+- Lock canónico: .vscode/AuditLock.json; contexto: .github/CODEX_CONTEXT.md.
 - Génesis: docs/evidencias/AuditLock.genesis.json con fase previa nula. No representa implementación.
 - Para cada cierre, guardar bytes exactos del lock anterior en docs/evidencias, registrar su SHA256 y firmar SHA256(bytes anteriores concatenados con updatedAt UTF-8).
 - Añadir hashes de entregables al lock, sin incluir el propio lock. Comprobar cadena y entregables con node scripts/verify-governance.cjs.

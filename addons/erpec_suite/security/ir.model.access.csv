@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+plan_admin,Planes administración,model_erpec_plan,base.group_system,1,1,1,0
+plan_reader,Planes consulta,model_erpec_plan,base.group_user,1,0,0,0
+subscription_admin,Contratos administración,model_erpec_subscription,base.group_system,1,1,1,0
+subscription_reader,Contratos consulta,model_erpec_subscription,base.group_user,1,0,0,0
+link_admin,Vínculos administración,model_erpec_product_link,base.group_system,1,1,1,0
+link_reader,Vínculos consulta,model_erpec_product_link,base.group_user,1,0,0,0

@@ -1,7 +1,7 @@
 # ERPEC26-07 — Cobertura Ecuador ampliada
 
 ## Entrada y alcance
-Leer RULES.md, .github/CODEX/_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 06. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
+Leer RULES.md, .github/CODEX_CONTEXT.md, docs/PLAN_HAIKY_ERPEC26.md, matriz y arquitectura. Dependencia: 06. Validar el lock y los hashes antes de modificar. Ejecutar solamente con autorización vigente para esta fase; la creación de este prompt no acredita ejecución.
 
 ## Tareas
 Cerrar EC04–EC08: retenciones, notas, liquidaciones, reembolsos, guías, ATS y reportes. Priorizar motores propios existentes; implementar APIs faltantes y decidir alcance POS/ecommerce.

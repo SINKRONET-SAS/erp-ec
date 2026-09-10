@@ -2,7 +2,7 @@
 
 Objetivo: comercializar Odoo Community en la nube mediante planes propios, integrado con SKNOMINA y SINKRONET FACTURADOR, aprovechando localización Community y revisando capacidades Enterprise sin incorporar código no autorizado.
 
-Estado: fases 00–02 completadas; fase 03 pendiente de definir autoridad de cobro. Plataforma Windows nativo por instrucción del usuario. No hay despliegue productivo.
+Estado: fases 00–03 completadas; fase 04 en ejecución. Plataforma Windows nativo por instrucción del usuario. No hay despliegue productivo.
 
 Referencias: MATRIZ_CAPACIDADES.md, ARQUITECTURA_Y_CONTRATOS.md y evidencias/fuentes.json. Ruta física SKNOMINA verificada: C:/proyectos web/nuevo_nomina; la variante C:/proyectos web/nuevo/_nomina no existe en esta máquina. Facturador contiene trabajo ajeno pendiente y debe preservarse.
 
@@ -11,7 +11,7 @@ Referencias: MATRIZ_CAPACIDADES.md, ARQUITECTURA_Y_CONTRATOS.md y evidencias/fue
 | ERPEC26-00 | Gobierno y diagnóstico | Ninguna | Completada: documentación |
 | ERPEC26-01 | Procedencia y alcance Ecuador | 00 | Completada |
 | ERPEC26-02 | Base Community y aislamiento | 01 | Completada: piloto Windows verificado |
-| ERPEC26-03 | Organizaciones, identidad y planes | 02 | Pendiente |
+| ERPEC26-03 | Organizaciones, identidad y planes | 02 | Completada: contratos locales sin cargo automático |
 | ERPEC26-04 | Aprovisionamiento SaaS | 03 | Pendiente |
 | ERPEC26-05 | Facturación desde Odoo | 04 | Pendiente |
 | ERPEC26-06 | Nómina y contabilidad | 05 | Pendiente |
