@@ -2,7 +2,7 @@
 
 ## Estado y alcance
 
-Continuación solicitada el 10 de septiembre de 2026. La instrucción vigente del usuario es validar localmente antes de desplegar o contratar recursos en Render. Aplicación SK_ERP creada en PayPhone en modo Prueba, probador aceptado y subdominio conectado por Cloudflare Tunnel. Estos pasos se observaron en la sesión; no acreditan una transacción externa completada.
+Continuación solicitada el 10 de septiembre de 2026. La instrucción vigente del usuario es validar localmente antes de desplegar o contratar recursos en Render. Aplicación SK_ERP creada en PayPhone en modo Prueba, probador aceptado y subdominio conectado por Cloudflare Tunnel. Ensayo externo completado el 10 de septiembre de 2026: transacción de prueba 91119318 por USD 1, confirmada por el servidor a las 23:46:02 UTC. Contrato conciliado, una instancia local creada y autenticada en el puerto 8186. Repetir el retorno conservó un pago y una instancia. No es un cobro productivo.
 
 El módulo propio `erpec_payphone` amplía la fase 04. La fase sigue abierta y el AuditLock de la fase 03 permanece intacto. No se han ejecutado las fases 05–08 ni se ha declarado compatible con Render el trabajador Windows.
 
@@ -43,8 +43,7 @@ Antes de retirar o actualizar la integración: detener nuevos ensayos, revisar p
 
 ## Pendiente para cerrar fase 04
 
-- Credenciales cargadas privadamente y ensayo externo completo: preparación, pago por el probador, retorno, confirmación y conciliación de instancia.
-- Recuperación de un ensayo externo y contraste de duplicados con PayPhone; las pruebas automatizadas son simuladas.
+- La repetición del retorno del ensayo externo fue verificada. Los escenarios de caída, timeout y rechazo siguen respaldados por simulación automatizada, no por una interrupción del proveedor.
 - Adaptador y validación Render, persistencia y permisos administrados cuando el usuario autorice pasar del piloto local; no se contrataron recursos.
 - Actualizar el cierre firmado solo con evidencias completas. La dependencia de fase 05 continúa pendiente.
 

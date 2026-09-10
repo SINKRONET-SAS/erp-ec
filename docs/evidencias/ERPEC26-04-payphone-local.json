@@ -13,24 +13,11 @@
     ],
     "logSha256": "224db21615dbccb427ffba26f488d49489d0960b0110e3e70fd1fa052f1b5954"
   },
-  "installedSmoke": {
-    "authenticated": true,
-    "private_configuration_form": true,
-    "providerStatus": "Pendiente: Token, StoreID y confirmación del modo Prueba",
-    "paymentState": "draft",
-    "paymentAmount": 1.0,
-    "reconciled": false,
-    "public_login": 200,
-    "public_return_without_parameters": 400,
-    "second_pilot": 200
-  },
-  "externalPayphoneTransactionVerified": false,
+  "externalPayphoneTransactionVerified": true,
   "renderDeployed": false,
   "pending": [
-    "Credenciales privadas y ensayo completo con el probador de PayPhone",
-    "Verificar conciliación e instancia tras pago externo de prueba",
     "Adaptación y validación Render aplazadas por instrucción del usuario; sin contratación",
-    "Fases 05 a 08 mantienen dependencia de fase 04"
+    "Fases 05 a 08 mantienen dependencia de fase 04; no se altera el cierre firmado de fase 03"
   ],
   "auditLock": "Se conserva sin cambios el cierre firmado de fase 03; no se declara fase 04 completada",
   "fileHashes": {
@@ -47,6 +34,40 @@
     "addons/erpec_payphone/views/payphone.xml": "c7f457849fb83fb8e48740c6175a11dd43dfde1a51e65bb4a3dd290ece37d4ab",
     "scripts/install-payphone.py": "e2e2d2a948ba791e3cd96eb4562c59bb6a8cb3d831c5ee9a1a75746ec1b2321e",
     "scripts/verify-payphone.py": "37e65260cb10c3b17f0d4569bbc30f0e76a94ea9ddd57961d8a8840257d54e7e",
-    "docs/PAYPHONE_LOCAL.md": "39eb6759c36443876ceb0a62a94fbd6ab9d4a0ad6411a60db56a0322dbd94c2c"
+    "docs/PAYPHONE_LOCAL.md": "63265e25096bc557645cbf77d308826099c7da8a0a82fad86aa8674e5a766e11"
+  },
+  "externalTest": {
+    "externalTestPayment": {
+      "amountUSD": 1.0,
+      "transactionId": "91119318",
+      "confirmedAtUTC": "2026-09-10 23:46:02",
+      "state": "approved",
+      "reconciled": true
+    },
+    "duplicateReturnHTTP": 200,
+    "paymentCount": 1,
+    "instanceCount": 1,
+    "jobs": [
+      {
+        "id": 6,
+        "state": "ready",
+        "name": "b0bdbfd97ff34409b0fe0ea9eff6793f",
+        "endpoint": "http://127.0.0.1:8186",
+        "last_error": false
+      }
+    ],
+    "instanceAuthenticated": true,
+    "instanceLoginHTTP": 200
+  },
+  "initialInstalledSmoke": {
+    "authenticated": true,
+    "private_configuration_form": true,
+    "providerStatus": "Pendiente: Token, StoreID y confirmación del modo Prueba",
+    "paymentState": "draft",
+    "paymentAmount": 1.0,
+    "reconciled": false,
+    "public_login": 200,
+    "public_return_without_parameters": 400,
+    "second_pilot": 200
   }
 }
