@@ -29,10 +29,10 @@ class TestCommercial(TransactionCase):
             contract.check_capacity('connections', 3)
         with self.assertRaises(AccessError):
             contract.write({'suspended': True})
-        contract.action_suspend()
+        self.assertIs(contract.action_suspend(), True)
         with self.assertRaises(AccessError):
             contract.check_capacity('users', 1)
-        contract.action_resume()
+        self.assertIs(contract.action_resume(), True)
         self.assertEqual(contract.state, 'active')
 
     def test_expiry_future_and_product_api_separation(self):

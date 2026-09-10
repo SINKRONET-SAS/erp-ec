@@ -22,3 +22,5 @@ La vista ERP EC → Estado de la suite expone que los conectores y la suscripci�
 Reversión: detener solo los procesos del piloto y conservar .cache/windows; volver al commit anterior para código. Nunca borrar bases o archivos para revertir una actualización; restaurar una copia en un destino nuevo y validar antes de sustituir una instancia.
 
 Para detener los dos procesos Odoo del piloto: `.venv/Scripts/python.exe scripts/manage-odoo.py stop`. Para volver a iniciarlos: `.venv/Scripts/python.exe scripts/windows-local.py start`. La operación `update` también configura español de Ecuador y reinicia ambos procesos. PostgreSQL del piloto permanece activo; estos comandos no detienen servicios ajenos.
+
+El catálogo y los contratos ya están disponibles en ERP EC. El controlador local del operador y sus límites de validación se describen en APROVISIONAMIENTO_WINDOWS.md. La implementación fiscal y el acceso público siguen pendientes.

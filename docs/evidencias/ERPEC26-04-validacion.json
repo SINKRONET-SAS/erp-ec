@@ -1,0 +1,21 @@
+{
+  "status": "passed-local",
+  "phaseComplete": false,
+  "checks": [
+    "Acceso cruzado entre operador y cliente rechazado; módulos del operador excluidos del cliente",
+    "Siete pruebas transaccionales de contratos y cola: cero fallos, cero errores",
+    "Solicitud repetida conserva una sola instancia",
+    "Trabajador Windows crea rol, base, filestore y proceso reales; autentica salud en la base exacta",
+    "Reinicio de trabajador no duplica instancia",
+    "Suspensión detiene el proceso; reactivación conserva el contacto sintético",
+    "Reservas vencidas, tokens obsoletos y límite de reintentos verificados transaccionalmente",
+    "Pantalla de instancias accesible bajo la compañía autorizada; sin errores JavaScript capturados"
+  ],
+  "pendingChecks": [
+    "Proveedor y ambiente de pagos",
+    "Servidor Windows y dominio/HTTPS"
+  ],
+  "instance": "111d87fbc82f4a96906586f8707988af",
+  "endpoint": "http://127.0.0.1:8183",
+  "scope": "Alta comercial sintética local, sin pago externo, DNS público ni HTTPS"
+}

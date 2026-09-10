@@ -150,6 +150,7 @@ class Subscription(models.Model):
         self._lock_organization()
         super(Subscription, self).write({'suspended': True})
         _logger.info('Contrato suspendido sin borrar datos correlationId=%s userId=%s', self.correlation_id, self.env.uid)
+        return True
 
     def action_resume(self):
         self._lock_organization()
@@ -158,6 +159,7 @@ class Subscription(models.Model):
         self._check_overlap()
         super(Subscription, self).write({'suspended': False})
         _logger.info('Contrato reactivado correlationId=%s userId=%s', self.correlation_id, self.env.uid)
+        return True
 
     def check_capacity(self, resource, requested):
         self.ensure_one()
