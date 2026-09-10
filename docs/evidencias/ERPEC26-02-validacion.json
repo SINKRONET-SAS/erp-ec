@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "checks": [
+    "Dos bases y roles: acceso ajeno rechazado; módulos y plan contable Ecuador instalados",
+    "Registro y adjunto de A no visibles en B",
+    "Respaldo pg_dump restaurado en base independiente y archivo recuperado con SHA256 coincidente",
+    "Acceso real por navegador a ERP EC en español de Ecuador; fila visible, sin errores JavaScript capturados"
+  ],
+  "restoredDatabase": "restore_2445c6056b56",
+  "scope": "Piloto Windows local con datos sintéticos, sin servicios fiscales ni carga productiva"
+}

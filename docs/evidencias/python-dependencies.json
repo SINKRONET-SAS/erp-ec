@@ -1,0 +1,493 @@
+[
+  {
+    "name": "asn1crypto",
+    "version": "1.5.1",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "attrs",
+    "version": "26.1.0",
+    "license": "MIT",
+    "classifiers": []
+  },
+  {
+    "name": "Babel",
+    "version": "2.10.3",
+    "license": "BSD",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "beautifulsoup4",
+    "version": "4.15.0",
+    "license": "MIT License",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "cbor2",
+    "version": "5.6.2",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "certifi",
+    "version": "2026.7.22",
+    "license": "MPL-2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+    ]
+  },
+  {
+    "name": "cffi",
+    "version": "2.1.1",
+    "license": "MIT-0",
+    "classifiers": []
+  },
+  {
+    "name": "chardet",
+    "version": "5.2.0",
+    "license": "LGPL",
+    "classifiers": [
+      "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)"
+    ]
+  },
+  {
+    "name": "charset-normalizer",
+    "version": "3.5.1",
+    "license": "MIT",
+    "classifiers": []
+  },
+  {
+    "name": "colorama",
+    "version": "0.4.6",
+    "license": "",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "cryptography",
+    "version": "42.0.8",
+    "license": "Apache-2.0 OR BSD-3-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License",
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "decorator",
+    "version": "5.1.1",
+    "license": "new BSD License",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "docopt",
+    "version": "0.6.2",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "docutils",
+    "version": "0.20.1",
+    "license": "public domain, Python, 2-Clause BSD, GPL 3 (see COPYING.txt)",
+    "classifiers": [
+      "License :: Public Domain",
+      "License :: OSI Approved :: Python Software Foundation License",
+      "License :: OSI Approved :: BSD License",
+      "License :: OSI Approved :: GNU General Public License (GPL)"
+    ]
+  },
+  {
+    "name": "et_xmlfile",
+    "version": "2.0.0",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "freezegun",
+    "version": "1.2.1",
+    "license": "Apache 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "geoip2",
+    "version": "2.9.0",
+    "license": "Apache License, Version 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "idna",
+    "version": "3.6",
+    "license": "",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "isodate",
+    "version": "0.7.2",
+    "license": "Copyright (c) 2021, Hugo van Kemenade and contributors\nCopyright (c) 2009-2018, Gerhard Weis and contributors\nCopyright (c) 2009, Gerhard Weis\nAll rights reserv",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "Jinja2",
+    "version": "3.1.2",
+    "license": "BSD-3-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "libsass",
+    "version": "0.22.0",
+    "license": "MIT License",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "lxml",
+    "version": "5.2.1",
+    "license": "BSD-3-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "lxml_html_clean",
+    "version": "0.4.4",
+    "license": "BSD-3-Clause",
+    "classifiers": []
+  },
+  {
+    "name": "MarkupSafe",
+    "version": "2.1.5",
+    "license": "BSD-3-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "maxminddb",
+    "version": "3.1.1",
+    "license": "Apache-2.0",
+    "classifiers": []
+  },
+  {
+    "name": "num2words",
+    "version": "0.5.13",
+    "license": "LGPL",
+    "classifiers": [
+      "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)"
+    ]
+  },
+  {
+    "name": "ofxparse",
+    "version": "0.21",
+    "license": "MIT License",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "openpyxl",
+    "version": "3.1.2",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "passlib",
+    "version": "1.7.4",
+    "license": "BSD",
+    "classifiers": []
+  },
+  {
+    "name": "pillow",
+    "version": "10.2.0",
+    "license": "HPND",
+    "classifiers": [
+      "License :: OSI Approved :: Historical Permission Notice and Disclaimer (HPND)"
+    ]
+  },
+  {
+    "name": "pip",
+    "version": "25.0.1",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "platformdirs",
+    "version": "4.11.8",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "polib",
+    "version": "1.1.1",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "psutil",
+    "version": "5.9.8",
+    "license": "BSD-3-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "psycopg2",
+    "version": "2.9.9",
+    "license": "LGPL with exceptions",
+    "classifiers": [
+      "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)"
+    ]
+  },
+  {
+    "name": "pycparser",
+    "version": "3.0",
+    "license": "BSD-3-Clause",
+    "classifiers": []
+  },
+  {
+    "name": "pyOpenSSL",
+    "version": "24.1.0",
+    "license": "Apache License, Version 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "PyPDF2",
+    "version": "2.12.1",
+    "license": "",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "pypiwin32",
+    "version": "223",
+    "license": "UNKNOWN",
+    "classifiers": []
+  },
+  {
+    "name": "pypng",
+    "version": "0.20220715.0",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "pyserial",
+    "version": "3.5",
+    "license": "BSD",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "python-dateutil",
+    "version": "2.8.2",
+    "license": "Dual License",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License",
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "python-stdnum",
+    "version": "1.19",
+    "license": "LGPL",
+    "classifiers": [
+      "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)"
+    ]
+  },
+  {
+    "name": "pytz",
+    "version": "2026.3.post1",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "pyusb",
+    "version": "1.2.1",
+    "license": "UNKNOWN",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "pywin32",
+    "version": "312",
+    "license": "PSF",
+    "classifiers": [
+      "License :: OSI Approved :: Python Software Foundation License"
+    ]
+  },
+  {
+    "name": "qrcode",
+    "version": "7.4.2",
+    "license": "BSD",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "reportlab",
+    "version": "4.1.0",
+    "license": "BSD license (see license.txt for details), Copyright (c) 2000-2022, ReportLab Inc.",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "requests",
+    "version": "2.31.0",
+    "license": "Apache 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "requests-file",
+    "version": "3.0.1",
+    "license": "Apache 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "requests-toolbelt",
+    "version": "1.0.0",
+    "license": "Apache 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "rjsmin",
+    "version": "1.2.0",
+    "license": "Apache License, Version 2.0",
+    "classifiers": [
+      "License :: OSI Approved"
+    ]
+  },
+  {
+    "name": "rl-renderPM",
+    "version": "4.0.3",
+    "license": "BSD license (see LICENSE.txt for details), Copyright (c) 2000-2022, ReportLab Inc.",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "six",
+    "version": "1.17.0",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "soupsieve",
+    "version": "2.9.2",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "typing_extensions",
+    "version": "4.16.0",
+    "license": "PSF-2.0",
+    "classifiers": []
+  },
+  {
+    "name": "urllib3",
+    "version": "2.0.7",
+    "license": "",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  },
+  {
+    "name": "vobject",
+    "version": "0.9.6.1",
+    "license": "Apache",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ]
+  },
+  {
+    "name": "Werkzeug",
+    "version": "3.0.1",
+    "license": "",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "xlrd",
+    "version": "2.0.1",
+    "license": "BSD",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "XlsxWriter",
+    "version": "3.1.9",
+    "license": "BSD-2-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "xlwt",
+    "version": "1.3.0",
+    "license": "BSD",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ]
+  },
+  {
+    "name": "zeep",
+    "version": "4.2.1",
+    "license": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ]
+  }
+]

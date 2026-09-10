@@ -1,0 +1,16 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),cp=require('child_process');
+const root=path.resolve(__dirname,'..');
+const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
+const write=(p,t)=>{if(Buffer.from(t,'utf8').toString('utf8')!==t)throw Error('UTF-8 inválido');fs.writeFileSync(path.join(root,p),t,'utf8')};
+const [phase,reportPath]=process.argv.slice(2);
+if(!/^ERPEC26-0[1-8]$/.test(phase||''))throw Error('Fase inválida');
+const raw=fs.readFileSync(path.join(root,'.vscode/AuditLock.json'));
+const previous=JSON.parse(raw),report=JSON.parse(fs.readFileSync(path.join(root,reportPath),'utf8'));
+if(Number(phase.slice(-2))!==Number(previous.phaseCompleted.slice(-2))+1)throw Error('Orden de fase inválido');
+if(report.status!=='passed'||!report.checks?.length)throw Error('No se puede cerrar sin validaciones aprobadas');
+const snapshot='docs/evidencias/AuditLock.'+previous.phaseCompleted+'.json';write(snapshot,raw.toString('utf8'));
+const updatedAt=new Date().toISOString();
+const files=cp.execFileSync('git',['ls-files','--cached','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/).filter(p=>p!=='.vscode/AuditLock.json');
+const unique=[...new Set([...files,snapshot])].sort();
+const lock={schemaVersion:1,planCode:'ERPEC26',phaseCompleted:phase,status:'completed-pass',updatedAt,filesModified:unique,validationChecks:report.checks,fileHashes:Object.fromEntries(unique.map(p=>[p,hash(fs.readFileSync(path.join(root,p)))])),previousAuditLockSnapshot:snapshot,previousAuditLockHash:hash(raw),signature:hash(Buffer.concat([raw,Buffer.from(updatedAt)]))};
+write('.vscode/AuditLock.json',JSON.stringify(lock,null,2)+'\n');console.log('Cierre registrado:',phase);

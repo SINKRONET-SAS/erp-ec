@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "checks": [
+    "Community oficial b1fd3a9 descargado y revisión verificada",
+    "46 módulos seleccionados/transitivos declarados LGPL-3; sin Enterprise",
+    "63 paquetes Python con versiones y licencias inventariadas",
+    "pip check sin incompatibilidades; Odoo Server 18.0 ejecutable en Windows",
+    "Contrato fiscal y nómina auditados; brechas y fuente SRI 2.34 registradas"
+  ]
+}

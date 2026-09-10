@@ -1,0 +1,408 @@
+{
+  "source": "https://github.com/odoo/odoo",
+  "revision": "b1fd3a9eee5d575848ac649d2f5103537d8de7a4",
+  "selected": [
+    "base",
+    "web",
+    "sale_management",
+    "purchase",
+    "stock",
+    "account",
+    "l10n_ec",
+    "l10n_ec_stock",
+    "l10n_ec_website_sale"
+  ],
+  "requiredModules": {
+    "account": {
+      "license": "LGPL-3",
+      "depends": [
+        "base_setup",
+        "onboarding",
+        "product",
+        "analytic",
+        "portal",
+        "digest"
+      ],
+      "sha256": "24f2cc73694089d226e1b668ee1eb170575de74f3d5a8c10197b5892155df215"
+    },
+    "account_debit_note": {
+      "license": "LGPL-3",
+      "depends": [
+        "account"
+      ],
+      "sha256": "d397c2b5052b5a810542612ec85d25d524d90443fc131656d30af861d4540283"
+    },
+    "account_payment": {
+      "license": "LGPL-3",
+      "depends": [
+        "account",
+        "payment"
+      ],
+      "sha256": "e5b0dd12219405bfd5e90c812bc4fb14c161183ed9ee1b32b9dcf2f2c065bc79"
+    },
+    "analytic": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail",
+        "uom"
+      ],
+      "sha256": "54f91ddd41efd482f6e1ec5b30bba2a92bdd0af7e5f7e7521d3b15e071a49dcc"
+    },
+    "auth_signup": {
+      "license": "LGPL-3",
+      "depends": [
+        "base_setup",
+        "mail",
+        "web"
+      ],
+      "sha256": "b3e91496eca739083c3a1ac649c111acce0b6f43b6bc000a1b274274531ab535"
+    },
+    "barcodes": {
+      "license": "LGPL-3",
+      "depends": [
+        "web"
+      ],
+      "sha256": "20760ffbc27cef182186ce80847cc36a0e7e8067548d69c5cfd4d4e97946374d"
+    },
+    "barcodes_gs1_nomenclature": {
+      "license": "LGPL-3",
+      "depends": [
+        "barcodes",
+        "uom"
+      ],
+      "sha256": "3aac41ce5607dbb574b2afae2662efa94544175955a5db97e798d87e7bd1897e"
+    },
+    "base": {
+      "license": "LGPL-3",
+      "depends": [],
+      "sha256": "f2e4e2ba19fd463ac9089a44b36d1321dc2d6e65d75e3b82e76886f0dd47ce9a"
+    },
+    "base_iban": {
+      "license": "LGPL-3",
+      "depends": [
+        "account",
+        "web"
+      ],
+      "sha256": "389be4677a03d1aaa30fca3254c7da878e063e9f047aec4c53433eb435260f19"
+    },
+    "base_setup": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "sha256": "139d7665fbcfc7d5c05b0360613d305489ce6ca4ad1aacdc75442b6b36c9948d"
+    },
+    "base_vat": {
+      "license": "LGPL-3",
+      "depends": [
+        "account"
+      ],
+      "sha256": "7aad35e3d62878a2d5b780c82feac9da207a707d97eb00053cc6f1d5076c722f"
+    },
+    "bus": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "sha256": "eedcfbd5affa9c03577f13fb912feadaba3626b7663bf89b75253fdde2cd3984"
+    },
+    "contacts": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "sha256": "9d24f8c152c828cef900fbbf983d2db7eac8dd912807d04e18730cd60f816b70"
+    },
+    "delivery": {
+      "license": "LGPL-3",
+      "depends": [
+        "sale"
+      ],
+      "sha256": "0d960102c5d7b25a5c0b10c80cb5e83bf3529fd3b2a5b63619db64b68575e946"
+    },
+    "digest": {
+      "license": "LGPL-3",
+      "depends": [
+        "mail",
+        "portal",
+        "resource"
+      ],
+      "sha256": "8662af33e9f019ebf8cb6b0f942b4ada2d93177fb58491715a1ca78495b4644a"
+    },
+    "google_recaptcha": {
+      "license": "LGPL-3",
+      "depends": [
+        "base_setup"
+      ],
+      "sha256": "8a5f35cdf9afed0350c7af2178c47c71937180cc8d43ba803f0f99801291f742"
+    },
+    "html_editor": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "bus",
+        "web"
+      ],
+      "sha256": "f86156150ccb9816552cc44a90e1b9dd997ba952d18ee6d59dbfae9b89b824d8"
+    },
+    "http_routing": {
+      "license": "LGPL-3",
+      "depends": [
+        "web"
+      ],
+      "sha256": "2f99631ca846e02d4600821edac8237b021aca5e49a203f2fdf9c07f5f331484"
+    },
+    "l10n_ec": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "base_iban",
+        "account_debit_note",
+        "l10n_latam_invoice_document",
+        "l10n_latam_base",
+        "account"
+      ],
+      "sha256": "34ff34cb363ce148dcc79fa8add0191ba0d805b86cfea8e1f28bdfeef7db0c01"
+    },
+    "l10n_ec_stock": {
+      "license": "LGPL-3",
+      "depends": [
+        "l10n_ec",
+        "stock"
+      ],
+      "sha256": "5a776222843d0d3cca773fe7ce74c39e091eef427710ca7b76f8c4a10f654565"
+    },
+    "l10n_ec_website_sale": {
+      "license": "LGPL-3",
+      "depends": [
+        "website_sale",
+        "l10n_ec"
+      ],
+      "sha256": "5261335201e7fed595c0cf2e78760f96e886633518350bad104648d56fec1885"
+    },
+    "l10n_latam_base": {
+      "license": "LGPL-3",
+      "depends": [
+        "contacts",
+        "base_vat"
+      ],
+      "sha256": "d90cf359e57f2d1573c50088d67df0f3229b183939e42201abeadcf37bcabbdf"
+    },
+    "l10n_latam_invoice_document": {
+      "license": "LGPL-3",
+      "depends": [
+        "account",
+        "account_debit_note"
+      ],
+      "sha256": "e94e245f8205b72f955b90a424034cf64547f5d81c3b7b177467818713f98ed4"
+    },
+    "mail": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "base_setup",
+        "bus",
+        "web_tour",
+        "html_editor"
+      ],
+      "sha256": "2d7df7687a3b0b7f6f486576f18337f5affa75446299c58d77f58e65290fdcc4"
+    },
+    "onboarding": {
+      "license": "LGPL-3",
+      "depends": [
+        "web"
+      ],
+      "sha256": "129f1222d8b51a7f9ee864fe0471adeac9f661687a5cdb121c44ffd7c0609de7"
+    },
+    "payment": {
+      "license": "LGPL-3",
+      "depends": [
+        "onboarding",
+        "portal"
+      ],
+      "sha256": "dd274f53666d6dd60aaec1e45f09e161a8ad2b23bfa424a14b13f53d17699bf2"
+    },
+    "portal": {
+      "license": "LGPL-3",
+      "depends": [
+        "web",
+        "web_editor",
+        "http_routing",
+        "mail",
+        "auth_signup"
+      ],
+      "sha256": "3cc152889a74eddd0e4b2ff205216c902a92d9972b4e37007ef9a4cd9ce41b1e"
+    },
+    "portal_rating": {
+      "license": "LGPL-3",
+      "depends": [
+        "portal",
+        "rating"
+      ],
+      "sha256": "d32fb801892382a6394c3b2b0479ee5f2dc341514bc09f8abd144680fdc2e775"
+    },
+    "product": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail",
+        "uom"
+      ],
+      "sha256": "5107b3390e35555b9d0451e693819db1425aaa34c7c02b181befb75c9c4248a0"
+    },
+    "purchase": {
+      "license": "LGPL-3",
+      "depends": [
+        "account"
+      ],
+      "sha256": "bc4f1e5b023bd5416ccf39c8a35ec12c61649d0d2def9d45724ad0b0e733932a"
+    },
+    "rating": {
+      "license": "LGPL-3",
+      "depends": [
+        "mail"
+      ],
+      "sha256": "0ef8e2d6280fef39f7017d5fa500143121e10e23eb6cb0ade0ee4b948a2d702d"
+    },
+    "resource": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "sha256": "8431cc03dd950c0f68936b189dc9b03be54074bd422e150065f58d8aeef0bbe1"
+    },
+    "sale": {
+      "license": "LGPL-3",
+      "depends": [
+        "sales_team",
+        "account_payment",
+        "utm"
+      ],
+      "sha256": "b0b2a57bb41e17158a9e2497ff51e118e5252e501ca26a7a159560b72b010533"
+    },
+    "sale_management": {
+      "license": "LGPL-3",
+      "depends": [
+        "sale",
+        "digest"
+      ],
+      "sha256": "179a3dd2a28960f07caadb7d72de47c85bab60c2ebc8a7f610b862aae53faaec"
+    },
+    "sales_team": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "sha256": "19fb3a46b2f64cda88a5daca2f7a245769d07b15bdbe3474ec718b46ab09ecb2"
+    },
+    "social_media": {
+      "license": "LGPL-3",
+      "depends": [
+        "base"
+      ],
+      "sha256": "7ccea8940fbac31402ef86e12562a48371a254312591d73429093d883b1dac42"
+    },
+    "stock": {
+      "license": "LGPL-3",
+      "depends": [
+        "product",
+        "barcodes_gs1_nomenclature",
+        "digest"
+      ],
+      "sha256": "844351aca998dc714b6202ee5c9841c09eb131b10e4796fffccbb9193b69046b"
+    },
+    "uom": {
+      "license": "LGPL-3",
+      "depends": [
+        "base"
+      ],
+      "sha256": "152ed6abcd8bcf2e748df1d6d97a6c236c7fc2b7a5e97aa3ac10eafd6494e913"
+    },
+    "utm": {
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "sha256": "19a431973d6decdb66c8c5d73d5929e0dea906b9b8859463decdd0e622401230"
+    },
+    "web": {
+      "license": "LGPL-3",
+      "depends": [
+        "base"
+      ],
+      "sha256": "82b8502d6881e1f980d531d7ae4c43f9219f6813abc1e007a5885994e8f82feb"
+    },
+    "web_editor": {
+      "license": "LGPL-3",
+      "depends": [
+        "bus",
+        "web",
+        "html_editor"
+      ],
+      "sha256": "c0436d84afae1644462c2568b68b704de9e8b8287db4d0c85093607e7c01e974"
+    },
+    "web_tour": {
+      "license": "LGPL-3",
+      "depends": [
+        "web"
+      ],
+      "sha256": "f0332bebc1b36386444c278cc66da927844a326d2da46439d4e74176e98ccf0a"
+    },
+    "website": {
+      "license": "LGPL-3",
+      "depends": [
+        "digest",
+        "web",
+        "web_editor",
+        "html_editor",
+        "http_routing",
+        "portal",
+        "social_media",
+        "auth_signup",
+        "mail",
+        "google_recaptcha",
+        "utm"
+      ],
+      "sha256": "6944a7efcc25d959321f4117198c64a4c3d5bbff33ecca44fe211c844d52f20e"
+    },
+    "website_mail": {
+      "license": "LGPL-3",
+      "depends": [
+        "website",
+        "mail"
+      ],
+      "sha256": "875ba082d9375941b1c5127fb74c8a100cfe733982133f2148f4d47bfefa1dc9"
+    },
+    "website_payment": {
+      "license": "LGPL-3",
+      "depends": [
+        "website",
+        "account_payment",
+        "portal"
+      ],
+      "sha256": "d341b0c10676f432897c9c3a64f727c843a4a777078f5966f2d6b5db27e4fc12"
+    },
+    "website_sale": {
+      "license": "LGPL-3",
+      "depends": [
+        "website",
+        "sale",
+        "website_payment",
+        "website_mail",
+        "portal_rating",
+        "digest",
+        "delivery"
+      ],
+      "sha256": "93f340b07c989a54e785244bde5764ca4cb7fa85e509062e05dd6c97c65c1304"
+    }
+  },
+  "scope": "Manifiestos y dependencias de módulos; bibliotecas del entorno en informe separado",
+  "restricted": {}
+}

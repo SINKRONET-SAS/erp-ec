@@ -1,7 +1,7 @@
 # Arquitectura propuesta y contratos por cerrar
 
 ## Decisiones iniciales
-Odoo Community 18 oficial, módulos propios separados del núcleo y despliegues Linux reproducibles. La referencia Enterprise local no será distribuida. Mantener inicialmente los motores de SKNOMINA y Facturador por API. Portar lógica propia solo con una decisión documentada de costo, licencia, equivalencia, migración y autoridad única.
+Odoo Community 18 oficial, módulos propios separados del núcleo y instalación Windows nativa reproducible, según instrucción del usuario. La referencia Enterprise local no será distribuida. Mantener inicialmente los motores de SKNOMINA y Facturador por API. Portar lógica propia solo con una decisión documentada de costo, licencia, equivalencia, migración y autoridad única.
 
 Portal de suite → control de organizaciones, planes y aprovisionamiento → instancia Odoo y conexiones a los dos productos. El controlador de infraestructura debe estar aislado del frontend y no aceptar comandos arbitrarios. Base y archivos aislados por cliente, PostgreSQL con permisos mínimos, host asociado a base, HTTPS y administrador de bases no expuesto. Probar restauración de base y filestore juntos.
 

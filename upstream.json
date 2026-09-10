@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/odoo/odoo.git",
+  "branch": "18.0",
+  "commit": "b1fd3a9eee5d575848ac649d2f5103537d8de7a4",
+  "license": "LGPL-3.0",
+  "platform": "Windows nativo",
+  "python": "3.12",
+  "postgresql": "17",
+  "scope": "Localización y ERP Community, sin módulos Enterprise"
+}
