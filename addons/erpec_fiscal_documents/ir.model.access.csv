@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_withholding,Preparacion de retenciones,model_erpec_purchase_withholding,account.group_account_invoice,1,1,1,1
+access_reimbursement_support,Sustentos de reembolso,model_erpec_reimbursement_support,account.group_account_invoice,1,1,1,1

@@ -1,0 +1,75 @@
+{
+  "scope": "Incremento local de preparación documental Ecuador sobre Community; no cierre de fase fiscal ni cloud",
+  "testedAt": "2026-09-10 America/Guayaquil",
+  "tests": 6,
+  "failed": 0,
+  "errors": 0,
+  "database": "ec_fiscal_documents_cc47731963",
+  "testLogSha256": "2c726c8ffa2575ddfc55e1d8c07074531343dd550cf296f9031e2bd6428e658b",
+  "fileHashes": {
+    "addons/erpec_fiscal_documents/documents.py": "59a5f692e88535b5d6a6f21405375349c1e217a480ba5f579d3a7a992c3a3ea2",
+    "addons/erpec_fiscal_documents/ir.model.access.csv": "1d3ba734b9497476db461b43663796f5fe9cd89e231c1438ee187709e3dc5025",
+    "addons/erpec_fiscal_documents/security.xml": "8354085cb6cbb20187f44dcad174caf72fba22b23321034cc5ad8eaa5f4889ad",
+    "addons/erpec_fiscal_documents/views.xml": "8e08a225ca03442af68410599b1679bf0e2f97625fd24dc239c9854820d1a325",
+    "addons/erpec_fiscal_documents/__init__.py": "537ffab00c8cae027b89ad1bec7964b2be783f9fdb9b1c27706aa2e7e7d31476",
+    "addons/erpec_fiscal_documents/__manifest__.py": "4887f28d523a96842bc529429bc1c69787d1a33d65b4594a16b851525742a64c",
+    "addons/erpec_fiscal_documents/tests/test_documents.py": "9e97271331214c395ac356cfb19d8b0cd8193a0783f99eb1b8091bdf9717552b",
+    "addons/erpec_fiscal_documents/tests/__init__.py": "819e55a233e5f34e291a4ab465cafe30e584443ee6a11c190807849ad0126eb6"
+  },
+  "installed": {
+    "documentCounts": {
+      "erpec.purchase.withholding": 0,
+      "erpec.reimbursement.support": 0
+    },
+    "invoiceViewVerified": true,
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal_documents-install-20260910-203355",
+    "modules": [
+      {
+        "id": 482,
+        "name": "purchase_stock",
+        "state": "installed"
+      },
+      {
+        "id": 679,
+        "name": "erpec_fiscal_documents",
+        "state": "installed"
+      },
+      {
+        "id": 678,
+        "name": "erpec_operations",
+        "state": "installed"
+      },
+      {
+        "id": 511,
+        "name": "sale_stock",
+        "state": "installed"
+      }
+    ],
+    "workspace": [
+      {
+        "id": 1,
+        "company_readiness": "Completar: RUC de la empresa, dirección de la empresa.",
+        "fiscal_scope": "Pendiente: conector de emisión electrónica y validación de XML/RIDE y estados fiscales. Crear una factura contable en Odoo no acredita su autorización por el SRI."
+      }
+    ],
+    "url": "http://127.0.0.1:8186/odoo/action-480/1",
+    "loginStatus": 200,
+    "enterpriseInstalled": false,
+    "fiscalEmissionPerformed": false
+  },
+  "coverage": [
+    "Vínculos nativos de ventas y compras con facturas",
+    "Retención preliminar sin asiento ni cambio de saldo",
+    "Reembolso: importes y duplicado por emisor, tipo y número normalizado",
+    "Separación de empresas y permisos",
+    "Inmutabilidad de respaldos contabilizados, incluido traslado entre facturas",
+    "Rechazo de padre de ventas y concepto inválido"
+  ],
+  "pending": [
+    "Contabilización y conciliación de retenciones",
+    "Tratamiento fiscal completo de reembolsos",
+    "Contrato externo y conector fiscal",
+    "Validación vigente de tarifas, XML/RIDE y autorización SRI",
+    "Aplicación al aprovisionamiento y Linux"
+  ]
+}

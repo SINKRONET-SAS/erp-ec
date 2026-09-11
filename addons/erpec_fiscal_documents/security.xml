@@ -1,0 +1,4 @@
+<odoo>
+<record id="withholding_company_rule" model="ir.rule"><field name="name">Retenciones por empresa</field><field name="model_id" ref="model_erpec_purchase_withholding"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="reimbursement_company_rule" model="ir.rule"><field name="name">Reembolsos por empresa</field><field name="model_id" ref="model_erpec_reimbursement_support"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+</odoo>

@@ -1,0 +1,23 @@
+<odoo>
+<record id="move_ec_documents" model="ir.ui.view">
+ <field name="name">account.move.erpec.documents</field><field name="model">account.move</field><field name="inherit_id" ref="account.view_move_form"/>
+ <field name="arch" type="xml"><xpath expr="//notebook" position="inside">
+  <page name="erpec_documents" string="Ecuador" invisible="move_type == 'entry'" groups="account.group_account_invoice">
+   <div class="alert alert-warning" role="status"><field name="ec_fiscal_notice" nolabel="1"/></div>
+   <group string="Relación con la operación"><field name="ec_sale_order_ids" widget="many2many_tags"/><field name="ec_purchase_order_ids" widget="many2many_tags"/><field name="reversed_entry_id" readonly="1"/></group>
+   <group string="Preparación de retenciones · sin contabilizar" invisible="move_type != 'in_invoice'">
+    <p>El responsable debe revisar concepto, base, tarifa y vigencia. Este importe no reduce el saldo de la factura ni genera un comprobante de retención.</p>
+    <field name="ec_withholding_ids" nolabel="1" readonly="state == 'cancel'">
+     <list editable="bottom"><field name="company_id" column_invisible="True"/><field name="currency_id" column_invisible="True"/><field name="tax_id" domain="[('company_id','=',parent.company_id),('tax_group_id.l10n_ec_type','in',['withhold_income_purchase','withhold_vat_purchase'])]"/><field name="tax_kind"/><field name="base_amount"/><field name="rate"/><field name="estimated_amount"/><field name="notes"/></list>
+    </field>
+   </group>
+   <group string="Reembolso de gastos · comprobantes de sustento" invisible="move_type != 'in_invoice'">
+    <p>Registro de respaldo en USD, sin distribución parcial de un comprobante entre varias facturas. No recalcula las líneas ni impuestos de la factura de compra.</p>
+    <field name="ec_reimbursement_ids" nolabel="1" readonly="state != 'draft'">
+     <list editable="bottom"><field name="currency_id" column_invisible="True"/><field name="supplier_id"/><field name="document_type_id"/><field name="document_number"/><field name="issue_date"/><field name="untaxed_amount"/><field name="tax_amount"/><field name="total_amount"/><field name="notes" optional="hide"/></list>
+    </field>
+   </group>
+  </page>
+ </xpath></field>
+</record>
+</odoo>
