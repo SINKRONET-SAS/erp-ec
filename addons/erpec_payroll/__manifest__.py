@@ -1,0 +1,1 @@
+{'name': 'ERP EC — Nómina nativa', 'version': '18.0.1.0.0', 'license': 'Other proprietary', 'author': 'SINKRONET S.A.S.', 'depends': ['erpec_operations', 'hr', 'account'], 'data': ['security.xml', 'ir.model.access.csv', 'views.xml'], 'installable': True}

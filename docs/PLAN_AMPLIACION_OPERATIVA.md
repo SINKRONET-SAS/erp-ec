@@ -87,3 +87,9 @@ Estos prompts se ejecutan con la autorización vigente y complementan ERPEC26-06
 ## Avance local del 11 de septiembre de 2026
 
 Primer incremento OP01/OP02 instalado en demo 8369 después de cuatro pruebas transaccionales y un ensayo HTTP concurrente en copia. Incluye fabricación parcial, desperdicio/desmontaje, control de faltantes, dos operaciones dependientes, pausa con motivo, tiempos y valoración AVCO periódica. No representa el cierre completo de ambos frentes: casos restantes y limitación de revisión visual están en docs/PRODUCCION_TRABAJO_DEMO.md; evidencia en docs/evidencias/ERPEC26-OP01-OP02.json. OP03 y OP04 siguen pendientes. PAYPHONE ya fue probado mediante túnel; Render continúa aplazado.
+
+## Segundo incremento y corrección del titular — 11-09-2026
+
+Se implementa expediente de importación sobre costos nativos y nómina local con cierre contable, conforme a la decisión expresa de trasladar lógica de SKNOMINA. SKNOMINA sí tiene API y permanece disponible; no se modificó su repositorio. La demo utiliza parámetros reales Ecuador 2026 y personas ficticias.
+
+La evidencia del incremento es ERPEC26-OPERACIONES-LOCAL.json. La guía OPERACIONES_LOCALES_DEMO.md distingue los ciclos probados de los requisitos todavía abiertos. El contrato de cierre externo original se conserva como alternativa de integración; no se ha ejecutado un corte productivo de autoridad. Los controles de pagos, equivalencia integral y validaciones externas conservan su condición pendiente.

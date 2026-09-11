@@ -1,4 +1,5 @@
 <odoo>
+  <record id="pause_loss" model="mrp.workcenter.productivity.loss"><field name="name">Pausa documentada ERP EC</field><field name="loss_type">availability</field></record>
   <menuitem id="manufacturing_root" name="Producción y trabajo" parent="erpec_base.suite_root" sequence="15" groups="mrp.group_mrp_user"/>
   <menuitem id="production_menu" name="Órdenes de fabricación" parent="manufacturing_root" action="mrp.mrp_production_action" sequence="10"/>
   <menuitem id="workorder_menu" name="Operaciones y tiempos" parent="manufacturing_root" action="mrp.mrp_workorder_todo" sequence="20"/>
@@ -14,6 +15,6 @@
   <record id="workorder_pause_reason" model="ir.ui.view">
     <field name="name">erpec.workorder.pause.reason</field><field name="model">mrp.workorder</field>
     <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
-    <field name="arch" type="xml"><xpath expr="//sheet" position="inside"><group string="Pausa documentada"><field name="erpec_pause_reason" placeholder="Explica el motivo antes de pausar"/></group></xpath></field>
+    <field name="arch" type="xml"><xpath expr="//sheet" position="inside"><group string="Pausa documentada"><field name="erpec_pause_reason" placeholder="Explica el motivo antes de pausar"/><field name="erpec_downtime"/></group></xpath></field>
   </record>
 </odoo>

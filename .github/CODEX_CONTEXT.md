@@ -5,10 +5,10 @@
 - Decisión: Odoo Community; revisar localización Ecuador Enterprise como referencia de alcance, sin asumir permiso de reutilización propietaria.
 - Productos: SKNOMINA y SINKRONET FACTURADOR; fuentes y hashes en docs/evidencias/fuentes.json.
 - Fase completada: ERPEC26-03, catálogo versionado, contratos y vínculos autorizados.
-- Fase en curso: ERPEC26-04. Cola y aprovisionamiento Windows local verificados. Producción definida: Render (Linux/contenedores, PostgreSQL y servicios), Cloudflare para DNS/proxy del dominio futuro y PAYPHONE para pagos. Pendientes: adaptación del trabajador a Render, acceso al proyecto y aplicación PAYPHONE de prueba. HTTPS inicial con URL de Render; dominio propio posterior. Fases 05–08 pendientes por dependencia. Autoridad de cobro obligatoria por contrato; no hay cargo automático. Ejecución de todas las fases, commit y push autorizados por el usuario.
+- Fase en curso: ERPEC26-04. Cola y aprovisionamiento Windows local verificados. Producción definida: Render (Linux/contenedores, PostgreSQL y servicios), Cloudflare para DNS/proxy del dominio futuro y PAYPHONE para pagos. Pendientes: adaptación del trabajador a Render, acceso al proyecto Render. HTTPS inicial con URL de Render; dominio propio posterior. Fases 05–08 pendientes por dependencia. Autoridad de cobro obligatoria por contrato; no hay cargo automático. Ejecución de todas las fases, commit y push autorizados por el usuario.
 - Plan: docs/PLAN_HAIKY_ERPEC26.md; prompts ERPEC26-00 a ERPEC26-08.
 - Verificación: node scripts/verify-governance.cjs.
-- Alcance actual: catálogo/contratos y controlador local visibles; tercera instancia sintética aprovisionada, suspendida y reactivada conservando datos. Sin publicación en nube, pagos externos, pruebas SRI ni cambios a productos fuente.
+- Alcance actual: catálogo/contratos y controlador local visibles; tercera instancia sintética aprovisionada, suspendida y reactivada conservando datos. Sin publicación en nube ni pruebas SRI; PAYPHONE ya probado por túnel ni cambios a productos fuente.
 - Desarrollo local: Windows nativo, Python 3.12 aislado y PostgreSQL 17. Producción: Render; no requiere Windows. Decisión y segunda pasada: docs/PRODUCCION_RENDER_CLOUDFLARE.md.
 - Mantener modelo API inicial y autoridad única por operación; traslado de lógica propia requiere análisis explícito.
 - GitHub privado: https://github.com/SINKRONET-SAS/erp-ec.
@@ -22,3 +22,11 @@
 - PAYPHONE ya tuvo una transacción externa verificada mediante túnel, registrada en ERPEC26-04-payphone-local.json. El usuario reiteró mantener el desarrollo local; Render continúa aplazado. No pedir nuevamente la prueba PAYPHONE como si nunca se hubiese realizado.
 - Mantener separadas la demo sin RUC, la instancia del emisor y las copias de pruebas. No se modificaron SKNOMINA ni Facturador.
 - Las fases históricas 04–08 no se cierran por este incremento. Continuar los casos locales pendientes OP01/OP02 y después OP03/OP04 conforme al complemento aprobado.
+
+## Continuidad operativa y nómina nativa — 2026-09-11
+
+- El usuario autorizó continuar los prompts restantes y trasladar lógica de SKNOMINA al ERP. Aclaró expresamente que SKNOMINA tiene API: se inspeccionaron rutas externas y funciones de cálculo, sin modificar la fuente.
+- Corrección expresa: la demo debe utilizar parámetros reales. La semilla carga Ecuador 2026, régimen privado general continental, con empleados ficticios. Los parámetros artificiales quedan exclusivamente en pruebas de regresión, nunca en la semilla instalada.
+- Se incorporan erpec_imports y erpec_payroll y se amplían controles de fabricación. Evidencia y límites actuales: docs/evidencias/ERPEC26-OPERACIONES-LOCAL.json y docs/OPERACIONES_LOCALES_DEMO.md. No confundir este incremento con cierre de todas las fases.
+- Nómina nativa: una autoridad activa por empresa/año, parámetros y mapeos inmutables tras activar, cierres sin sobrescritura, asiento idempotente, reversión y corrección. La empresa DEMO calcula localmente; no se activó migración de empresas reales ni se retiró SKNOMINA.
+- Pendientes de OP04: equivalencia integral (regímenes, novedades con bases distintas, acumulados anuales, liquidaciones, ausencias y pagos conciliados), migración/corte de autoridad por organización y revisión laboral integral. API existente no equivale a contrato externo de cierre/versionado validado.

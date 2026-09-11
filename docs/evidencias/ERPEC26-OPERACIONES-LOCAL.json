@@ -1,0 +1,186 @@
+{
+  "recordedAt": "2026-09-11T17:41:43.695Z",
+  "operationalIncrements": [
+    "OP01",
+    "OP02",
+    "OP03",
+    "OP04"
+  ],
+  "phaseComplete": false,
+  "status": "passed-local-increment",
+  "checks": [
+    "17 pruebas transaccionales en copia aislada: cero fallos y cero errores",
+    "Compra-fabricación-venta con valoración automática, lotes/series y planificación de capacidad uno verificados",
+    "Importación parcial, AVCO/FIFO, divisa, mercancía vendida, clasificación, controles de origen, aislamiento y ajuste inverso verificados",
+    "Nómina con aprobación, cálculo, asiento repetido, reversión, corrección, permisos y parámetros oficiales 2026 verificados",
+    "Dos solicitudes HTTP simultáneas por acción: un temporizador activo, cero productivos durante pausa y un único intervalo de pausa; un asiento de nómina tras contabilización concurrente",
+    "Demo instalada con respaldo previo; vistas compiladas mediante usuario autenticado; RUC vacío y ausencia de módulos Enterprise",
+    "Respaldo previo restaurado en ec_recovery_b3e87a1b09 con rol y filestore propios; ausencia de nómina anterior verificada",
+    "Seis casos contrastados con funciones puras de SKNOMINA; diferencia de tratamiento de gastos personales registrada; no acredita equivalencia integral"
+  ],
+  "pendingChecks": [
+    "Revisión visual completa: el navegador mostró el acceso, pero se interrumpió la entrada con error de conexión; los cuatro formularios sí compilan mediante autenticación",
+    "Fabricación parcial con operaciones y aceptación completa por operario/supervisor",
+    "Importaciones: pago y diferencia cambiaria conciliados, revisión aduanera de operación real",
+    "Nómina: regímenes adicionales, cargas/exenciones, acumulados y retenciones previas, bases independientes por novedad, ausencias, liquidaciones, pagos conciliados y equivalencia integral",
+    "Contrato externo de cierre SKNOMINA, migración y corte productivo por organización; no se modificó el producto fuente",
+    "Gates históricos externos y publicación Render aplazada; PAYPHONE local ya probado"
+  ],
+  "automatedTests": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "logSha256": "cf048b91b9161f552b28e345e3d8dc50f4e8eabcd06b769e53c1a318659aaa91",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517"
+  },
+  "concurrency": {
+    "requestsPerAction": 2,
+    "workTimersAfterStart": 1,
+    "productiveTimersDuringPause": 0,
+    "pauseTimersDuringPause": 1,
+    "payrollMovesAfterConcurrentPost": 1
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\operational-install-20260911-103317",
+    "database": "erpec_demo",
+    "urls": {
+      "import_action": "http://127.0.0.1:8369/odoo/action-575",
+      "period_action": "http://127.0.0.1:8369/odoo/action-576",
+      "policy_action": "http://127.0.0.1:8369/odoo/action-577"
+    },
+    "authenticated": true,
+    "viewsCompiled": {
+      "erpec.importation": true,
+      "erpec.payroll.period": true,
+      "erpec.payroll.policy": true,
+      "mrp.workorder": true
+    },
+    "fictionalEmployees": true,
+    "realParameters2026": true,
+    "vatEmpty": true,
+    "enterpriseInstalled": false,
+    "payrollPeriods": [
+      {
+        "id": 1,
+        "name": "NOMINA-DEMO-2026-08",
+        "state": "posted",
+        "move_id": [
+          8,
+          "ECDN/2026/09/0001 (Nómina NOMINA-DEMO-2026-08)"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "NOMINA-DEMO-2026-09",
+        "state": "draft",
+        "move_id": false
+      }
+    ]
+  },
+  "recovery": {
+    "restoredDatabase": "ec_recovery_b3e87a1b09",
+    "configuration": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\recoveries\\ec_recovery_b3e87a1b09\\odoo.conf",
+    "sourceBackup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\operational-install-20260911-103317",
+    "currentDemoUntouched": true,
+    "previousPayrollAbsent": true
+  },
+  "equivalence": {
+    "sourcePath": "C:/proyectos web/nuevo_nomina/backend/src/services/calculoNominaService.js",
+    "sourceSha256": "001ebda151d02c0f653dcb7ed461a3342cb40f269062001fe99c7a8e79b15e90",
+    "testedFunctions": [
+      "calcularDiasTrabajados",
+      "calcularValorHora",
+      "getEmployeeMonthlyHours",
+      "calcularIR"
+    ],
+    "matchingCases": 6,
+    "days": [
+      30,
+      15,
+      0,
+      30
+    ],
+    "hour": 10,
+    "taxWithoutExpenses": 116,
+    "intentionalDifference": {
+      "syntheticParameters": true,
+      "sourceExpenseTreatment": 107.67,
+      "nativeExpenseTreatment": 101
+    },
+    "fullPayrollEquivalent": false,
+    "sourceModified": false
+  },
+  "parameters": {
+    "year": 2026,
+    "profile": "Privado general continental, cero cargas, sin exenciones especiales",
+    "real": true,
+    "employeesFictional": true,
+    "minimumSalary": 482,
+    "personalIess": 0.0945,
+    "employerIess": 0.1115,
+    "employerOther": 0.01,
+    "reserve": 0.0833,
+    "expenseLimit": 5752.6,
+    "rebateRate": 0.18,
+    "sourceFile": "addons/erpec_payroll/parameters_ec2026.py"
+  },
+  "testedFileHashes": {
+    "addons/erpec_manufacturing/models.py": "d3f5afc7a258d071a7a3e3f97b562de1ffcb6ab908450fc87b9d33cfc0df2f5e",
+    "addons/erpec_manufacturing/views.xml": "cb3c058ae514427a5242793a56a3c470c019095f580503d1906e1c740d878c07",
+    "addons/erpec_manufacturing/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_manufacturing/__manifest__.py": "231293273079589c93d41686f3d36ee1e9fd4109089635b65daf34c8417f3419",
+    "addons/erpec_manufacturing/tests/test_manufacturing.py": "db6c6bedccf9c9a28bb2fad076b018831e512c9a1771443a4cf68baa562c07b4",
+    "addons/erpec_manufacturing/tests/__init__.py": "dd9b684c8f07a68b0275dccc2f662ef57c902d60d7084ab19eef0ad2e3b85416",
+    "addons/erpec_imports/ir.model.access.csv": "ae5e9f47e993fe4d050a5e07100501ed99425f0a9707afe61e6361be10420dc5",
+    "addons/erpec_imports/models.py": "ee53d6bfaf6bf9a43f0f20b0a9a5173e454f740caf2e811161e6d833d7a185db",
+    "addons/erpec_imports/security.xml": "8e955a798c4b8104f0685e52b5f0fd0b1c0442161625b5898ee4fd9b54f1cf00",
+    "addons/erpec_imports/views.xml": "8e5976592612234c1e4a5d24bed955ccf16a0dbdc1617aed2f00e5cdeb0905c7",
+    "addons/erpec_imports/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_imports/__manifest__.py": "68faeddd94f438181aa85d60bb782e31ca9348f8a5cc50423bf50c8cdb2f44fa",
+    "addons/erpec_imports/tests/test_imports.py": "6795396eb25b3209d79ddf6a416fddb768dcbd20fdf15381c7532ee94cb85f09",
+    "addons/erpec_imports/tests/__init__.py": "628c2552634c359e5044a7bb4e4409513484a5274267b4d9dde9701878b5ccff",
+    "addons/erpec_payroll/demo_parameters.py": "b6387d7aa7a14b6b71cb1edd3c4002d664883678f0a75bf0b366701dc0d52a0c",
+    "addons/erpec_payroll/engine.py": "06242feb48fa2b5d73b7d7fa6405732f21336350703f6524f103130b2dbf8860",
+    "addons/erpec_payroll/ir.model.access.csv": "9a43325d9740c22cbba46536e8787db462eecef32aa0e1b4f35251a9b0a09ad8",
+    "addons/erpec_payroll/models.py": "5651dce8ece6883dbaf04e5f9f4149aab16ef850a6379b3b4edd1fe726945ec8",
+    "addons/erpec_payroll/parameters_ec2026.py": "47e68a93fc310ce2c6d212047525cb46dd47feda31888d7d0b0b747ad1dbf439",
+    "addons/erpec_payroll/security.xml": "d3f315d380301e4b665bac3d384b648fffd709bac513dcaab27d516975555fb6",
+    "addons/erpec_payroll/views.xml": "f9a7cc36004deb23cf4a11b19d9339834c078d0aea7b949bcfeaa7b9faa7422c",
+    "addons/erpec_payroll/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_payroll/__manifest__.py": "cc8019dda043702e137d885617162111ad969d2247a15f73ea163cb3ce41ce01",
+    "addons/erpec_payroll/tests/test_payroll.py": "4acdf5eb3aa25177499254abbbef7e47d4df2527962566ee33099389c353ff71",
+    "addons/erpec_payroll/tests/__init__.py": "d5f8a498d6e40a94110b095889cca54617d09b7b1c55e7c82a7e6cd999bf523d"
+  },
+  "fileHashes": {
+    "addons/erpec_manufacturing/models.py": "d3f5afc7a258d071a7a3e3f97b562de1ffcb6ab908450fc87b9d33cfc0df2f5e",
+    "addons/erpec_manufacturing/views.xml": "cb3c058ae514427a5242793a56a3c470c019095f580503d1906e1c740d878c07",
+    "addons/erpec_manufacturing/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_manufacturing/__manifest__.py": "231293273079589c93d41686f3d36ee1e9fd4109089635b65daf34c8417f3419",
+    "addons/erpec_manufacturing/tests/test_manufacturing.py": "db6c6bedccf9c9a28bb2fad076b018831e512c9a1771443a4cf68baa562c07b4",
+    "addons/erpec_manufacturing/tests/__init__.py": "dd9b684c8f07a68b0275dccc2f662ef57c902d60d7084ab19eef0ad2e3b85416",
+    "addons/erpec_imports/ir.model.access.csv": "ae5e9f47e993fe4d050a5e07100501ed99425f0a9707afe61e6361be10420dc5",
+    "addons/erpec_imports/models.py": "ee53d6bfaf6bf9a43f0f20b0a9a5173e454f740caf2e811161e6d833d7a185db",
+    "addons/erpec_imports/security.xml": "8e955a798c4b8104f0685e52b5f0fd0b1c0442161625b5898ee4fd9b54f1cf00",
+    "addons/erpec_imports/views.xml": "8e5976592612234c1e4a5d24bed955ccf16a0dbdc1617aed2f00e5cdeb0905c7",
+    "addons/erpec_imports/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_imports/__manifest__.py": "68faeddd94f438181aa85d60bb782e31ca9348f8a5cc50423bf50c8cdb2f44fa",
+    "addons/erpec_imports/tests/test_imports.py": "6795396eb25b3209d79ddf6a416fddb768dcbd20fdf15381c7532ee94cb85f09",
+    "addons/erpec_imports/tests/__init__.py": "628c2552634c359e5044a7bb4e4409513484a5274267b4d9dde9701878b5ccff",
+    "addons/erpec_payroll/demo_parameters.py": "b6387d7aa7a14b6b71cb1edd3c4002d664883678f0a75bf0b366701dc0d52a0c",
+    "addons/erpec_payroll/engine.py": "06242feb48fa2b5d73b7d7fa6405732f21336350703f6524f103130b2dbf8860",
+    "addons/erpec_payroll/ir.model.access.csv": "9a43325d9740c22cbba46536e8787db462eecef32aa0e1b4f35251a9b0a09ad8",
+    "addons/erpec_payroll/models.py": "5651dce8ece6883dbaf04e5f9f4149aab16ef850a6379b3b4edd1fe726945ec8",
+    "addons/erpec_payroll/parameters_ec2026.py": "47e68a93fc310ce2c6d212047525cb46dd47feda31888d7d0b0b747ad1dbf439",
+    "addons/erpec_payroll/security.xml": "d3f315d380301e4b665bac3d384b648fffd709bac513dcaab27d516975555fb6",
+    "addons/erpec_payroll/views.xml": "f9a7cc36004deb23cf4a11b19d9339834c078d0aea7b949bcfeaa7b9faa7422c",
+    "addons/erpec_payroll/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_payroll/__manifest__.py": "cc8019dda043702e137d885617162111ad969d2247a15f73ea163cb3ce41ce01",
+    "addons/erpec_payroll/tests/test_payroll.py": "4acdf5eb3aa25177499254abbbef7e47d4df2527962566ee33099389c353ff71",
+    "addons/erpec_payroll/tests/__init__.py": "b9d058ddab8cfee24f494b0148681ccf4c6357659843e40de8f03355ae39dee3"
+  },
+  "encodingNote": "Después de las pruebas se normalizó únicamente tests/__init__.py de nómina de CRLF a LF; contenido e importación idénticos. Los hashes prueban ambos estados.",
+  "seedHashes": {
+    "seed-manufacturing-demo.py": "fe0993b8168ff4ed9301d527799903053fe380fbb9f5da3eb61aa241ea204652",
+    "seed-operational-demo.py": "4d71317a8b36a1af9a0cfc1005e8a16570fc5809bf5699633477dddc39ebd9ba"
+  }
+}

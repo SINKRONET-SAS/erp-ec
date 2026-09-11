@@ -2,7 +2,7 @@
 
 Objetivo: comercializar Odoo Community en la nube mediante planes propios, integrado con SKNOMINA y SINKRONET FACTURADOR, aprovechando localización Community y revisando capacidades Enterprise sin incorporar código no autorizado.
 
-Estado: fases 00–03 completadas; fase 04 parcialmente implementada y validada localmente; pendiente de adaptación a Render y pruebas PAYPHONE. Windows es el entorno local; Render alojará producción y PostgreSQL, con Cloudflare para el dominio futuro. No hay despliegue productivo.
+Estado: fases 00–03 completadas; fase 04 parcialmente implementada y validada localmente; pendiente de adaptación a Render; PAYPHONE probado localmente por túnel. Windows es el entorno local; Render alojará producción y PostgreSQL, con Cloudflare para el dominio futuro. No hay despliegue productivo.
 
 Referencias: MATRIZ_CAPACIDADES.md, ARQUITECTURA_Y_CONTRATOS.md y evidencias/fuentes.json. Ruta física SKNOMINA verificada: C:/proyectos web/nuevo_nomina; la variante C:/proyectos web/nuevo/_nomina no existe en esta máquina. Facturador contiene trabajo ajeno pendiente y debe preservarse.
 
@@ -12,7 +12,7 @@ Referencias: MATRIZ_CAPACIDADES.md, ARQUITECTURA_Y_CONTRATOS.md y evidencias/fue
 | ERPEC26-01 | Procedencia y alcance Ecuador | 00 | Completada |
 | ERPEC26-02 | Base Community y aislamiento | 01 | Completada: piloto Windows verificado |
 | ERPEC26-03 | Organizaciones, identidad y planes | 02 | Completada: contratos locales sin cargo automático |
-| ERPEC26-04 | Aprovisionamiento SaaS | 03 | Parcial: piloto local probado; adaptación Render y pruebas PAYPHONE pendientes |
+| ERPEC26-04 | Aprovisionamiento SaaS | 03 | Parcial: piloto local probado; adaptación Render pendiente; PAYPHONE local probado |
 | ERPEC26-05 | Facturación desde Odoo | 04 | Pendiente |
 | ERPEC26-06 | Nómina y contabilidad | 05 | Pendiente |
 | ERPEC26-07 | Cobertura Ecuador ampliada | 06 | Pendiente |
@@ -27,7 +27,7 @@ No se estiman fechas o precios sin dimensionar clientes, usuarios simultáneos, 
 ## Decisiones pendientes
 
 - Community 18 fijado en upstream.json y verificado en fase 01; cualquier cambio de versión actualiza matriz y pruebas.
-- Proveedores elegidos: Render para producción, Cloudflare para DNS/proxy y PAYPHONE para pagos. Faltan región, recursos, aplicación de prueba y objetivos de disponibilidad/recuperación/retención. El dominio se contratará después; se permite probar con la URL HTTPS de Render.
+- Proveedores elegidos: Render para producción, Cloudflare para DNS/proxy y PAYPHONE para pagos. Faltan región, recursos y objetivos de disponibilidad/recuperación/retención. El dominio se contratará después; se permite probar con la URL HTTPS de Render.
 - Definir titularidad/licencia de módulos propios y revisar complementos seleccionados.
 - Elegir autoridad de cobro de suite y vinculación de contratos vigentes sin doble cargo.
 - Confirmar responsables de validación fiscal/contable y credenciales de pruebas.

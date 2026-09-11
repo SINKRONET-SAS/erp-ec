@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+import_manager,Expedientes responsables,model_erpec_importation,account.group_account_manager,1,1,1,0
+import_user,Expedientes consulta,model_erpec_importation,stock.group_stock_user,1,0,0,0
+charge_manager,Gastos responsables,model_erpec_import_charge,account.group_account_manager,1,1,1,1
+charge_user,Gastos consulta,model_erpec_import_charge,stock.group_stock_user,1,0,0,0

@@ -45,8 +45,9 @@ try:
     assert count == 1, 'Las solicitudes concurrentes duplicaron el temporizador'
     call('mrp.workorder', 'write', [[first], {'erpec_pause_reason': 'Fin del ensayo concurrente'}])
     call('mrp.workorder', 'button_pending', [[first]])
-    assert call('mrp.workcenter.productivity', 'search_count', [[('workorder_id', '=', first), ('date_end', '=', False)]]) == 0
-    report.update({'exitCode': 0, 'fileHashes': verify.hashes(), 'seedHash': verify.hashlib.sha256((ROOT/'scripts/seed-manufacturing-demo.py').read_bytes()).hexdigest(), 'concurrentRequests': 2, 'openTimersAfterConcurrentStart': count, 'openTimersAfterPause': 0, 'seedPassed': True})
+    assert call('mrp.workcenter.productivity', 'search_count', [[('workorder_id', '=', first), ('date_end', '=', False), ('erpec_pause', '=', False)]]) == 0
+    assert call('mrp.workcenter.productivity', 'search_count', [[('workorder_id', '=', first), ('date_end', '=', False), ('erpec_pause', '=', True)]]) == 1
+    report.update({'exitCode': 0, 'fileHashes': verify.hashes(), 'seedHash': verify.hashlib.sha256((ROOT/'scripts/seed-manufacturing-demo.py').read_bytes()).hexdigest(), 'concurrentRequests': 2, 'openTimersAfterConcurrentStart': count, 'openTimersAfterPause': 1, 'openProductiveTimersAfterPause': 0, 'seedPassed': True})
     verify.write(verify.STATE/'manufacturing-test-result.json', report)
     print(json.dumps(report), flush=True)
 finally:

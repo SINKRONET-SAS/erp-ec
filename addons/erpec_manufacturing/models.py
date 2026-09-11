@@ -1,5 +1,5 @@
 """Controles operativos sobre fabricación, inventario y tiempos nativos Community."""
-from odoo import fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
 
@@ -31,6 +31,17 @@ class Workorder(models.Model):
     _inherit = 'mrp.workorder'
 
     erpec_pause_reason = fields.Char('Motivo de pausa')
+    erpec_downtime = fields.Float('Pausa improductiva (min)', compute='_compute_downtime')
+
+    @api.depends('time_ids.duration', 'time_ids.date_end')
+    def _compute_downtime(self):
+        for order in self:
+            order.erpec_downtime = sum(order.time_ids.filtered('erpec_pause').mapped('duration'))
+
+    def _close_pauses(self, all_users=False):
+        pauses = self.time_ids.filtered(lambda item: item.erpec_pause and not item.date_end and (all_users or item.user_id == self.env.user))
+        if pauses:
+            pauses.write({'date_end': fields.Datetime.now()})
 
     def _lock_timer(self):
         self.check_access('write')
@@ -45,6 +56,7 @@ class Workorder(models.Model):
         for order in self:
             if order.blocked_by_workorder_ids.filtered(lambda previous: previous.state != 'done'):
                 raise UserError('Termina la operación precedente antes de iniciar esta etapa.')
+        self._close_pauses()
         super().button_start(raise_on_invalid_state=raise_on_invalid_state)
         return True
 
@@ -53,8 +65,15 @@ class Workorder(models.Model):
         for order in self:
             if not (order.erpec_pause_reason or '').strip():
                 raise UserError('Indica el motivo de pausa antes de detener el trabajo.')
+            active = order.time_ids.filtered(lambda item: not item.date_end and item.user_id == self.env.user)
+            if active.filtered('erpec_pause'):
+                order.production_id.message_post(body='La pausa ya estaba registrada; no se duplica el intervalo.')
+                continue
+            if not active or order.state != 'progress':
+                raise UserError('Inicia el trabajo antes de registrar una pausa.')
+            super(Workorder, order).button_pending()
+            self.env['mrp.workcenter.productivity'].create({'workorder_id': order.id, 'workcenter_id': order.workcenter_id.id, 'company_id': order.company_id.id, 'user_id': self.env.uid, 'loss_id': self.env.ref('erpec_manufacturing.pause_loss').id, 'erpec_pause': True, 'description': order.erpec_pause_reason})
             order.production_id.message_post(body='Pausa en %s: %s' % (order.name, order.erpec_pause_reason))
-        super().button_pending()
         return True
 
     def button_finish(self):
@@ -62,4 +81,17 @@ class Workorder(models.Model):
         for order in self.filtered(lambda item: item.state not in ('done', 'cancel')):
             if order.blocked_by_workorder_ids.filtered(lambda previous: previous.state != 'done'):
                 raise UserError('Termina la operación precedente antes de finalizar esta etapa.')
+        self._close_pauses(all_users=True)
         return super().button_finish()
+
+    def button_done(self):
+        self._lock_timer()
+        if self.blocked_by_workorder_ids.filtered(lambda previous: previous.state != 'done'):
+            raise UserError('Termina la operación precedente antes de finalizar esta etapa.')
+        self._close_pauses(all_users=True)
+        return super().button_done()
+
+
+class Productivity(models.Model):
+    _inherit = 'mrp.workcenter.productivity'
+    erpec_pause = fields.Boolean('Pausa documentada', readonly=True)

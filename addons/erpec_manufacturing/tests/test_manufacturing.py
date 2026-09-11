@@ -17,7 +17,8 @@ class ManufacturingCase(TransactionCase):
         self.bom = self.env['mrp.bom'].create({'product_tmpl_id': self.finished.product_tmpl_id.id, 'product_qty': 1, 'company_id': self.env.company.id, 'bom_line_ids': [(0, 0, {'product_id': self.raw.id, 'product_qty': 2})]})
 
     def production(self, quantity=2, stock=10):
-        self.env['stock.quant']._update_available_quantity(self.raw, self.location, stock)
+        if stock:
+            self.env['stock.quant']._update_available_quantity(self.raw, self.location, stock)
         order = self.env['mrp.production'].create({'product_id': self.finished.id, 'product_qty': quantity, 'bom_id': self.bom.id})
         order.action_confirm()
         order.action_assign()
@@ -78,7 +79,7 @@ class ManufacturingCase(TransactionCase):
         self.assertEqual(len(stages[0].time_ids.filtered(lambda item: not item.date_end)), 1)
         stages[0].erpec_pause_reason = 'Ajuste sintético de herramienta'
         stages[0].button_pending()
-        self.assertFalse(stages[0].time_ids.filtered(lambda item: not item.date_end))
+        self.assertEqual(len(stages[0].time_ids.filtered(lambda item: not item.date_end and item.erpec_pause)), 1)
         stages[0].button_start()
         stages[0].button_finish()
         stages[1].button_start()
@@ -101,3 +102,43 @@ class ManufacturingCase(TransactionCase):
             self.assertTrue(self.env.ref('erpec_manufacturing.'+reference).action)
         view = order.get_view(view_id=self.env.ref('mrp.mrp_production_form_view').id, view_type='form')
         self.assertIn('repón existencias', view['arch'])
+
+
+    def test_purchase_manufacture_sale_with_accounting(self):
+        accounts={}
+        for key,kind in [('VAL','asset_current'),('IN','asset_current'),('OUT','asset_current'),('EXP','expense')]:
+            accounts[key]=self.env['account.account'].create({'code':'MRPTEST'+key,'name':'Ensayo '+key,'account_type':kind})
+        journal=self.env['account.journal'].create({'name':'Fabricación contable','code':'MRPT','type':'general'})
+        self.raw.categ_id.write({'property_valuation':'real_time','property_stock_journal':journal.id,'property_stock_valuation_account_id':accounts['VAL'].id,'property_stock_account_input_categ_id':accounts['IN'].id,'property_stock_account_output_categ_id':accounts['OUT'].id,'property_account_expense_categ_id':accounts['EXP'].id})
+        partner=self.env['res.partner'].create({'name':'Contraparte sintética'})
+        purchase=self.env['purchase.order'].create({'partner_id':partner.id,'order_line':[(0,0,{'product_id':self.raw.id,'product_qty':4,'price_unit':5,'taxes_id':[(5,0,0)]})]})
+        purchase.button_confirm(); receipt=purchase.picking_ids
+        receipt.move_ids.quantity=4;receipt.move_ids.picked=True;receipt.button_validate()
+        order=self.production(quantity=2,stock=0);self.finish(order,2)
+        sale=self.env['sale.order'].create({'partner_id':partner.id,'order_line':[(0,0,{'product_id':self.finished.id,'product_uom_qty':1,'price_unit':25,'tax_id':[(5,0,0)]})]})
+        sale.action_confirm(); delivery=sale.picking_ids
+        delivery.move_ids.quantity=1;delivery.move_ids.picked=True;delivery.button_validate()
+        layers=(receipt.move_ids|order.move_raw_ids|order.move_finished_ids|delivery.move_ids).stock_valuation_layer_ids
+        self.assertTrue(layers.account_move_id)
+        self.assertEqual(set(layers.account_move_id.mapped('state')),{'posted'})
+        for move in layers.account_move_id:
+            self.assertAlmostEqual(sum(move.line_ids.mapped('balance')),0)
+        self.assertEqual(self.finished.qty_available,1);self.assertEqual(self.raw.qty_available,0)
+        self.assertAlmostEqual(sum(layers.mapped('value')),10)
+
+    def test_lot_serial_trace_and_work_calendar(self):
+        self.raw.tracking='lot';self.finished.tracking='serial'
+        lot=self.env['stock.lot'].create({'name':'LOTE-ENSAYO','product_id':self.raw.id,'company_id':self.env.company.id})
+        self.env['stock.quant']._update_available_quantity(self.raw,self.location,2,lot_id=lot)
+        order=self.production(quantity=1,stock=0)
+        serial=self.env['stock.lot'].create({'name':'SERIE-ENSAYO','product_id':self.finished.id,'company_id':self.env.company.id})
+        order.lot_producing_id=serial;self.finish(order,1)
+        self.assertEqual(order.move_raw_ids.move_line_ids.lot_id,lot)
+        self.assertEqual(order.move_finished_ids.move_line_ids.lot_id,serial)
+        center=self.env['mrp.workcenter'].create({'name':'Capacidad de ensayo','default_capacity':1})
+        self.env['mrp.routing.workcenter'].create({'name':'Operación de ensayo','bom_id':self.bom.id,'workcenter_id':center.id,'time_cycle_manual':60})
+        first=self.production(quantity=1,stock=0);second=self.production(quantity=1,stock=0)
+        first.button_plan();second.button_plan()
+        self.assertTrue(first.workorder_ids.leave_id)
+        self.assertTrue(second.workorder_ids.leave_id)
+        self.assertGreaterEqual(second.workorder_ids.date_start,first.workorder_ids.date_finished)

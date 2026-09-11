@@ -1,0 +1,2 @@
+# Tasas deliberadamente sintéticas; no constituyen una tabla laboral vigente.
+PARAMS={'minimum_salary':480,'monthly_hours':240,'personal_rate':0.1,'employer_rate':0.12,'reserve_rate':0.08,'reserve_months':12,'thirteenth_rate':1/12,'fourteenth_rate':1/12,'vacation_rate':1/24,'tax_brackets':[{'from':0,'to':12000,'base':0,'rate':0},{'from':12000,'to':None,'base':0,'rate':0.1}],'expense_limit':5000,'rebate_rate':0.18,'overtime_50':1.5,'overtime_100':2,'night_rate':0.25}

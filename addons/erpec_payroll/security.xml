@@ -1,0 +1,7 @@
+<odoo>
+<record id="group_payroll_manager" model="res.groups"><field name="name">Responsable de nómina ERP EC</field><field name="implied_ids" eval="[(4, ref('hr.group_hr_manager')), (4, ref('account.group_account_manager'))]"/></record>
+<record id="policy_company_rule" model="ir.rule"><field name="name">Nómina policy por empresa</field><field name="model_id" ref="model_erpec_payroll_policy"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="mapping_company_rule" model="ir.rule"><field name="name">Nómina mapping por empresa</field><field name="model_id" ref="model_erpec_payroll_mapping"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="period_company_rule" model="ir.rule"><field name="name">Nómina period por empresa</field><field name="model_id" ref="model_erpec_payroll_period"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="line_company_rule" model="ir.rule"><field name="name">Nómina line por empresa</field><field name="model_id" ref="model_erpec_payroll_line"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+</odoo>
