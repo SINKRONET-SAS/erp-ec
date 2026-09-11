@@ -1,0 +1,1 @@
+{'name': 'ERP EC — Contabilidad y retenciones', 'version': '18.0.1.0.0', 'license': 'Other proprietary', 'author': 'SINKRONET', 'depends': ['erpec_fiscal_documents'], 'data': ['security.xml', 'ir.model.access.csv', 'views.xml', 'accounting.xml'], 'application': True, 'category': 'Accounting/Accounting'}

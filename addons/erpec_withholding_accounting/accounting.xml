@@ -1,0 +1,14 @@
+<odoo>
+<record id="accounting_form" model="ir.ui.view"><field name="name">erpec.accounting.center</field><field name="model">erpec.trial.balance</field><field name="arch" type="xml"><form><sheet>
+<h1>Contabilidad ERP EC</h1><p>Asientos, cuentas y conciliación sobre Odoo Community.</p>
+<div class="d-flex flex-wrap gap-2 mb-4">
+<button name="%(account.action_move_journal_line)d" type="action" string="Asientos"/><button name="%(account.action_account_moves_all)d" type="action" string="Movimientos y mayor"/><button name="%(account.action_account_form)d" type="action" string="Plan de cuentas"/><button name="%(account.action_account_journal_form)d" type="action" string="Diarios" groups="account.group_account_manager"/><button name="%(account.action_move_out_invoice_type)d" type="action" string="Facturas de clientes"/><button name="%(account.action_move_in_invoice_type)d" type="action" string="Facturas de proveedores"/><button name="%(retention_action)d" type="action" string="Retenciones"/>
+</div><separator string="Balance de comprobación"/><p>Solo asientos contabilizados. Saldo positivo: deudor; saldo negativo: acreedor. El saldo inicial incluye los movimientos anteriores al período.</p>
+<group><field name="company_id"/><field name="date_from"/><field name="date_to"/><field name="currency_id" invisible="1"/></group><button name="action_generate" type="object" string="Calcular balance" class="oe_highlight"/>
+<field name="line_ids"><list create="false" delete="false"><field name="account_id"/><field name="currency_id" column_invisible="True"/><field name="opening" sum="Saldo inicial"/><field name="debit" sum="Debe"/><field name="credit" sum="Haber"/><field name="closing" sum="Saldo final"/><button name="action_ledger" type="object" string="Ver movimientos"/></list></field><group><field name="total_debit"/><field name="total_credit"/><field name="total_balance"/></group>
+<p>La contabilización de retenciones y este informe no acreditan autorización del SRI.</p></sheet></form></field></record>
+<record id="accounting_action" model="ir.actions.act_window"><field name="name">Contabilidad ERP EC</field><field name="res_model">erpec.trial.balance</field><field name="view_mode">form</field><field name="view_id" ref="accounting_form"/></record>
+<menuitem id="accounting_root" name="Contabilidad ERP EC" action="accounting_action" sequence="6" groups="account.group_account_user"/>
+<menuitem id="accounting_panel" name="Panel contable" parent="accounting_root" action="accounting_action" sequence="1"/>
+<menuitem id="accounting_retention" name="Retenciones" parent="accounting_root" action="retention_action" sequence="2"/>
+</odoo>

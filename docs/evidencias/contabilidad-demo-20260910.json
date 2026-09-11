@@ -1,0 +1,64 @@
+{
+  "scope": "Incremento local autorizado; sin cierre de fases ni emisiones SRI",
+  "tests": {
+    "database": "ec_withholding_accounting_3234184c90",
+    "exitCode": 0,
+    "passed": 8,
+    "fileHashes": {
+      "addons/erpec_withholding_accounting/accounting.py": "6438a68a58e4477d38dce2055d90eba8dc2bc4eb34b79a19df53426e7183f02b",
+      "addons/erpec_withholding_accounting/accounting.xml": "69eed711c63014236506b872f0ece23c4234572ce8d9000fbc4101c48283b34d",
+      "addons/erpec_withholding_accounting/ir.model.access.csv": "4260a1d600d28af7aabc9cb270c6df6d4bb33ce21752049386b3a78e944af98e",
+      "addons/erpec_withholding_accounting/reimbursement.py": "a9682abe06f5860498e810a4485ef21a0d7bd7fa92aa00e7a216745c97fcb1df",
+      "addons/erpec_withholding_accounting/security.xml": "d7e155a94978f3931bfdc790302afa86a168c634d641e5a4081414a1ea7a8c0b",
+      "addons/erpec_withholding_accounting/views.xml": "259e3397741ba311361940777f4dbfa7bdfced763332762c865eb048dd0912f9",
+      "addons/erpec_withholding_accounting/withholding.py": "de7192df24b9709b421f3fda1b2cd7badd9d9d3de616d5bd5fc1dd141e861e42",
+      "addons/erpec_withholding_accounting/__init__.py": "909e3fa7461ab881cc426aa3abba32824ce746fce60f5eb59d76eabff08bb34f",
+      "addons/erpec_withholding_accounting/__manifest__.py": "52f93bee26e37aa227e9210cb5a8fb9c716cecdf283e187a16e3f3acce27ee81",
+      "addons/erpec_withholding_accounting/tests/test_accounting.py": "c4111e8e0e7060000cd2fd925731a5f072c03dc7c97f9716211b5e16296d36b5",
+      "addons/erpec_withholding_accounting/tests/__init__.py": "9734069d7702bb570e450365d2b30be73c53f35d484ebec1931281f3daf3fb84"
+    }
+  },
+  "demo": {
+    "company": "Comercial Andina DEMO — Datos ficticios",
+    "database": "erpec_demo",
+    "url": "http://127.0.0.1:8369/odoo/action-482",
+    "accountingAction": 482,
+    "trialBalanceId": 1,
+    "totalDebit": 714.0,
+    "totalCredit": 714.0,
+    "retentions": 2,
+    "fiscalEmission": false,
+    "syntheticData": true
+  },
+  "verification": {
+    "demoVat": false,
+    "saleTotal": 500,
+    "saleResidual": 490,
+    "purchaseTotal": 200,
+    "purchaseResidual": 196,
+    "crossDatabaseConnectBothDirections": false,
+    "frontend": "Panel Contabilidad ERP EC observado en cliente 8186: asientos, mayor, cuentas, diarios, facturas, retenciones y balance"
+  },
+  "issuer": {
+    "correlationId": "35a2d036-1e4e-436c-b921-00ea26e00f45",
+    "created": true,
+    "userId": 14,
+    "empresaId": 167,
+    "workspaceId": 167,
+    "email": "info@sinkronet.com.ec",
+    "ruc": "1793235327001",
+    "ambienteUsuario": "1",
+    "ambienteEmpresa": "1",
+    "activeApiKeys": 0,
+    "productionEmission": false,
+    "emailsSent": false,
+    "certificateConfigured": false,
+    "emissionPointConfigured": false
+  },
+  "limits": [
+    "Contabilizacion no equivale a autorizacion SRI",
+    "Firma, punto de emision y credencial API de pruebas requieren configuracion",
+    "El emisor real se conserva exclusivamente en Facturador; Odoo demo sin RUC",
+    "No se ejecutaron pruebas de carga concurrente"
+  ]
+}

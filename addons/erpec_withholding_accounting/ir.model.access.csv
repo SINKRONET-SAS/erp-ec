@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+withholding_accountant,Retenciones contables,model_erpec_withholding,account.group_account_user,1,1,1,1
+withholding_line_accountant,Conceptos contables,model_erpec_withholding_line,account.group_account_user,1,1,1,1
+trial_accountant,Balance de comprobación,model_erpec_trial_balance,account.group_account_user,1,1,1,1
+trial_line_accountant,Líneas de comprobación,model_erpec_trial_balance_line,account.group_account_user,1,1,1,1
