@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+connection_admin,Configuración fiscal,model_erpec_fiscal_connection,base.group_system,1,1,1,0
+connection_account,Consulta configuración fiscal,model_erpec_fiscal_connection,account.group_account_user,1,0,0,0
+job_account,Bandeja fiscal,model_erpec_fiscal_job,account.group_account_user,1,1,1,0

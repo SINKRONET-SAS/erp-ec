@@ -1,0 +1,4 @@
+<odoo>
+<record id="connection_company" model="ir.rule"><field name="name">Conexión por empresa</field><field name="model_id" ref="model_erpec_fiscal_connection"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="job_company" model="ir.rule"><field name="name">Bandeja por empresa</field><field name="model_id" ref="model_erpec_fiscal_job"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+</odoo>

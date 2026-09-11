@@ -1,0 +1,82 @@
+{
+  "test": {
+    "database": "ec_fiscal_connector_4ead68bbbb",
+    "exitCode": 0,
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\fiscal_connector-tests\\ec_fiscal_connector_4ead68bbbb\\tests.log",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\fiscal_connector-tests\\ec_fiscal_connector_4ead68bbbb",
+    "scope": "Copia del cliente; datos sinteticos y sin emision fiscal",
+    "fileHashes": {
+      "addons/erpec_fiscal_connector/connector.py": "29fcd48e31b9f15d3b9c47d5856dd6b72f814f467bcbf069e0110cfcf515062f",
+      "addons/erpec_fiscal_connector/ir.model.access.csv": "b329710bd84135579bfee61649cfd9976357081ddc0a1423fb0daba329a98ffa",
+      "addons/erpec_fiscal_connector/security.xml": "5f26c38353205f3b9e81f9d67b480b18904009fa84d73e99aea8ae15e321bdd7",
+      "addons/erpec_fiscal_connector/views.xml": "1f51e4653b4a0b2a53722b9d14e2e419ff143faedaf511e1ee403c719d85d2e8",
+      "addons/erpec_fiscal_connector/__init__.py": "f43469444697ae048228d70895f6095b36b990f5cf7a5604b4776e8558e1599e",
+      "addons/erpec_fiscal_connector/__manifest__.py": "fab6a6e2820ba4cd43ad2afa3b525fbe6304127c081e45b44326408e5d188af4",
+      "addons/erpec_fiscal_connector/tests/test_connector.py": "3ae2cb86aa52b96080f7ce9f26167fef2f6bd75647af15f16cd9fe0a28067e32",
+      "addons/erpec_fiscal_connector/tests/__init__.py": "3d0545b61204433f2f39b50ec227af20e9568f41da7f63ffd0e1ece1af26b7ee"
+    }
+  },
+  "installation": {
+    "documentCounts": {
+      "erpec.fiscal.connection": 0,
+      "erpec.fiscal.job": 0
+    },
+    "invoiceViewVerified": true,
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal_connector-install-20260910-212305",
+    "modules": [
+      {
+        "id": 681,
+        "name": "erpec_fiscal_connector",
+        "state": "installed"
+      },
+      {
+        "id": 482,
+        "name": "purchase_stock",
+        "state": "installed"
+      },
+      {
+        "id": 678,
+        "name": "erpec_operations",
+        "state": "installed"
+      },
+      {
+        "id": 511,
+        "name": "sale_stock",
+        "state": "installed"
+      }
+    ],
+    "workspace": [
+      {
+        "id": 1,
+        "company_readiness": "Completar: RUC de la empresa, dirección de la empresa.",
+        "fiscal_scope": "Conector de pruebas instalado. Pendiente: verificar la conexión de la empresa en Facturación electrónica y completar el ensayo SRI con firma y punto de emisión autorizados. Consulta el estado de cada solicitud en la bandeja; instalar el conector no autoriza comprobantes."
+      }
+    ],
+    "url": "http://127.0.0.1:8186/odoo/action-484",
+    "loginStatus": 200,
+    "enterpriseInstalled": false,
+    "fiscalEmissionPerformed": false
+  },
+  "facturadorCommit": "13d84039",
+  "facturadorTests": {
+    "passed": 19,
+    "exitCode": 0,
+    "remoteServiceSimulated": true
+  },
+  "odooTestsPassed": 9,
+  "browserVerified": "Bandeja fiscal — Pruebas, action-484",
+  "issuerVerification": {
+    "userId": 14,
+    "empresaId": 167,
+    "workspaceId": 167,
+    "userEnvironment": "1",
+    "empresaEnvironment": "1",
+    "certificatePresent": false,
+    "emissionPoints": 0,
+    "activeApiKeys": 0,
+    "addressPresent": false
+  },
+  "realSriEmission": false,
+  "demoChanged": false,
+  "phaseClosed": false
+}
