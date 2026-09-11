@@ -34,3 +34,7 @@ Planes deben separar productos, aplicaciones, usuarios, empresas, almacenamiento
 Paneles mínimos: productos contratados, instancia y dominio, permisos, conexiones, bandeja de errores/reintentos, estado fiscal, conciliación, uso de cuotas y respaldos. Texto de capacidad depende del derecho real; nunca mostrar incluido y bloqueado simultáneamente.
 
 Antes de producción: pruebas de aislamiento y permisos, recuperación tras caída, restauración, observabilidad, políticas de datos y retención, revisión de licencias y formatos SRI vigentes. Secretos y certificados nunca se incluyen en documentación ni repositorios.
+
+## Decisiones posteriores autorizadas — 11-09-2026
+
+El titular autorizó lógica nativa tanto para nómina como para facturación, conservando las API existentes como alternativas. Para nómina, ver OPERACIONES_LOCALES_DEMO.md. Para facturación, ver FACTURACION_LOCAL.md: la preparación XML ya es local; la firma, transporte SRI, RIDE y migración de autoridad siguen pendientes. La tabla anterior registra el diseño inicial y no obliga a desplegar otros productos para la preparación local. La autoridad de autorización fiscal pertenece al SRI; ni el ERP ni Facturador pueden simularla.

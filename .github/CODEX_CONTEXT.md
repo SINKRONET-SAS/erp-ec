@@ -8,6 +8,7 @@ Actualizado: 11-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y d
 - Prioridad actual: desarrollo local en Windows con Odoo Community. Render continúa aplazado; Cloudflare se reserva para el dominio futuro. No pedir Render como requisito para tareas locales independientes.
 - PAYPHONE ya tuvo una transacción externa verificada mediante túnel: docs/evidencias/ERPEC26-04-payphone-local.json. No repetir la solicitud como si nunca se hubiera probado.
 - SKNOMINA sí tiene API. El titular autorizó trasladar lógica propia al ERP para calcular localmente. La API sigue como alternativa y referencia de contraste; no se exige otro servicio para la demo.
+- Facturación: el titular autorizó también trasladar lógica propia al ERP. Primer incremento instalado: preparación XML sin firma, con verificación XSD y módulo 11. Ver docs/FACTURACION_LOCAL.md y evidencia ERPEC26-FISCAL-NATIVO.json. No hay firma ni emisión SRI nativas todavía; conservar Facturador/API y una autoridad por comprobante.
 - La demo usa parámetros laborales reales Ecuador 2026; empleados y operaciones son ficticios. Los parámetros artificiales de regresión no deben alimentar la semilla de demostración.
 - Mantener una autoridad por empresa/año. No migrar empresas reales ni retirar SKNOMINA sin equivalencia integral y corte controlado. No modificar repositorios fuente ni incorporar código Enterprise sin permiso.
 
@@ -23,6 +24,8 @@ Actualizado: 11-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y d
 
 ## Cola de ejecución
 
+Prioridad fiscal autorizada: continuar secuencias y autoridad durables, firma XAdES, envío/consulta SRI, RIDE y equivalencia integral según docs/FACTURACION_LOCAL.md; el XML previo no equivale a un emisor completo.
+
 1. Completar aceptación visual de OP01/OP02 con operario y supervisor y OP03 con recepción de dos productos y distribución de gastos. La prueba automatizada de fabricación parcial con operaciones y roles está en el incremento de aceptación.
 2. OP04: período con dos empleados y centros; completar pagos y conciliación de la nómina por pagar. La cuenta neta de la semilla actual es pasivo corriente y todavía no constituye un flujo de pago conciliado.
 3. Ampliar equivalencia laboral: acumulados y retenciones previas, bases independientes, ausencias, liquidaciones, cargas y exenciones, otros regímenes; documentar diferencias y validar normativa antes de habilitar empresas reales.
@@ -34,4 +37,5 @@ Actualizado: 11-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y d
 - Ejecutar node scripts/verify-governance.cjs antes de modificar y al cerrar. Mantener cadena AuditLock y separar comprobación documental de pruebas funcionales.
 - scripts/verify-operational-plan.py valida en copia aislada; --prepare crea otra copia con respaldo. Las pruebas deben poder convivir con la política real ya sembrada.
 - scripts/verify-operational-runtime.py comprueba semillas, vistas y concurrencia. Instalar cambios funcionales mediante scripts/install-operational-demo.py solo después de validar; respaldar antes.
-- En este incremento cambian pruebas y documentación, no modelos ni pantallas: no requiere reinstalación funcional de la demo. No atribuirle una nueva instalación o restauración.
+- Incremento fiscal nativo instalado con respaldo en demo: acción 581, pestaña Facturación local. Incluye modelos y pantallas; pruebas 14/14 y contraste 258 casos de módulo 11. No atribuirle restauración del respaldo ni emisión SRI, que no se ejecutaron.
+- Servicios locales verificados: demo 8369, pilotos 8169/8170 y cliente 8186. No se inició el producto Facturador para preparar XML.

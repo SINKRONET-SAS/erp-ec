@@ -33,3 +33,7 @@ No se estiman fechas o precios sin dimensionar clientes, usuarios simultáneos, 
 - Confirmar responsables de validación fiscal/contable y credenciales de pruebas.
 
 Estas decisiones no bloquean la planificación completada. Sí condicionan las fases correspondientes.
+
+## Ampliación fiscal local autorizada — 11-09-2026
+
+El titular solicita trasladar también lógica de facturación al ERP. Se permite avanzar el incremento local independiente de Render, preservando las dependencias del cierre histórico. Primer incremento: XML previo sin firma; evidencia ERPEC26-FISCAL-NATIVO.json y guía FACTURACION_LOCAL.md. La emisión fiscal completa y el cierre de ERPEC26-05 siguen pendientes. No se modifica el repositorio fuente del Facturador.

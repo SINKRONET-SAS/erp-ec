@@ -1,0 +1,97 @@
+{
+  "recordedAt": "2026-09-11T18:19:02.361Z",
+  "scope": "Primer incremento nativo: preparación XML sin firma; no cierra ERPEC26-05",
+  "tests": {
+    "exitCode": 0,
+    "testedAt": "2026-09-11T18:15:21.573739+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\native-tests-20260911-131442.log",
+    "logSha256": "7fdae4a0fba27f84416584c22ddc11ec60e9c6b41e384a5ccdee25607dd9587a",
+    "modules": [
+      "erpec_fiscal_native",
+      "erpec_fiscal_connector"
+    ],
+    "fileHashes": {
+      "addons/erpec_fiscal_native/engine.py": "161f718d7390f45eb45dc4bddae1db44f983e9c662aacb32e36275bcf365d6b4",
+      "addons/erpec_fiscal_native/ir.model.access.csv": "bd37b135a154b6a925e9b53886c4098db1a2c024a116b116c8fe046ef0764da5",
+      "addons/erpec_fiscal_native/models.py": "08ff744aedb9adf1486ddf61daa3bd99722cb28a5793b1b6da8f58a5a4e7f6e3",
+      "addons/erpec_fiscal_native/security.xml": "cfad31f36fe8e39490a37a42e8805c59ceaf148eeab1ddd815f67e5f1ff7bd12",
+      "addons/erpec_fiscal_native/views.xml": "a7f19fee810ea1766cdfe7b447446d83459097bd310d8111a17e366f71b6acde",
+      "addons/erpec_fiscal_native/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+      "addons/erpec_fiscal_native/__manifest__.py": "47eec19dc535967fcc85d0b605baba8ffa07f45ecaa64b9ded5be93c5491c90a",
+      "addons/erpec_fiscal_native/tests/test_native.py": "6b4505e73d4a2f3dc5e6fb84dab0006b9bc7f5349928e9693d76afbcc5d2595c",
+      "addons/erpec_fiscal_native/tests/__init__.py": "2fc6d1899f6e2f2d71a5889e5d3b57d73c597ba8c16ad98a0f32f8620f4ffef2",
+      "addons/erpec_fiscal_native/xsd/factura_V2.1.0.xsd": "5f2c37bc1a58bb40e8bbbc366cabe05d5dc199598aeea1561137370f8bd4eace",
+      "addons/erpec_fiscal_native/xsd/xmldsig-core-schema.xsd": "35cf8197da812c85e40d57891b35c94187569ed474a2dac813ce5090dafcd35c",
+      "addons/erpec_fiscal_connector/connector.py": "29fcd48e31b9f15d3b9c47d5856dd6b72f814f467bcbf069e0110cfcf515062f",
+      "addons/erpec_fiscal_connector/ir.model.access.csv": "b329710bd84135579bfee61649cfd9976357081ddc0a1423fb0daba329a98ffa",
+      "addons/erpec_fiscal_connector/security.xml": "5f26c38353205f3b9e81f9d67b480b18904009fa84d73e99aea8ae15e321bdd7",
+      "addons/erpec_fiscal_connector/views.xml": "1f51e4653b4a0b2a53722b9d14e2e419ff143faedaf511e1ee403c719d85d2e8",
+      "addons/erpec_fiscal_connector/__init__.py": "f43469444697ae048228d70895f6095b36b990f5cf7a5604b4776e8558e1599e",
+      "addons/erpec_fiscal_connector/__manifest__.py": "fab6a6e2820ba4cd43ad2afa3b525fbe6304127c081e45b44326408e5d188af4",
+      "addons/erpec_fiscal_connector/tests/test_connector.py": "3ae2cb86aa52b96080f7ce9f26167fef2f6bd75647af15f16cd9fe0a28067e32",
+      "addons/erpec_fiscal_connector/tests/__init__.py": "e18eff623397bb73c197add6ea17b7284251e4db39d3b7de70bf0b3f0ceaffa4"
+    },
+    "tests": 14,
+    "failed": 0,
+    "errors": 0
+  },
+  "comparison": {
+    "checkedAt": "2026-09-11T18:15:15.347Z",
+    "source": "C:/proyectos web/sinkroniq-mobile/backend/src/services/sri/claveAccesoService.js",
+    "sourceSha256": "b7a3f502426b860cd68c581eaecbcc714895cb5a027ebabb1569db919bfda904",
+    "cases": 258,
+    "passed": true,
+    "scope": "Módulo 11 exclusivamente. No acredita equivalencia XML, firma, autorización ni emisión.",
+    "sourceModified": false
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal-native-install-20260911-131601",
+    "views": {
+      "account.move": true,
+      "res.company": true,
+      "erpec.fiscal.preview": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-581",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_fiscal_native",
+      "erpec_fiscal_connector"
+    ]
+  },
+  "services": {
+    "postgres": 55487,
+    "odoo": [
+      8369,
+      8169,
+      8170,
+      8186
+    ],
+    "versionVerified": "18.0"
+  },
+  "officialReference": {
+    "page": "https://www.sri.gob.ec/facturacion-electronica",
+    "technicalSheet": "2.34, julio 2026",
+    "invoiceSchema": "2.1.0",
+    "zipSha256": "ba1ff0c4e329fe759c3f88dc75f2975780b315b6eb3d0069071b77c1f26fec03"
+  },
+  "checks": [
+    "XML estructural, descuentos y totales; repetición sin cola ni reserva de secuencial",
+    "Acceso por empresa y preservación de asignación externa",
+    "Demo sin RUC y perfil sin confirmar; sin identidades ficticias sembradas",
+    "14 pruebas en copia aislada; 258 casos de módulo 11 contrastados",
+    "Respaldo e instalación; formularios compilados por usuario autenticado"
+  ],
+  "pending": [
+    "Firma XAdES local, certificado real y validación",
+    "Autoridad/secuencias durables, recepción y consulta SRI, reinicios y conciliación",
+    "RIDE autorizado y archivo fiscal durable",
+    "Equivalencia integral y perfiles/documentos adicionales",
+    "Aceptación visual: control del navegador agota espera tras login",
+    "Recuperación ensayada del respaldo de esta instalación"
+  ],
+  "externalEmissionPerformed": false,
+  "sourceRepositoriesModified": false
+}

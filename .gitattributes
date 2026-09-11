@@ -2,3 +2,6 @@
 docs/referencias/RULES.*.md -text whitespace=cr-at-eol
 docs/evidencias/AuditLock*.json -text
 .vscode/AuditLock.json -text
+
+# Conservar espacios del esquema oficial y su copia W3C sin reescribir terceros.
+addons/erpec_fiscal_native/xsd/*.xsd whitespace=-blank-at-eol,-space-before-tab
