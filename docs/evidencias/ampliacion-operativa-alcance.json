@@ -1,0 +1,17 @@
+{
+  "scope": "Ampliación de planificación aprobada; no implementación funcional",
+  "fronts": [
+    "OP01 Producción",
+    "OP02 Órdenes de trabajo",
+    "OP03 Importaciones comerciales",
+    "OP04 Nómina Ecuador"
+  ],
+  "sourceFiles": {
+    ".cache/odoo-community/addons/mrp/__manifest__.py": "9036a5e018e879f375dc21ff5b5de3fac42f3f6552e9088d43f5670d5e880d56",
+    ".cache/odoo-community/addons/mrp/models/mrp_workorder.py": "e06fd7f7bd89b17a24b077cea31ba720665e730354746e2262e71ab300e570c6",
+    ".cache/odoo-community/addons/mrp_account/__manifest__.py": "94fa39f7c1e5d0812117e2bb7091a01bbecbdc68a18767a418d8abe7d5ae9e73",
+    ".cache/odoo-community/addons/stock_landed_costs/__manifest__.py": "1958451bd6b537f99783b6af0760e2870ed57cbd32cbc801b9c0b2dfd2f59699",
+    "SKNOMINA/backend/src/routes/externalApiRoutes.js": "ad57faff71e815464de26677e0cc6a4738e6b7b637ca6d1e9043a92f09537c8d",
+    "SKNOMINA/backend/src/controllers/payrollAccountingController.js": "2f62cc3a2489ae8e627f56f8d2d203e1844338b28dbd8d7990ed7e23301d8751"
+  }
+}
