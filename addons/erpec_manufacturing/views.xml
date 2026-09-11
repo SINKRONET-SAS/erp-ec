@@ -1,0 +1,19 @@
+<odoo>
+  <menuitem id="manufacturing_root" name="Producción y trabajo" parent="erpec_base.suite_root" sequence="15" groups="mrp.group_mrp_user"/>
+  <menuitem id="production_menu" name="Órdenes de fabricación" parent="manufacturing_root" action="mrp.mrp_production_action" sequence="10"/>
+  <menuitem id="workorder_menu" name="Operaciones y tiempos" parent="manufacturing_root" action="mrp.mrp_workorder_todo" sequence="20"/>
+  <menuitem id="load_menu" name="Carga de centros" parent="manufacturing_root" action="mrp.action_mrp_workcenter_load_report_graph" sequence="30"/>
+  <menuitem id="bom_menu" name="Listas de materiales" parent="manufacturing_root" action="mrp.mrp_bom_form_action" sequence="40"/>
+  <record id="production_controls" model="ir.ui.view">
+    <field name="name">erpec.production.controls</field><field name="model">mrp.production</field>
+    <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+    <field name="arch" type="xml"><xpath expr="//sheet" position="inside">
+      <div class="alert alert-info" role="status">Finaliza las operaciones antes de cerrar. Si faltan materiales, repón existencias y vuelve a reservar. La valoración y los tiempos se consultan en esta orden.</div>
+    </xpath></field>
+  </record>
+  <record id="workorder_pause_reason" model="ir.ui.view">
+    <field name="name">erpec.workorder.pause.reason</field><field name="model">mrp.workorder</field>
+    <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
+    <field name="arch" type="xml"><xpath expr="//sheet" position="inside"><group string="Pausa documentada"><field name="erpec_pause_reason" placeholder="Explica el motivo antes de pausar"/></group></xpath></field>
+  </record>
+</odoo>

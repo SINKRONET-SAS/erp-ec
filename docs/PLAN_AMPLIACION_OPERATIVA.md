@@ -83,3 +83,7 @@ Cada frente requiere respaldo previo, pruebas en copia, instalación verificada,
 - .github/prompts/ERPEC26-OP04-NOMINA.md
 
 Estos prompts se ejecutan con la autorización vigente y complementan ERPEC26-06, ERPEC26-07 y la aceptación de ERPEC26-08. Las firmas históricas no se reescriben para simular implementación.
+
+## Avance local del 11 de septiembre de 2026
+
+Primer incremento OP01/OP02 instalado en demo 8369 después de cuatro pruebas transaccionales y un ensayo HTTP concurrente en copia. Incluye fabricación parcial, desperdicio/desmontaje, control de faltantes, dos operaciones dependientes, pausa con motivo, tiempos y valoración AVCO periódica. No representa el cierre completo de ambos frentes: casos restantes y limitación de revisión visual están en docs/PRODUCCION_TRABAJO_DEMO.md; evidencia en docs/evidencias/ERPEC26-OP01-OP02.json. OP03 y OP04 siguen pendientes. PAYPHONE ya fue probado mediante túnel; Render continúa aplazado.

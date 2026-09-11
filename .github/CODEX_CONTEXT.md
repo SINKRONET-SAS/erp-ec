@@ -13,3 +13,12 @@
 - Mantener modelo API inicial y autoridad única por operación; traslado de lógica propia requiere análisis explícito.
 - GitHub privado: https://github.com/SINKRONET-SAS/erp-ec.
 - Publicación y rama propia autorizadas por el usuario. Base: main; rama de trabajo: codex/erpec26-implementacion.
+
+## Continuidad vigente — 2026-09-11
+
+- Prioridad local aprobada: docs/PLAN_AMPLIACION_OPERATIVA.md y prompts ERPEC26-OP01 a OP04. Consultarlos antes de decidir que la única tarea siguiente es Render.
+- OP01/OP02: primer incremento de fabricación y trabajo instalado y probado en demo 8369. Evidencia: docs/evidencias/ERPEC26-OP01-OP02.json; guía y casos pendientes: docs/PRODUCCION_TRABAJO_DEMO.md. No se declaran cerrados todos sus requisitos.
+- Cuatro pruebas transaccionales, dos solicitudes HTTP concurrentes sin duplicar temporizador, instalación autenticada y restauración del respaldo anterior en base nueva verificadas. La revisión visual quedó pendiente por fallo del control del navegador.
+- PAYPHONE ya tuvo una transacción externa verificada mediante túnel, registrada en ERPEC26-04-payphone-local.json. El usuario reiteró mantener el desarrollo local; Render continúa aplazado. No pedir nuevamente la prueba PAYPHONE como si nunca se hubiese realizado.
+- Mantener separadas la demo sin RUC, la instancia del emisor y las copias de pruebas. No se modificaron SKNOMINA ni Facturador.
+- Las fases históricas 04–08 no se cierran por este incremento. Continuar los casos locales pendientes OP01/OP02 y después OP03/OP04 conforme al complemento aprobado.

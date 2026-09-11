@@ -1,0 +1,100 @@
+{
+  "phase": "ERPEC26-07",
+  "operationalIncrements": [
+    "OP01",
+    "OP02"
+  ],
+  "status": "passed-local-increment",
+  "phaseComplete": false,
+  "recordedAt": "2026-09-11T14:39:55.864Z",
+  "checks": [
+    "Cuatro pruebas transaccionales en copia: cero fallos y cero errores",
+    "Fabricación parcial/completa, desperdicio y desmontaje con existencias y valoración verificadas",
+    "Faltantes revierten el cierre; reposición y nueva reserva permiten completar",
+    "Dos etapas dependientes, pausa/reanudación y costo sintético de materiales más trabajo conciliados",
+    "Dos peticiones HTTP concurrentes abren un solo temporizador; pausa deja cero abiertos",
+    "Demo 8369 instalada tras verificar hashes; autenticación y compilación de vista aprobadas; RUC vacío y sin Enterprise",
+    "Respaldo restaurado en ec_recovery_bf07aa441e con rol y filestore propios; estado anterior sin módulo de fabricación verificado"
+  ],
+  "automatedTests": {
+    "passed": 4,
+    "failed": 0,
+    "errors": 0,
+    "logSha256": "9679706131c8ee63ef5c6d4f9dcab4b9807f85b8ff4ddd98970691ce92bb2eb1"
+  },
+  "concurrency": {
+    "requests": 2,
+    "openTimersAfterStart": 1,
+    "openTimersAfterPause": 0
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\manufacturing-install-20260911-093239",
+    "database": "erpec_demo",
+    "url": "http://127.0.0.1:8369/odoo/action-524",
+    "authenticated": true,
+    "viewCompiled": true,
+    "syntheticData": true,
+    "vatEmpty": true,
+    "enterpriseInstalled": false,
+    "productionOrders": [
+      {
+        "id": 1,
+        "name": "WH/MO/00001",
+        "state": "done",
+        "product_qty": 1,
+        "origin": "Ensayo sintético: tiempos de ejemplo, sin operación real"
+      },
+      {
+        "id": 3,
+        "name": "WH/MO/00003",
+        "state": "confirmed",
+        "product_qty": 50,
+        "origin": "Demostración de faltantes: abastecer antes de fabricar"
+      },
+      {
+        "id": 2,
+        "name": "WH/MO/00002",
+        "state": "confirmed",
+        "product_qty": 2,
+        "origin": "Demostración operativa: iniciar y pausar las etapas"
+      }
+    ]
+  },
+  "recovery": {
+    "database": "ec_recovery_bf07aa441e",
+    "preIncrementStateVerified": true,
+    "currentDemoUntouched": true
+  },
+  "visualReview": {
+    "completed": false,
+    "reason": "El navegador agotó tiempos de respuesta al interactuar; no se acredita revisión visual"
+  },
+  "limitations": [
+    "Primer incremento, no cierre completo de OP01/OP02; pendientes detallados en PRODUCCION_TRABAJO_DEMO.md",
+    "Valoración AVCO periódica; no acredita asientos automáticos, emisión fiscal ni nube",
+    "Prueba PAYPHONE externa previa conservada; no se ejecutó otro pago"
+  ],
+  "fileHashes": {
+    "addons/erpec_manufacturing/models.py": "857b0c969f985bb77732bf9bca87baf7a907eddc9b297acddf529ddccd101bad",
+    "addons/erpec_manufacturing/views.xml": "207408d2dfc12d8398c1fa999c57ee76111aa393c36dbbfab6e3ab26084e72e8",
+    "addons/erpec_manufacturing/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_manufacturing/__manifest__.py": "231293273079589c93d41686f3d36ee1e9fd4109089635b65daf34c8417f3419",
+    "addons/erpec_manufacturing/tests/test_manufacturing.py": "26b477d25a584e5e0073eac646d12b3b09b7930046171e353a6f4007d29f7c6b",
+    "addons/erpec_manufacturing/tests/__init__.py": "dd9b684c8f07a68b0275dccc2f662ef57c902d60d7084ab19eef0ad2e3b85416",
+    "scripts/verify-manufacturing.py": "188cee8444922ae8700ac8bcb36f0366ffdd0fc0920b2c439fe84d7956bb2f71",
+    "scripts/verify-manufacturing-concurrency.py": "d538c990cb26b171feba8af928079a6c867c0022462bce84fdaf19922a8ef466",
+    "scripts/seed-manufacturing-demo.py": "fe0993b8168ff4ed9301d527799903053fe380fbb9f5da3eb61aa241ea204652",
+    "scripts/install-manufacturing-demo.py": "809db3b43ec41fc2e6af6801e9e4a3999f39642db912be0c5526fbbf640c7305",
+    "scripts/restore-manufacturing-demo.py": "bee1d96f7a6871c4bee6e399fe621ce724ee87e9e3b368587ac0b444f5e1aa01",
+    "docs/PRODUCCION_TRABAJO_DEMO.md": "6f648ff8da10e7ec30b15fe487cc32dc4cabbf0c31f17c51f9673869d1ce4e8c"
+  },
+  "testedFileHashes": {
+    "addons/erpec_manufacturing/models.py": "dbda59a111df0ae3a3eebe15dee2ebb338b4d69b60af3a9cabc3b59d1e8ac127",
+    "addons/erpec_manufacturing/views.xml": "8491825c4d4d02d8e572b393a50b94a207885dfd6f6a60a3f218079358493c81",
+    "addons/erpec_manufacturing/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+    "addons/erpec_manufacturing/__manifest__.py": "231293273079589c93d41686f3d36ee1e9fd4109089635b65daf34c8417f3419",
+    "addons/erpec_manufacturing/tests/test_manufacturing.py": "3b4e4b6814b5abbf3833838d876aeae5131317b64b4866d84b2cc0e95fb1d8c0",
+    "addons/erpec_manufacturing/tests/__init__.py": "dd9b684c8f07a68b0275dccc2f662ef57c902d60d7084ab19eef0ad2e3b85416"
+  },
+  "encodingNote": "Entregables normalizados a LF tras pruebas; sin cambios semánticos. Se conservan hashes de los bytes probados e instalados."
+}
