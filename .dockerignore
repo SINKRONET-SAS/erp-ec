@@ -1,0 +1,15 @@
+**
+!upstream.json
+!deployment/
+!deployment/linux/
+!deployment/linux/Dockerfile
+!deployment/linux/runtime.py
+!deployment/linux/requirements-linux.lock
+!addons/
+!addons/erpec_base/**
+!addons/erpec_suite/**
+!addons/erpec_provision/**
+!addons/erpec_payphone/**
+!addons/erpec_runtime/**
+**/__pycache__
+**/*.pyc

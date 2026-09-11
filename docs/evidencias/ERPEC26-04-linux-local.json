@@ -1,0 +1,72 @@
+{
+  "phase": "ERPEC26-04",
+  "status": "in_progress",
+  "testedAt": "2026-09-11T01:01:34.520292+00:00",
+  "scope": "Pruebas reales en Docker local existente. No equivale a desplegar en Render.",
+  "profiles": {
+    "customer": {
+      "scope": "Docker Linux local; no despliegue ni llamadas a Render",
+      "checks": [
+        "Dos procesos no pueden abrir simultáneamente el mismo filestore",
+        "Arranque real Python 3.12, PostgreSQL 17 y Community fijado; usuario PostgreSQL sin privilegios administrativos",
+        "Módulos separados según perfil customer",
+        "Recreación del contenedor conserva contacto, adjunto físico y contraseña cambiada; sin duplicar espacio ni reinstalar",
+        "Rol de cliente no puede conectar a la base ajena",
+        "Interfaz de acceso HTTP 200 y espacio visible identificado como Linux",
+        "Arranque bloqueado ante pérdida de disco o identidad de otra instancia"
+      ],
+      "passed": true,
+      "testedAt": "2026-09-11T00:55:07.705899+00:00",
+      "instance": "864cb059a926442585762ad6fbfd003a",
+      "image": "sha256:9e8b332506249203441e50752a0df56cbf3fdd2b1db3620bc459dd39698727f0",
+      "profile": "customer",
+      "resourcesPrefix": "erpec-linux-a6305f1f79",
+      "dataPreserved": true
+    },
+    "controller": {
+      "scope": "Docker Linux local; no despliegue ni llamadas a Render",
+      "checks": [
+        "Dos procesos no pueden abrir simultáneamente el mismo filestore",
+        "Arranque real Python 3.12, PostgreSQL 17 y Community fijado; usuario PostgreSQL sin privilegios administrativos",
+        "Módulos separados según perfil controller",
+        "Recreación del contenedor conserva contacto, adjunto físico y contraseña cambiada; sin duplicar espacio ni reinstalar",
+        "Rol de cliente no puede conectar a la base ajena",
+        "Interfaz de acceso HTTP 200 y espacio visible identificado como Linux",
+        "Arranque bloqueado ante pérdida de disco o identidad de otra instancia"
+      ],
+      "passed": true,
+      "testedAt": "2026-09-11T00:58:22.710930+00:00",
+      "instance": "0ce6940c5dc243e1b1ec1ebf6535c6c7",
+      "image": "sha256:9b9fa47c01eef63a5a2f036a978deeb1923376cf834ed7b87ec913ece1a3c7f1",
+      "profile": "controller",
+      "resourcesPrefix": "erpec-linux-bb733444cb",
+      "dataPreserved": true
+    }
+  },
+  "windowsPilotsHttpStatus": {
+    "8169": 200,
+    "8170": 200,
+    "8186": 200
+  },
+  "testContainersStopped": true,
+  "renderResourcesCreated": false,
+  "renderBlueprintApplied": false,
+  "fileHashes": {
+    ".dockerignore": "22b7ba5f19e10672ea1305bbf8d95a27d8ea90e4fe75cf4edb49c4df99c9876e",
+    "scripts/verify-linux.py": "4edad48d3b69994234496ab6dabd7a0943ef492dc144fd4dcd71099cbf3cc21c",
+    "docs/LINUX_RENDER.md": "b92511310ca8d807eb4e5740d8928aa7ac3976ee7d8edaa74e2e0c29b6fbddbb",
+    "deployment/render.customer.example.yaml": "d50eae6a90d2c5069445d626981d4e3ae8fb4879d6c502cbb1dd0f81174c6d79",
+    "deployment/linux/Dockerfile": "a98be43e3ab363acb50b5705dc70b66e91080e69ab4541b9a11aa8ca3fde0b8c",
+    "deployment/linux/requirements-linux.lock": "a10857532738590f14e544bdbb38b53f80720cedb036dd8a35b11a38bc15bbb6",
+    "deployment/linux/runtime.py": "58b7e50c07e55d36eedb68aefd9809d0ad0a2988c4a51bf1982975e6171f6cb4",
+    "addons/erpec_runtime/health.py": "d72a0d430f25d012e5a1eed673db1e2bf241ae8546ea8c9ff55847cb0cdde40b",
+    "addons/erpec_runtime/__init__.py": "c57b794aced3a7f7c6e08cb2435cb21120c02680d97641424e3eb12f584f0be5",
+    "addons/erpec_runtime/__manifest__.py": "e92c2b294a124c677405337bb7fd098bd2e6db093fe8d9d6fcb7bb2a273f04ff"
+  },
+  "pending": [
+    "Adaptador Render para la cola, estados y suspensión/reactivación",
+    "Selección y autorización de recursos y acceso al espacio Render",
+    "PostgreSQL administrado, permisos del disco, HTTPS y restauración verificados sobre Render",
+    "Generador PDF y revisión de dependencias antes de producción"
+  ]
+}

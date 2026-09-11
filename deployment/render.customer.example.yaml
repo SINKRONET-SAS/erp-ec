@@ -1,0 +1,45 @@
+# Plantilla de revisión. Aplicarla crearía recursos de pago; no se ha aplicado.
+# Confirmar región, capacidad, nombres e identidad antes de usarla.
+services:
+  - type: web
+    name: erpec-piloto-cliente
+    runtime: docker
+    repo: https://github.com/SINKRONET-SAS/erp-ec
+    branch: codex/erpec26-implementacion
+    region: virginia
+    plan: 1c-2g
+    dockerfilePath: ./deployment/linux/Dockerfile
+    autoDeployTrigger: off
+    healthCheckPath: /erpec/health
+    numInstances: 1
+    disk:
+      name: erpec-piloto-filestore
+      mountPath: /var/data/odoo
+      sizeGB: 5
+    envVars:
+      - key: ERPEC_PROFILE
+        value: customer
+      - key: DATABASE_URL
+        fromDatabase:
+          name: erpec-piloto-postgres
+          property: connectionString
+      - key: DB_SSLMODE
+        value: require
+      - key: ERPEC_INSTANCE_ID
+        sync: false
+      - key: ERPEC_COMPANY_NAME
+        sync: false
+      - key: ODOO_ADMIN_PASSWORD
+        sync: false
+      - key: ODOO_MASTER_PASSWORD
+        generateValue: true
+      - key: ERPEC_BOOTSTRAP
+        value: "1"
+databases:
+  - name: erpec-piloto-postgres
+    region: virginia
+    plan: 0.5c-1g
+    postgresMajorVersion: "17"
+    databaseName: erpec_piloto
+    user: erpec_piloto
+    ipAllowList: []
