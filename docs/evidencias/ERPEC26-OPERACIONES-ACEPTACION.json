@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-11T18:00:47.865Z",
+  "scope": "Validación adicional local de OP01/OP02/OP03 y continuidad de OP04; sin cierre global",
+  "previousEvidence": "docs/evidencias/ERPEC26-OPERACIONES-LOCAL.json",
+  "testResult": {
+    "testedAt": "2026-09-11T17:59:23.503260+00:00",
+    "database": "ec_operational_d6bacee517",
+    "tests": 19,
+    "failed": 0,
+    "errors": 0,
+    "logFile": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\unit-tests.log",
+    "logSha256": "db5e1dbf53819d6c89778c1c0fd7205a6ac4cd92f923c810aaf06469124468e3",
+    "fileHashes": {
+      "addons/erpec_manufacturing/models.py": "d3f5afc7a258d071a7a3e3f97b562de1ffcb6ab908450fc87b9d33cfc0df2f5e",
+      "addons/erpec_manufacturing/views.xml": "cb3c058ae514427a5242793a56a3c470c019095f580503d1906e1c740d878c07",
+      "addons/erpec_manufacturing/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+      "addons/erpec_manufacturing/__manifest__.py": "231293273079589c93d41686f3d36ee1e9fd4109089635b65daf34c8417f3419",
+      "addons/erpec_manufacturing/tests/test_manufacturing.py": "828469370431ee3f6654bbd959a64d2592d56203d5e1788312a34e0aec001643",
+      "addons/erpec_manufacturing/tests/__init__.py": "dd9b684c8f07a68b0275dccc2f662ef57c902d60d7084ab19eef0ad2e3b85416",
+      "addons/erpec_imports/ir.model.access.csv": "ae5e9f47e993fe4d050a5e07100501ed99425f0a9707afe61e6361be10420dc5",
+      "addons/erpec_imports/models.py": "ee53d6bfaf6bf9a43f0f20b0a9a5173e454f740caf2e811161e6d833d7a185db",
+      "addons/erpec_imports/security.xml": "8e955a798c4b8104f0685e52b5f0fd0b1c0442161625b5898ee4fd9b54f1cf00",
+      "addons/erpec_imports/views.xml": "8e5976592612234c1e4a5d24bed955ccf16a0dbdc1617aed2f00e5cdeb0905c7",
+      "addons/erpec_imports/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+      "addons/erpec_imports/__manifest__.py": "68faeddd94f438181aa85d60bb782e31ca9348f8a5cc50423bf50c8cdb2f44fa",
+      "addons/erpec_imports/tests/test_imports.py": "2bd6b8dad0bb6965ae1931037071a9739c36c694c14efecb6ed1f7e45bdd1ced",
+      "addons/erpec_imports/tests/__init__.py": "628c2552634c359e5044a7bb4e4409513484a5274267b4d9dde9701878b5ccff",
+      "addons/erpec_payroll/demo_parameters.py": "b6387d7aa7a14b6b71cb1edd3c4002d664883678f0a75bf0b366701dc0d52a0c",
+      "addons/erpec_payroll/engine.py": "06242feb48fa2b5d73b7d7fa6405732f21336350703f6524f103130b2dbf8860",
+      "addons/erpec_payroll/ir.model.access.csv": "9a43325d9740c22cbba46536e8787db462eecef32aa0e1b4f35251a9b0a09ad8",
+      "addons/erpec_payroll/models.py": "5651dce8ece6883dbaf04e5f9f4149aab16ef850a6379b3b4edd1fe726945ec8",
+      "addons/erpec_payroll/parameters_ec2026.py": "47e68a93fc310ce2c6d212047525cb46dd47feda31888d7d0b0b747ad1dbf439",
+      "addons/erpec_payroll/security.xml": "d3f315d380301e4b665bac3d384b648fffd709bac513dcaab27d516975555fb6",
+      "addons/erpec_payroll/views.xml": "f9a7cc36004deb23cf4a11b19d9339834c078d0aea7b949bcfeaa7b9faa7422c",
+      "addons/erpec_payroll/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+      "addons/erpec_payroll/__manifest__.py": "cc8019dda043702e137d885617162111ad969d2247a15f73ea163cb3ce41ce01",
+      "addons/erpec_payroll/tests/test_payroll.py": "202ba4cd8f669b0731b57fe00ba650466ab1311fef9688c298089c03806be5ba",
+      "addons/erpec_payroll/tests/__init__.py": "b9d058ddab8cfee24f494b0148681ccf4c6357659843e40de8f03355ae39dee3"
+    }
+  },
+  "newAcceptance": [
+    "Fabricación parcial y orden pendiente: dos operaciones dependientes, operario/supervisor, pausa/reanudación, cantidades y aislamiento contable",
+    "Factura EUR 20 / valor USD 40, pagos USD 20 + USD 30, saldo cero, pérdida cambiaria USD 10 en asientos publicados y balanceados; capitalización USD 40 intacta",
+    "Política artificial de pruebas aislada en año 2099 para convivir con la política real 2026"
+  ],
+  "runtime": {
+    "passed": true,
+    "views": {
+      "erpec.importation": true,
+      "erpec.payroll.period": true,
+      "erpec.payroll.policy": true,
+      "mrp.workorder": true
+    },
+    "concurrentRequestsPerAction": 2,
+    "activeWorkTimersAfterStart": 1,
+    "productiveTimersDuringPause": 0,
+    "pauseTimersDuringPause": 1,
+    "payrollMovesAfterConcurrentPost": 1,
+    "payrollScope": "Reintentos concurrentes sobre período existente ya contabilizado; la publicación inicial concurrente está en evidencia anterior"
+  },
+  "limitations": [
+    "Tipos de cambio controlados de ensayo; no cotizaciones reales ni cambios en parámetros de demo",
+    "Sin nueva instalación ni restauración: cambios limitados a pruebas, arnés y documentación",
+    "Revisión visual incompleta por espera agotada tras login; causa no resuelta",
+    "No se completan pagos de nómina, equivalencia integral, aceptación aduanera ni gates externos"
+  ],
+  "initialFailuresResolved": [
+    "Colisión de política de prueba 2026 con semilla real activa: ensayo aislado en 2099",
+    "La diferencia de cambio se buscaba solo en conciliación completa; el caso real exige también los asientos de conciliaciones parciales y comprueba la pérdida total"
+  ]
+}

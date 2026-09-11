@@ -8,7 +8,7 @@ Este documento complementa el plan histórico firmado sin alterar sus evidencias
 
 1. OP01 Producción y OP02 Órdenes de trabajo: primer incremento integrado en una copia de la demo; después de validar, instalar y demostrar en la demo 8369.
 2. OP03 Importaciones: expediente propio enlazado a compras, recepciones, gastos y valoración nativa. Requiere inventario y configuración contable probados.
-3. OP04 Nómina: completar ERPEC26-06 con SKNOMINA como autoridad del cálculo y Odoo como autoridad del asiento. Preparar mapeos y casos sintéticos mientras se resuelve la disponibilidad del contrato externo.
+3. OP04 Nómina: cálculo y asiento nativos en la demo por decisión posterior expresa del titular, con parámetros reales del ejercicio y personas ficticias. SKNOMINA tiene API y se conserva como alternativa de integración. Exigir una autoridad por organización, equivalencia y corte controlado antes de migrar empresas reales.
 4. Ensayo comercial transversal: importar insumos → recibir y nacionalizar → fabricar → registrar tiempos y costos → vender → registrar nómina y conciliar su costo por centro. La parte fiscal real conserva su gate de firma y ambiente de pruebas.
 
 El orden anterior prioriza entregas locales demostrables. No elimina dependencias de cierre fiscal, permisos ni recuperación; una credencial que falte en un frente no impide trabajar en otro independiente. Render y producción pública conservan sus gates propios.
@@ -53,8 +53,8 @@ Aceptación: compra extranjera con dos productos y recepción parcial; cargar ga
 
 Base observada: SKNOMINA ofrece rutas externas de empleados, marcas, novedades y consulta de nómina; también tiene servicios y controlador de mapeo contable. No se ha acreditado que ese controlador esté disponible con el contrato externo requerido para Odoo.
 
-- Vinculación explícita de organización, tenant SKNOMINA, instancia y empresa Odoo, con credencial propia y permisos mínimos.
-- Empleados y centros de costo; novedades, ingresos, descuentos, aportes, beneficios, provisiones y liquidaciones calculados por SKNOMINA.
+- Vinculación explícita de organización, instancia y empresa Odoo; para integración externa, tenant SKNOMINA y credencial propia con permisos mínimos.
+- Empleados y centros de costo; novedades, ingresos, descuentos, aportes, beneficios, provisiones y liquidaciones calculados por la autoridad elegida; nativa en la demo actual.
 - Catálogo de conceptos y mapeo versionado a cuentas, terceros y distribución analítica, con vigencia por período.
 - Cierre aprobado, asiento borrador balanceado, revisión y contabilización. Nómina por pagar, pagos y conciliación. Separar obligación laboral, provisión y desembolso.
 - Referencia única por tenant, período, cierre y versión; reintentos sin duplicados, rechazos explicados, reapertura y reversión controlada.
@@ -93,3 +93,7 @@ Primer incremento OP01/OP02 instalado en demo 8369 después de cuatro pruebas tr
 Se implementa expediente de importación sobre costos nativos y nómina local con cierre contable, conforme a la decisión expresa de trasladar lógica de SKNOMINA. SKNOMINA sí tiene API y permanece disponible; no se modificó su repositorio. La demo utiliza parámetros reales Ecuador 2026 y personas ficticias.
 
 La evidencia del incremento es ERPEC26-OPERACIONES-LOCAL.json. La guía OPERACIONES_LOCALES_DEMO.md distingue los ciclos probados de los requisitos todavía abiertos. El contrato de cierre externo original se conserva como alternativa de integración; no se ha ejecutado un corte productivo de autoridad. Los controles de pagos, equivalencia integral y validaciones externas conservan su condición pendiente.
+
+## Incremento de aceptación local — 11-09-2026
+
+La evidencia ERPEC26-OPERACIONES-ACEPTACION.json añade fabricación parcial con dos operaciones bajo usuarios operario/supervisor y pagos parciales de importación con diferencia de cambio conciliada. Son verificaciones ejecutadas en copia, no cierre global de OP01–OP04. La cola vigente y los límites visuales están consolidados en .github/CODEX_CONTEXT.md; continúan pendientes los pagos de nómina y la equivalencia integral.

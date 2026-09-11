@@ -35,8 +35,14 @@ Las pruebas en copia cubren fabricación parcial, desperdicio y desmontaje, falt
 
 El contraste de seis casos con funciones puras de SKNOMINA no acredita equivalencia integral. Existe una diferencia intencional: el motor local aplica la rebaja de gastos personales al impuesto y no como reducción de la base imponible. No se modificó SKNOMINA ni se desconectó una empresa existente.
 
-Pendientes para cerrar todos los prompts: fabricación parcial con operaciones y aceptación completa por operario/supervisor; importaciones con pago y diferencia cambiaria conciliados; nómina con acumulados y retenciones previas, otras relaciones IESS, cargas/exenciones, novedades de bases independientes, ausencias, liquidaciones y pagos conciliados; contrato externo y migración productiva. Las tasas reales no sustituyen estas pruebas ni constituyen homologación laboral. Render permanece aplazado; PAYPHONE ya fue probado por túnel.
+Pendientes para cerrar todos los prompts: aceptación visual completa por operario/supervisor y expediente con dos productos; nómina con acumulados y retenciones previas, otras relaciones IESS, cargas/exenciones, novedades de bases independientes, ausencias, liquidaciones y pagos conciliados; contrato externo y migración productiva. Las tasas reales no sustituyen estas pruebas ni constituyen homologación laboral. Render permanece aplazado; PAYPHONE ya fue probado por túnel.
 
 ## Respaldo y reproducción
 
 Scripts: verify-operational-plan.py crea/usa copia aislada; verify-operational-runtime.py verifica semillas, vistas y concurrencia; install-operational-demo.py exige las pruebas y sus hashes, respalda y actualiza solo erpec_demo; restore-operational-demo.py recupera el respaldo en otra base con rol y filestore propios, conservando la demo. Los resultados privados se guardan en .cache/windows; la evidencia pública del repositorio excluye contraseñas.
+
+## Incremento de aceptación — 11-09-2026
+
+Diecinueve pruebas transaccionales pasan en copia aislada. El nuevo caso de fabricación usa usuarios operario y supervisor, dos operaciones dependientes, pausa/reanudación y producción parcial seguida de la orden pendiente; comprueba existencias y que el operario no lea asientos contables. El nuevo caso de importación concilia una factura de EUR 20 valorada inicialmente en USD 40 mediante pagos de ensayo de USD 20 y USD 30: saldo final cero, pérdida cambiaria USD 10 y costo capitalizado conservado en USD 40. Los tipos de cambio son datos controlados de prueba, no una cotización real ni parámetros de la demo. No hay conexión bancaria.
+
+La política artificial de regresión usa un año reservado para coexistir con la versión real 2026; la demo conserva sus parámetros reales. La comprobación cambiaria incluye asientos de conciliaciones parciales, donde Odoo registra esta diferencia. Evidencia: evidencias/ERPEC26-OPERACIONES-ACEPTACION.json. Este incremento modifica pruebas y contexto, sin nueva instalación o restauración de la demo.

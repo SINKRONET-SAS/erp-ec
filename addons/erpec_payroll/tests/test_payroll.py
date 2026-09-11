@@ -16,7 +16,8 @@ class PayrollCase(TransactionCase):
         self.expense=self.env['account.account'].create({'code':'PAYTESTEXP','name':'Nómina ensayo','account_type':'expense'})
         self.liability=self.env['account.account'].create({'code':'PAYTESTLIAB','name':'Obligaciones ensayo','account_type':'liability_current'})
         self.journal=self.env['account.journal'].create({'name':'Nómina ensayo','code':'PAYT','type':'general'})
-        self.policy=self.env['erpec.payroll.policy'].create({'name':'SINTETICA-1','year':2026,'journal_id':self.journal.id,'parameters':json.dumps(PARAMS),'authorization':'Ensayo local sin corte de SKNOMINA','source_reference':'Parámetros ficticios para pruebas'})
+        # Año reservado al ensayo para no colisionar con la versión real de la demo.
+        self.policy=self.env['erpec.payroll.policy'].create({'name':'SINTETICA-1','year':2099,'journal_id':self.journal.id,'parameters':json.dumps(PARAMS),'authorization':'Ensayo local sin corte de SKNOMINA','source_reference':'Parámetros ficticios para pruebas'})
         for concept in ('gross','net','personal_iess','tax','advances','loans','other_deductions','employer_iess','thirteenth','fourteenth','vacation','reserve_iess'):
             self.env['erpec.payroll.mapping'].create({'policy_id':self.policy.id,'concept':concept,'debit_id':self.expense.id if concept not in ('net','personal_iess','tax','advances','loans','other_deductions') else False,'credit_id':self.liability.id if concept!='gross' else False})
         self.policy.action_activate()

@@ -1,5 +1,6 @@
 """Recepciones parciales, divisas y ajustes de inventario con datos sintéticos."""
 import base64
+from datetime import timedelta
 from psycopg2.errors import UniqueViolation
 from odoo import fields
 from odoo.exceptions import AccessError, ValidationError
@@ -125,3 +126,34 @@ class ImportCase(TransactionCase):
         self.assertTrue(self.dossier.with_user(stock).read(['name']))
         with self.assertRaises(AccessError):self.dossier.with_user(stock).action_prepare_cost()
         self.assertTrue(self.dossier.get_view(view_type='form')['arch'])
+
+
+    def test_partial_supplier_payments_and_exchange_difference(self):
+        euro=self.env.ref('base.EUR');euro.active=True
+        today=fields.Date.today();payment_date=today+timedelta(days=1)
+        self.env['res.currency.rate'].create([{'currency_id':euro.id,'name':today,'company_id':self.env.company.id,'rate':0.5},{'currency_id':euro.id,'name':payment_date,'company_id':self.env.company.id,'rate':0.4}])
+        self.charge.unlink()
+        bill=self.bill.copy({'currency_id':euro.id,'invoice_date':today,'l10n_latam_document_number':'001-001-000000033'})
+        bill.action_post()
+        self.env['erpec.import.charge'].create({'import_id':self.dossier.id,'name':'Flete con pago en divisa','kind':'capital','bill_line_id':bill.invoice_line_ids.id})
+        cost=self.prepare();cost.button_validate()
+        self.assertEqual(cost.amount_total,40)
+        bank=self.env['account.journal'].create({'name':'Banco de ensayo sin conexión','code':'IMPBN','type':'bank'})
+        bank.outbound_payment_method_line_ids.payment_account_id=self.accounts['IN']
+        for amount,expected in [(20,12),(30,0)]:
+            wizard=self.env['account.payment.register'].with_context(active_model='account.move',active_ids=bill.ids).create({'journal_id':bank.id,'currency_id':self.env.company.currency_id.id,'payment_date':payment_date,'amount':amount,'payment_difference_handling':'open'})
+            payment=wizard._create_payments()
+            self.assertEqual(payment.move_id.state,'posted')
+            payable=bill.line_ids.filtered(lambda line:line.account_type=='liability_payable')
+            self.assertAlmostEqual(abs(sum(payable.mapped('amount_residual_currency'))),expected)
+        self.assertTrue(payable.reconciled)
+        self.assertAlmostEqual(bill.amount_residual,0)
+        self.assertEqual(cost.amount_total,40)
+        partials=payable.matched_debit_ids | payable.matched_credit_ids
+        exchange=partials.exchange_move_id | payable.full_reconcile_id.exchange_move_id
+        self.assertTrue(exchange)
+        self.assertTrue(all(move.state=='posted' for move in exchange))
+        for move in exchange:
+            self.assertAlmostEqual(sum(move.line_ids.mapped('balance')),0)
+        losses=exchange.line_ids.filtered(lambda line:line.account_id==self.env.company.expense_currency_exchange_account_id)
+        self.assertAlmostEqual(sum(losses.mapped('balance')),10)

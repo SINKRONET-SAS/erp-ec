@@ -142,3 +142,41 @@ class ManufacturingCase(TransactionCase):
         self.assertTrue(first.workorder_ids.leave_id)
         self.assertTrue(second.workorder_ids.leave_id)
         self.assertGreaterEqual(second.workorder_ids.date_start,first.workorder_ids.date_finished)
+
+
+    def test_partial_operations_operator_and_supervisor(self):
+        company=self.env.company
+        operator=new_test_user(self.env,login='partial_operator',groups='mrp.group_mrp_user,mrp.group_mrp_routings,mrp.group_mrp_workorder_dependencies',company_id=company.id,company_ids=[(6,0,company.ids)])
+        supervisor=new_test_user(self.env,login='partial_supervisor',groups='mrp.group_mrp_manager,mrp.group_mrp_routings,mrp.group_mrp_workorder_dependencies',company_id=company.id,company_ids=[(6,0,company.ids)])
+        center=self.env['mrp.workcenter'].with_user(supervisor).create({'name':'Centro compartido','costs_hour':60})
+        self.bom.allow_operation_dependencies=True
+        first=self.env['mrp.routing.workcenter'].create({'name':'Corte','bom_id':self.bom.id,'workcenter_id':center.id,'time_cycle_manual':10})
+        self.env['mrp.routing.workcenter'].create({'name':'Montaje','bom_id':self.bom.id,'workcenter_id':center.id,'time_cycle_manual':10,'blocked_by_operation_ids':[(4,first.id)]})
+        order=self.production(quantity=2,stock=4)
+        order.qty_producing=1;order._set_qty_producing()
+        stages=order.workorder_ids.sorted('id').with_user(operator)
+        with self.assertRaisesRegex(UserError,'precedente'):stages[1].button_done()
+        for stage in stages:
+            stage.button_start()
+            with self.assertRaisesRegex(UserError,'motivo'):stage.button_pending()
+            stage.erpec_pause_reason='Revisión de herramienta por operario'
+            stage.button_pending();stage.button_pending();stage.button_start();stage.button_finish()
+            self.assertFalse(stage.time_ids.filtered(lambda item:not item.date_end))
+        self.finish(order.with_user(supervisor),1,backorder=True)
+        remaining=self.env['mrp.production'].search([('procurement_group_id','=',order.procurement_group_id.id),('id','!=',order.id)])
+        self.assertEqual(len(remaining),1);self.assertEqual(remaining.product_qty,1)
+        self.assertEqual(len(remaining.workorder_ids),2)
+        self.assertEqual(sum(remaining.move_raw_ids.mapped('product_uom_qty')),2)
+        remaining.qty_producing=1;remaining._set_qty_producing()
+        for stage in remaining.workorder_ids.sorted('id').with_user(operator):
+            stage.button_start();stage.button_finish()
+        self.finish(remaining.with_user(supervisor),1)
+        self.assertEqual((order|remaining).mapped('state'),['done','done'])
+        self.assertEqual(self.raw.qty_available,0);self.assertEqual(self.finished.qty_available,2)
+        self.assertEqual(sum((order|remaining).move_raw_ids.mapped('quantity')),4)
+        self.assertEqual(sum((order|remaining).move_finished_ids.mapped('quantity')),2)
+        for user in (operator,supervisor):
+            arch=self.env['mrp.workorder'].with_user(user).get_view(view_type='form')['arch']
+            self.assertIn('erpec_pause_reason',arch)
+        with self.assertRaises(AccessError):
+            self.env['account.move'].with_user(operator).search_count([])

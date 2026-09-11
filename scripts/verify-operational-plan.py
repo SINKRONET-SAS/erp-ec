@@ -61,7 +61,8 @@ def test(directory):
     result=subprocess.run(command)
     if before!=file_hashes():
         raise RuntimeError('Los archivos cambiaron mientras se ejecutaban las pruebas; repetir antes de instalar')
-    report={'exitCode':result.returncode,'directory':str(directory),'testedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'modules':MODULES,'fileHashes':file_hashes(),'logSha256':hashlib.sha256((directory/'tests.log').read_bytes()).hexdigest()}
+    shutil.copyfile(directory/'tests.log',directory/'unit-tests.log')
+    report={'logFile':str(directory/'unit-tests.log'),'exitCode':result.returncode,'directory':str(directory),'testedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'modules':MODULES,'fileHashes':file_hashes(),'logSha256':hashlib.sha256((directory/'tests.log').read_bytes()).hexdigest()}
     write(STATE/'operational-test-result.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps({'exitCode':result.returncode,'directory':str(directory)}),flush=True)
     sys.exit(result.returncode)

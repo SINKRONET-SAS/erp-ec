@@ -4,7 +4,7 @@ Leer AGENTS.md, RULES.md, el contexto histórico y docs/PLAN_AMPLIACION_OPERATIV
 
 ## Trabajo
 
-Completar ERPEC26-06: inspeccionar y probar contrato de cierre SKNOMINA, mapeos versionados y asiento Odoo. Ensayar cierre, repetición, timeout, tenant ajeno, pagos y reversión. SKNOMINA conserva cálculo; Odoo conserva asiento. Mostrar errores y acciones de corrección.
+Completar el alcance local autorizado de ERPEC26-06 con cálculo nativo, mapeos versionados y asiento Odoo. Usar parámetros reales del ejercicio y personas ficticias. SKNOMINA sí tiene API y se conserva como alternativa de integración. Ensayar cierre, repetición, aislamiento, pagos y reversión; para la alternativa externa, validar además contrato de cierre, timeout y tenant ajeno. Mantener una sola autoridad por organización y mostrar errores y acciones de corrección.
 
 Todos los requisitos, casos negativos y criterios del apartado OP04 del plan complementario son obligatorios. Empezar por inspeccionar el estado actual y licencias; aprovechar el código Community ya disponible. No modificar productos fuente como efecto secundario. Los cambios de integración requieren sus reglas y commits separados.
 
