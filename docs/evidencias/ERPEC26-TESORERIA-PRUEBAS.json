@@ -1,0 +1,37 @@
+{
+  "exitCode": 0,
+  "testedAt": "2026-09-11T20:05:19.675723+00:00",
+  "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517",
+  "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\closeout-tests-20260911-150431.log",
+  "logSha256": "47066f0fbe0869febf069677725f492fe2487a297e73b4013392e7c321016eea",
+  "modules": [
+    "erpec_workspace",
+    "erpec_treasury"
+  ],
+  "fileHashes": {
+    "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+    "addons/erpec_workspace/legacy_demo.py": "248e9ade5ddb8ebfb5757a7421861ba61fcf5c09e3c105b9e2fc1eaa20afb91f",
+    "addons/erpec_workspace/legacy_demo_views.xml": "d5da7d7645a8b21db190e6637761cc49332f021ee26a5fdc84175ef947d1aa63",
+    "addons/erpec_workspace/operation_views.xml": "be679b51ad380ab6da5d209d342f68d634ac80ea5d00d6a100c21b0dd2bf900e",
+    "addons/erpec_workspace/purchase.py": "f9f3c4043dbdaf3568184a7eb2575cc8176f6eb2a7f3005513f9c84f3bfdc9b1",
+    "addons/erpec_workspace/purchase_views.xml": "d1a77fef1c08dd8c7b0d8918d3b45d28e83aace941b18dbf591f65bf6e2db2f1",
+    "addons/erpec_workspace/views.xml": "a848913370bde022f43c6d23c8a9cbb76e12b53004f6fbc3485d37739defe5a0",
+    "addons/erpec_workspace/workspace.py": "4d9100ef4784cc5566730251da1bd8817cfa3c805efc7d8e89dee2489198c100",
+    "addons/erpec_workspace/__init__.py": "d99594454bc918840b75458f7bb5a7c98215ee0e427d20e8447a90b5e728b45d",
+    "addons/erpec_workspace/__manifest__.py": "0d6290ebe3c50527542d9c4501bbcf34b79033ac42f33c17fd169cadb8a9e1f3",
+    "addons/erpec_workspace/tests/test_purchase_flow.py": "4e94cc7d2eeaa1f46702c2fc7d014f9e20d2e0382f9cd91313a4782f36841a84",
+    "addons/erpec_workspace/tests/test_workspace.py": "a6bee79397f8381cf9fe2a43c70a3651940c894cf0c3f230cb2bc610f11f4161",
+    "addons/erpec_workspace/tests/__init__.py": "92293c9155b1bcf0e6b9003e1b126e5be7288cd866e0b493f49b8a535f68e9cd",
+    "addons/erpec_treasury/banking.py": "53e72f7e147eb8319fb4dd435d53d7d82e89704eb1284e63d9a7ca6f95053b9c",
+    "addons/erpec_treasury/cleanup.py": "683bbd41f187b8438d4c28b49f077e604a7fe37ba42413d02578652f022f4942",
+    "addons/erpec_treasury/ir.model.access.csv": "aaac61ef2c7c1d881b3b4f9a5163993dac5292ff8d4ff8564565565e6fd5eadb",
+    "addons/erpec_treasury/payroll.py": "344bce3c3b6052d56282561c2d23ed64733ceb1fb0190b6984fca33dce901219",
+    "addons/erpec_treasury/security.xml": "95e0a49d5e0d9778d5345e716668a29a7467c9b6629aa8bce5023ff2bf1304af",
+    "addons/erpec_treasury/views.xml": "c870075b4e6db7982e8a293ffb48717e641224e9b42af7bd318f63b7363a8862",
+    "addons/erpec_treasury/__init__.py": "d0b69d11130c6f73c77959d3e772d6a2f9158f1841c015a4710e566992fa293f",
+    "addons/erpec_treasury/__manifest__.py": "a518b4ce736b38289a2aaab45453aac83ff8c1a9fb6f4835a14f53e7cd7d1b10",
+    "addons/erpec_treasury/tests/test_treasury.py": "05690b1c5a23288a4bd3a42098c7ba066010f5591afaa188bcb356169beb47d3",
+    "addons/erpec_treasury/tests/__init__.py": "019042038e3ab651d7349399ff88f5b2dd0427355497c89eda1251274b623882"
+  },
+  "scope": "Copia aislada: 13 pruebas del centro, conciliación exacta, preparación y pagos de nómina y saneamiento. No instalado en demo; no acredita aceptación visual ni emisión fiscal."
+}

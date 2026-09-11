@@ -7,10 +7,12 @@ ROOT=Path(__file__).resolve().parents[1]
 STATE=ROOT/'.cache/windows'
 parser=argparse.ArgumentParser()
 parser.add_argument('--backup',required=True,help='Respaldo operational-install dentro de .cache/windows/backups')
+parser.add_argument('--closeout-backup',action='store_true',help='Acepta respaldo de instalación de tesorería anterior al cambio')
+parser.add_argument('--expect-treasury',action='store_true',help='Comprueba nómina, pagos y saneamiento en un respaldo que ya contiene tesorería')
 parser.add_argument('--expect-workspace',action='store_true',help='Comprueba un respaldo con centro de trabajo instalado')
 args=parser.parse_args()
 backup=Path(args.backup).resolve()
-if not backup.is_relative_to((STATE/'backups').resolve()) or not backup.name.startswith('workspace-install-' if args.expect_workspace else 'operational-install-'):
+if not backup.is_relative_to((STATE/'backups').resolve()) or not backup.name.startswith('closeout-install-' if args.closeout_backup else 'workspace-install-' if args.expect_workspace else 'operational-install-'):
     raise ValueError('El respaldo no pertenece al incremento operativo')
 for item in ['database.dump','filestore','addons']:
     if not (backup/item).exists():
@@ -44,12 +46,20 @@ if args.expect_workspace:
 else:
     code="assert not env.company.vat\nassert not env['ir.module.module'].search_count([('name','=','erpec_payroll'),('state','=','installed')])\nprint('Recuperación previa a importaciones y nómina verificada; demo actual conservada')\n"
 
+if args.expect_treasury:
+    if not args.expect_workspace or not args.closeout_backup:
+        raise ValueError('La recuperación de tesorería requiere --expect-workspace y --closeout-backup')
+    code += "assert env['ir.module.module'].search_count([('name','=','erpec_treasury'),('state','=','installed')]) == 1\n"
+    code += "period=env.ref('erpec_treasury_demo.period')\nassert len(period.disbursement_ids)==2\nassert sorted(period.disbursement_ids.mapped('residual'))==[0,624.4]\n"
+    code += "assert env.ref('erpec_sanitized_demo.bill').amount_total==230\nassert env.ref('erpec_sanitized_demo.invoice').amount_total==575\n"
+    code += "print('Tesorería recuperada: dos empleados, saldo parcial y documentos saneados')\n"
+
 def hashes(folder):
     return {p.relative_to(folder).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc'}
 assert hashes(backup/'filestore') == hashes(directory/'data/filestore'/name)
 assert hashes(backup/'addons') == hashes(directory/'addons')
 subprocess.run([sys.executable,str(ROOT/'.cache/odoo-community/odoo-bin'),'shell','-c',str(directory/'odoo.conf'),'--no-http'],input=code,text=True,check=True)
-result={'restoredDatabase':name,'configuration':str(directory/'odoo.conf'),'sourceBackup':str(backup),'currentDemoUntouched':True,'previousPayrollAbsent':not args.expect_workspace,'workspaceExpected':args.expect_workspace,'filestoreAndAddonsMatch':True}
+result={'restoredDatabase':name,'configuration':str(directory/'odoo.conf'),'sourceBackup':str(backup),'currentDemoUntouched':True,'previousPayrollAbsent':not args.expect_workspace,'workspaceExpected':args.expect_workspace,'treasuryExpected':args.expect_treasury,'filestoreAndAddonsMatch':True}
 text=json.dumps(result,ensure_ascii=False,indent=2)+'\n'
 assert text.encode('utf-8').decode('utf-8')==text
 (STATE/('workspace-restore-result.json' if args.expect_workspace else 'operational-restore-result.json')).write_text(text,encoding='utf-8',newline='\n')

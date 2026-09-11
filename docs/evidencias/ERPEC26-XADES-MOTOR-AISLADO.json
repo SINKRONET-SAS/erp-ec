@@ -1,0 +1,11 @@
+{
+  "tests": 10,
+  "failures": 0,
+  "errors": 0,
+  "sourceSha256": "cd3c1aca6d249df580774fb19e15ce27a1cd8d32f98842d75ac454533ef00988",
+  "testedAt": "2026-09-11T21:02:10.127592+00:00",
+  "syntheticCertificate": true,
+  "realIssuerCertificateUsed": false,
+  "sriSubmission": false,
+  "scope": "Firma y verificación del motor aislado; sin homologación SRI ni verificador independiente"
+}

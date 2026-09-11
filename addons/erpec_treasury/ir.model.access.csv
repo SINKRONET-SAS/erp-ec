@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+bank_match_manager,Conciliación bancaria,model_erpec_bank_match,account.group_account_manager,1,1,1,1
+payroll_disbursement_manager,Pagos de nómina,model_erpec_payroll_disbursement,erpec_payroll.group_payroll_manager,1,1,1,0

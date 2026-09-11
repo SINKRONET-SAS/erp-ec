@@ -29,7 +29,7 @@ Prioridad actual: segunda pasada de estabilización y producto autorizada el 11/
 Prioridad fiscal posterior: continuar secuencias y autoridad durables, firma XAdES, envío/consulta SRI, RIDE y equivalencia integral según docs/FACTURACION_LOCAL.md; el XML previo no equivale a un emisor completo.
 
 1. Completar aceptación visual de OP01/OP02 con operario y supervisor y OP03 con recepción de dos productos y distribución de gastos. La prueba automatizada de fabricación parcial con operaciones y roles está en el incremento de aceptación.
-2. OP04: período con dos empleados y centros; completar pagos y conciliación de la nómina por pagar. La cuenta neta de la semilla actual es pasivo corriente y todavía no constituye un flujo de pago conciliado.
+2. OP04: el incremento de Tesorería añade una preparación por empleado sobre cuenta por pagar conciliable, preservando el asiento de nómina original. Demo con dos empleados, uno liquidado y otro parcial; mantener pendiente la equivalencia laboral integral y los archivos bancarios.
 3. Ampliar equivalencia laboral: acumulados y retenciones previas, bases independientes, ausencias, liquidaciones, cargas y exenciones, otros regímenes; documentar diferencias y validar normativa antes de habilitar empresas reales.
 4. Ensayo comercial transversal y recuperación acorde al incremento instalado. El script de recuperación actual comprueba el estado anterior a la primera instalación operativa; adaptar su expectativa antes de usar respaldos de actualizaciones posteriores.
 5. Retomar gates externos cuando corresponda: Render, validación fiscal real y contrato externo de cierre/versionado para organizaciones que elijan integración. La existencia de API no acredita ese contrato específico.
@@ -52,11 +52,27 @@ Usar scripts/start-demo.py --restart con el usuario Windows propietario de la ca
 - Solo la vista de inicio impide editar; su contexto no elimina crear/editar en las áreas. Acción de ventana estable conserva la vista al recargar. Nómina/importaciones con etiquetas y columnas revisadas.
 - Cinco pruebas en copia aislada; diez accesos y vistas comprobados en la demo; revisión visual de inicio, recarga, ida/vuelta a nómina e importaciones y menú. Evidencia: docs/evidencias/ERPEC26-SEGUNDA-PASADA.json. No equivale a aceptación de los ciclos comerciales completos.
 - Respaldo workspace-install-20260911-140812 recuperado en ec_recovery_107aee9b5a, con archivos coincidentes, centro de trabajo y asientos presentes; no reemplazó la demo. El respaldo contiene la primera versión del centro, anterior a los últimos ajustes visuales.
-- Nuevo orden: SP01 coordinación (primer incremento validado), SP02 aceptación transversal, SP03 operación/calidad integral, SP04 puerta comercial. Continúan pendientes la emisión SRI completa, equivalencia laboral y pago conciliado; no declarar producto comercializable ni cerrar fases 04–08.
+- Nuevo orden: SP01 coordinación (primer incremento validado), SP02 aceptación transversal, SP03 operación/calidad integral, SP04 puerta comercial. Continúan pendientes la emisión SRI completa y la equivalencia laboral; no declarar producto comercializable ni cerrar fases 04–08.
 
 ## SP02 — Compras: incremento de seguimiento y ensayo transversal
 
 - Continúa la segunda pasada. La orden de compra muestra guía derivada de estados nativos, enlaces visibles a recepciones/facturas y distinción entre facturado, pagado y devuelto. Se oculta el botón alternativo sin cantidades facturables.
 - Siete pruebas del centro/compras: comprador, bodega y contabilidad; parciales, dos facturas, dos pagos, devolución y nota de crédito; cuenta por pagar de la primera factura conciliada. No se probó el extracto bancario ni se declara aceptación fiscal.
-- Hallazgo SP02-D01: documentos de la semilla inicial contienen retención ficticia y clasificación contable sin sanear. La factura de servicio P00001 usa cuenta 110307 y tipo tiquete. Aviso visible en los dos documentos históricos; no se reescribieron asientos publicados. Priorizar saneamiento antes de aceptar parámetros de la demo como evidencia comercial.
+- Hallazgo SP02-D01: documentos de la semilla inicial contienen retención ficticia y clasificación contable sin sanear. La factura de servicio P00001 usa cuenta 110307 y tipo tiquete. Aviso visible en los dos documentos históricos; no se reescribieron asientos publicados. Saneamiento posterior de estos dos documentos aplicado en el incremento de Tesorería descrito al final; no equivale a aceptación fiscal.
 - Guía y límites: docs/SP02_COMPRAS.md. Evidencia: docs/evidencias/ERPEC26-SP02-COMPRAS.json. SP02 sigue en curso, con aceptación visual por roles y bancaria pendiente.
+
+## Tesorería y saneamiento instalados — 11-09-2026
+
+- erpec_treasury instalado con respaldo: preparación de pago por empleado, parciales y conciliación exacta con extractos. Demo julio 2026: dos empleados ficticios con política real, netos 1083,14 y 724,40; saldos 0 y 624,40. Sin transferencias externas. Diario de ensayo predeterminado comprobado en el formulario de pago.
+- SP02-D01: saneamiento aplicado a los dos documentos históricos identificados. Retenciones artificiales revertidas, documentos compensados sin reescribir líneas originales y sustitutos publicados por 230 y 575 con IVA 15 %. La semilla nueva también fue corregida y probada en copia aislada con rollback. No extender este resultado a todos los documentos de la demo.
+- Compras/Tesorería: 14 pruebas en copia aislada, incluidos proveedores con nota de crédito, anticipo, pagos parciales, conciliación y restricción a bodega. No equivalen a homologación bancaria ni aceptación visual integral por todos los perfiles.
+- Nuevo alcance autorizado: archivos de pago de nómina **y proveedores** para Pichincha, Guayaquil, Produbanco, Pacífico, Rumiñahui, Internacional y Bolivariano. Compartir validación, versiones de perfiles y trazabilidad en Tesorería, conservando las diferencias de cada servicio. Ver docs/VALIDACION_ARCHIVOS_BANCARIOS.md.
+- No copiar como aprobados los perfiles estáticos de SKNOMINA: se encontraron incompatibilidades con fichas oficiales. Todavía no hay generador bancario habilitado ni lotes homologados. Faltan fichas completas recuperables de cuatro entidades y confirmación/aceptación de cada servicio. El límite aparece en el inicio de la demo.
+- Accesos de Tesorería: saldos de proveedores, pagos y anticipos y conciliación. Utilizan documentos y pagos nativos; el registro contable no transmite fondos.
+- Recuperación aislada del respaldo closeout-install-20260911-160059: base ec_recovery_ff440557d6, archivos coincidentes, dos empleados y sus saldos, documentos saneados por 230/575. El respaldo precede a los accesos de proveedores; no afirmar que recupera esa revisión de interfaz.
+- Firma fiscal: certificado recibido y comprobado localmente, RUC y datos de ubicación recibidos en almacenamiento privado. Pendientes régimen tributario, obligación contable y condición de contribuyente especial/agente de retención. La demo conserva RUC vacío. No pedir de nuevo certificado o identificación ya recibidos.
+- Motor XAdES aislado en desarrollo: diez ensayos criptográficos con certificado sintético; sin uso del certificado real, integración UI, reserva durable, verificación independiente, confianza/revocación ni envío SRI. No está importado por el módulo ni instalado. No declarar firma fiscal operativa.
+
+## Continuidad pendiente
+
+Completar perfiles bancarios por banco y servicio, lotes inmutables y prevención de sobreasignación, validación en canales bancarios; conservar pendientes los gates fiscales, laborales, aceptación visual integral y calidad comercial de la segunda pasada. La documentación registra alcance y evidencia, no sustituye implementación ni aceptación.

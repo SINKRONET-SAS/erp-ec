@@ -17,4 +17,4 @@ class AccountMove(models.Model):
                 'Documento del ensayo inicial: incluye una retención ficticia y una configuración '
                 'contable pendiente de saneamiento. No usarlo como evidencia de parámetros fiscales '
                 'reales ni como modelo para registrar operaciones de una empresa.'
-                if move.id in ids else False)
+                if move.id in ids and move.ec_accounting_withholding_ids else False)

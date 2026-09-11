@@ -1,0 +1,98 @@
+{
+  "recordedAt": "2026-09-11T21:06:40.653397+00:00",
+  "functionalTests": {
+    "exitCode": 0,
+    "testedAt": "2026-09-11T21:08:38.074762+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\closeout-tests-20260911-160738.log",
+    "logSha256": "a03bec4477857a891711771ec6d1393d56f58565bac495145894c47478a33ee3",
+    "modules": [
+      "erpec_workspace",
+      "erpec_treasury"
+    ],
+    "fileHashes": {
+      "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+      "addons/erpec_workspace/legacy_demo.py": "7e340ec0497344906a9cd90f2928399001e6f19347e5cb2d0be675a3f11cd34e",
+      "addons/erpec_workspace/legacy_demo_views.xml": "d5da7d7645a8b21db190e6637761cc49332f021ee26a5fdc84175ef947d1aa63",
+      "addons/erpec_workspace/operation_views.xml": "be679b51ad380ab6da5d209d342f68d634ac80ea5d00d6a100c21b0dd2bf900e",
+      "addons/erpec_workspace/purchase.py": "f9f3c4043dbdaf3568184a7eb2575cc8176f6eb2a7f3005513f9c84f3bfdc9b1",
+      "addons/erpec_workspace/purchase_views.xml": "d1a77fef1c08dd8c7b0d8918d3b45d28e83aace941b18dbf591f65bf6e2db2f1",
+      "addons/erpec_workspace/views.xml": "a848913370bde022f43c6d23c8a9cbb76e12b53004f6fbc3485d37739defe5a0",
+      "addons/erpec_workspace/workspace.py": "4d9100ef4784cc5566730251da1bd8817cfa3c805efc7d8e89dee2489198c100",
+      "addons/erpec_workspace/__init__.py": "d99594454bc918840b75458f7bb5a7c98215ee0e427d20e8447a90b5e728b45d",
+      "addons/erpec_workspace/__manifest__.py": "0d6290ebe3c50527542d9c4501bbcf34b79033ac42f33c17fd169cadb8a9e1f3",
+      "addons/erpec_workspace/tests/test_purchase_flow.py": "4e94cc7d2eeaa1f46702c2fc7d014f9e20d2e0382f9cd91313a4782f36841a84",
+      "addons/erpec_workspace/tests/test_workspace.py": "a6bee79397f8381cf9fe2a43c70a3651940c894cf0c3f230cb2bc610f11f4161",
+      "addons/erpec_workspace/tests/__init__.py": "92293c9155b1bcf0e6b9003e1b126e5be7288cd866e0b493f49b8a535f68e9cd",
+      "addons/erpec_treasury/banking.py": "6be1360f91b7022db65f2b70daa863244cff4fac7f5f914a64f10d17e0d5327f",
+      "addons/erpec_treasury/cleanup.py": "3278cb7e276a07c95c5942062ac4c604ba8a22e42a267c5da14b08eec5d05f6c",
+      "addons/erpec_treasury/ir.model.access.csv": "aaac61ef2c7c1d881b3b4f9a5163993dac5292ff8d4ff8564565565e6fd5eadb",
+      "addons/erpec_treasury/payroll.py": "2ed797aff09069b5bcf9f51d83d0a883141aaac8de8e558381923a56dde90918",
+      "addons/erpec_treasury/security.xml": "95e0a49d5e0d9778d5345e716668a29a7467c9b6629aa8bce5023ff2bf1304af",
+      "addons/erpec_treasury/views.xml": "ef6d91d3ea1084da68782dfd9d8eb7012e203cdd1342f4f88353ea3dae3867fe",
+      "addons/erpec_treasury/__init__.py": "d0b69d11130c6f73c77959d3e772d6a2f9158f1841c015a4710e566992fa293f",
+      "addons/erpec_treasury/__manifest__.py": "a518b4ce736b38289a2aaab45453aac83ff8c1a9fb6f4835a14f53e7cd7d1b10",
+      "addons/erpec_treasury/tests/test_treasury.py": "5972d5925fe31cc906e95990c511ec8775cac8d3ff1354a50f212b89de264c21",
+      "addons/erpec_treasury/tests/__init__.py": "019042038e3ab651d7349399ff88f5b2dd0427355497c89eda1251274b623882"
+    }
+  },
+  "functionalTestCount": 14,
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\closeout-install-20260911-160846",
+    "views": {
+      "home": true,
+      "erpec.payroll.disbursement": true,
+      "erpec.bank.match": true,
+      "supplierBalances": true,
+      "supplierPayments": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-582",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_workspace",
+      "erpec_treasury"
+    ]
+  },
+  "recovery": {
+    "restoredDatabase": "ec_recovery_ff440557d6",
+    "configuration": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\recoveries\\ec_recovery_ff440557d6\\odoo.conf",
+    "sourceBackup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\closeout-install-20260911-160059",
+    "currentDemoUntouched": true,
+    "previousPayrollAbsent": false,
+    "workspaceExpected": true,
+    "treasuryExpected": true,
+    "filestoreAndAddonsMatch": true
+  },
+  "freshDemoSeed": {
+    "exitCode": 0,
+    "seedSha256": "4a4bc1c8ecaf50680c1359a12e7de82a4777c0c43f6d4dfe0e280d6f7a680ec0",
+    "logSha256": "4b466b03ba25b30a20dfae1b3cd801b13b1dd9640b91676230ca5653221f1bcf",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\fresh-seed.log",
+    "testedAt": "2026-09-11T20:55:00.257991+00:00",
+    "rolledBack": true
+  },
+  "treasurySeed": {
+    "exitCode": 0,
+    "seedSha256": "30a0d044905af7b61f7a29b51838bd95ee896e559a1b088aad752e6da4e1971e",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\treasury-seed.log",
+    "logSha256": "a7e2bb0dfbcaea8afec9647ce2e8260086145ab06f9cfc715dfbd8af229b4f2a",
+    "testedAt": "2026-09-11T20:49:45.804841+00:00",
+    "rolledBack": true
+  },
+  "visualChecks": {
+    "session": "demo administradora, navegador local",
+    "homeTreasury": true,
+    "supplierPendingListShowsTypeTotalResidual": true,
+    "supplierInvoiceDetail230Vat15": true,
+    "payrollPartialWizardShowsDemoBank": true,
+    "bankValidationNoticeVisible": true,
+    "allRolesAndMobileAccepted": false,
+    "commonPaymentsShowsBeneficiaryReferenceAmount": true
+  },
+  "scope": "Nómina y proveedores: pagos contables y conciliación; sin archivos homologados ni transferencias bancarias.",
+  "externalTransfers": false,
+  "sriEmission": false,
+  "commercialGateClosed": false
+}

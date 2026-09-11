@@ -76,3 +76,10 @@ Para retirar una actualización fallida se debe recuperar su respaldo completo y
 ## Incremento SP02 de compras
 
 Seguimiento implementado y recorrido automatizado por perfiles documentados en SP02_COMPRAS.md. Hallazgo prioritario SP02-D01: sanear los documentos de la semilla inicial que contienen retenciones ficticias y clasificación contable inadecuada para el servicio mostrado. Se advierte en pantalla; no se aceptan como parámetros reales. SP02 y la puerta comercial permanecen abiertos.
+
+
+## Tesorería común: nómina y proveedores
+
+Ampliación autorizada el 11-09-2026. SP02 incorpora archivos de pago para ambos orígenes en las siete entidades indicadas en VALIDACION_ARCHIVOS_BANCARIOS.md. El cierre requiere plantillas por banco/servicio, lotes y versiones trazables, bloqueo de duplicados y sobreasignación, aplicación previa de créditos/anticipos, respuesta individual de rechazo y conciliación. No asumir que una plantilla de nómina sirve para proveedores.
+
+Los pagos contables, parciales y conciliación exacta están instalados. El saneamiento SP02-D01 de los dos documentos históricos fue aplicado y la semilla corregida; no constituye auditoría de todas las operaciones ni aceptación fiscal. Las pruebas y la recuperación se registran separadamente de esta planificación. La exportación bancaria sigue inhabilitada y el inicio muestra ese límite.
