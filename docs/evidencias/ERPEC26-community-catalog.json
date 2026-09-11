@@ -1,0 +1,35 @@
+{
+  "scope": "Catalogo de dos pilotos Windows; sin cambio de modulos instalados ni despliegue cloud",
+  "testedAt": "2026-09-11T01:08:08.132260+00:00",
+  "userDirection": "ERP comercial propio sobre Odoo Community localizado para Ecuador; sin dependencia de Enterprise",
+  "idempotentReapplicationVerified": true,
+  "results": [
+    {
+      "port": 8169,
+      "enterpriseInstalled": [],
+      "promotionsVisible": 0,
+      "restored": false,
+      "name": "Aplicaciones ERP EC · Community",
+      "action": 39,
+      "applicationsVisible": 36
+    },
+    {
+      "port": 8186,
+      "enterpriseInstalled": [],
+      "promotionsVisible": 0,
+      "restored": false,
+      "name": "Aplicaciones ERP EC · Community",
+      "action": 39,
+      "applicationsVisible": 36
+    }
+  ],
+  "fileHashes": {
+    "scripts/configure-community-catalog.py": "1046d24507563b1c41559e1a0f8aa83f718a52775594a7cdfcc932bfce0c099a",
+    "docs/ALCANCE_COMMUNITY_ECUADOR.md": "14525ab3ef8e21e8095fd1d8e2c3c2863cbaa40629ac4a7220186289453c5bbe"
+  },
+  "phase04Closed": false,
+  "limitations": [
+    "Politica pendiente de incorporar en futuras instancias y contenedores",
+    "Ocultar promociones no implementa las funciones anunciadas ni completa la localizacion fiscal"
+  ]
+}
