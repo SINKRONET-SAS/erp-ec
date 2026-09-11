@@ -1,0 +1,56 @@
+{
+  "phase": "ERPEC26-04",
+  "status": "in_progress",
+  "checks": [
+    "Venta a factura borrador verificada",
+    "Venta y compra generan movimientos de inventario",
+    "Vista y accesos operativos validados"
+  ],
+  "testCount": 3,
+  "testLogSha256": "dca16edda484f7df4ce509d1b9fa10c84573b7259f1803e00cd0f55514f50cdc",
+  "fileHashes": {
+    "addons/erpec_operations/views.xml": "fba6cb47ff0ff0867c143763611234b479c0c4b7cc1e49d75341c3c06d2aa026",
+    "addons/erpec_operations/workspace.py": "b3372906a5f212cb654742da523034c18d38ba9c6337c45635a8506ac5e16da3",
+    "addons/erpec_operations/__init__.py": "3abbf8df8c0296d73cc56179fe3aa12a8603f4f8ee37cd96b41a7b422bc17c65",
+    "addons/erpec_operations/__manifest__.py": "affc48d2070e2f09b1865d9fb67d2c76a0279193104e9fb334ea04605d0eac8a",
+    "addons/erpec_operations/tests/test_operations.py": "2897bf09d0a66f1e9e36047d9feaaef3e27da519a80545a2c9c0fea30f9bcfe5",
+    "addons/erpec_operations/tests/__init__.py": "6857c8161916f9a92dcee527df7a14a086fd2e25f861ce9ef5fd382c65dafe0c"
+  },
+  "installed": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\operations-install-20260910-201541",
+    "modules": [
+      {
+        "id": 497,
+        "name": "sale_management",
+        "state": "installed"
+      },
+      {
+        "id": 482,
+        "name": "purchase_stock",
+        "state": "installed"
+      },
+      {
+        "id": 678,
+        "name": "erpec_operations",
+        "state": "installed"
+      },
+      {
+        "id": 511,
+        "name": "sale_stock",
+        "state": "installed"
+      }
+    ],
+    "workspace": [
+      {
+        "id": 1,
+        "company_readiness": "Completar: RUC de la empresa, dirección de la empresa.",
+        "fiscal_scope": "Pendiente: conector de emisión electrónica y validación de XML/RIDE y estados fiscales. Crear una factura contable en Odoo no acredita su autorización por el SRI."
+      }
+    ],
+    "url": "http://127.0.0.1:8186/odoo/action-480/1",
+    "loginStatus": 200,
+    "enterpriseInstalled": false,
+    "fiscalEmissionPerformed": false
+  },
+  "fiscalEmissionPerformed": false
+}

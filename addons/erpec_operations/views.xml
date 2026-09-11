@@ -1,0 +1,33 @@
+<odoo>
+  <record id="operation_form" model="ir.ui.view">
+    <field name="name">erpec.workspace.operation</field>
+    <field name="model">erpec.workspace</field>
+    <field name="arch" type="xml">
+      <form create="false" delete="false">
+        <sheet>
+          <h1>ERP EC · Operación Community</h1>
+          <p>Ventas, compras, inventario y facturación sobre Odoo Community.</p>
+          <group><field name="company_id" readonly="1"/><field name="platform"/></group>
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <button name="action_sales" type="object" string="Ventas" class="btn-primary"/>
+            <button name="action_purchases" type="object" string="Compras"/>
+            <button name="action_inventory" type="object" string="Inventario"/>
+            <button name="action_invoices" type="object" string="Facturas de clientes"/>
+          </div>
+          <group string="Preparación para Ecuador"><field name="company_readiness" nolabel="1"/></group>
+          <div class="alert alert-warning" role="status"><field name="fiscal_scope" nolabel="1"/></div>
+          <p>La emisión electrónica sigue pendiente de integración. Las funciones de Enterprise no forman parte de este producto.</p>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="operation_action" model="ir.actions.act_window">
+    <field name="name">Operación Ecuador</field><field name="res_model">erpec.workspace</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <record id="operation_action_form" model="ir.actions.act_window.view">
+    <field name="sequence">2</field><field name="view_mode">form</field>
+    <field name="view_id" ref="operation_form"/><field name="act_window_id" ref="operation_action"/>
+  </record>
+  <menuitem id="operation_menu" name="Operación Ecuador" parent="erpec_base.suite_root" action="operation_action" sequence="0" groups="base.group_system"/>
+</odoo>
