@@ -3,9 +3,14 @@ from pathlib import Path
 import configparser,hashlib,json,os,shutil,subprocess,sys,time,xmlrpc.client,socket,re
 import psutil
 ROOT=Path(__file__).resolve().parents[1];STATE=ROOT/'.cache/windows';DEMO=STATE/'demo';ODOO=ROOT/'.cache/odoo-community/odoo-bin'
-report=json.loads((STATE/'fiscal-native-test-result.json').read_text(encoding='utf-8'))
+workspace_mode = '--workspace' in sys.argv
+prefix = 'workspace' if workspace_mode else 'fiscal-native'
+expected_tests = 5 if workspace_mode else 14
+report=json.loads((STATE/(prefix+'-test-result.json')).read_text(encoding='utf-8'))
+expected_modules = ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
+if report['modules'] != expected_modules: raise RuntimeError('El informe corresponde a otros módulos')
 log=Path(report['log']).read_bytes()
-if report['exitCode'] or hashlib.sha256(log).hexdigest()!=report['logSha256'] or not re.search(rb'0 failed, 0 error\(s\) of 14 tests',log):raise RuntimeError('Faltan 14 pruebas fiscales aprobadas')
+if report['exitCode'] or hashlib.sha256(log).hexdigest()!=report['logSha256'] or not re.search(('0 failed, 0 error\\(s\\) of '+str(expected_tests)+' tests').encode(),log):raise RuntimeError('Faltan las pruebas aprobadas del incremento')
 for name,expected in report['fileHashes'].items():
     path=ROOT/name
     if not path.resolve().is_relative_to(ROOT.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest()!=expected:raise RuntimeError('Cambios posteriores a las pruebas')
@@ -15,7 +20,7 @@ import importlib.util
 access_spec=importlib.util.spec_from_file_location('session_access',ROOT/'scripts/demo-session-access.py')
 access_check=importlib.util.module_from_spec(access_spec);access_spec.loader.exec_module(access_check)
 access_check.verify_session_access(DEMO)
-backup=STATE/'backups'/('fiscal-native-install-'+time.strftime('%Y%m%d-%H%M%S'));backup.mkdir(parents=True)
+backup=STATE/'backups'/(prefix+'-install-'+time.strftime('%Y%m%d-%H%M%S'));backup.mkdir(parents=True)
 p=psutil.Process(int((DEMO/'pid').read_text()))
 if str(DEMO/'odoo.conf') not in p.cmdline():raise RuntimeError('El proceso no pertenece a la demo')
 p.terminate();p.wait(30)
@@ -37,9 +42,19 @@ for attempt in range(45):
     time.sleep(1)
 else:raise RuntimeError('Autenticación fallida')
 def call(model,method,args,kwargs=None):return xmlrpc.client.ServerProxy(url+'/xmlrpc/2/object').execute_kw('erpec_demo',uid,password,model,method,args,kwargs or {})
-views={m:bool(call(m,'get_view',[],{'view_type':'form'})['arch']) for m in ['account.move','res.company','erpec.fiscal.preview']}
+if workspace_mode:
+    home=call('erpec.workspace','action_home',[])
+    views={'home':bool(call('erpec.workspace','get_view',[],{'view_id':home['views'][0][0],'view_type':'form'})['arch'])}
+    action=call('ir.model.data','search_read',[[('module','=','erpec_workspace'),('name','=','home_action')]],{'fields':['res_id']})[0]['res_id']
+    previous=call('res.users','read',[[uid]],{'fields':['action_id']})[0]['action_id']
+    previous_text=json.dumps({'userId':uid,'actionId':previous})+'\n'
+    assert previous_text.encode('utf-8').decode('utf-8')==previous_text
+    (backup/'previous-home.json').write_bytes(previous_text.encode('utf-8'))
+    call('res.users','write',[[uid],{'action_id':action}])
+else:
+    views={m:bool(call(m,'get_view',[],{'view_type':'form'})['arch']) for m in ['account.move','res.company','erpec.fiscal.preview']}
+    assert 'ec_native_notice' in call('account.move','get_view',[],{'view_type':'form'})['arch']
+    action=call('ir.model.data','search_read',[[('module','=','erpec_fiscal_native'),('name','=','native_action')]],{'fields':['res_id']})[0]['res_id']
 assert all(views.values());assert not call('res.company','read',[[1]],{'fields':['vat']})[0]['vat']
-assert 'ec_native_notice' in call('account.move','get_view',[],{'view_type':'form'})['arch']
-action=call('ir.model.data','search_read',[[('module','=','erpec_fiscal_native'),('name','=','native_action')]],{'fields':['res_id']})[0]['res_id']
 result={'backup':str(backup),'views':views,'url':url+'/odoo/action-'+str(action),'authenticated':True,'demoRucEmpty':True,'fiscalEmissionPerformed':False,'installedModules':report['modules']}
-output=json.dumps(result,ensure_ascii=False,indent=2)+'\n';assert output.encode('utf-8').decode('utf-8')==output;(STATE/'fiscal-native-install-result.json').write_bytes(output.encode('utf-8'));print(json.dumps(result,ensure_ascii=True))
+output=json.dumps(result,ensure_ascii=False,indent=2)+'\n';assert output.encode('utf-8').decode('utf-8')==output;(STATE/(prefix+'-install-result.json')).write_bytes(output.encode('utf-8'));print(json.dumps(result,ensure_ascii=True))

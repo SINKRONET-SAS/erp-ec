@@ -1,0 +1,161 @@
+{
+  "recordedAt": "2026-09-11T19:13:07.735693+00:00",
+  "scope": "SP01: primer incremento de coordinación y estabilización; no aceptación comercial completa",
+  "unit": {
+    "exitCode": 0,
+    "testedAt": "2026-09-11T19:05:06.416406+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\workspace-tests-20260911-140448.log",
+    "logSha256": "e6b60fccfae3584e125461a0992478a9f274be3e178bfac5dcaa7fc219038b9a",
+    "modules": [
+      "erpec_workspace"
+    ],
+    "fileHashes": {
+      "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+      "addons/erpec_workspace/operation_views.xml": "be679b51ad380ab6da5d209d342f68d634ac80ea5d00d6a100c21b0dd2bf900e",
+      "addons/erpec_workspace/views.xml": "a848913370bde022f43c6d23c8a9cbb76e12b53004f6fbc3485d37739defe5a0",
+      "addons/erpec_workspace/workspace.py": "4d9100ef4784cc5566730251da1bd8817cfa3c805efc7d8e89dee2489198c100",
+      "addons/erpec_workspace/__init__.py": "3abbf8df8c0296d73cc56179fe3aa12a8603f4f8ee37cd96b41a7b422bc17c65",
+      "addons/erpec_workspace/__manifest__.py": "30e1e94766e7364a3b7bfa28e38720e03d2540ae8bb84411f6ea1516eec887a2",
+      "addons/erpec_workspace/tests/test_workspace.py": "a6bee79397f8381cf9fe2a43c70a3651940c894cf0c3f230cb2bc610f11f4161",
+      "addons/erpec_workspace/tests/__init__.py": "c11344cd83eed6baba7fe89e6b6286f37c109d917bd5200336a62377487dd54f"
+    }
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\workspace-install-20260911-140812",
+    "views": {
+      "home": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-582",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_workspace"
+    ]
+  },
+  "runtime": {
+    "authenticated": true,
+    "homeRecord": 1,
+    "homeAction": 583,
+    "areas": [
+      {
+        "area": "sales",
+        "model": "sale.order",
+        "listCompiled": true,
+        "seconds": 0.514
+      },
+      {
+        "area": "purchases",
+        "model": "purchase.order",
+        "listCompiled": true,
+        "seconds": 0.308
+      },
+      {
+        "area": "inventory",
+        "model": "stock.picking.type",
+        "listCompiled": true,
+        "seconds": 0.292
+      },
+      {
+        "area": "imports",
+        "model": "erpec.importation",
+        "listCompiled": true,
+        "seconds": 0.293
+      },
+      {
+        "area": "manufacturing",
+        "model": "mrp.production",
+        "listCompiled": true,
+        "seconds": 0.527
+      },
+      {
+        "area": "workorders",
+        "model": "mrp.workorder",
+        "listCompiled": true,
+        "seconds": 0.285
+      },
+      {
+        "area": "invoices",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.345
+      },
+      {
+        "area": "bills",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.266
+      },
+      {
+        "area": "payroll",
+        "model": "erpec.payroll.period",
+        "listCompiled": true,
+        "seconds": 0.266
+      },
+      {
+        "area": "fiscal",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.262
+      }
+    ],
+    "businessRecordsCreated": false,
+    "scope": "Accesos y vistas con el perfil demo; no acredita ciclos completos ni carga concurrente"
+  },
+  "recovery": {
+    "restoredDatabase": "ec_recovery_107aee9b5a",
+    "configuration": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\recoveries\\ec_recovery_107aee9b5a\\odoo.conf",
+    "sourceBackup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\workspace-install-20260911-140812",
+    "currentDemoUntouched": true,
+    "previousPayrollAbsent": false,
+    "workspaceExpected": true,
+    "filestoreAndAddonsMatch": true
+  },
+  "visualChecks": [
+    "Inicio persistente sin Nuevo ni guardar",
+    "Recarga conserva action-583/1 y la vista del centro",
+    "Inicio a nómina y regreso con Nuevo disponible",
+    "Inicio a importaciones con Nuevo disponible",
+    "Menú ERP EC común y enlace Inicio funcional",
+    "Nómina: 2026 sin separador y estados con texto"
+  ],
+  "limitations": [
+    "Capturas de sesión administradora en panel de 752 px; no auditoría WCAG",
+    "No se ejecutaron ciclos comerciales completos desde la UI",
+    "No prueba de carga ni emisión fiscal; no movimientos de negocio creados",
+    "Restauración aislada del respaldo anterior a los ajustes finales; no reemplazo de demo"
+  ],
+  "screenshots": {
+    "antes-inicio.png": {
+      "path": ".cache/segunda-pasada/antes-inicio.png",
+      "sha256": "b8fbb2814a81462d014c42ebae4268144aa9f35d3bc3845b7c33a6a10c449143",
+      "capturedAndInspected": true
+    },
+    "antes-facturas.png": {
+      "path": ".cache/segunda-pasada/antes-facturas.png",
+      "sha256": "7e2f85427b92f23db92320a521919a2011035c93b0208820007938ead4080db4",
+      "capturedAndInspected": true
+    },
+    "despues-inicio.png": {
+      "path": ".cache/segunda-pasada/despues-inicio.png",
+      "sha256": "5fba9aae386b51d2bbfbbb348c2a2c9c8dc3346d31690a654a35c7c53f23cddc",
+      "capturedAndInspected": true
+    },
+    "despues-nomina.png": {
+      "path": ".cache/segunda-pasada/despues-nomina.png",
+      "sha256": "799a1ae0a6e13a2a9ff6c32b25fd1310ec6143e6a5cc1f6fe74a5ae592f40037",
+      "capturedAndInspected": true
+    },
+    "despues-importaciones.png": {
+      "path": ".cache/segunda-pasada/despues-importaciones.png",
+      "sha256": "9c804d08288ed3b9057968f18aea12743fdafef3755c97c0dfb262446515d3f3",
+      "capturedAndInspected": true
+    },
+    "despues-menu.png": {
+      "path": ".cache/segunda-pasada/despues-menu.png",
+      "sha256": "b185bf21f2eeb21a04e443b4ad194a7804bacdce122bfe81300293b0bb172001",
+      "capturedAndInspected": true
+    }
+  }
+}

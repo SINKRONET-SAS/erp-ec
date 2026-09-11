@@ -37,3 +37,7 @@ Estas decisiones no bloquean la planificación completada. Sí condicionan las f
 ## Ampliación fiscal local autorizada — 11-09-2026
 
 El titular solicita trasladar también lógica de facturación al ERP. Se permite avanzar el incremento local independiente de Render, preservando las dependencias del cierre histórico. Primer incremento: XML previo sin firma; evidencia ERPEC26-FISCAL-NATIVO.json y guía FACTURACION_LOCAL.md. La emisión fiscal completa y el cierre de ERPEC26-05 siguen pendientes. No se modifica el repositorio fuente del Facturador.
+
+## Segunda pasada autorizada — septiembre de 2026
+
+La revisión de estabilización, navegación y experiencia de producto tiene prioridad sobre nuevas ampliaciones aisladas. Su orden y puertas de aceptación están en SEGUNDA_PASADA_PRODUCTO.md. El centro de trabajo constituye un incremento local; no sustituye ni cierra las validaciones pendientes de este plan.

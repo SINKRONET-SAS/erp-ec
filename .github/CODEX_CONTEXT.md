@@ -24,7 +24,9 @@ Actualizado: 11-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y d
 
 ## Cola de ejecución
 
-Prioridad fiscal autorizada: continuar secuencias y autoridad durables, firma XAdES, envío/consulta SRI, RIDE y equivalencia integral según docs/FACTURACION_LOCAL.md; el XML previo no equivale a un emisor completo.
+Prioridad actual: segunda pasada de estabilización y producto autorizada el 11/09/2026; véase docs/SEGUNDA_PASADA_PRODUCTO.md. Primero coordinar y aceptar los recorridos existentes. La ampliación fiscal queda detrás de esta revisión.
+
+Prioridad fiscal posterior: continuar secuencias y autoridad durables, firma XAdES, envío/consulta SRI, RIDE y equivalencia integral según docs/FACTURACION_LOCAL.md; el XML previo no equivale a un emisor completo.
 
 1. Completar aceptación visual de OP01/OP02 con operario y supervisor y OP03 con recepción de dos productos y distribución de gastos. La prueba automatizada de fabricación parcial con operaciones y roles está en el incremento de aceptación.
 2. OP04: período con dos empleados y centros; completar pagos y conciliación de la nómina por pagar. La cuenta neta de la semilla actual es pasivo corriente y todavía no constituye un flujo de pago conciliado.
@@ -43,3 +45,11 @@ Prioridad fiscal autorizada: continuar secuencias y autoridad durables, firma XA
 ## Incidente de acceso resuelto — 11-09-2026
 
 Usar scripts/start-demo.py --restart con el usuario Windows propietario de la carpeta de sesiones. El usuario restringido no puede escribirla: tempfile.mkstemp reintentaba tras PermissionError y el login no terminaba pese a contraseña correcta. No era un fallo de credenciales ni se corrigió ampliando permisos. El precontrol de escritura ahora se aplica antes de detener la demo en los instaladores de fabricación, operaciones y facturación y al preparar una copia operativa. Si falla, solicitar la ejecución con el usuario propietario; no arrancar directamente con Popen desde el entorno restringido. El diagnóstico temporal fue retirado al volver al arranque normal. Credenciales sin cambios, en el archivo privado ACCESO_DEMO.md.
+
+## Segunda pasada de producto — primer incremento
+
+- erpec_workspace instalado en la demo: centro de trabajo persistente por empresa, menú común y accesos con permisos existentes. Inicio de demo configurado; no asigna masivamente el inicio a otros usuarios.
+- Solo la vista de inicio impide editar; su contexto no elimina crear/editar en las áreas. Acción de ventana estable conserva la vista al recargar. Nómina/importaciones con etiquetas y columnas revisadas.
+- Cinco pruebas en copia aislada; diez accesos y vistas comprobados en la demo; revisión visual de inicio, recarga, ida/vuelta a nómina e importaciones y menú. Evidencia: docs/evidencias/ERPEC26-SEGUNDA-PASADA.json. No equivale a aceptación de los ciclos comerciales completos.
+- Respaldo workspace-install-20260911-140812 recuperado en ec_recovery_107aee9b5a, con archivos coincidentes, centro de trabajo y asientos presentes; no reemplazó la demo. El respaldo contiene la primera versión del centro, anterior a los últimos ajustes visuales.
+- Nuevo orden: SP01 coordinación (primer incremento validado), SP02 aceptación transversal, SP03 operación/calidad integral, SP04 puerta comercial. Continúan pendientes la emisión SRI completa, equivalencia laboral y pago conciliado; no declarar producto comercializable ni cerrar fases 04–08.
