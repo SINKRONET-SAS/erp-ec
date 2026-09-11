@@ -2,11 +2,12 @@
 from pathlib import Path
 import configparser,hashlib,json,os,shutil,subprocess,sys,time,xmlrpc.client,socket,re
 import psutil
+os.environ.update(PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
 ROOT=Path(__file__).resolve().parents[1];STATE=ROOT/'.cache/windows';DEMO=STATE/'demo';ODOO=ROOT/'.cache/odoo-community/odoo-bin'
 closeout_mode = '--closeout' in sys.argv
 workspace_mode = '--workspace' in sys.argv or closeout_mode
 prefix = 'closeout' if closeout_mode else 'workspace' if workspace_mode else 'fiscal-native'
-expected_tests = 14 if closeout_mode else 7 if workspace_mode else 14
+expected_tests = 19 if closeout_mode else 7 if workspace_mode else 14
 report=json.loads((STATE/(prefix+'-test-result.json')).read_text(encoding='utf-8'))
 expected_modules = ['erpec_workspace','erpec_treasury'] if closeout_mode else ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
 if report['modules'] != expected_modules: raise RuntimeError('El informe corresponde a otros módulos')
@@ -72,6 +73,10 @@ if closeout_mode:
     views['supplierBalances']='amount_residual' in supplier_arch and 'move_type' in supplier_arch
     payments_view=call('ir.model.data','search_read',[[('module','=','erpec_treasury'),('name','=','supplier_payments_list')]],{'fields':['res_id']})[0]['res_id']
     views['supplierPayments']='memo' in call('account.payment','get_view',[],{'view_id':payments_view,'view_type':'list'})['arch']
+    sale_form=call('ir.model.data','search_read',[[('module','=','sale'),('name','=','view_order_form')]],{'fields':['res_id']})[0]['res_id']
+    views['salesFlow']='erpec_sale_guide' in call('sale.order','get_view',[],{'view_id':sale_form,'view_type':'form'})['arch']
+    production_form=call('ir.model.data','search_read',[[('module','=','mrp'),('name','=','mrp_production_form_view')]],{'fields':['res_id']})[0]['res_id']
+    views['productionFlow']='Iniciar producción' in call('mrp.production','get_view',[],{'view_id':production_form,'view_type':'form'})['arch']
 assert all(views.values());assert not call('res.company','read',[[1]],{'fields':['vat']})[0]['vat']
 result={'backup':str(backup),'views':views,'url':url+'/odoo/action-'+str(action),'authenticated':True,'demoRucEmpty':True,'fiscalEmissionPerformed':False,'installedModules':report['modules']}
 output=json.dumps(result,ensure_ascii=False,indent=2)+'\n';assert output.encode('utf-8').decode('utf-8')==output;(STATE/(prefix+'-install-result.json')).write_bytes(output.encode('utf-8'));print(json.dumps(result,ensure_ascii=True))

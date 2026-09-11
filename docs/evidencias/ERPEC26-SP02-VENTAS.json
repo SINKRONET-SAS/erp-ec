@@ -1,0 +1,113 @@
+{
+  "recordedAt": "2026-09-11T21:38:26.393056+00:00",
+  "functionalTestCount": 19,
+  "functionalTests": {
+    "exitCode": 0,
+    "testedAt": "2026-09-11T21:32:46.799823+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\closeout-tests-20260911-163129.log",
+    "logSha256": "591881ec0b6220b6ffb6f9bb30533c1defe0755b7d41644e5b42bb91fc1a0b0d",
+    "modules": [
+      "erpec_workspace",
+      "erpec_treasury"
+    ],
+    "fileHashes": {
+      "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+      "addons/erpec_workspace/legacy_demo.py": "7e340ec0497344906a9cd90f2928399001e6f19347e5cb2d0be675a3f11cd34e",
+      "addons/erpec_workspace/legacy_demo_views.xml": "d5da7d7645a8b21db190e6637761cc49332f021ee26a5fdc84175ef947d1aa63",
+      "addons/erpec_workspace/operation_views.xml": "3bde93eba67939a5cbefb4319cd743e02e1e3e08d2926fd3249f42b21ba326dc",
+      "addons/erpec_workspace/purchase.py": "f9f3c4043dbdaf3568184a7eb2575cc8176f6eb2a7f3005513f9c84f3bfdc9b1",
+      "addons/erpec_workspace/purchase_views.xml": "d1a77fef1c08dd8c7b0d8918d3b45d28e83aace941b18dbf591f65bf6e2db2f1",
+      "addons/erpec_workspace/sale.py": "5d4e422ae07a47e8c7c8b7da7cadab1ca28c4bc520c3989921560454415f1b42",
+      "addons/erpec_workspace/sale_views.xml": "df8655d0d4caf7c703bff0cb20501b2dee42403123bf71dc717d069f633975e4",
+      "addons/erpec_workspace/views.xml": "a848913370bde022f43c6d23c8a9cbb76e12b53004f6fbc3485d37739defe5a0",
+      "addons/erpec_workspace/workspace.py": "e3a688928a2eaeac78129956310384637af45a6156c26e0cb843c4b989905a78",
+      "addons/erpec_workspace/__init__.py": "6783f77d085bd335eb7401798f32f32c196a6056d30a32f77465e3eb5df6dbaa",
+      "addons/erpec_workspace/__manifest__.py": "43aeed0b6847e2e92d068147ca2f546d5987665f607a8806846120548084c3e9",
+      "addons/erpec_workspace/tests/test_purchase_flow.py": "4e94cc7d2eeaa1f46702c2fc7d014f9e20d2e0382f9cd91313a4782f36841a84",
+      "addons/erpec_workspace/tests/test_workspace.py": "a6bee79397f8381cf9fe2a43c70a3651940c894cf0c3f230cb2bc610f11f4161",
+      "addons/erpec_workspace/tests/__init__.py": "92293c9155b1bcf0e6b9003e1b126e5be7288cd866e0b493f49b8a535f68e9cd",
+      "addons/erpec_treasury/banking.py": "6be1360f91b7022db65f2b70daa863244cff4fac7f5f914a64f10d17e0d5327f",
+      "addons/erpec_treasury/cleanup.py": "b4a2ec90c3890552d24e87dae984d0d8ca177bc2bbe21353f173062ef8fc983a",
+      "addons/erpec_treasury/ir.model.access.csv": "0fa9ec704a28411b6bfdefeaccd94b7ef76b9a82c960a56020453c0611e324e7",
+      "addons/erpec_treasury/payroll.py": "dcc991893d49a8e803e7eac5df6c2573f4b6309ac19a1064b09c3cd16277c3b1",
+      "addons/erpec_treasury/security.xml": "95e0a49d5e0d9778d5345e716668a29a7467c9b6629aa8bce5023ff2bf1304af",
+      "addons/erpec_treasury/views.xml": "ef6d91d3ea1084da68782dfd9d8eb7012e203cdd1342f4f88353ea3dae3867fe",
+      "addons/erpec_treasury/__init__.py": "d0b69d11130c6f73c77959d3e772d6a2f9158f1841c015a4710e566992fa293f",
+      "addons/erpec_treasury/__manifest__.py": "a518b4ce736b38289a2aaab45453aac83ff8c1a9fb6f4835a14f53e7cd7d1b10",
+      "addons/erpec_treasury/tests/test_sales_flow.py": "3c5e57deac15f6c1bad851b73b1c30fd24dfe261c143e14264c16d8eb1a980c4",
+      "addons/erpec_treasury/tests/test_treasury.py": "2a6d10490a9db23ebf81acdac68a529eca63b09aa05e723785a1ae6781b01be1",
+      "addons/erpec_treasury/tests/__init__.py": "d7fb4bf27cbcb52d6f95ff321fdeabe7856e18fc91d7b5eca74f7a8e64581a70"
+    }
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\closeout-install-20260911-163514",
+    "views": {
+      "home": true,
+      "erpec.payroll.disbursement": true,
+      "erpec.bank.match": true,
+      "supplierBalances": true,
+      "supplierPayments": true,
+      "salesFlow": true,
+      "productionFlow": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-582",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_workspace",
+      "erpec_treasury"
+    ]
+  },
+  "runtime": {
+    "checkedAt": "2026-09-11T21:37:15.008456+00:00",
+    "authenticated": true,
+    "demoWithoutRuc": true,
+    "commercialLinks": [
+      {
+        "document": "Fact 999-999-000900002",
+        "order": "S00001",
+        "total": 575,
+        "invoiceStatus": "invoiced",
+        "linked": true
+      },
+      {
+        "document": "Fact 999-999-000900001",
+        "order": "P00001",
+        "total": 230,
+        "invoiceStatus": "invoiced",
+        "linked": true
+      }
+    ],
+    "importCostsReadOnly": true,
+    "externalTransfers": false,
+    "sriEmission": false
+  },
+  "recovery": {
+    "restoredDatabase": "ec_recovery_8384290327",
+    "configuration": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\recoveries\\ec_recovery_8384290327\\odoo.conf",
+    "sourceBackup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\closeout-install-20260911-162623",
+    "currentDemoUntouched": true,
+    "previousPayrollAbsent": false,
+    "workspaceExpected": true,
+    "treasuryExpected": true,
+    "filestoreAndAddonsMatch": true
+  },
+  "visualReview": {
+    "profile": "Sesión administradora de la demo",
+    "salesListWithoutDefaultPersonalFilter": true,
+    "quotationGuideVisible": true,
+    "repairedOrderShows575AndInvoicedQuantity1": true,
+    "productionPendingOrderAndDependenciesReviewed": true,
+    "importationOneProductPurchasePartialReceiptAndPostedCostReviewed": true,
+    "fullVisualOperatorSupervisorCycle": false,
+    "fullTwoProductForeignCurrencyVisualCycle": false,
+    "productionStartLabelAndPauseGuideVisible": true,
+    "importSupplierCurrencyAndPurchaseReadOnlyAfterCosts": true
+  },
+  "scope": "Incremento local SP02 de ventas y coordinación operativa; no cierra toda la segunda pasada.",
+  "externalBankValidationPending": true,
+  "sriEmissionPerformed": false,
+  "commercialGateClosed": false
+}

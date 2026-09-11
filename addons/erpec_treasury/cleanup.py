@@ -22,6 +22,7 @@ class Workspace(models.Model):
         if result:
             if len(result)!=2 or result.company_id!=company:
                 raise ValidationError('El saneamiento previo no está completo o pertenece a otra empresa.')
+            self._link_sanitized_documents()
             return self._sanitized_action(result)
 
         source = [self.env.ref('erpec_demo_seed.'+key) for key in ['bill','invoice']]
@@ -85,7 +86,58 @@ class Workspace(models.Model):
                 self.env['ir.model.data'].create({'module':'erpec_sanitized_demo','name':suffix,
                     'model':record._name,'res_id':record.id,'noupdate':True})
             result |= replacement
+        self._link_sanitized_documents()
         return self._sanitized_action(result)
+
+    def _link_sanitized_documents(self):
+        """Restaura solo vínculos conocidos de la semilla; nunca infiere un pedido."""
+        changes = []
+        for key, expected in [('bill', 230), ('invoice', 575)]:
+            source = self.env.ref('erpec_demo_seed.' + key)
+            replacement = self.env.ref('erpec_sanitized_demo.' + key)
+            if (source.company_id != self.env.company or replacement.company_id != self.env.company
+                    or source.state != 'posted' or replacement.state != 'posted'
+                    or replacement.amount_total != expected or replacement.ec_fiscal_job_ids
+                    or len(source.invoice_line_ids) != 1 or len(replacement.invoice_line_ids) != 1):
+                raise ValidationError('Los documentos saneados cambiaron; revisa sus vínculos manualmente.')
+            original, line = source.invoice_line_ids, replacement.invoice_line_ids
+            if (line.product_id != original.product_id or line.quantity != original.quantity
+                    or line.price_unit != original.price_unit or line.discount != original.discount
+                    or len(line.tax_ids) != 1 or line.tax_ids.amount != 15):
+                raise ValidationError('El detalle del documento saneado no coincide con su origen.')
+            commercial = original.purchase_line_id if key == 'bill' else original.sale_line_ids
+            current = line.purchase_line_id if key == 'bill' else line.sale_line_ids
+            if len(commercial) != 1 or (current and current != commercial):
+                raise ValidationError('Vínculo comercial ausente o ambiguo; no se asociará otro pedido.')
+            order = commercial.order_id
+            quantity = commercial.product_qty if key == 'bill' else commercial.product_uom_qty
+            if (order.company_id != self.env.company or order.partner_id != source.partner_id
+                    or order.state not in ('sale', 'purchase', 'done')
+                    or commercial.product_id != original.product_id or quantity != original.quantity
+                    or commercial.price_unit != original.price_unit):
+                raise ValidationError('El pedido de origen cambió; no se modifica automáticamente.')
+            allowed = source | source.reversal_move_ids | replacement
+            linked = commercial.invoice_lines.move_id.filtered(lambda move: move.state != 'cancel')
+            if linked - allowed:
+                raise ValidationError('Hay otros documentos en el pedido; revisa una posible duplicación antes de vincular.')
+            changes.append((key, replacement, line, commercial))
+        before = {move.id: [(line.id, line.balance, line.amount_currency, line.account_id.id)
+                  for line in move.line_ids] for _key, move, _line, _commercial in changes}
+        for key, move, line, commercial in changes:
+            if key == 'bill':
+                if line.purchase_line_id != commercial:
+                    line.purchase_line_id = commercial
+                if commercial.taxes_id != line.tax_ids:
+                    commercial.taxes_id = line.tax_ids
+            else:
+                if line.sale_line_ids != commercial:
+                    line.sale_line_ids = commercial
+                if commercial.tax_id != line.tax_ids:
+                    commercial.tax_id = line.tax_ids
+            if move.invoice_origin != commercial.order_id.name:
+                move.invoice_origin = commercial.order_id.name
+            if before[move.id] != [(item.id, item.balance, item.amount_currency, item.account_id.id) for item in move.line_ids]:
+                raise ValidationError('La vinculación alteraría el asiento publicado; se revierte la operación.')
 
     def _sanitized_action(self, moves):
         return {'type':'ir.actions.act_window','name':'Documentos saneados de la demo',

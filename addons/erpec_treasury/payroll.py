@@ -131,7 +131,8 @@ class PreparedMove(models.Model):
     erpec_disbursement_ids = fields.One2many('erpec.payroll.disbursement','move_id')
 
     def _check_disbursement_edit(self):
-        if self.env.context.get('_erpec_disbursement_token') is not _TOKEN and self.erpec_disbursement_ids:
+        # Solo consulta la existencia del vínculo para protegerlo; no expone datos de nómina.
+        if self.env.context.get('_erpec_disbursement_token') is not _TOKEN and self.sudo().erpec_disbursement_ids:
             raise ValidationError('Administra la cuenta por pagar desde la preparación de nómina.')
 
     def write(self, values):
@@ -170,4 +171,3 @@ class PreparedMoveLine(models.Model):
     def unlink(self):
         self.move_id._check_disbursement_edit()
         return super().unlink()
-

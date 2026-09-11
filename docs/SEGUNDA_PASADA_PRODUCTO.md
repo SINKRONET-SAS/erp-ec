@@ -83,3 +83,10 @@ Seguimiento implementado y recorrido automatizado por perfiles documentados en S
 Ampliación autorizada el 11-09-2026. SP02 incorpora archivos de pago para ambos orígenes en las siete entidades indicadas en VALIDACION_ARCHIVOS_BANCARIOS.md. El cierre requiere plantillas por banco/servicio, lotes y versiones trazables, bloqueo de duplicados y sobreasignación, aplicación previa de créditos/anticipos, respuesta individual de rechazo y conciliación. No asumir que una plantilla de nómina sirve para proveedores.
 
 Los pagos contables, parciales y conciliación exacta están instalados. El saneamiento SP02-D01 de los dos documentos históricos fue aplicado y la semilla corregida; no constituye auditoría de todas las operaciones ni aceptación fiscal. Las pruebas y la recuperación se registran separadamente de esta planificación. La exportación bancaria sigue inhabilitada y el inicio muestra ese límite.
+
+
+## Avance posterior con homologación bancaria pendiente
+
+El usuario autorizó continuar otros temas manteniendo abierta esa dependencia. SP02 incorpora seguimiento de ventas y ensayo comercial completo en copia: entregas parciales, facturas, cobros, extractos, devolución y abono. Se corrigen permisos contables y la dependencia indebida de nómina, además de los vínculos de los dos documentos saneados con sus pedidos.
+
+Producción e importaciones reciben ajustes de orientación y edición coherentes con sus controles existentes. Guía y límites en SP02_VENTAS.md; pruebas, instalación, recuperación y revisión visual en ERPEC26-SP02-VENTAS.json. El recorrido visual completo por perfiles, el expediente de dos productos y divisas y los requisitos fiscales/laborales siguen pendientes; no se cierra SP02 por este incremento.

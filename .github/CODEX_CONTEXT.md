@@ -31,7 +31,7 @@ Prioridad fiscal posterior: continuar secuencias y autoridad durables, firma XAd
 1. Completar aceptación visual de OP01/OP02 con operario y supervisor y OP03 con recepción de dos productos y distribución de gastos. La prueba automatizada de fabricación parcial con operaciones y roles está en el incremento de aceptación.
 2. OP04: el incremento de Tesorería añade una preparación por empleado sobre cuenta por pagar conciliable, preservando el asiento de nómina original. Demo con dos empleados, uno liquidado y otro parcial; mantener pendiente la equivalencia laboral integral y los archivos bancarios.
 3. Ampliar equivalencia laboral: acumulados y retenciones previas, bases independientes, ausencias, liquidaciones, cargas y exenciones, otros regímenes; documentar diferencias y validar normativa antes de habilitar empresas reales.
-4. Ensayo comercial transversal y recuperación acorde al incremento instalado. El script de recuperación actual comprueba el estado anterior a la primera instalación operativa; adaptar su expectativa antes de usar respaldos de actualizaciones posteriores.
+4. Continuar aceptación comercial por perfiles. La recuperación ya admite respaldos closeout con --expect-workspace y --expect-treasury; verifica saldos y saneamiento en copia aislada. Distinguir el estado previo contenido en el respaldo de la revisión instalada posteriormente.
 5. Retomar gates externos cuando corresponda: Render, validación fiscal real y contrato externo de cierre/versionado para organizaciones que elijan integración. La existencia de API no acredita ese contrato específico.
 
 ## Verificación y entrega
@@ -76,3 +76,14 @@ Usar scripts/start-demo.py --restart con el usuario Windows propietario de la ca
 ## Continuidad pendiente
 
 Completar perfiles bancarios por banco y servicio, lotes inmutables y prevención de sobreasignación, validación en canales bancarios; conservar pendientes los gates fiscales, laborales, aceptación visual integral y calidad comercial de la segunda pasada. La documentación registra alcance y evidencia, no sustituye implementación ni aceptación.
+
+
+## SP02 — Siguientes temas: ventas y coordinación operativa
+
+- El usuario dejó pendiente la homologación bancaria y autorizó avanzar los demás temas. No volver a bloquear las tareas locales por esa dependencia.
+- Nueva entrada de Cotizaciones y pedidos sin el filtro automático «Mis cotizaciones» ni filas ficticias de muestra; conserva las reglas nativas por vendedor y empresa. Seguimiento comercial en el formulario, con entregas, facturación, anticipo expreso, abonos y cobros diferenciados.
+- Diecinueve pruebas de compras, ventas y Tesorería aprobadas en copia aislada: entrega parcial, dos facturas, cobros con extracto, devolución y abono, servicios, cancelación, cantidades no entregadas, permisos y protección de nómina. Evidencia: docs/evidencias/ERPEC26-SP02-VENTAS.json.
+- Fallos por perfil corregidos: el responsable contable ahora puede crear/actualizar extractos mediante permisos específicos; el control interno de protección de nómina ya no requiere acceso a salarios para trabajar sobre asientos comerciales ajenos a nómina. No se concede acceso adicional a importes salariales.
+- Reparación adicional del saneamiento: copia de líneas no conservaba vínculos comerciales. Se restauran únicamente las relaciones exactas de los documentos de la semilla, se coordinan sus impuestos con los pedidos y se comprueba que no cambie el asiento publicado. Una relación ajena o documentación adicional bloquea la reparación. No generalizarla a otros documentos.
+- Producción: etiqueta Iniciar producción e indicaciones para motivo de pausa y secuencia; motivo disponible como columna opcional. Importaciones: consulta de costos y bloqueo visual de proveedor, moneda y compras cuando hay costos preparados.
+- Guía: docs/SP02_VENTAS.md. Revisión visual de la sesión administradora; no declarar aceptación completa por operario/supervisor ni el expediente de dos productos y divisas. Permanecen pendientes los ciclos visuales integrales, equivalencia laboral, emisión fiscal y puerta comercial.

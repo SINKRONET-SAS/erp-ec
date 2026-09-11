@@ -107,6 +107,11 @@ class TreasuryCase(TransactionCase):
             period.action_reverse()
         with self.assertRaises(ValidationError):
             period.disbursement_ids[0].move_id.button_draft()
+        accountant=new_test_user(self.env,login='treasury_guard_accountant',groups='account.group_account_manager')
+        with self.assertRaises(ValidationError):
+            period.disbursement_ids[0].move_id.with_user(accountant).write({'date':fields.Date.today()})
+        with self.assertRaises(AccessError):
+            period.disbursement_ids[0].with_user(accountant).read(['amount'])
 
     def test_prepare_reverse_and_correction(self):
         period=self.period();period.action_prepare_payments()
@@ -125,6 +130,14 @@ class TreasuryCase(TransactionCase):
         self.env['erpec.workspace'].action_sanitize_demo()
         result=self.env.ref('erpec_sanitized_demo.bill') | self.env.ref('erpec_sanitized_demo.invoice')
         self.assertEqual(sorted(result.mapped('amount_total')),[230,575])
+        sale=self.env.ref('erpec_demo_seed.invoice').invoice_line_ids.sale_line_ids.order_id
+        purchase=self.env.ref('erpec_demo_seed.bill').invoice_line_ids.purchase_line_id.order_id
+        self.assertEqual(sale.invoice_status,'invoiced')
+        self.assertEqual(purchase.invoice_status,'invoiced')
+        self.assertEqual(sale.amount_total,575)
+        self.assertEqual(purchase.amount_total,230)
+        self.assertIn(self.env.ref('erpec_sanitized_demo.invoice'),sale.invoice_ids)
+        self.assertIn(self.env.ref('erpec_sanitized_demo.bill'),purchase.invoice_ids)
         self.assertTrue(all(m.l10n_latam_document_type_id.code=='01' for m in result))
         self.assertEqual(originals.ec_accounting_withholding_ids.mapped('state'),['reversed','reversed'])
         for move in originals:
@@ -178,3 +191,13 @@ class TreasuryCase(TransactionCase):
         self.assertEqual(bill.payment_state,'paid')
         with self.assertRaises(AccessError):
             bill.with_user(new_test_user(self.env,login='treasury_supplier_stock',groups='stock.group_stock_user')).read(['amount_residual'])
+
+    def test_sanitize_refuses_unrelated_commercial_link(self):
+        self.env['erpec.workspace'].action_sanitize_demo()
+        source=self.env.ref('erpec_demo_seed.invoice').invoice_line_ids.sale_line_ids
+        other=source.order_id.copy({'order_line':[(5,0,0)]})
+        alien=source.copy({'order_id':other.id})
+        replacement=self.env.ref('erpec_sanitized_demo.invoice')
+        replacement.invoice_line_ids.sale_line_ids=alien
+        with self.assertRaisesRegex(ValidationError,'ambiguo'):
+            self.env['erpec.workspace'].action_sanitize_demo()

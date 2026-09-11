@@ -26,7 +26,7 @@ class Workspace(models.Model):
         self.ensure_one()
         self.check_access('read')
         areas = {
-            'sales': ('sales_team.group_sale_salesman', 'sale.action_quotations'),
+            'sales': ('sales_team.group_sale_salesman', 'erpec_workspace.sale_action'),
             'purchases': ('purchase.group_purchase_user', 'purchase.purchase_rfq'),
             'inventory': ('stock.group_stock_user', 'stock.stock_picking_type_action'),
             'imports': ('stock.group_stock_user,account.group_account_manager', 'erpec_imports.import_action'),

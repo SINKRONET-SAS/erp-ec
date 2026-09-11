@@ -1,0 +1,23 @@
+<odoo>
+  <record id="sale_flow_form" model="ir.ui.view">
+    <field name="name">sale.order.erpec.flow</field><field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
+        <div class="border rounded p-3 my-3">
+          <h2>Seguimiento de la venta</h2>
+          <field name="erpec_sale_guide" nolabel="1" class="d-block mb-2"/>
+          <div class="d-flex flex-wrap gap-2">
+            <button name="action_view_delivery" type="object" string="Entregas" class="btn btn-outline-primary" groups="stock.group_stock_user" invisible="delivery_count == 0"/>
+            <button name="%(sale.action_view_sale_advance_payment_inv)d" type="action" string="Preparar factura / abono" class="btn btn-outline-primary" groups="account.group_account_invoice" invisible="invoice_status != 'to invoice'"/>
+            <button name="action_view_invoice" type="object" string="Facturas y abonos" class="btn btn-outline-primary" groups="account.group_account_invoice" invisible="invoice_count == 0"/>
+          </div>
+        </div>
+      </xpath>
+      <xpath expr="//header/button[@id='create_invoice_percentage']" position="attributes"><attribute name="string">Preparar anticipo</attribute></xpath>
+    </field>
+  </record>
+  <record id="sale_list" model="ir.ui.view"><field name="name">erpec.sale.list</field><field name="model">sale.order</field><field name="arch" type="xml"><list sample="0"><field name="currency_id" column_invisible="True"/><field name="name" string="Pedido"/><field name="partner_id" string="Cliente"/><field name="date_order" string="Fecha" optional="hide"/><field name="amount_total" string="Total"/><field name="state" widget="badge"/><field name="delivery_status" string="Entrega" optional="show"/><field name="invoice_status" string="Facturación" optional="show"/><field name="user_id" optional="hide"/></list></field></record>
+  <record id="sale_action" model="ir.actions.act_window"><field name="name">Cotizaciones y pedidos</field><field name="res_model">sale.order</field><field name="view_mode">list,form</field><field name="view_id" ref="sale_list"/><field name="search_view_id" ref="sale.sale_order_view_search_inherit_quotation"/><field name="context">{}</field><field name="help" type="html"><p>No hay cotizaciones ni pedidos que coincidan con la búsqueda.</p><p>Crea una cotización o revisa los filtros y el vendedor asignado. El acceso depende de tu perfil.</p></field></record>
+  <record id="sales_menu" model="ir.ui.menu"><field name="action" ref="sale_action"/></record>
+</odoo>
