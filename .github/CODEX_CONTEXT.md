@@ -20,7 +20,7 @@ Actualizado: 11-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y d
 - Importaciones: expediente enlazado a compras, recepciones, documentos y costos nativos; FIFO/AVCO, duplicados, clasificación, divisas, mercancía vendida y ajuste inverso.
 - Nómina nativa: parámetros reales 2026, novedades, aprobación, cierre, asiento idempotente, reversión y corrección; versión activa inmutable. Equivalencia con SKNOMINA solo parcial, no integral.
 - Instalación y recuperación verificadas del incremento anterior: docs/evidencias/ERPEC26-OPERACIONES-LOCAL.json. Guía: docs/OPERACIONES_LOCALES_DEMO.md. Conservar evidencias históricas sin reescribirlas.
-- Validaciones adicionales de este incremento: docs/evidencias/ERPEC26-OPERACIONES-ACEPTACION.json. Distinguir ensayos automatizados en copia de recorridos visuales en la demo. La revisión visual sigue pendiente: el inicio de sesión se registra exitoso en servidor, pero el control del navegador agota su espera sin completar el recorrido; causa aún sin resolver.
+- Validaciones adicionales de este incremento: docs/evidencias/ERPEC26-OPERACIONES-ACEPTACION.json. Distinguir ensayos automatizados en copia de recorridos visuales en la demo. Acceso web corregido: la demo se ejecutaba con un usuario Windows sin escritura en data/sessions. Se verificó login completo y navegación a Facturación electrónica con el propietario de la carpeta. Sigue pendiente la aceptación visual integral de los ciclos operativos.
 
 ## Cola de ejecución
 
@@ -39,3 +39,7 @@ Prioridad fiscal autorizada: continuar secuencias y autoridad durables, firma XA
 - scripts/verify-operational-runtime.py comprueba semillas, vistas y concurrencia. Instalar cambios funcionales mediante scripts/install-operational-demo.py solo después de validar; respaldar antes.
 - Incremento fiscal nativo instalado con respaldo en demo: acción 581, pestaña Facturación local. Incluye modelos y pantallas; pruebas 14/14 y contraste 258 casos de módulo 11. No atribuirle restauración del respaldo ni emisión SRI, que no se ejecutaron.
 - Servicios locales verificados: demo 8369, pilotos 8169/8170 y cliente 8186. No se inició el producto Facturador para preparar XML.
+
+## Incidente de acceso resuelto — 11-09-2026
+
+Usar scripts/start-demo.py --restart con el usuario Windows propietario de la carpeta de sesiones. El usuario restringido no puede escribirla: tempfile.mkstemp reintentaba tras PermissionError y el login no terminaba pese a contraseña correcta. No era un fallo de credenciales ni se corrigió ampliando permisos. El precontrol de escritura ahora se aplica antes de detener la demo en los instaladores de fabricación, operaciones y facturación y al preparar una copia operativa. Si falla, solicitar la ejecución con el usuario propietario; no arrancar directamente con Popen desde el entorno restringido. El diagnóstico temporal fue retirado al volver al arranque normal. Credenciales sin cambios, en el archivo privado ACCESO_DEMO.md.

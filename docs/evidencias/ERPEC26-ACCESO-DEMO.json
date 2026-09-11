@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-09-11T18:45:04.115Z",
+  "incident": "Contraseña aceptada pero login web sin terminar",
+  "cause": "Servicio iniciado como usuario restringido sin permiso de escritura en data/sessions; tempfile.mkstemp reintenta PermissionError en Windows",
+  "diagnostic": {
+    "stackSha256": "a3f4af84fa235917923c2b04eb4ae4b8e207cdabb3aa7cce0ff0773ab19f9b50",
+    "blockedCall": "FilesystemSessionStore.save -> tempfile.mkstemp -> _mkstemp_inner",
+    "restrictedWrite": "PermissionError",
+    "ownerWrite": "passed"
+  },
+  "correction": "Servicio reiniciado como propietario de sesiones, sin cambiar contraseña ni ampliar ACL",
+  "prevention": [
+    "scripts/start-demo.py comprueba escritura antes de arrancar o detener",
+    "Instaladores de demo y preparación de copia operativa verifican escritura antes de detener el servicio"
+  ],
+  "verification": [
+    "Login web con credenciales existentes: POST /web/login 303; GET /odoo 200",
+    "Navegación visual autenticada: ERP EC y lista de facturas, empresa DEMO",
+    "Sesión conservada tras reinicio de instalación",
+    "Control preventivo rechaza usuario restringido sin detener demo",
+    "Sintaxis y UTF-8 de seis scripts comprobados"
+  ],
+  "fiscalTextRepair": {
+    "tests": 14,
+    "failed": 0,
+    "errors": 0,
+    "testedAt": "2026-09-11T18:42:53.173446+00:00",
+    "logSha256": "3d9a3d944c8937090847ff168d61186d541a8a37906e375703e3e2e055a10911",
+    "fileHashes": {
+      "addons/erpec_fiscal_native/engine.py": "161f718d7390f45eb45dc4bddae1db44f983e9c662aacb32e36275bcf365d6b4",
+      "addons/erpec_fiscal_native/ir.model.access.csv": "bd37b135a154b6a925e9b53886c4098db1a2c024a116b116c8fe046ef0764da5",
+      "addons/erpec_fiscal_native/models.py": "fb7e34f34d67e0a1e6e80c636f1752058782911d608dc0e65937e83fb8760ddd",
+      "addons/erpec_fiscal_native/security.xml": "cfad31f36fe8e39490a37a42e8805c59ceaf148eeab1ddd815f67e5f1ff7bd12",
+      "addons/erpec_fiscal_native/views.xml": "a24a74b03647d950567663d5ff7b3d4dd35fbfabb6353b2e7b12f2acbc6f7c0d",
+      "addons/erpec_fiscal_native/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
+      "addons/erpec_fiscal_native/__manifest__.py": "47eec19dc535967fcc85d0b605baba8ffa07f45ecaa64b9ded5be93c5491c90a",
+      "addons/erpec_fiscal_native/tests/test_native.py": "a801772ced912c3f29ce287d8c190b16dcdcfdcfc92fdb523e813cb07a581b0a",
+      "addons/erpec_fiscal_native/tests/__init__.py": "2fc6d1899f6e2f2d71a5889e5d3b57d73c597ba8c16ad98a0f32f8620f4ffef2",
+      "addons/erpec_fiscal_native/xsd/factura_V2.1.0.xsd": "5f2c37bc1a58bb40e8bbbc366cabe05d5dc199598aeea1561137370f8bd4eace",
+      "addons/erpec_fiscal_native/xsd/xmldsig-core-schema.xsd": "35cf8197da812c85e40d57891b35c94187569ed474a2dac813ce5090dafcd35c",
+      "addons/erpec_fiscal_connector/connector.py": "29fcd48e31b9f15d3b9c47d5856dd6b72f814f467bcbf069e0110cfcf515062f",
+      "addons/erpec_fiscal_connector/ir.model.access.csv": "b329710bd84135579bfee61649cfd9976357081ddc0a1423fb0daba329a98ffa",
+      "addons/erpec_fiscal_connector/security.xml": "5f26c38353205f3b9e81f9d67b480b18904009fa84d73e99aea8ae15e321bdd7",
+      "addons/erpec_fiscal_connector/views.xml": "1f51e4653b4a0b2a53722b9d14e2e419ff143faedaf511e1ee403c719d85d2e8",
+      "addons/erpec_fiscal_connector/__init__.py": "f43469444697ae048228d70895f6095b36b990f5cf7a5604b4776e8558e1599e",
+      "addons/erpec_fiscal_connector/__manifest__.py": "fab6a6e2820ba4cd43ad2afa3b525fbe6304127c081e45b44326408e5d188af4",
+      "addons/erpec_fiscal_connector/tests/test_connector.py": "3ae2cb86aa52b96080f7ce9f26167fef2f6bd75647af15f16cd9fe0a28067e32",
+      "addons/erpec_fiscal_connector/tests/__init__.py": "e18eff623397bb73c197add6ea17b7284251e4db39d3b7de70bf0b3f0ceaffa4"
+    },
+    "installation": {
+      "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal-native-install-20260911-134347",
+      "views": {
+        "account.move": true,
+        "res.company": true,
+        "erpec.fiscal.preview": true
+      },
+      "url": "http://127.0.0.1:8369/odoo/action-581",
+      "authenticated": true,
+      "demoRucEmpty": true,
+      "fiscalEmissionPerformed": false,
+      "installedModules": [
+        "erpec_fiscal_native",
+        "erpec_fiscal_connector"
+      ]
+    }
+  },
+  "remaining": "La navegación de acceso está verificada; no equivale a aceptación integral de todos los ciclos del plan"
+}

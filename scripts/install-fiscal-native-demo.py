@@ -11,6 +11,10 @@ for name,expected in report['fileHashes'].items():
     if not path.resolve().is_relative_to(ROOT.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest()!=expected:raise RuntimeError('Cambios posteriores a las pruebas')
 config=configparser.ConfigParser(interpolation=None);config.read(DEMO/'odoo.conf',encoding='utf-8');options=config['options']
 if options['db_name']!='erpec_demo' or options['http_port']!='8369':raise RuntimeError('Destino diferente de la demo')
+import importlib.util
+access_spec=importlib.util.spec_from_file_location('session_access',ROOT/'scripts/demo-session-access.py')
+access_check=importlib.util.module_from_spec(access_spec);access_spec.loader.exec_module(access_check)
+access_check.verify_session_access(DEMO)
 backup=STATE/'backups'/('fiscal-native-install-'+time.strftime('%Y%m%d-%H%M%S'));backup.mkdir(parents=True)
 p=psutil.Process(int((DEMO/'pid').read_text()))
 if str(DEMO/'odoo.conf') not in p.cmdline():raise RuntimeError('El proceso no pertenece a la demo')

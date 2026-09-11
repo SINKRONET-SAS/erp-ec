@@ -18,6 +18,10 @@ def file_hashes():
     return {path.relative_to(ROOT).as_posix():hashlib.sha256(path.read_bytes()).hexdigest() for module in MODULES for path in (ROOT/'addons'/module).rglob('*') if path.is_file() and path.suffix in ('.py','.xml','.csv')}
 
 def prepare():
+    import importlib.util
+    spec=importlib.util.spec_from_file_location('session_access',ROOT/'scripts/demo-session-access.py')
+    access=importlib.util.module_from_spec(spec);spec.loader.exec_module(access)
+    access.verify_session_access(DEMO)
     config=configparser.ConfigParser(interpolation=None);config.read(DEMO/'odoo.conf',encoding='utf-8');options=config['options']
     if options['db_name']!='erpec_demo' or options['http_port']!='8369':
         raise RuntimeError('La configuración no corresponde a la demo')

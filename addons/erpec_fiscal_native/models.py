@@ -14,24 +14,24 @@ class Company(models.Model):
 
 class Move(models.Model):
     _inherit='account.move'
-    ec_native_notice=fields.Text(compute='_compute_native_notice',string='PreparaciÃ³n local')
+    ec_native_notice=fields.Text(compute='_compute_native_notice',string='Preparación local')
 
     @api.depends('company_id.vat','company_id.street','company_id.ec_native_ordinary','company_id.ec_native_accounting','state','move_type')
     def _compute_native_notice(self):
         for move in self:
             missing=[]
             if not move.company_id.vat:missing.append('RUC real del emisor')
-            if not move.company_id.street:missing.append('direcciÃ³n matriz')
+            if not move.company_id.street:missing.append('dirección matriz')
             if not move.company_id.ec_native_ordinary or not move.company_id.ec_native_accounting:missing.append('perfil fiscal y obligación contable verificados en la empresa')
             if move.state!='posted':missing.append('factura contabilizada')
-            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'PreparaciÃ³n XML dentro del ERP, sin servicio Facturador. Ambiente PRUEBAS. Falta implementar y validar firma XAdES, envÃ­o/consulta SRI y RIDE autorizado; esta vista previa no emite ni autoriza.'
+            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Preparación XML dentro del ERP, sin servicio Facturador. Ambiente PRUEBAS. Falta implementar y validar firma XAdES, envío/consulta SRI y RIDE autorizado; esta vista previa no emite ni autoriza.'
 
     def action_native_preview(self):
         self.ensure_one();self.check_access('read')
-        if not self.env.user.has_group('account.group_account_user'):raise ValidationError('La preparaciÃ³n fiscal requiere permisos contables.')
+        if not self.env.user.has_group('account.group_account_user'):raise ValidationError('La preparación fiscal requiere permisos contables.')
         if self.state!='posted' or self.move_type!='out_invoice' or self.currency_id.name!='USD' or self.company_id.country_id.code!='EC':
             raise ValidationError('Se requiere factura de venta contabilizada en USD de Ecuador.')
-        if self.ec_fiscal_job_ids:raise ValidationError('Esta factura ya estÃ¡ asignada al Facturador; conserva su autoridad y trazabilidad.')
+        if self.ec_fiscal_job_ids:raise ValidationError('Esta factura ya está asignada al Facturador; conserva su autoridad y trazabilidad.')
         company=self.company_id;partner=self.partner_id.commercial_partner_id
         if not company.ec_native_ordinary or not company.ec_native_accounting:
             raise ValidationError('El perfil tributario especial requiere ampliar el XML antes de usarlo.')
@@ -40,10 +40,10 @@ class Move(models.Model):
         for line in self.invoice_line_ids.filtered(lambda row:row.display_type=='product'):
             tax=line.tax_ids
             if len(tax)!=1 or tax.amount_type!='percent' or tax.price_include or tax.include_base_amount or (tax.tax_group_id.l10n_ec_type,tax.amount) not in [('zero_vat',0),('vat15',15)]:
-                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por lÃ­nea, sin impuestos incluidos ni compuestos.')
+                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por línea, sin impuestos incluidos ni compuestos.')
             items.append({'code':line.product_id.default_code or str(line.id),'description':line.name,'quantity':line.quantity,'unit':line.price_unit,'discount':line.discount,'rate':tax.amount,'subtotal':line.price_subtotal,'tax':line.price_total-line.price_subtotal})
         data={'date':str(self.invoice_date),'number':self.l10n_latam_document_number,'issuer_vat':company.vat,'issuer_name':company.name,'issuer_address':company.street,'buyer_type':identification,'buyer_vat':partner.vat,'buyer_name':partner.name,'buyer_address':partner.street,'accounting':company.ec_native_accounting,'payment':self.ec_fiscal_payment_code,'total':self.amount_total,'items':items}
-        # CÃ³digo reproducible solo para previsualizaciÃ³n; no reserva un secuencial fiscal.
+        # Código reproducible solo para previsualización; no reserva un secuencial fiscal.
         digest=hashlib.sha256(json.dumps(data,sort_keys=True,ensure_ascii=False).encode('utf-8')).hexdigest();data['numeric']=str(int(digest[:12],16)%100000000).zfill(8)
         try:key,xml=generate(data)
         except ValueError as error:raise ValidationError(str(error)) from error

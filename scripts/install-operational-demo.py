@@ -21,6 +21,10 @@ config.read(DEMO/'odoo.conf',encoding='utf-8')
 options=config['options']
 if options['db_name']!='erpec_demo' or options['http_port']!='8369':
     raise RuntimeError('El destino no es la demo autorizada')
+import importlib.util
+access_spec=importlib.util.spec_from_file_location('session_access',ROOT/'scripts/demo-session-access.py')
+access_check=importlib.util.module_from_spec(access_spec);access_spec.loader.exec_module(access_check)
+access_check.verify_session_access(DEMO)
 backup=STATE/'backups'/('operational-install-'+time.strftime('%Y%m%d-%H%M%S'))
 backup.mkdir(parents=True)
 process=psutil.Process(int((DEMO/'pid').read_text()))
