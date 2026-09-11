@@ -25,8 +25,14 @@ for area in ['sales','purchases','inventory','imports','manufacturing','workorde
     view = call(model,'get_view',[],{'view_type':'list'})
     assert view['arch']
     results.append({'area':area,'model':model,'listCompiled':True,'seconds':round(time.perf_counter()-start,3)})
+purchase_arch = call('purchase.order','get_view',[],{'view_type':'form'})['arch']
+assert 'erpec_purchase_guide' in purchase_arch
+assert 'Preparar factura / nota de crédito' in purchase_arch
+purchase_guides = call('purchase.order','search_read',[[('state','=','purchase')]],
+    {'fields':['name','receipt_status','invoice_status','erpec_purchase_guide'],'limit':5})
+assert purchase_guides and all(row['erpec_purchase_guide'] for row in purchase_guides)
 result = {'authenticated':True,'homeRecord':home['res_id'],'homeAction':home['id'],'areas':results,
-          'businessRecordsCreated':False,'scope':'Accesos y vistas con el perfil demo; no acredita ciclos completos ni carga concurrente'}
+          'purchaseGuidance':purchase_guides,'businessRecordsCreated':False,'scope':'Accesos y vistas con el perfil demo; no acredita ciclos completos ni carga concurrente'}
 text = json.dumps(result,ensure_ascii=False,indent=2)+'\n'
 assert text.encode('utf-8').decode('utf-8') == text
 (STATE/'workspace-runtime-result.json').write_bytes(text.encode('utf-8'))

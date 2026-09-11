@@ -1,0 +1,22 @@
+<odoo>
+  <record id="purchase_flow_form" model="ir.ui.view">
+    <field name="name">purchase.order.erpec.flow</field><field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
+        <div class="border rounded p-3 my-3">
+          <h2>Seguimiento de la compra</h2>
+          <field name="erpec_purchase_guide" nolabel="1" class="d-block mb-2"/>
+          <div class="d-flex flex-wrap gap-2">
+            <button name="action_view_picking" type="object" string="Recepciones" class="btn btn-outline-primary" groups="stock.group_stock_user" invisible="incoming_picking_count == 0"/>
+            <button name="action_create_invoice" type="object" string="Preparar factura / nota de crédito" class="btn btn-outline-primary" groups="account.group_account_invoice" invisible="invoice_status != 'to invoice'"/>
+            <button name="action_view_invoice" type="object" string="Facturas del proveedor" class="btn btn-outline-primary" groups="account.group_account_invoice" invisible="invoice_count == 0"/>
+          </div>
+        </div>
+      </xpath>
+      <xpath expr="//header/button[@name='action_create_invoice'][not(@class)]" position="attributes">
+        <attribute name="invisible">True</attribute>
+      </xpath>
+    </field>
+  </record>
+</odoo>

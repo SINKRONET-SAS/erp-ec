@@ -53,3 +53,10 @@ Usar scripts/start-demo.py --restart con el usuario Windows propietario de la ca
 - Cinco pruebas en copia aislada; diez accesos y vistas comprobados en la demo; revisión visual de inicio, recarga, ida/vuelta a nómina e importaciones y menú. Evidencia: docs/evidencias/ERPEC26-SEGUNDA-PASADA.json. No equivale a aceptación de los ciclos comerciales completos.
 - Respaldo workspace-install-20260911-140812 recuperado en ec_recovery_107aee9b5a, con archivos coincidentes, centro de trabajo y asientos presentes; no reemplazó la demo. El respaldo contiene la primera versión del centro, anterior a los últimos ajustes visuales.
 - Nuevo orden: SP01 coordinación (primer incremento validado), SP02 aceptación transversal, SP03 operación/calidad integral, SP04 puerta comercial. Continúan pendientes la emisión SRI completa, equivalencia laboral y pago conciliado; no declarar producto comercializable ni cerrar fases 04–08.
+
+## SP02 — Compras: incremento de seguimiento y ensayo transversal
+
+- Continúa la segunda pasada. La orden de compra muestra guía derivada de estados nativos, enlaces visibles a recepciones/facturas y distinción entre facturado, pagado y devuelto. Se oculta el botón alternativo sin cantidades facturables.
+- Siete pruebas del centro/compras: comprador, bodega y contabilidad; parciales, dos facturas, dos pagos, devolución y nota de crédito; cuenta por pagar de la primera factura conciliada. No se probó el extracto bancario ni se declara aceptación fiscal.
+- Hallazgo SP02-D01: documentos de la semilla inicial contienen retención ficticia y clasificación contable sin sanear. La factura de servicio P00001 usa cuenta 110307 y tipo tiquete. Aviso visible en los dos documentos históricos; no se reescribieron asientos publicados. Priorizar saneamiento antes de aceptar parámetros de la demo como evidencia comercial.
+- Guía y límites: docs/SP02_COMPRAS.md. Evidencia: docs/evidencias/ERPEC26-SP02-COMPRAS.json. SP02 sigue en curso, con aceptación visual por roles y bancaria pendiente.

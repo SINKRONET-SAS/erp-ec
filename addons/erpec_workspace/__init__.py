@@ -1,1 +1,1 @@
-from . import workspace
+from . import workspace, purchase, legacy_demo

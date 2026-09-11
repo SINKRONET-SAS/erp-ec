@@ -1,0 +1,168 @@
+{
+  "recordedAt": "2026-09-11T19:30:43.755208+00:00",
+  "scope": "SP02.1 compras: guía y pruebas transversales nativas; aceptación integral pendiente",
+  "unit": {
+    "exitCode": 0,
+    "testedAt": "2026-09-11T19:28:48.672603+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_d6bacee517\\workspace-tests-20260911-142821.log",
+    "logSha256": "6efad707f6b02d596fb272f3e6bc803bd4d59f0f5be7872e8fec53cac8746d1b",
+    "modules": [
+      "erpec_workspace"
+    ],
+    "fileHashes": {
+      "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+      "addons/erpec_workspace/legacy_demo.py": "248e9ade5ddb8ebfb5757a7421861ba61fcf5c09e3c105b9e2fc1eaa20afb91f",
+      "addons/erpec_workspace/legacy_demo_views.xml": "d5da7d7645a8b21db190e6637761cc49332f021ee26a5fdc84175ef947d1aa63",
+      "addons/erpec_workspace/operation_views.xml": "be679b51ad380ab6da5d209d342f68d634ac80ea5d00d6a100c21b0dd2bf900e",
+      "addons/erpec_workspace/purchase.py": "f9f3c4043dbdaf3568184a7eb2575cc8176f6eb2a7f3005513f9c84f3bfdc9b1",
+      "addons/erpec_workspace/purchase_views.xml": "d1a77fef1c08dd8c7b0d8918d3b45d28e83aace941b18dbf591f65bf6e2db2f1",
+      "addons/erpec_workspace/views.xml": "a848913370bde022f43c6d23c8a9cbb76e12b53004f6fbc3485d37739defe5a0",
+      "addons/erpec_workspace/workspace.py": "4d9100ef4784cc5566730251da1bd8817cfa3c805efc7d8e89dee2489198c100",
+      "addons/erpec_workspace/__init__.py": "d99594454bc918840b75458f7bb5a7c98215ee0e427d20e8447a90b5e728b45d",
+      "addons/erpec_workspace/__manifest__.py": "0d6290ebe3c50527542d9c4501bbcf34b79033ac42f33c17fd169cadb8a9e1f3",
+      "addons/erpec_workspace/tests/test_purchase_flow.py": "4e94cc7d2eeaa1f46702c2fc7d014f9e20d2e0382f9cd91313a4782f36841a84",
+      "addons/erpec_workspace/tests/test_workspace.py": "a6bee79397f8381cf9fe2a43c70a3651940c894cf0c3f230cb2bc610f11f4161",
+      "addons/erpec_workspace/tests/__init__.py": "92293c9155b1bcf0e6b9003e1b126e5be7288cd866e0b493f49b8a535f68e9cd"
+    }
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\workspace-install-20260911-142915",
+    "views": {
+      "home": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-582",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_workspace"
+    ]
+  },
+  "runtime": {
+    "authenticated": true,
+    "homeRecord": 1,
+    "homeAction": 583,
+    "areas": [
+      {
+        "area": "sales",
+        "model": "sale.order",
+        "listCompiled": true,
+        "seconds": 0.865
+      },
+      {
+        "area": "purchases",
+        "model": "purchase.order",
+        "listCompiled": true,
+        "seconds": 0.272
+      },
+      {
+        "area": "inventory",
+        "model": "stock.picking.type",
+        "listCompiled": true,
+        "seconds": 0.263
+      },
+      {
+        "area": "imports",
+        "model": "erpec.importation",
+        "listCompiled": true,
+        "seconds": 0.274
+      },
+      {
+        "area": "manufacturing",
+        "model": "mrp.production",
+        "listCompiled": true,
+        "seconds": 0.592
+      },
+      {
+        "area": "workorders",
+        "model": "mrp.workorder",
+        "listCompiled": true,
+        "seconds": 0.268
+      },
+      {
+        "area": "invoices",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.318
+      },
+      {
+        "area": "bills",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.265
+      },
+      {
+        "area": "payroll",
+        "model": "erpec.payroll.period",
+        "listCompiled": true,
+        "seconds": 0.271
+      },
+      {
+        "area": "fiscal",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.3
+      }
+    ],
+    "purchaseGuidance": [
+      {
+        "id": 2,
+        "name": "P00002",
+        "receipt_status": "partial",
+        "invoice_status": "to invoice",
+        "erpec_purchase_guide": "Recepción parcial: revisa el traslado pendiente antes de dar por completo el abastecimiento. Hay cantidades por facturar o abonar. Revisa si corresponde factura o nota de crédito y contrástala con el documento del proveedor."
+      },
+      {
+        "id": 1,
+        "name": "P00001",
+        "receipt_status": false,
+        "invoice_status": "invoiced",
+        "erpec_purchase_guide": "Sin traslados activos. En servicios, verifica la cantidad recibida o la política de facturación. Facturas generadas. Abre Facturas del proveedor para revisar su validación, saldo y pagos; facturado no significa pagado."
+      }
+    ],
+    "businessRecordsCreated": false,
+    "scope": "Accesos y vistas con el perfil demo; no acredita ciclos completos ni carga concurrente"
+  },
+  "visualChecks": [
+    "P00001: guía para servicios, acceso a factura y sin botón de crear factura sin cantidades",
+    "P00001 a factura vinculada: importe 200, saldo histórico 196 observado",
+    "P00002: guía de recepción parcial y acceso a WH/IN/00001 hecho y WH/IN/00002 disponible",
+    "Aviso visible en factura histórica, separado del distintivo de pago"
+  ],
+  "businessRecordsCreatedInDemo": false,
+  "pending": [
+    "SP02-D01: sanear documentos históricos y sus parámetros ficticios",
+    "Recorrido bancario con extracto y conciliación",
+    "Aceptación integral desde navegador por perfiles",
+    "Valoración automática de inventario no cubierta por las dos nuevas pruebas",
+    "No hay validación fiscal ni restauración nueva en este incremento"
+  ],
+  "screenshots": {
+    "compra-antes.png": {
+      "path": ".cache/segunda-pasada/sp02/compra-antes.png",
+      "sha256": "bd9b832a062725c70fbd77d7fbaffbcd087317f2f4dd97547e4433011d3ae583",
+      "capturedAndInspected": true
+    },
+    "compra-servicio.png": {
+      "path": ".cache/segunda-pasada/sp02/compra-servicio.png",
+      "sha256": "bffe93eb26b0d082f30c94fcaa0149eb2f5a35013d294586ff5591b098c2dd4f",
+      "capturedAndInspected": true
+    },
+    "compra-parcial.png": {
+      "path": ".cache/segunda-pasada/sp02/compra-parcial.png",
+      "sha256": "421a15f31df838a8a4e9a49b36d6a3bcbb3bd8e5336a450948fdb7b4b2874d11",
+      "capturedAndInspected": true
+    },
+    "factura-historica.png": {
+      "path": ".cache/segunda-pasada/sp02/factura-historica.png",
+      "sha256": "18880e04cdcada41c70f48da68b3894ac65ed3697a415ecd30a0bbb4432e212a",
+      "capturedAndInspected": true
+    },
+    "aviso-historico.png": {
+      "path": ".cache/segunda-pasada/sp02/aviso-historico.png",
+      "sha256": "7f413e92bd3ddc6a447b385ac93355da0483edccdff6d5427287a8772c6feaa6",
+      "capturedAndInspected": true
+    }
+  }
+}

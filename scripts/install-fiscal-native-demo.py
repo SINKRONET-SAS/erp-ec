@@ -5,7 +5,7 @@ import psutil
 ROOT=Path(__file__).resolve().parents[1];STATE=ROOT/'.cache/windows';DEMO=STATE/'demo';ODOO=ROOT/'.cache/odoo-community/odoo-bin'
 workspace_mode = '--workspace' in sys.argv
 prefix = 'workspace' if workspace_mode else 'fiscal-native'
-expected_tests = 5 if workspace_mode else 14
+expected_tests = 7 if workspace_mode else 14
 report=json.loads((STATE/(prefix+'-test-result.json')).read_text(encoding='utf-8'))
 expected_modules = ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
 if report['modules'] != expected_modules: raise RuntimeError('El informe corresponde a otros módulos')

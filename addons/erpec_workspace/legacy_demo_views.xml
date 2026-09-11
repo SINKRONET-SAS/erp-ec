@@ -1,0 +1,13 @@
+<odoo>
+  <record id="legacy_demo_notice_form" model="ir.ui.view">
+    <field name="name">account.move.erpec.legacy.demo</field><field name="model">account.move</field>
+    <field name="inherit_id" ref="account.view_move_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/div[hasclass('oe_title')]" position="before">
+        <div class="alert alert-warning" style="margin-right: 8rem;" role="status" invisible="not erpec_legacy_demo_notice">
+          <field name="erpec_legacy_demo_notice" nolabel="1"/>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

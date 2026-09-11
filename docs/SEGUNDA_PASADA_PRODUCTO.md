@@ -72,3 +72,7 @@ Instalación en demo: `.venv/Scripts/python.exe scripts/install-fiscal-native-de
 Ensayo de recuperación de un respaldo que ya contiene el centro: `.venv/Scripts/python.exe scripts/restore-operational-demo.py --backup RUTA_ABSOLUTA --expect-workspace`. Crea base, usuario y carpetas nuevos; no reemplaza la demo. Verifica archivos, carga del registro, acceso al centro y presencia de asientos.
 
 Para retirar una actualización fallida se debe recuperar su respaldo completo y comprobarlo antes de cambiar el servicio. Desinstalar solamente erpec_workspace no basta para restaurar menús que fueron reorganizados. No ejecutar el ensayo histórico de recuperación sin --expect-workspace sobre respaldos recientes; ese ensayo espera la ausencia de nómina.
+
+## Incremento SP02 de compras
+
+Seguimiento implementado y recorrido automatizado por perfiles documentados en SP02_COMPRAS.md. Hallazgo prioritario SP02-D01: sanear los documentos de la semilla inicial que contienen retenciones ficticias y clasificación contable inadecuada para el servicio mostrado. Se advierte en pantalla; no se aceptan como parámetros reales. SP02 y la puerta comercial permanecen abiertos.
