@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-13T21:08:26.975Z",
+  "updatedAt": "2026-09-13T21:06:32.127Z",
   "filesModified": [
     ".dockerignore",
     ".gitattributes",
@@ -330,8 +330,7 @@
     "scripts/verify-workspace.py",
     "scripts/verify-xades-local.py",
     "scripts/windows-local.py",
-    "upstream.json",
-    "docs/evidencias/AuditLock.before-SP02-normalizacion.json"
+    "upstream.json"
   ],
   "filesSkippedBinary": [
     "docs/evidencias/uiux/00-confirmacion-menu.png",
@@ -359,8 +358,7 @@
     "Arranque/parada con propietario sobre copia explícita",
     "Selector operational-current.json conservado",
     "Sintaxis Python válida",
-    "Regresión de fabricación: 7/7, salida 0; no valida cierre global SP02",
-    "Esquema RDEP idéntico tras normalizar finales de línea; contenido funcional conservado"
+    "Regresión de fabricación: 7/7, salida 0; no valida cierre global SP02"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -486,7 +484,7 @@
     "addons/erpec_payroll/tests/test_annex_rdep.py": "cf7c1ac04c70877141700fc9ad8b9c46c293e11230ce8db881a4e69f2dac655f",
     "addons/erpec_payroll/tests/test_payroll.py": "dec4bb3e55b112beedd5edc524cfee35ab55470fdb518bf1d395e9d4c105b454",
     "addons/erpec_payroll/views.xml": "099f0531566feab1028ecc2489895ac53af1f6c730cd386fe1c87df1691cc808",
-    "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd": "8d595d42c17948ca9f4f5bf5bf4fff18ae9ddac5f3fb1f2a5670ba3ec2783636",
+    "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd": "9067640f71c4c14549c5376e0f5c357d01f69189b24346ff70408adbb5c68046",
     "addons/erpec_provision/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
     "addons/erpec_provision/__manifest__.py": "0fbb84ff441469ebfbe745891f73dfa06f560398c23867f41c9211a999abc24d",
     "addons/erpec_provision/models/__init__.py": "933822946288cff9ac2d53ae7c7beb68d89d9010bf1b42c237e71875c4e6bcb3",
@@ -704,13 +702,12 @@
     "scripts/windows-local.py": "7294505c0f57ee85ad6408a4ef53497b8f8ec6bcea039dd243974a8336ac4cb0",
     "upstream.json": "cdc7e8f8a393f2d17a840a8a41635c4a85974b4527990f4a8e479471485f3376",
     "scripts/verify-sp02-production.py": "3a4a2f5fa400c726028357e0637d6b9b2dbdd81e8013803ca87c7626d1583dd1",
-    "docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json": "f737d0d54aa6875f39a70fe67eb7f3711ccdd7ce6730b38af075a4012c515d97",
-    "docs/evidencias/AuditLock.before-SP02-produccion-visual.json": "2fd2f24de52be06a3894052885b959eeec11c68eed548cb0dbd3814a01412a9d",
-    "docs/evidencias/AuditLock.before-SP02-normalizacion.json": "0c7cdb89e21467b28484a0a8604db92e5d50b15b50c701079f514f49f86bfec3"
+    "docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json": "2ac0bcb132de87193f7beb055eb9cf74e797a2f92690503c9c44ca62bed9a55a",
+    "docs/evidencias/AuditLock.before-SP02-produccion-visual.json": "2fd2f24de52be06a3894052885b959eeec11c68eed548cb0dbd3814a01412a9d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-SP02-normalizacion.json",
-  "previousAuditLockHash": "0c7cdb89e21467b28484a0a8604db92e5d50b15b50c701079f514f49f86bfec3",
-  "signature": "017549329507072a554d097c4849989590e8f2872f0e414ffb195d577d0f8b0c",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-SP02-produccion-visual.json",
+  "previousAuditLockHash": "2fd2f24de52be06a3894052885b959eeec11c68eed548cb0dbd3814a01412a9d",
+  "signature": "4e689365ee804e44dabb851feb9db387883fdf21d60b4b2ff4d5627712b4f95c",
   "secondPassProduction": {
     "status": "increment-passed",
     "phaseInProgress": "SP02",

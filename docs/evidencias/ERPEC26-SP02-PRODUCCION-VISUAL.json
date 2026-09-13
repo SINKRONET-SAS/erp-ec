@@ -59,5 +59,12 @@
     "docs/evidencias/sp02-produccion/03-parcial-supervisor.png": "218d219a44e91f5c57ac7ba848583b14266c3f08903221a914e4b1a1f31ebb54",
     "docs/evidencias/sp02-produccion/04-produccion-terminada.png": "5ce49a8863eff79df023f982b2b39dce2123b8e8d01b67dad5615fbb91a26474"
   },
-  "concurrentGovernance": "La divergencia inicial se registró en ERPEC26-SP02-REANUDACION.json. OP05.5 cerró su propio incremento en 2720b8a; este cierre encadena ese lock vigente y no atribuye sus pruebas a SP02."
+  "concurrentGovernance": "La divergencia inicial se registró en ERPEC26-SP02-REANUDACION.json. OP05.5 cerró su propio incremento en 2720b8a; este cierre encadena ese lock vigente y no atribuye sus pruebas a SP02.",
+  "governanceNormalization": {
+    "file": "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd",
+    "reason": "CRLF local frente a LF normalizado por .gitattributes en Git",
+    "contentEqualAfterLineNormalization": true,
+    "previousLocalHash": "9067640f71c4c14549c5376e0f5c357d01f69189b24346ff70408adbb5c68046",
+    "canonicalHash": "8d595d42c17948ca9f4f5bf5bf4fff18ae9ddac5f3fb1f2a5670ba3ec2783636"
+  }
 }
