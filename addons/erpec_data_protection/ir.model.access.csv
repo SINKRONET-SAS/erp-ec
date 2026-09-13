@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_data_processing_activity,Responsable actividad de tratamiento,model_erpec_data_processing_activity,group_data_protection_officer,1,1,1,1

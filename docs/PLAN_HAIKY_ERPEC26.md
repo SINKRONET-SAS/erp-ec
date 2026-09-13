@@ -45,3 +45,11 @@ La revisión de estabilización, navegación y experiencia de producto tiene pri
 ## Anexos fiscales ATS y RDEP autorizados — 13-09-2026
 
 El titular pidió investigar y documentar el alcance de los anexos ATS y RDEP del SRI, con referencia adicional a lo ya construido en SINKRONET FACTURADOR y SKNOMINA, y ejecutar el resultado. Se amplía PLAN_AMPLIACION_OPERATIVA.md con el complemento OP05: ver docs/ALCANCE_ATS_RDEP.md para el alcance normativo y docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json para el primer incremento (agregador RDEP de solo lectura; ATS pendiente del catálogo oficial). No se declara homologación ni presentación ante el SRI.
+
+## Cumplimiento legal Ecuador autorizado — 13-09-2026
+
+El titular pidió, en respuesta a la necesidad de garantizar cumplimiento legal (Tributario, Facturación Electrónica, ATS, RDEP, Laboral, Protección de Datos, envíos por email), generar un plan Haiky dedicado con su gobierno y ejecutarlo. Ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, complemento OP06 con prompt en .github/prompts/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.md. Los dominios con documentación propia (Facturación Electrónica, ATS, RDEP, Laboral) se remiten a ella sin duplicarla. Protección de Datos y envíos por email, sin trabajo previo, se investigaron contra fuente oficial (LOPDP, Registro Oficial Suplemento 459 del 26-05-2021; Ley 67 de Comercio Electrónico) y tienen un primer incremento de código: módulo `erpec_data_protection` (Registro de Actividades de Tratamiento y exclusión de correo comercial). No se declara cumplimiento legal alcanzado en ningún dominio.
+
+
+## Plan tributario transversal autorizado — 13-09-2026
+Complemento local TX00–TX02: PLAN_HAIKY_IMPUESTOS.md. Relaciona catálogo, cuentas, artículos, proveedores y operaciones con las posiciones fiscales nativas. No sustituye los gates de emisión, retenciones, ATS ni validación legal.

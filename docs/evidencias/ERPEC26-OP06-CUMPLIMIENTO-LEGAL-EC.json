@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-09-13T22:10:00.000Z",
+  "scope": "Primer incremento del complemento OP06 (cumplimiento legal Ecuador). Consolida el estado de siete dominios legales; investiga con fuente oficial los dos dominios sin trabajo previo (Protección de Datos, envíos por email) e implementa un primer módulo de código para Protección de Datos. No declara cumplimiento legal alcanzado en ningún dominio; no cierra OP06.",
+  "planDocument": "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md",
+  "prompt": ".github/prompts/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.md",
+  "domainsReferencedNotDuplicated": {
+    "tributario": "docs/CONTABILIDAD_Y_DEMO.md — erpec_withholding_accounting",
+    "facturacionElectronica": "docs/FACTURACION_LOCAL.md — erpec_fiscal_native",
+    "ats": "docs/ALCANCE_ATS_RDEP.md — erpec_fiscal_native/ats_catalog.py",
+    "rdep": "docs/ALCANCE_ATS_RDEP.md — erpec_payroll/annex_rdep.py",
+    "laboral": "docs/OPERACIONES_LOCALES_DEMO.md y .github/CODEX_CONTEXT.md — erpec_payroll"
+  },
+  "newResearch": {
+    "recordedAt": "2026-09-13T21:50:00.000Z",
+    "method": "agente de investigación en segundo plano, fuentes oficiales priorizadas (asambleanacional.gob.ec, spdp.gob.ec, sri.gob.ec); fuentes secundarias marcadas explícitamente donde se usaron",
+    "lopdp": {
+      "identificacion": "Ley Orgánica de Protección de Datos Personales, Registro Oficial Suplemento N.° 459, 26-05-2021 (confianza alta, fuente primaria)",
+      "regulador": "Superintendencia de Protección de Datos Personales (SPDP), spdp.gob.ec — operativa, emitiendo resoluciones en 2025-2026",
+      "vigenciaSancionatoria": "26-05-2023 (dos años de transición)",
+      "noVerificadoContraFuentePrimaria": ["números de artículo exactos de derechos del titular y notificación de brechas", "umbral de 100+ empleados para el RAT obligatorio (Reglamento General)", "si la SPDP sanciona activamente a privados hoy o solo orienta"]
+    },
+    "emailYFacturacion": {
+      "entregaAlCliente": "sin plazo específico confirmado; el único plazo confirmado es de transmisión al SRI (72 horas desde 2025, no de entrega al cliente)",
+      "consentimientoTransaccional": "correo transaccional de una venta ya realizada se ampara en necesidad contractual (Art. 7 LOPDP), no en consentimiento de mercadeo",
+      "leyAntispam": "Ley de Comercio Electrónico, Firmas Electrónicas y Mensajes de Datos (Ley 67, 2002): exige mecanismo de exclusión para mensajes periódicos/masivos",
+      "spfDkim": "sin requisito legal encontrado; se trata como no confirmado/probablemente inexistente como mandato"
+    }
+  },
+  "implementation": {
+    "module": "erpec_data_protection",
+    "newModels": ["erpec.data.processing.activity"],
+    "extendedModels": ["res.partner (ec_marketing_email_opt_out, ec_marketing_email_opt_out_date)"],
+    "newGroup": "group_data_protection_officer",
+    "menu": "ERP EC › Protección de datos › Registro de tratamiento (RAT)",
+    "businessDataInvented": false,
+    "legalComplianceClaimed": false
+  },
+  "bugsFoundAndFixedDuringTesting": [
+    "group_data_protection_officer no implicaba base.group_user: bloqueaba la resolución de subtipos de mail.thread al crear una actividad de tratamiento",
+    "group_data_protection_officer no implicaba base.group_partner_manager: base.group_user solo da lectura a res.partner por diseño nativo de Odoo (access_res_partner_group_user, perm_write=0); la acción de excluir de correo comercial escribe res.partner y requería ese grupo adicional"
+  ],
+  "tests": {
+    "exitCode": 0,
+    "totalTests": 6,
+    "failed": 0,
+    "errors": 0,
+    "environment": "base de datos PostgreSQL aislada y nueva (ec_dp_test, eliminada al finalizar), no la copia operativa compartida, para no mezclar con el trabajo concurrente de otra sesión sobre erpec_workspace"
+  },
+  "installation": {
+    "deferred": true,
+    "reason": "La copia compartida de demo tiene cambios no comiteados de otra sesión concurrente (modelo erpec.tax.plan sin tabla, observado durante el intento de prueba). Reiniciar el proceso de la demo ahora podría desestabilizar su trabajo en curso. No se fuerza la instalación.",
+    "nextStep": "Instalar con scripts/install-operational-demo.py o equivalente cuando la demo esté en un estado estable compartido, con respaldo previo."
+  },
+  "checks": [
+    "6/6 pruebas del módulo erpec_data_protection aprobadas en base de datos aislada y limpia",
+    "Dos errores de permisos encontrados y corregidos durante la prueba, documentados con su causa exacta",
+    "Investigación de LOPDP y envíos por email con fuentes citadas, fecha de consulta y nivel de confianza explícito por hallazgo",
+    "Ningún envío de correo real, transmisión SRI ni recolección de datos personales reales de terceros"
+  ],
+  "pending": [
+    "Tributario/Facturación Electrónica/ATS/RDEP/Laboral: brechas ya documentadas en sus propios documentos, sin cambios en este incremento",
+    "Protección de Datos: derechos del titular (acceso/rectificación/eliminación/oposición/portabilidad), procedimiento de notificación de brechas, registro RNPD, evaluación de si aplica DPD obligatorio; lectura del texto primario completo de la LOPDP y su Reglamento General antes de fijar umbrales o plazos",
+    "Envíos por email: envío real sigue desactivado; confirmar contra el Reglamento de Comprobantes Electrónicos si existe un plazo de entrega al cliente distinto del plazo de transmisión al SRI",
+    "Instalación en demo aplazada por actividad concurrente de otra sesión"
+  ],
+  "externalEmissionPerformed": false,
+  "sourceRepositoriesModified": false
+}

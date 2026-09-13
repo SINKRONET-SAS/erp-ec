@@ -1,0 +1,17 @@
+<odoo>
+<record id="activity_list" model="ir.ui.view"><field name="name">erpec.data.processing.activity.list</field><field name="model">erpec.data.processing.activity</field><field name="arch" type="xml"><list><field name="name"/><field name="legal_basis"/><field name="responsible_id"/><field name="special_category_data"/><field name="cross_border_transfer"/><field name="state"/></list></field></record>
+<record id="activity_form" model="ir.ui.view"><field name="name">erpec.data.processing.activity.form</field><field name="model">erpec.data.processing.activity</field><field name="arch" type="xml"><form>
+<header><field name="state" widget="statusbar"/></header>
+<sheet>
+<div class="alert alert-info" role="status">Registro de actividades de tratamiento (RAT) de apoyo a la LOPDP. No declara cumplimiento legal; revisar con criterio propio o asesoría legal. Ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06.</div>
+<group><field name="name"/><field name="company_id"/><field name="responsible_id"/></group>
+<group string="Tratamiento"><field name="purpose"/><field name="legal_basis"/><field name="data_subjects"/><field name="data_categories"/><field name="special_category_data"/></group>
+<group string="Destino y conservación"><field name="recipients"/><field name="retention_period"/><field name="security_measures"/></group>
+<group string="Transferencia internacional"><field name="cross_border_transfer"/><field name="transfer_country" invisible="not cross_border_transfer"/><field name="transfer_mechanism" invisible="not cross_border_transfer"/></group>
+<group><field name="notes"/></group>
+</sheet><chatter/></form></field></record>
+<record id="activity_action" model="ir.actions.act_window"><field name="name">Registro de actividades de tratamiento (RAT)</field><field name="res_model">erpec.data.processing.activity</field><field name="view_mode">list,form</field></record>
+<menuitem id="data_protection_menu" name="Protección de datos" parent="erpec_base.suite_root" groups="group_data_protection_officer" sequence="90"/>
+<menuitem id="activity_menu" name="Registro de tratamiento (RAT)" parent="data_protection_menu" action="activity_action" sequence="10"/>
+<record id="partner_marketing_opt_out" model="ir.ui.view"><field name="name">res.partner.erpec.data.protection</field><field name="model">res.partner</field><field name="inherit_id" ref="base.view_partner_form"/><field name="arch" type="xml"><xpath expr="//div[@name='button_box']" position="inside"><button name="action_ec_mark_marketing_opt_out" type="object" string="Excluir de correo comercial" class="oe_stat_button" icon="fa-envelope-o" invisible="ec_marketing_email_opt_out" groups="erpec_data_protection.group_data_protection_officer"/></xpath><xpath expr="//div[@name='button_box']" position="inside"><field name="ec_marketing_email_opt_out" invisible="1"/></xpath></field></record>
+</odoo>

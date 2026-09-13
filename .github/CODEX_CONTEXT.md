@@ -1,6 +1,6 @@
 # Contexto vigente ERPEC26
 
-Actualizado: 11-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y docs/PLAN_AMPLIACION_OPERATIVA.md. Este contexto orienta la continuidad; no acredita por sí mismo avances funcionales.
+Actualizado: 13-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y docs/PLAN_AMPLIACION_OPERATIVA.md. Este contexto orienta la continuidad; no acredita por sí mismo avances funcionales.
 
 ## Autorización y decisiones
 
@@ -146,3 +146,22 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Retomado escenario ficticio en ec_operational_7a74b3c051: operario pausa/reanuda y finaliza dos etapas; supervisor registra parcial y completa la segunda unidad. Órdenes WH/MO/00013-001 y -002 terminadas; 4 componentes consumidos, 2 productos terminados, 4 operaciones terminadas, ningún intervalo abierto.
 - La copia antigua necesitó respaldo y actualización de esquema antes del ingreso. Arranque de aceptación admite --directory y reutiliza el precontrol de permisos de sesiones; no altera el selector compartido de pruebas. Demo principal sin cambios de negocio.
 - Evidencia y límites en docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json y docs/SP02_EXPERIENCIA_Y_ACEPTACION.md. El contador heredado desde el 11/09 invalida su uso como costo representativo; no se reajustó la historia. Pendientes venta/valoración representativa, reversión visual, importaciones de dos productos y demás recorridos SP02. No cierra SP02 ni la puerta comercial.
+
+## OP06 — Cumplimiento legal Ecuador: primer incremento — 13-09-2026
+
+- El titular pidió, en respuesta a la necesidad de garantizar cumplimiento legal (Tributario, Facturación Electrónica, ATS, RDEP, Laboral, Protección de Datos, envíos por email), generar y desplegar un plan con su gobierno, ejecutarlo, verificar regresiones y cerrar. Complemento nuevo, independiente de OP01-05 y del plan de impuestos TX00-02 de otra sesión concurrente. Plan: docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md. Prompt: .github/prompts/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.md.
+- Tributario, Facturación Electrónica, ATS, RDEP y Laboral: sin código nuevo en este incremento; el plan remite a la documentación ya existente (docs/FACTURACION_LOCAL.md, docs/ALCANCE_ATS_RDEP.md, docs/OPERACIONES_LOCALES_DEMO.md) en vez de duplicarla.
+- Protección de Datos (LOPDP) y envíos por email: dominios sin ningún trabajo previo en el proyecto. Investigados contra fuente oficial (Registro Oficial Suplemento 459 del 26-05-2021 para la LOPDP; spdp.gob.ec como regulador operativo; Ley 67 de Comercio Electrónico para el mecanismo de exclusión de correo). Varios plazos/umbrales citados en fuentes secundarias (umbral del RAT, plazos de notificación de brechas) quedan marcados explícitamente como no verificados contra el texto primario.
+- Primer incremento de código: módulo `erpec_data_protection` — Registro de Actividades de Tratamiento (RAT, `erpec.data.processing.activity`) y campo de exclusión de correo comercial en `res.partner`. No declara cumplimiento legal ni homologación.
+- Corregido durante la prueba: el grupo nuevo no implicaba `base.group_user` (bloqueaba el chatter de `mail.thread`) ni `base.group_partner_manager` (bloqueaba escribir `res.partner`, que por diseño nativo de Odoo solo da lectura a `group_user`). 6/6 pruebas aprobadas en base aislada limpia (no la copia operativa compartida, para no mezclar con el trabajo concurrente de otra sesión sobre `erpec_workspace`).
+- Instalación en demo aplazada deliberadamente: la copia compartida tiene cambios no comiteados de otra sesión (`erpec.tax.plan` sin tabla) que podrían inestabilizarse si se reinicia el proceso ahora. No se fuerza la instalación; queda pendiente para cuando la demo esté en un estado estable compartido.
+- No cierra OP06: Tributario/Facturación/ATS/RDEP/Laboral siguen con sus brechas ya documentadas; Protección de Datos solo tiene el RAT (faltan derechos del titular, notificación de brechas, RNPD); envíos por email sigue sin envío real habilitado.
+
+
+## SP02 y TX — Importaciones, valoración y plan de impuestos — 13-09-2026
+
+- Importación visual por comprador, bodega y contabilidad completada: dos productos, 300 EUR, dos recepciones, flete 30 EUR/34,78 USD y ajuste inverso. Valoración 347,76 → 382,54 → 347,76 USD; asientos balanceados.
+- Fabricación nueva WH/MO/00059 con dos intervalos cerrados de esta sesión: materiales 20,00 + trabajo 0,63 = 20,63 USD para dos unidades. Entrega/devolución automatizada por 10,32 USD, revertida al terminar. No se alteró el contador histórico.
+- Plan de impuestos instalado: consultas por empresa, artículo, tercero y operación; posiciones fiscales y motor nativos; cuentas de factura/devolución y enlace inverso cuenta→catálogo. No duplica tasas ni valida tratamientos tributarios reales. La consulta guardada es configuración vigente, no una regla paralela ni historial fiscal.
+- 32/32 pruebas aprobadas; 40 archivos instalados coincidentes; once accesos comprobados. Respaldo imports-ui-install-20260913-165519 recuperado en ec_recovery_746b09dd18, anterior al cambio, con archivos y Tesorería coincidentes.
+- Plan: docs/PLAN_HAIKY_IMPUESTOS.md. Guía: docs/SP02_IMPORTACIONES_VALORACION_IMPUESTOS.md. Evidencia: docs/evidencias/ERPEC26-SP02-IMPORTACIONES-VALORACION.json. TX00–TX02 cubren este incremento técnico. SP02 y las fases históricas continúan abiertas según sus límites.
