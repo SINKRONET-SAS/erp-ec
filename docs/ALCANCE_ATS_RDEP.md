@@ -91,3 +91,23 @@ El titular pidió verificar dos hipótesis concretas antes de dejarlas como "sin
 Pruebas nuevas: suma y tope combinado de educación+arte/cultura, con validación de esquema. 35/35 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll aprobadas.
 
 **Lo que sigue sin generarse**: el anexo no se presenta ante el SRI ni se homologa. La vista previa XML solo se genera cuando la empresa tiene un RUC real de 13 dígitos (bloqueada en la demo, que mantiene RUC vacío por convención del proyecto) y cuando cada empleado tiene sus campos RDEP completos; no se completan con datos inventados. Evidencia: `docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json` (actualizada).
+
+## Corrección — 13-09-2026 (misma sesión, tercera parte): tope único de gastos personales, no por categoría; benGalpg confirmado vigente
+
+El titular aportó información puntual sobre el mecanismo 2026 (tope 18%, canasta básica de enero, coeficiente IPCEG 1,803 en Galápagos) que contradecía la conclusión anterior ("indicio fuerte, no confirmación completa" para `benGalpg`, y topes por categoría heredados del Instructivo Formulario 107 para las 7 categorías). Se verificó directamente contra la fuente primaria antes de corregir el código:
+
+**Fuente primaria encontrada y leída**: Boletín NAC-COM-26-006 del SRI (06-02-2026, "SRI habilita la proyección de gastos personales 2026 para reducir el Impuesto a la Renta"), PDF oficial extraído con éxito (no escaneado). Texto literal relevante: *"la rebaja por gastos personales será del 18%, aplicada sobre el menor valor entre los gastos declarados y el valor de la canasta básica de enero de 2026 (USD 821,80), monto que varía según el número de cargas familiares"* y *"En Galápagos, el cálculo se ajusta con el Índice de Precios al Consumidor Especial (IPCEG) de 1,803"*. El mismo boletín lista los rubros vigentes como "alimentación, educación, arte y cultura, salud, vestimenta, vivienda y turismo nacional" — confirma también, de forma directa y primaria, la fusión de educación y arte/cultura ya corregida en la parte anterior.
+
+**Hallazgo clave: el Instructivo Formulario 107 usado como fuente (2) es anterior a la reforma de 2023 y describe un mecanismo ya derogado.** Los topes por categoría (0.325×/1.3× la fracción básica exenta) que se habían implementado no reflejan la ley vigente. Desde la reforma de 2023 **no existe tope por categoría**: hay un único tope anual total, expresado en canastas básicas familiares (CBF) según cargas familiares (0 cargas = 7 canastas = USD 5.752,60 para 2026; escala hasta 20 canastas con 5 o más cargas = USD 16.436,00), confirmado además por una fuente tributaria secundaria (Factuplan) con la tabla completa y coherente con los valores que aportó el titular. El parámetro `expense_limit` que ya usaba `erpec_payroll.engine` para el cálculo mensual (5752.60 en `parameters_ec2026.py`) coincide exactamente con 7 × 821,80 — es decir, el motor mensual ya usaba el valor correcto para 0 cargas, aunque nunca lo escalaba por cargas familiares.
+
+**`benGalpg` pasa de "indicio fuerte" a confirmado vigente para 2026** por la misma fuente primaria: el ajuste IPCEG 1,803 en Galápagos es explícito y actual (boletín de febrero de 2026), no una referencia a la resolución derogada de 2016-2021.
+
+**Corregido en el código** (`addons/erpec_payroll/annex_rdep.py`):
+- Se eliminaron los topes por categoría (`EXPENSE_CAP_RATES`, `EDUCATION_ART_CULTURE_CAP_RATE`).
+- Nueva función `_personal_expense_cap(policy, dependents_count, galapagos)`: reutiliza `parameters['expense_limit']` (sin duplicarlo) como el tope de 0 cargas, lo escala según `DEPENDENTS_BASKETS` (7/9/11/14/17/20 canastas) y lo multiplica por `GALAPAGOS_IPCEG_FACTOR = 1.803` cuando `ec_rdep_ben_galpg == 'SI'`.
+- La validación `_check_expense_caps` ahora compara la **suma** de las 7 categorías contra ese tope único, no cada categoría por separado.
+- Ayudas en pantalla y docstring del módulo actualizados citando el Boletín NAC-COM-26-006 en vez del Instructivo Formulario 107 para este punto específico.
+
+**Brecha nueva, documentada, no corregida en este incremento**: `erpec_payroll.engine.calculate()` sigue usando `expense_limit` sin escalarlo por `numCargRebGastPers` del empleado ni por Galápagos — el cálculo **mensual** de retención (no solo el anexo RDEP) subestima el tope real para empleados con cargas familiares o en Galápagos. Corregir esto toca el motor de cálculo activo de nómina, no solo el anexo; queda pendiente como una tarea propia, priorizada porque afecta la retención mensual real, no solo un reporte anual.
+
+Pruebas: 3 nuevas (tope único escalado por cargas, factor Galápagos, educación+arte/cultura ya no tienen tope propio). 36/36 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll aprobadas.

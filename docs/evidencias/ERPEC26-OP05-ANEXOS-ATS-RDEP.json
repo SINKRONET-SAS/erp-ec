@@ -32,12 +32,31 @@
       "confidenceNote": "No se leyó la ficha técnica narrativa del RDEP (PDF escaneado); confirmación por fuentes tributarias secundarias, no por la fuente primaria del propio anexo."
     },
     "benGalpg": {
-      "conclusion": "indicio fuerte, no confirmación completa",
+      "conclusion": "confirmado vigente para 2026 (corregido tras aporte del titular; ver 'correction2026' abajo)",
       "sources": ["Resolución NAC-DGERCGC16-00000443 (Registro Oficial Sup. 874, 01-11-2016)", "Resolución NAC-DGERCGC21-00000049 (Registro Oficial 596, 13-12-2021, derogatoria)"],
       "finding": "La Resolución 2016 estableció una tabla diferenciada de deducción de gastos personales para el Régimen Especial de la Provincia de Galápagos (LOREG); fue derogada en 2021. Coherente con el nombre y tipo SI/NO del campo, pero el esquema RDEP es de 2023 (posterior a la derogatoria) y ninguna fuente confirma si el campo conserva efecto vigente hoy.",
       "codeChange": "La ayuda en pantalla de ec_rdep_ben_galpg ahora cita ambas resoluciones y el límite de confianza explícitamente, en vez de decir 'sin documentación'. Se mantiene NO como valor por defecto.",
-      "confidenceNote": "No se encontró el texto de una ficha técnica o resolución que documente el campo benGalpg por su nombre exacto; la relación con LOREG es inferida de la coincidencia temática y del nombre del campo."
+      "confidenceNote": "No se encontró el texto de una ficha técnica o resolución que documente el campo benGalpg por su nombre exacto; la relación con LOREG es inferida de la coincidencia temática y del nombre del campo. SUPERADO por correction2026: fuente primaria directa confirma el ajuste IPCEG vigente para 2026."
     }
+  },
+  "correction2026": {
+    "recordedAt": "2026-09-13T20:20:00.000Z",
+    "prompted": "El titular aportó el mecanismo 2026 (18% sobre canasta básica de enero según cargas familiares, factor IPCEG 1.803 en Galápagos), contradiciendo el tope por categoría (0.325x/1.3x) implementado en el paso anterior.",
+    "primarySource": {
+      "titulo": "Boletín NAC-COM-26-006 — SRI habilita la proyección de gastos personales 2026 para reducir el Impuesto a la Renta",
+      "url": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/ea002a89-17d8-4cdf-be42-affedbe3f8d8/BOLET%C3%8DN%20006%20-%20SRI%20HABILITA%20LA%20PROYECCI%C3%93N%20DE%20GASTOS%20PERSONALES%202026%20PARA%20REDUCIR%20EL%20IMPUESTO%20A%20LA%20RENTA.pdf",
+      "fecha": "2026-02-06", "leida": true, "metodo": "extracción de texto (PyPDF2), PDF oficial no escaneado",
+      "literal": "la rebaja por gastos personales será del 18%, aplicada sobre el menor valor entre los gastos declarados y el valor de la canasta básica de enero de 2026 (USD 821,80), monto que varía según el número de cargas familiares [...] En Galápagos, el cálculo se ajusta con el Índice de Precios al Consumidor Especial (IPCEG) de 1,803."
+    },
+    "secondarySource": {"titulo": "Factuplan: gastos personales deducibles Ecuador 2026", "usadoPara": "tabla completa de topes por cargas familiares (7 a 20 canastas), consistente con el boletín oficial y con las cifras aportadas por el titular"},
+    "findings": [
+      "No existe tope por categoría desde la reforma de 2023; hay un único tope anual TOTAL que varía solo por cargas familiares.",
+      "parameters['expense_limit'] ya usado por erpec_payroll.engine (5752.60) coincide exactamente con 7 canastas x 821.80 (CBF enero 2026): el motor mensual ya usaba el valor correcto para 0 cargas, pero nunca lo escalaba por cargas familiares del empleado.",
+      "benGalpg (IPCEG 1.803) está confirmado vigente y activo para 2026 por fuente primaria directa, no por la resolución derogada de 2016-2021 encontrada en el paso anterior.",
+      "El Instructivo Formulario 107 usado como fuente secundaria en el incremento anterior es anterior a la reforma de 2023 y describía un mecanismo de topes por categoría ya derogado."
+    ],
+    "codeChange": "annex_rdep.py: eliminados EXPENSE_CAP_RATES/EDUCATION_ART_CULTURE_CAP_RATE; nueva _personal_expense_cap(policy, dependents_count, galapagos) reutiliza expense_limit (sin duplicarlo), escalado por DEPENDENTS_BASKETS (7/9/11/14/17/20) y por GALAPAGOS_IPCEG_FACTOR=1.803; _check_expense_caps ahora valida la suma de las 7 categorías contra ese tope único.",
+    "newGapFound": "erpec_payroll.engine.calculate() sigue sin escalar expense_limit por cargas familiares ni Galápagos: afecta el cálculo MENSUAL real de retención, no solo el anexo RDEP anual. No corregido en este incremento; documentado como tarea propia priorizada por afectar la retención activa."
   },
   "implementation": {
     "atsModule": "erpec_fiscal_native",
@@ -48,19 +67,22 @@
     "rdepNewEmployeeFields": ["ec_rdep_id_type", "ec_rdep_fiscal_residence", "ec_rdep_residence_country", "ec_rdep_ben_galpg", "ec_rdep_establishment"],
     "rdepXsdCopy": "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd",
     "rdepXmlGeneration": "erpec.payroll.rdep.action_generate_xml, validado con lxml.etree.XMLSchema contra el esquema oficial copiado",
-    "unresolvedFieldsSentNeutral": ["benGalpg='NO' por defecto (indicio fuerte de Régimen Especial de Galápagos derogado en 2021; sin confirmación completa de efecto vigente)"],
-    "resolvedThisSession": ["deducEducartcult = expense_education + expense_art_culture (categoría 'Educación, arte y cultura' confirmada por fuentes tributarias secundarias)"],
+    "unresolvedFieldsSentNeutral": ["benGalpg='NO' por defecto para empleados fuera de Galápagos (mecanismo IPCEG 1.803 confirmado vigente 2026 por fuente primaria; el ERP no determina automáticamente la residencia fiscal del empleado)"],
+    "resolvedThisSession": [
+      "deducEducartcult = expense_education + expense_art_culture (categoría 'Educación, arte y cultura' confirmada por fuentes tributarias secundarias, y luego por el Boletín NAC-COM-26-006 primario)",
+      "Tope de gastos personales corregido de por-categoría (0.325x/1.3x fracción básica, mecanismo derogado) a único total por cargas familiares con factor Galápagos, confirmado por el Boletín NAC-COM-26-006 (fuente primaria)"
+    ],
     "businessDataInvented": false
   },
   "tests": {
     "exitCode": 0,
-    "testedAt": "2026-09-13T20:09:00.626187+00:00",
+    "testedAt": "2026-09-13T20:24:24.006461+00:00",
     "modules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
-    "totalTests": 35,
-    "newTestsThisIncrement": 8,
+    "totalTests": 36,
+    "newTestsThisIncrement": 11,
     "failed": 0,
     "errors": 0,
-    "logSha256": "78ebeba7ec1dbcae8210fe0b2b1d350305513dd1bceb2ec8e8e878de1547cdec",
+    "logSha256": "02da3fdab4df596f2e866178f829d5248c8a25895ec2488055e30257163b89d1",
     "runtimePassed": true,
     "payrollMovesAfterConcurrentPost": 1
   },
@@ -99,13 +121,13 @@
     "Catálogo ATS oficial descargado, transcrito y verificado con 6 pruebas de integridad cruzada (voucherTypes<->supportCodes, meses, países, fuente documentada)",
     "Motor de nómina ampliado sin duplicar cálculo: 3 valores expuestos que ya se calculaban, 14 campos nuevos de captura para lo que el motor no puede calcular",
     "XML de vista previa RDEP generado y validado con éxito contra el esquema oficial del SRI (Esquema_RDEP_2023.xsd)",
-    "35/35 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll (incluye la verificación de deducEducartcult/Galápagos) y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
+    "36/36 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll (incluye la corrección del tope único de gastos personales y el factor Galápagos) y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
     "Agregador probado en vivo contra la demo: 3 empleados consolidados para 2026; generación de XML correctamente bloqueada por RUC vacío de la demo, sin usar datos inventados",
     "Instalación en demo con respaldo previo"
   ],
   "pending": [
     "ATS: clasificación de sustento tributario por documento de compra/venta (dato inexistente en el ERP); generación de las secciones compras/ventas/anulados/exportaciones/recap/fideicomisos/rendFinancieros",
-    "RDEP: confirmar benGalpg contra la ficha técnica narrativa del RDEP (no leída, PDF escaneado) o el software DIMM; deducEducartcult ya quedó razonablemente confirmado por fuentes secundarias",
+    "PRIORITARIO — erpec_payroll.engine.calculate() no escala expense_limit por cargas familiares del empleado ni por Galápagos: subestima el tope real de gastos personales en el cálculo MENSUAL de retención para empleados con cargas o en Galápagos, no solo en el anexo RDEP",
     "RDEP: intGrabGen sigue siendo un campo de captura manual sin fuente primaria confirmada de su significado exacto",
     "Canal de presentación ante el SRI (el trámite oficial solo documenta software de escritorio DIMM/APS y FTP, no una API)",
     "Ningún anexo se ha presentado, firmado ni homologado ante el SRI"

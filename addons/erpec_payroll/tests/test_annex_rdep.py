@@ -173,19 +173,34 @@ class RdepAnnexCase(TransactionCase):
         tree = etree.fromstring(base64.b64decode(annex.xml_file))
         self.assertEqual(tree.find('retRelDep/datRetRelDep/sisSalNet').text, '2')
 
-    def test_expense_caps_enforced(self):
+    def test_expense_caps_enforced_as_single_total_by_dependents(self):
+        # Boletín NAC-COM-26-006 (SRI): tope único total, sin tope por categoría,
+        # según cargas familiares (0 cargas = expense_limit tal cual, 7 canastas).
         period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-9', 'policy_id': self.policy.id, 'month': 9, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
-        fraction = json.loads(self.policy.parameters)['tax_brackets'][0]['to']
+        cap = json.loads(self.policy.parameters)['expense_limit']
         with self.assertRaises(ValidationError), self.cr.savepoint():
-            period.line_ids.write({'expense_housing': fraction * 0.325 + 1})
-        period.line_ids.write({'expense_housing': fraction * 0.325})
+            period.line_ids.write({'expense_housing': cap / 2 + 1, 'expense_health': cap / 2 + 1})
+        period.line_ids.write({'expense_housing': cap / 2, 'expense_health': cap / 2})
 
-    def test_education_and_art_culture_share_combined_cap(self):
-        # Desde la reforma de 2023 el SRI reporta educación y arte/cultura como una
-        # sola categoría (deducEducartcult); el tope 0.325x se aplica a su suma.
+    def test_expense_cap_scales_with_dependents_and_galapagos(self):
         period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-11', 'policy_id': self.policy.id, 'month': 11, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
-        fraction = json.loads(self.policy.parameters)['tax_brackets'][0]['to']
-        cap = fraction * 0.325
+        baseline = json.loads(self.policy.parameters)['expense_limit']
+        self.employee.write({'ec_rdep_dependents_count': 2})  # 11 canastas en vez de 7
+        cap_with_dependents = baseline / 7 * 11
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            period.line_ids.write({'expense_food': cap_with_dependents + 1})
+        period.line_ids.write({'expense_food': cap_with_dependents})
+        self.employee.write({'ec_rdep_ben_galpg': 'SI'})
+        cap_galapagos = cap_with_dependents * 1.803
+        period.line_ids.write({'expense_food': cap_galapagos})
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            period.line_ids.write({'expense_food': cap_galapagos + 1})
+
+    def test_education_and_art_culture_merge_for_reporting_not_for_cap(self):
+        # Educación y arte/cultura se fusionan en deducEducartcult para el XML,
+        # pero el tope ya no es por categoría: comparten el tope único total.
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-13', 'policy_id': self.policy.id, 'month': 4, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
+        cap = json.loads(self.policy.parameters)['expense_limit']
         period.line_ids.write({'expense_education': cap / 2, 'expense_art_culture': cap / 2})
         with self.assertRaises(ValidationError), self.cr.savepoint():
             period.line_ids.write({'expense_art_culture': cap / 2 + 1})

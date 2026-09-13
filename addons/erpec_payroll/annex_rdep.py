@@ -26,21 +26,39 @@ autoridad SRI involucrados.
 `deducEducartcult` corresponde a la categoría "Educación, arte y cultura"
 que el SRI usa desde la reforma tributaria de 2023 para agrupar en una sola
 categoría lo que antes eran gastos de educación y de arte/cultura por
-separado (confirmado por múltiples guías tributarias post-reforma; no por la
-ficha técnica narrativa del RDEP, que sigue sin leerse). Los campos legados
-`deducEduca`/`deducArtycult` (opcionales en el esquema) ya no se usan para
-períodos corrientes y se omiten en la vista previa.
+separado. Confirmado directamente por el Boletín NAC-COM-26-006 del SRI
+(06-02-2026), que lista "alimentación, educación, arte y cultura, salud,
+vestimenta, vivienda y turismo nacional" como los rubros vigentes para la
+proyección de gastos personales 2026. Los campos legados `deducEduca`/
+`deducArtycult` (opcionales en el esquema) ya no se usan para períodos
+corrientes y se omiten en la vista previa.
 
-`benGalpg` corresponde al beneficio del Régimen Especial de la Provincia de
-Galápagos (LOREG): la Resolución NAC-DGERCGC16-00000443 (Registro Oficial
-Sup. 874, 01-11-2016) estableció una tabla diferenciada de deducción de
-gastos personales para ese régimen, derogada por la Resolución
-NAC-DGERCGC21-00000049 (Registro Oficial 596, 13-12-2021). No está
-confirmado si el campo conserva un efecto vigente para períodos posteriores
-a la derogatoria o si solo importa para corregir períodos 2016-2021; se
-mantiene como declaración explícita del responsable de nómina, con "NO"
-como valor por defecto razonable dado que el beneficio diferenciado está
-derogado, no como un hecho confirmado para cada empleado.
+`benGalpg` corresponde al Régimen Especial de la Provincia de Galápagos
+(LOREG). El mismo Boletín NAC-COM-26-006 confirma que, para el ejercicio
+fiscal 2026, "en Galápagos el cálculo se ajusta con el Índice de Precios al
+Consumidor Especial (IPCEG) de 1,803" sobre el tope de gastos personales.
+Esto es vigente y activo para 2026, no derogado: una resolución anterior
+específica de Galápagos (NAC-DGERCGC16-00000443, 2016) fue derogada en 2021
+(NAC-DGERCGC21-00000049), pero el ajuste por IPCEG documentado en el
+boletín de 2026 es el mecanismo actualmente vigente. El campo se declara
+explícitamente por empleado ("NO" por defecto para quienes no tributan en
+Galápagos) porque el ERP no determina automáticamente la residencia fiscal
+del empleado en el régimen especial.
+
+Importante: desde la reforma de 2023 el SRI ya NO aplica un tope individual
+por categoría de gasto personal (el Instructivo del Formulario 107, de
+origen anterior a esa reforma, describía topes por categoría que ya no
+rigen). El tope vigente es único y total, expresado en canastas básicas
+familiares (CBF) según las cargas familiares del empleado (7 canastas sin
+cargas, hasta 20 con 5 o más), multiplicado por el factor IPCEG en
+Galápagos. `parameters['expense_limit']` de la política de nómina ya
+representa ese tope de 0 cargas (verificado: 5752.60 = 7 × 821.80, CBF de
+enero de 2026) y se reutiliza aquí sin duplicarlo, escalándolo según cargas
+y Galápagos en `_personal_expense_cap`. El motor de cálculo mensual
+(erpec_payroll.engine) sigue usando ese mismo tope de 0 cargas sin escalar
+por cargas familiares del empleado; queda como brecha pendiente documentada
+en docs/ALCANCE_ATS_RDEP.md, no corregida en este incremento porque afecta
+el cálculo mensual de retención, no solo el anexo RDEP.
 """
 import json
 import unicodedata
@@ -72,21 +90,31 @@ RDEP_LINE_INPUT_KEYS = (
     'other_general_interest_income', 'expense_housing', 'expense_health', 'expense_education',
     'expense_food', 'expense_clothing', 'expense_art_culture', 'expense_tourism',
 )
-# Tramo 0 de tax_brackets (from=0) es la fracción básica exenta del IR; los
-# topes de gastos personales del Instructivo Formulario 107 se expresan como
-# múltiplos suyos: vivienda/educación/alimentación/vestimenta 0.325 veces,
-# salud 1.3 veces.
-# expense_education y expense_art_culture comparten un solo tope: desde la reforma
-# tributaria de 2023 el SRI las reporta como una única categoría "Educación, arte y
-# cultura" (deducEducartcult), no como dos categorías independientes.
-EXPENSE_CAP_RATES = {'expense_housing': 0.325, 'expense_food': 0.325, 'expense_clothing': 0.325, 'expense_health': 1.3}
-EDUCATION_ART_CULTURE_CAP_RATE = 0.325
+EXPENSE_CATEGORY_KEYS = ('expense_housing', 'expense_health', 'expense_education', 'expense_art_culture', 'expense_food', 'expense_clothing', 'expense_tourism')
+# Boletín NAC-COM-26-006 (SRI, 06-02-2026) y fuentes tributarias consistentes con él:
+# desde la reforma de 2023 ya NO hay tope individual por categoría de gasto personal.
+# Hay un solo tope anual total, expresado en canastas básicas familiares (CBF) de enero
+# del año, que crece según las cargas familiares del contribuyente. parameters['expense_limit']
+# ya representa el tope de 0 cargas (7 canastas: 5752.60 = 7 x 821.80 para 2026); se escala
+# aquí según cargas sin duplicar ese parámetro. En Galápagos el tope se multiplica además por
+# el Índice de Precios al Consumidor Especial de Galápagos (IPCEG), 1.803 según el mismo boletín.
+DEPENDENTS_BASKETS = {0: 7, 1: 9, 2: 11, 3: 14, 4: 17}
+DEPENDENTS_BASKETS_MAX = 20  # 5 o más cargas
+BASELINE_BASKETS = 7  # cargas=0, la base sobre la que ya está expresado expense_limit
+GALAPAGOS_IPCEG_FACTOR = 1.803
 
 
 def _basic_fraction(policy):
     params = json.loads(policy.parameters)
     brackets = [bracket for bracket in params['tax_brackets'] if bracket['from'] == 0]
     return brackets[0]['to']
+
+
+def _personal_expense_cap(policy, dependents_count, galapagos):
+    baseline = json.loads(policy.parameters)['expense_limit']
+    baskets = DEPENDENTS_BASKETS.get(dependents_count, DEPENDENTS_BASKETS_MAX)
+    cap = baseline / BASELINE_BASKETS * baskets
+    return cap * GALAPAGOS_IPCEG_FACTOR if galapagos == 'SI' else cap
 
 
 def _ascii_name(value):
@@ -139,7 +167,7 @@ class Employee(models.Model):
         help='Campo paisResidencia: código SRI de 3 dígitos. 593 = Ecuador. Catálogo completo de países en addons/erpec_fiscal_native/ats_catalog.py (COUNTRY_CODES).')
     ec_rdep_ben_galpg = fields.Selection(
         BEN_GALPG, string='Beneficiario Régimen Especial de Galápagos (RDEP)', default='NO',
-        help='Campo benGalpg del esquema SRI. Corresponde al Régimen Especial de la Provincia de Galápagos (LOREG): la tabla diferenciada de gastos personales de la Resolución NAC-DGERCGC16-00000443 (2016) fue derogada por la NAC-DGERCGC21-00000049 (2021). No está confirmado si el campo conserva efecto vigente después de la derogatoria; "NO" es el valor por defecto razonable, no un hecho verificado para cada empleado.')
+        help='Campo benGalpg del esquema SRI: indica si el empleado tributa bajo el Régimen Especial de la Provincia de Galápagos (LOREG). Confirmado vigente para 2026 por el Boletín NAC-COM-26-006 del SRI (06-02-2026): en Galápagos, el tope de gastos personales se multiplica por el Índice de Precios al Consumidor Especial de Galápagos (IPCEG), 1.803. Marcar SI aplica el factor 1.803 al tope de gastos personales de este empleado; "NO" es el valor por defecto para empleados fuera de Galápagos.')
     ec_rdep_establishment = fields.Char('Establecimiento (RDEP)', help='Campo estab: 3 dígitos, código de establecimiento del RUC donde trabaja el empleado.')
 
     @api.constrains('ec_rdep_disability_percentage')
@@ -176,13 +204,13 @@ class Line(models.Model):
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (RDEP)', help='Campo valRetAsuOtrosEmpls.')
     employer_assumed_tax = fields.Float('Impuesto a la renta asumido por este empleador (RDEP)', help='Campos impRentEmpl/valImpAsuEsteEmpl; solo aplica a contratos de ingreso neto (casillero 381 del F107).')
     other_general_interest_income = fields.Float('Otros intereses/ingresos gravados generales (RDEP)', help='Campo intGrabGen del esquema SRI; su significado no está confirmado por ninguna fuente primaria revisada el 13-09-2026. Completar solo tras validar con el contador o la ficha técnica.')
-    expense_housing = fields.Float('Gastos personales · vivienda (RDEP)', help='Campo deducVivienda; tope legal 0.325 veces la fracción básica exenta.')
-    expense_health = fields.Float('Gastos personales · salud (RDEP)', help='Campo deducSalud; tope legal 1.3 veces la fracción básica exenta.')
-    expense_education = fields.Float('Gastos personales · educación (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_art_culture. Tope combinado legal 0.325 veces la fracción básica exenta.')
-    expense_food = fields.Float('Gastos personales · alimentación (RDEP)', help='Campo deducAliement; tope legal 0.325 veces la fracción básica exenta.')
-    expense_clothing = fields.Float('Gastos personales · vestimenta (RDEP)', help='Campo deducVestim; tope legal 0.325 veces la fracción básica exenta.')
-    expense_art_culture = fields.Float('Gastos personales · arte y cultura (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_education. Tope combinado legal 0.325 veces la fracción básica exenta.')
-    expense_tourism = fields.Float('Gastos personales · turismo (RDEP)', help='Campo deduccionTurismo; tope legal no confirmado en las fuentes revisadas.')
+    expense_housing = fields.Float('Gastos personales · vivienda (RDEP)', help='Campo deducVivienda. No tiene tope individual; el tope es único y total (ver la categoría "Educación, arte y cultura" para la referencia normativa completa).')
+    expense_health = fields.Float('Gastos personales · salud (RDEP)', help='Campo deducSalud. No tiene tope individual; comparte el tope único y total con las demás categorías.')
+    expense_education = fields.Float('Gastos personales · educación (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_art_culture. Desde la reforma de 2023 no hay tope por categoría: el Boletín NAC-COM-26-006 del SRI fija un tope único anual según cargas familiares (7 a 20 canastas básicas familiares), multiplicado por 1.803 en Galápagos (IPCEG).')
+    expense_food = fields.Float('Gastos personales · alimentación (RDEP)', help='Campo deducAliement. No tiene tope individual; comparte el tope único y total con las demás categorías.')
+    expense_clothing = fields.Float('Gastos personales · vestimenta (RDEP)', help='Campo deducVestim. No tiene tope individual; comparte el tope único y total con las demás categorías.')
+    expense_art_culture = fields.Float('Gastos personales · arte y cultura (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_education. Ver esa ayuda para el tope único total vigente.')
+    expense_tourism = fields.Float('Gastos personales · turismo nacional (RDEP)', help='Campo deduccionTurismo. No tiene tope individual; comparte el tope único y total con las demás categorías.')
 
     def _copy_inputs(self):
         values = super()._copy_inputs()
@@ -195,17 +223,15 @@ class Line(models.Model):
             if any(line[key] < 0 for key in RDEP_LINE_INPUT_KEYS):
                 raise ValidationError('Las novedades del RDEP deben ser no negativas.')
 
-    @api.constrains(*EXPENSE_CAP_RATES, 'expense_education', 'expense_art_culture')
+    @api.constrains(*EXPENSE_CATEGORY_KEYS)
     def _check_expense_caps(self):
+        # Boletín NAC-COM-26-006 (SRI): un solo tope anual total según cargas
+        # familiares, no un tope por categoría (ver constante DEPENDENTS_BASKETS).
         for line in self:
-            fraction = _basic_fraction(line.period_id.policy_id)
-            for key, rate in EXPENSE_CAP_RATES.items():
-                if line[key] > fraction * rate:
-                    raise ValidationError('%s supera el tope legal (%.2f veces la fracción básica exenta) del Instructivo Formulario 107.' % (line._fields[key].string, rate))
-            # Educación y arte/cultura comparten un solo tope desde la reforma de 2023:
-            # el SRI las reporta como una única categoría (deducEducartcult).
-            if line.expense_education + line.expense_art_culture > fraction * EDUCATION_ART_CULTURE_CAP_RATE:
-                raise ValidationError('Educación + arte y cultura supera el tope legal combinado (%.3f veces la fracción básica exenta).' % EDUCATION_ART_CULTURE_CAP_RATE)
+            total = sum(line[key] for key in EXPENSE_CATEGORY_KEYS)
+            cap = _personal_expense_cap(line.period_id.policy_id, line.employee_id.ec_rdep_dependents_count, line.employee_id.ec_rdep_ben_galpg)
+            if total > cap:
+                raise ValidationError('El total de gastos personales (%.2f) supera el tope anual (%.2f) según las cargas familiares declaradas.' % (total, cap))
 
 
 class RdepAnnex(models.Model):
@@ -221,9 +247,10 @@ class RdepAnnex(models.Model):
     digest = fields.Char('SHA256 del XML', readonly=True)
     pending_notice = fields.Text('Pendiente', readonly=True, default=(
         'Vista previa interna del anexo RDEP; no se presenta ante el SRI ni se homologa. '
-        'benGalpg (Régimen Especial de Galápagos, LOREG) se declara por empleado con "NO" por defecto, '
-        'ya que la tabla diferenciada de gastos personales de ese régimen (Resolución NAC-DGERCGC16-00000443) '
-        'está derogada desde 2021; no está confirmado si el campo conserva otro efecto vigente. '
+        'El tope de gastos personales usado aquí es único y total según cargas familiares '
+        '(Boletín NAC-COM-26-006 del SRI), con el factor IPCEG 1.803 para empleados de Galápagos '
+        '(campo benGalpg). El motor mensual de nómina sigue sin escalar ese tope por cargas familiares; '
+        'es una brecha pendiente documentada, no corregida en este incremento. '
         'Revisa docs/ALCANCE_ATS_RDEP.md antes de continuar.'))
     _sql_constraints = [('company_year_unique', 'unique(company_id,year)', 'Ya existe un agregador para esta empresa y año.')]
 
