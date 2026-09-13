@@ -15,7 +15,7 @@ def call(model, method, args, kwargs=None):
 
 home = call('erpec.workspace','action_home',[])
 arch = call('erpec.workspace','get_view',[],{'view_id':home['views'][0][0],'view_type':'form'})['arch']
-assert 'Centro de trabajo' in arch and 'edit="false"' in arch
+assert 'Tu espacio de trabajo' in arch and 'edit="false"' in arch
 assert 'create' not in home['context'] and 'edit' not in home['context']
 results = []
 for area in ['sales','purchases','inventory','imports','manufacturing','workorders','invoices','bills','payroll','fiscal']:

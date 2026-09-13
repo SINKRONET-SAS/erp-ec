@@ -60,13 +60,14 @@ def prepare():
     return directory
 
 def test(directory):
-    command=[sys.executable,str(SOURCE/'odoo-bin'),'-c',str(directory/'odoo.conf'),'-i',','.join(MODULES),'-u',','.join(MODULES),'--test-enable','--test-tags',','.join('/'+module for module in MODULES),'--stop-after-init','--no-http']
+    test_log=directory/('operational-tests-'+datetime.datetime.now().strftime('%Y%m%d-%H%M%S')+'.log')
+    command=[sys.executable,str(SOURCE/'odoo-bin'),'-c',str(directory/'odoo.conf'),'-i',','.join(MODULES),'-u',','.join(MODULES),'--test-enable','--test-tags',','.join('/'+module for module in MODULES),'--stop-after-init','--no-http','--logfile',str(test_log)]
     before=file_hashes()
-    result=subprocess.run(command)
+    result=subprocess.run(command,env={**os.environ,'PYTHONUTF8':'1','PYTHONIOENCODING':'utf-8'})
     if before!=file_hashes():
         raise RuntimeError('Los archivos cambiaron mientras se ejecutaban las pruebas; repetir antes de instalar')
-    shutil.copyfile(directory/'tests.log',directory/'unit-tests.log')
-    report={'logFile':str(directory/'unit-tests.log'),'exitCode':result.returncode,'directory':str(directory),'testedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'modules':MODULES,'fileHashes':file_hashes(),'logSha256':hashlib.sha256((directory/'tests.log').read_bytes()).hexdigest()}
+    shutil.copyfile(test_log,directory/'unit-tests.log')
+    report={'logFile':str(directory/'unit-tests.log'),'exitCode':result.returncode,'directory':str(directory),'testedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'modules':MODULES,'fileHashes':file_hashes(),'logSha256':hashlib.sha256(test_log.read_bytes()).hexdigest()}
     write(STATE/'operational-test-result.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps({'exitCode':result.returncode,'directory':str(directory)}),flush=True)
     sys.exit(result.returncode)

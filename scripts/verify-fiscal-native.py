@@ -11,7 +11,7 @@ workspace_mode = '--workspace' in sys.argv
 modules=['erpec_workspace','erpec_treasury'] if closeout_mode else ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
 prefix = 'closeout' if closeout_mode else 'workspace' if workspace_mode else 'fiscal-native'
 def hashes():
-    return {p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for m in modules for p in (ROOT/'addons'/m).rglob('*') if p.is_file() and p.suffix in ('.py','.xml','.csv','.xsd')}
+    return {p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for m in modules for p in (ROOT/'addons'/m).rglob('*') if p.is_file() and p.suffix in ('.py','.xml','.csv','.xsd','.js','.scss')}
 before=hashes();log=directory/(prefix+'-tests-'+datetime.datetime.now().strftime('%Y%m%d-%H%M%S')+'.log')
 result=subprocess.run([sys.executable,str(verify.SOURCE/'odoo-bin'),'-c',str(directory/'odoo.conf'),'-i',','.join(modules),'-u',','.join(modules),'--test-enable','--test-tags',','.join('/'+m for m in modules),'--stop-after-init','--no-http','--logfile',str(log)],env={**os.environ,'PYTHONUTF8':'1','PYTHONIOENCODING':'utf-8'})
 if before!=hashes():raise RuntimeError('Los archivos cambiaron durante las pruebas')

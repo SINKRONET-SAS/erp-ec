@@ -82,7 +82,11 @@ class TreasuryCase(TransactionCase):
                 'plan_id':plan.id,'company_id':self.env.company.id})
             values.append((0,0,{'employee_id':employee.id,'partner_id':partner.id,'analytic_id':analytic.id,
                 'start_date':'2025-01-01','wage':wage,'approved':True}))
-        period=self.env['erpec.payroll.period'].create({'name':'Nómina de ensayo julio','policy_id':policy.id,'month':7,'line_ids':values})
+        # Convivir con cierres de la copia sin alterar períodos ya contabilizados.
+        used = self.env['erpec.payroll.period'].search([('company_id', '=', self.env.company.id), ('year', '=', policy.year)]).mapped('month')
+        available = [month for month in range(1, 13) if month not in used]
+        self.assertTrue(available, 'La copia necesita un mes libre para el escenario de tesorería.')
+        period=self.env['erpec.payroll.period'].create({'name':'Nómina de ensayo tesorería','policy_id':policy.id,'month':available[0],'line_ids':values})
         period.action_calculate();period.action_close();period.action_post()
         return period.with_user(self.manager)
 

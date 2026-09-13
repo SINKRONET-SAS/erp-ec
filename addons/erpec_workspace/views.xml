@@ -2,10 +2,10 @@
   <record id="home_form" model="ir.ui.view">
     <field name="name">erpec.workspace.home</field><field name="model">erpec.workspace</field>
     <field name="arch" type="xml">
-      <form create="false" edit="false" delete="false" duplicate="false">
+      <form create="false" edit="false" delete="false" duplicate="false" class="erpec_home">
         <sheet>
-          <h1>Centro de trabajo</h1>
-          <p class="text-muted">Elige un área para continuar. Los accesos dependen de tu perfil.</p>
+          <div class="erpec_home_intro"><span class="erpec_eyebrow">ERP EC · Gestión empresarial</span><h1>Tu espacio de trabajo</h1>
+          <p class="text-muted">Continúa con las tareas de tu equipo. Usa Áreas para cambiar de proceso en cualquier momento.</p></div>
           <group><field name="company_id" readonly="1" options="{'no_open': True}"/></group>
           <div class="row g-3 mb-4">
             <div class="col-12 col-sm-6" groups="sales_team.group_sale_salesman,account.group_account_invoice"><div class="border rounded p-3 h-100">
@@ -47,7 +47,7 @@
     </field>
   </record>
   <record id="home_window" model="ir.actions.act_window"><field name="name">Inicio · ERP EC</field><field name="res_model">erpec.workspace</field><field name="view_mode">form</field><field name="view_id" ref="home_form"/></record>
-  <record id="home_action" model="ir.actions.server"><field name="name">Inicio · ERP EC</field><field name="model_id" ref="erpec_base.model_erpec_workspace"/><field name="state">code</field><field name="code">action = model.action_home()</field></record>
+  <record id="home_action" model="ir.actions.server"><field name="name">Inicio · ERP EC</field><field name="model_id" ref="erpec_base.model_erpec_workspace"/><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/><field name="state">code</field><field name="code">action = model.action_home()</field></record>
   <record id="erpec_base.suite_root" model="ir.ui.menu"><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/></record>
   <record id="erpec_operations.operation_menu" model="ir.ui.menu"><field name="name">Inicio</field><field name="action" ref="home_action"/><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/></record>
   <menuitem id="sales_menu" name="Ventas" parent="erpec_base.suite_root" action="sale.action_quotations" sequence="5" groups="sales_team.group_sale_salesman"/>

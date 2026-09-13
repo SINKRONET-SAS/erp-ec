@@ -147,6 +147,7 @@ class ManufacturingCase(TransactionCase):
     def test_partial_operations_operator_and_supervisor(self):
         company=self.env.company
         operator=new_test_user(self.env,login='partial_operator',groups='mrp.group_mrp_user,mrp.group_mrp_routings,mrp.group_mrp_workorder_dependencies',company_id=company.id,company_ids=[(6,0,company.ids)])
+        operator.email = False
         supervisor=new_test_user(self.env,login='partial_supervisor',groups='mrp.group_mrp_manager,mrp.group_mrp_routings,mrp.group_mrp_workorder_dependencies',company_id=company.id,company_ids=[(6,0,company.ids)])
         center=self.env['mrp.workcenter'].with_user(supervisor).create({'name':'Centro compartido','costs_hour':60})
         self.bom.allow_operation_dependencies=True
@@ -160,7 +161,22 @@ class ManufacturingCase(TransactionCase):
             stage.button_start()
             with self.assertRaisesRegex(UserError,'motivo'):stage.button_pending()
             stage.erpec_pause_reason='Revisión de herramienta por operario'
-            stage.button_pending();stage.button_pending();stage.button_start();stage.button_finish()
+            stage.button_pending();stage.button_pending()
+            self.assertFalse(stage.is_user_working)
+            self.assertTrue(stage.erpec_user_paused)
+            self.assertFalse(stage.with_user(supervisor).erpec_user_paused)
+            maintenance = self.env['mrp.workcenter.productivity'].create({'workcenter_id': center.id, 'user_id': supervisor.id, 'loss_id': self.env.ref('erpec_manufacturing.pause_loss').id, 'description': 'Bloqueo de mantenimiento ajeno'})
+            with self.assertRaises(UserError), self.cr.savepoint():
+                stage.button_start()
+            self.assertTrue(stage.erpec_user_paused)
+            maintenance.date_end = fields.Datetime.now()
+            note = order.message_ids.filtered(lambda item: 'Pausa en ' in str(item.body))[:1]
+            self.assertTrue(note.is_internal)
+            self.assertEqual(note.author_id, operator.partner_id)
+            self.assertFalse(note.notification_ids)
+            stage.button_start()
+            self.assertFalse(stage.erpec_user_paused)
+            stage.button_finish()
             self.assertFalse(stage.time_ids.filtered(lambda item:not item.date_end))
         self.finish(order.with_user(supervisor),1,backorder=True)
         remaining=self.env['mrp.production'].search([('procurement_group_id','=',order.procurement_group_id.id),('id','!=',order.id)])
@@ -169,7 +185,9 @@ class ManufacturingCase(TransactionCase):
         self.assertEqual(sum(remaining.move_raw_ids.mapped('product_uom_qty')),2)
         remaining.qty_producing=1;remaining._set_qty_producing()
         for stage in remaining.workorder_ids.sorted('id').with_user(operator):
-            stage.button_start();stage.button_finish()
+            stage.button_start()
+            self.assertFalse(stage.erpec_user_paused)
+            stage.button_finish()
         self.finish(remaining.with_user(supervisor),1)
         self.assertEqual((order|remaining).mapped('state'),['done','done'])
         self.assertEqual(self.raw.qty_available,0);self.assertEqual(self.finished.qty_available,2)
@@ -178,5 +196,9 @@ class ManufacturingCase(TransactionCase):
         for user in (operator,supervisor):
             arch=self.env['mrp.workorder'].with_user(user).get_view(view_type='form')['arch']
             self.assertIn('erpec_pause_reason',arch)
+            self.assertIn('Reanudar operación', arch)
+            for view in ['mrp.mrp_production_workorder_tree_editable_view', 'mrp.mrp_production_workorder_tree_editable_view_mo_form']:
+                tree = self.env['mrp.workorder'].with_user(user).get_view(view_id=self.env.ref(view).id, view_type='list')['arch']
+                self.assertIn('not erpec_user_paused', tree)
         with self.assertRaises(AccessError):
             self.env['account.move'].with_user(operator).search_count([])

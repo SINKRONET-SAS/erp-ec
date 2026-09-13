@@ -1,0 +1,19 @@
+<templates xml:space="preserve">
+  <t t-name="erpec_workspace.ProductShell" t-inherit="web.NavBar" t-inherit-mode="extension">
+    <xpath expr="//nav" position="attributes"><attribute name="class" add="erpec_navbar" separator=" "/></xpath>
+    <xpath expr="//DropdownItem[contains(@class, 'o_menu_brand')]" position="attributes"><attribute name="t-if">!this.ui.isSmall and currentApp and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
+    <xpath expr="//t[@t-call='web.NavBar.SectionsMenu']" position="attributes"><attribute name="t-if">currentAppSections.length and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
+    <xpath expr="//t[@t-call='web.NavBar.AppsMenu']" position="before">
+      <button t-if="erpecHomeMenu" class="erpec_brand" title="Volver al inicio de ERP EC" aria-label="ERP EC · Inicio" t-on-click="erpecOpenHome"><strong>ERP EC</strong><span>SINKRONET</span></button>
+      <Dropdown t-if="erpecSections.length">
+        <button class="erpec_areas">Áreas <i class="fa fa-angle-down ms-1" aria-hidden="true"/></button>
+        <t t-set-slot="content">
+          <t t-call="web.NavBar.SectionsMenu.Dropdown.MenuSlot">
+            <t t-set="items" t-value="erpecSections"/>
+            <t t-set="decalage" t-value="16"/>
+          </t>
+        </t>
+      </Dropdown>
+    </xpath>
+  </t>
+</templates>

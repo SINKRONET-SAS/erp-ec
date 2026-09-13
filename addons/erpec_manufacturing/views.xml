@@ -15,6 +15,22 @@
   <record id="workorder_pause_reason" model="ir.ui.view">
     <field name="name">erpec.workorder.pause.reason</field><field name="model">mrp.workorder</field>
     <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
-    <field name="arch" type="xml"><xpath expr="//sheet" position="inside"><group string="Pausa documentada"><field name="erpec_pause_reason" placeholder="Explica el motivo antes de pausar"/><field name="erpec_downtime"/></group></xpath></field>
+    <field name="arch" type="xml"><xpath expr="//header" position="inside"><field name="erpec_user_paused" invisible="1"/><button name="button_start" type="object" string="Reanudar operación" class="btn-primary" invisible="not erpec_user_paused or state in ['done', 'cancel']"/></xpath><xpath expr="//sheet" position="inside"><group string="Pausa documentada"><field name="erpec_pause_reason" placeholder="Explica el motivo antes de pausar"/><field name="erpec_downtime"/></group></xpath></field>
+  </record>
+  <record id="workorder_resume_list" model="ir.ui.view">
+    <field name="name">erpec.workorder_resume_list</field><field name="model">mrp.workorder</field>
+    <field name="inherit_id" ref="mrp.mrp_production_workorder_tree_editable_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='state']" position="after"><field name="erpec_user_paused" column_invisible="True"/></xpath>
+      <xpath expr="//button[@name='button_start']" position="attributes"><attribute name="invisible">production_state in ('draft', 'done', 'cancel') or (working_state == 'blocked' and not erpec_user_paused) or state in ('done', 'cancel') or is_user_working</attribute><attribute name="string">Iniciar / reanudar</attribute><attribute name="title">Iniciar o reanudar operación</attribute></xpath>
+    </field>
+  </record>
+  <record id="workorder_resume_mo" model="ir.ui.view">
+    <field name="name">erpec.workorder_resume_mo</field><field name="model">mrp.workorder</field>
+    <field name="inherit_id" ref="mrp.mrp_production_workorder_tree_editable_view_mo_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='state']" position="after"><field name="erpec_user_paused" column_invisible="True"/></xpath>
+      <xpath expr="//button[@name='button_start']" position="attributes"><attribute name="invisible">production_state in ('draft', 'done', 'cancel') or (working_state == 'blocked' and not erpec_user_paused) or state in ('done', 'cancel') or is_user_working</attribute><attribute name="string">Iniciar / reanudar</attribute><attribute name="title">Iniciar o reanudar operación</attribute></xpath>
+    </field>
   </record>
 </odoo>

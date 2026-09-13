@@ -24,7 +24,7 @@ class WorkspaceCase(TransactionCase):
         user = self.env['res.users'].create({'name': 'Consulta ensayo', 'login': 'workspace_test_reader',
             'groups_id': [(6, 0, [self.env.ref('base.group_user').id])]})
         model = self.env['erpec.workspace'].with_user(user)
-        action = model.action_home()
+        action = self.env.ref('erpec_workspace.home_action').with_user(user).run()
         record = model.browse(action['res_id'])
         self.assertTrue(record.read(['company_id']))
         with self.assertRaises(AccessError):
@@ -47,3 +47,5 @@ class WorkspaceCase(TransactionCase):
             'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])]})
         with self.assertRaises(AccessError):
             self.env['erpec.workspace'].with_user(user).action_home()
+        with self.assertRaises(AccessError):
+            self.env.ref('erpec_workspace.home_action').with_user(user).run()

@@ -34,6 +34,15 @@ class ImportCase(TransactionCase):
         self.bill.action_post()
         self.charge = self.env['erpec.import.charge'].create({'import_id': self.dossier.id, 'name': 'Flete', 'kind': 'capital', 'bill_line_id': self.bill.invoice_line_ids.id})
 
+    def set_rate(self, currency, date, value):
+        # La transacción de prueba restaura la tasa real existente al terminar cada caso.
+        rates = self.env['res.currency.rate']
+        rate = rates.search([('currency_id', '=', currency.id), ('name', '=', date), ('company_id', '=', self.env.company.id)])
+        if rate:
+            rate.rate = value
+        else:
+            rates.create({'currency_id': currency.id, 'name': date, 'company_id': self.env.company.id, 'rate': value})
+
     def prepare(self):
         return self.env['stock.landed.cost'].browse(self.dossier.action_prepare_cost()['res_id'])
 
@@ -77,7 +86,7 @@ class ImportCase(TransactionCase):
     def test_currency_and_sold_goods(self):
         euro = self.env.ref('base.EUR')
         euro.active = True
-        self.env['res.currency.rate'].create({'currency_id': euro.id, 'name': fields.Date.today(), 'company_id': self.env.company.id, 'rate': 0.5})
+        self.set_rate(euro, fields.Date.today(), 0.5)
         with self.assertRaises(ValidationError), self.cr.savepoint():
             self.dossier.currency_id = euro
         self.charge.unlink()
@@ -131,7 +140,8 @@ class ImportCase(TransactionCase):
     def test_partial_supplier_payments_and_exchange_difference(self):
         euro=self.env.ref('base.EUR');euro.active=True
         today=fields.Date.today();payment_date=today+timedelta(days=1)
-        self.env['res.currency.rate'].create([{'currency_id':euro.id,'name':today,'company_id':self.env.company.id,'rate':0.5},{'currency_id':euro.id,'name':payment_date,'company_id':self.env.company.id,'rate':0.4}])
+        self.set_rate(euro, today, 0.5)
+        self.set_rate(euro, payment_date, 0.4)
         self.charge.unlink()
         bill=self.bill.copy({'currency_id':euro.id,'invoice_date':today,'l10n_latam_document_number':'001-001-000000033'})
         bill.action_post()

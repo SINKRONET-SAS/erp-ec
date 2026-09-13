@@ -1,0 +1,20 @@
+<odoo>
+  <template id="product_login_layout" inherit_id="web.login_layout" priority="90">
+    <xpath expr="//t[@t-set='no_header']" position="before"><t t-set="title">ERP EC · Acceso</t></xpath>
+    <xpath expr="//div[contains(@t-attf-class, 'o_database_list')]" position="attributes"><attribute name="t-attf-class">card border-0 mx-auto erpec_login_card {{login_card_classes}} o_database_list</attribute><attribute name="style">max-width: 440px;</attribute></xpath>
+    <xpath expr="//div[hasclass('card-body')]/div[1]" position="replace"><div class="erpec_login_identity"><p class="erpec_login_publisher">SINKRONET</p><h1>ERP EC</h1><p>Un espacio para coordinar tu empresa.</p></div></xpath>
+    <xpath expr="//a[@target='_blank']" position="replace"><span class="erpec_login_technology">Tecnología Odoo Community</span></xpath>
+  </template>
+  <template id="product_login" inherit_id="web.login" priority="90">
+    <xpath expr="//owl-component[@name='web.user_switch']" position="replace"/>
+    <xpath expr="//form" position="attributes"><attribute name="t-attf-class">oe_login_form erpec_login_form</attribute></xpath>
+    <xpath expr="//label[@for='login']" position="replace"><label for="login" class="form-label">Usuario o correo electrónico</label></xpath>
+    <xpath expr="//input[@name='login']" position="attributes"><attribute name="placeholder">Tu usuario</attribute></xpath>
+    <xpath expr="//label[@for='password']" position="replace"><label for="password" class="form-label">Contraseña</label></xpath>
+    <xpath expr="//input[@name='password']" position="attributes"><attribute name="placeholder">Tu contraseña</attribute></xpath>
+    <xpath expr="//button[@type='submit'][not(@name)]" position="replace"><button type="submit" class="btn btn-primary">Ingresar al ERP</button></xpath>
+    <xpath expr="//div[hasclass('oe_login_buttons')]" position="after"><p class="erpec_login_help">Usa el acceso asignado por el administrador de tu empresa.</p></xpath>
+    <xpath expr="//a[contains(@t-attf-href, '/web/signup')]" position="replace"><a t-if="signup_enabled" class="btn btn-link btn-sm" t-attf-href="/web/signup?{{ keep_query() }}">Crear una cuenta</a></xpath>
+    <xpath expr="//input[@name='password']" position="after"><a t-if="reset_password_enabled" class="erpec_login_reset" t-attf-href="/web/reset_password?{{ keep_query() }}">Recuperar contraseña</a></xpath>
+  </template>
+</odoo>

@@ -1,0 +1,18 @@
+.erpec_login_card {
+    background: #fff !important; border-radius: 14px; box-shadow: 0 8px 32px rgba(23, 53, 74, .08);
+    .card-body { padding: 36px; }
+    .erpec_login_identity { padding-bottom: 24px; margin-bottom: 22px; border-bottom: 1px solid #e2e9ed; }
+    .erpec_login_publisher { color: #146c70; font-size: 11px; font-weight: 700; letter-spacing: .16em; margin-bottom: 8px; }
+    h1 { color: #17354a; font-size: 34px; font-weight: 700; margin-bottom: 6px; }
+    .erpec_login_identity > p:last-child { color: #526675; margin: 0; }
+    .form-control { min-height: 46px; border-radius: 7px; border-color: #c6d5de; }
+    .form-control:focus { border-color: #146c70; box-shadow: 0 0 0 3px rgba(20, 108, 112, .18); }
+    .form-label { color: #17354a; font-weight: 600; }
+    .btn-primary { background: #146c70; border-color: #146c70; min-height: 46px; border-radius: 7px; font-weight: 600; }
+    .btn-primary:hover { background: #0e5558; border-color: #0e5558; }
+    a { color: #125e65; }
+    .erpec_login_reset { display: inline-block; font-size: 13px; margin-top: 8px; }
+    .erpec_login_help { color: #526675; font-size: 12px; line-height: 1.6; margin-top: 16px; text-align: center; }
+    .erpec_login_technology { color: #526675; font-size: 11px; }
+}
+@media (max-width: 480px) { .erpec_login_card .card-body { padding: 24px; } }

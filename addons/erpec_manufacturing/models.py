@@ -1,4 +1,5 @@
 """Controles operativos sobre fabricación, inventario y tiempos nativos Community."""
+from markupsafe import Markup
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
@@ -33,6 +34,14 @@ class Workorder(models.Model):
     erpec_pause_reason = fields.Char('Motivo de pausa')
     erpec_downtime = fields.Float('Pausa improductiva (min)', compute='_compute_downtime')
 
+    erpec_user_paused = fields.Boolean('Tu operación está pausada', compute='_compute_user_paused')
+
+    @api.depends_context('uid')
+    @api.depends('time_ids.date_end', 'time_ids.erpec_pause', 'time_ids.user_id')
+    def _compute_user_paused(self):
+        for order in self:
+            order.erpec_user_paused = bool(order.time_ids.filtered(lambda item: item.erpec_pause and not item.date_end and item.user_id == self.env.user))
+
     @api.depends('time_ids.duration', 'time_ids.date_end')
     def _compute_downtime(self):
         for order in self:
@@ -63,17 +72,19 @@ class Workorder(models.Model):
     def button_pending(self):
         self._lock_timer()
         for order in self:
+            order.production_id.check_access('write')
             if not (order.erpec_pause_reason or '').strip():
                 raise UserError('Indica el motivo de pausa antes de detener el trabajo.')
             active = order.time_ids.filtered(lambda item: not item.date_end and item.user_id == self.env.user)
             if active.filtered('erpec_pause'):
-                order.production_id.message_post(body='La pausa ya estaba registrada; no se duplica el intervalo.')
+                order.production_id._message_log(body='La pausa ya estaba registrada; no se duplica el intervalo.')
                 continue
             if not active or order.state != 'progress':
                 raise UserError('Inicia el trabajo antes de registrar una pausa.')
             super(Workorder, order).button_pending()
             self.env['mrp.workcenter.productivity'].create({'workorder_id': order.id, 'workcenter_id': order.workcenter_id.id, 'company_id': order.company_id.id, 'user_id': self.env.uid, 'loss_id': self.env.ref('erpec_manufacturing.pause_loss').id, 'erpec_pause': True, 'description': order.erpec_pause_reason})
-            order.production_id.message_post(body='Pausa en %s: %s' % (order.name, order.erpec_pause_reason))
+            # Registro interno sin notificaciones; el operario no necesita correo.
+            order.production_id._message_log(body=Markup('Pausa en %s: %s') % (order.name, order.erpec_pause_reason))
         return True
 
     def button_finish(self):
