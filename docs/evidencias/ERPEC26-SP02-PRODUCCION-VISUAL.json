@@ -1,0 +1,63 @@
+{
+  "database": "ec_operational_7a74b3c051",
+  "orders": [
+    {
+      "id": 15,
+      "name": "WH/MO/00013-001",
+      "state": "done",
+      "produced": 1
+    },
+    {
+      "id": 49,
+      "name": "WH/MO/00013-002",
+      "state": "done",
+      "produced": 1
+    }
+  ],
+  "componentsConsumed": 4,
+  "finishedProduced": 2,
+  "operationsDone": 4,
+  "openIntervals": 0,
+  "checks": [
+    "Dos órdenes terminadas; producción total 2",
+    "Consumo total 4 componentes",
+    "Cuatro operaciones terminadas y ningún intervalo abierto",
+    "RUC demo vacío"
+  ],
+  "limitation": "El contador de la primera operación permaneció abierto desde el 11 de septiembre; su costo no es representativo. No valida venta, reversión ni valoración comercial.",
+  "executedAt": "2026-09-13T21:03:47.708Z",
+  "status": "increment-passed",
+  "visualChecks": [
+    "Operario: rechazo por etapa precedente, pausa con motivo, reanudación y finalización",
+    "Supervisor: parcial 1+1 y cierre de ambas órdenes",
+    "Consulta final de consola del navegador sin errores"
+  ],
+  "serviceChecks": [
+    "Directorio demo rechazado antes de iniciar",
+    "Permiso de sesiones denegado sin espera prolongada",
+    "Arranque/parada con propietario sobre copia explícita",
+    "Selector operational-current.json conservado",
+    "Sintaxis Python válida"
+  ],
+  "regression": {
+    "tests": 7,
+    "failed": 0,
+    "errors": 0,
+    "exitCode": 0,
+    "log": ".cache/windows/operational-tests/ec_operational_7a74b3c051/sp02-regression-owner.log",
+    "logSha256": "629e56f2bfa9d5b1c7f7e7f9ad3e1fe088a435d3ce1d9e1f50075182d0bd574f",
+    "note": "Primer ensayo restringido informó 7/7 pero no terminó; detenido tras comprobar PID/configuración. Repetición bajo propietario terminó con salida 0."
+  },
+  "backup": {
+    "path": ".cache/windows/operational-tests/ec_operational_7a74b3c051/before-sp02-resume.dump",
+    "sha256": "3d4ecc0b4653737567d46e079021ae37140db5e8624f1a707044b1963fe9aad4",
+    "restored": false
+  },
+  "screenshots": {
+    "docs/evidencias/sp02-produccion/01-estado-retomado.png": "d1eeb7b8c4f935972d199ba759261745f34cece0bcda2b61f9ad21178abbc0e8",
+    "docs/evidencias/sp02-produccion/02-pausa-operario.png": "113f36db1f038bce7f29410e697b7bc7a25689b5f6c38fc05755530d655e941f",
+    "docs/evidencias/sp02-produccion/03-parcial-supervisor.png": "218d219a44e91f5c57ac7ba848583b14266c3f08903221a914e4b1a1f31ebb54",
+    "docs/evidencias/sp02-produccion/04-produccion-terminada.png": "5ce49a8863eff79df023f982b2b39dce2123b8e8d01b67dad5615fbb91a26474"
+  },
+  "concurrentGovernance": "La divergencia inicial se registró en ERPEC26-SP02-REANUDACION.json. OP05.5 cerró su propio incremento en 2720b8a; este cierre encadena ese lock vigente y no atribuye sus pruebas a SP02."
+}

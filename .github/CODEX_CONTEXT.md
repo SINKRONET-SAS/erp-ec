@@ -140,3 +140,9 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - `erpec.payroll.line._inputs()` (exclusivo de `calculate()`, nunca de la duplicación de líneas en `action_correct()`) agrega `dependents_count`/`galapagos` leídos de `line.employee_id`; `_copy_inputs()` no se tocó para no romper `action_correct()`, que pasa esos valores directo a `create()`.
 - Compatible con lo existente: valores por defecto (0 cargas, fuera de Galápagos) reproducen exactamente el comportamiento anterior; ninguna prueba preexistente cambió su resultado esperado.
 - 40/40 pruebas aprobadas (4 nuevas: función aislada, cálculo mensual real con menos impuesto a mayor tope, `action_correct()` sigue funcionando). Instalado y verificado en demo con respaldo. Detalle completo en docs/ALCANCE_ATS_RDEP.md ("Corrección del hallazgo colateral").
+
+## SP02 — Aceptación visual de fabricación parcial — 13-09-2026
+
+- Retomado escenario ficticio en ec_operational_7a74b3c051: operario pausa/reanuda y finaliza dos etapas; supervisor registra parcial y completa la segunda unidad. Órdenes WH/MO/00013-001 y -002 terminadas; 4 componentes consumidos, 2 productos terminados, 4 operaciones terminadas, ningún intervalo abierto.
+- La copia antigua necesitó respaldo y actualización de esquema antes del ingreso. Arranque de aceptación admite --directory y reutiliza el precontrol de permisos de sesiones; no altera el selector compartido de pruebas. Demo principal sin cambios de negocio.
+- Evidencia y límites en docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json y docs/SP02_EXPERIENCIA_Y_ACEPTACION.md. El contador heredado desde el 11/09 invalida su uso como costo representativo; no se reajustó la historia. Pendientes venta/valoración representativa, reversión visual, importaciones de dos productos y demás recorridos SP02. No cierra SP02 ni la puerta comercial.

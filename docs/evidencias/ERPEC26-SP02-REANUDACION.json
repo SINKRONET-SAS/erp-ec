@@ -1,0 +1,17 @@
+{
+  "status": "documental",
+  "checks": [
+    "Cadena predecesora íntegra",
+    "Divergencias de trabajo concurrente identificadas; sin atribuir validación funcional"
+  ],
+  "pendingConcurrentFiles": [
+    ".github/CODEX_CONTEXT.md",
+    "addons/erpec_payroll/annex_rdep.py",
+    "addons/erpec_payroll/engine.py",
+    "addons/erpec_payroll/tests/test_annex_rdep.py",
+    "addons/erpec_payroll/tests/test_payroll.py",
+    "docs/ALCANCE_ATS_RDEP.md",
+    "docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json"
+  ],
+  "scope": "Reanudar aceptación SP02 de producción; nómina concurrente excluida. No cierra SP02."
+}

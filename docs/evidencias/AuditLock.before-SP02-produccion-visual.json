@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-13T21:06:32.127Z",
+  "updatedAt": "2026-09-13T20:51:29.484Z",
   "filesModified": [
     ".dockerignore",
     ".gitattributes",
@@ -223,7 +223,6 @@
     "docs/evidencias/AuditLock.before-SEGUNDA-PASADA.json",
     "docs/evidencias/AuditLock.before-SP02-COMPRAS.json",
     "docs/evidencias/AuditLock.before-SP02-VENTAS-20260911T213953Z.json",
-    "docs/evidencias/AuditLock.before-SP02-produccion-visual.json",
     "docs/evidencias/AuditLock.before-SP02-reanudacion.json",
     "docs/evidencias/AuditLock.before-UIUX-00.json",
     "docs/evidencias/AuditLock.before-UIUX-01.json",
@@ -255,7 +254,6 @@
     "docs/evidencias/ERPEC26-OPERACIONES-LOCAL.json",
     "docs/evidencias/ERPEC26-SEGUNDA-PASADA.json",
     "docs/evidencias/ERPEC26-SP02-COMPRAS.json",
-    "docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json",
     "docs/evidencias/ERPEC26-SP02-REANUDACION.json",
     "docs/evidencias/ERPEC26-SP02-VENTAS.json",
     "docs/evidencias/ERPEC26-TESORERIA-LOCAL.json",
@@ -323,7 +321,6 @@
     "scripts/verify-payroll-equivalence.cjs",
     "scripts/verify-provision.py",
     "scripts/verify-sales-runtime.py",
-    "scripts/verify-sp02-production.py",
     "scripts/verify-treasury-seed.py",
     "scripts/verify-windows.py",
     "scripts/verify-workspace-runtime.py",
@@ -346,19 +343,13 @@
     "docs/evidencias/uiux/10-inicio-1280.png"
   ],
   "validationChecks": [
-    "Dos órdenes terminadas; producción total 2",
-    "Consumo total 4 componentes",
-    "Cuatro operaciones terminadas y ningún intervalo abierto",
-    "RUC demo vacío",
-    "Operario: rechazo por etapa precedente, pausa con motivo, reanudación y finalización",
-    "Supervisor: parcial 1+1 y cierre de ambas órdenes",
-    "Consulta final de consola del navegador sin errores",
-    "Directorio demo rechazado antes de iniciar",
-    "Permiso de sesiones denegado sin espera prolongada",
-    "Arranque/parada con propietario sobre copia explícita",
-    "Selector operational-current.json conservado",
-    "Sintaxis Python válida",
-    "Regresión de fabricación: 7/7, salida 0; no valida cierre global SP02"
+    "Diseño sin duplicar: DEPENDENTS_BASKETS/GALAPAGOS_IPCEG_FACTOR y personal_expense_cap() movidos a erpec_payroll/engine.py (única implementación); annex_rdep.py reutiliza esa función en vez de mantener su propia copia",
+    "erpec.payroll.line._inputs() (exclusivo de calculate(), no de la duplicación en action_correct()) agrega dependents_count/galapagos del empleado; _copy_inputs() sin cambios para no romper la corrección de períodos",
+    "Compatibilidad verificada: valores por defecto (0 cargas, fuera de Galápagos) reproducen exactamente el resultado anterior; ninguna prueba preexistente cambió su valor esperado",
+    "4 pruebas nuevas (función aislada, cálculo mensual real con menos impuesto a mayor tope, action_correct() sigue funcionando); 40/40 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll aprobadas (0 regresiones)",
+    "Regresión de precisión float-vs-Decimal encontrada y corregida en una prueba del incremento anterior, haciendo que calcule su valor esperado con la misma función que el código",
+    "Instalación en demo con respaldo (operational-install-20260913-154957)",
+    "UTF-8 sin BOM y git diff --check aprobados en los archivos de este incremento"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -381,7 +372,7 @@
   "fileHashes": {
     ".dockerignore": "22b7ba5f19e10672ea1305bbf8d95a27d8ea90e4fe75cf4edb49c4df99c9876e",
     ".gitattributes": "239beb794f9306f8004f85a1b5b91a6f4f3d0c3f63be1ba3be735ceedbbb9fba",
-    ".github/CODEX_CONTEXT.md": "0bde7333cfb0bb2076aa17425a1ccba3171bc371656691e8cafab3f3052666fa",
+    ".github/CODEX_CONTEXT.md": "0cf35dd9f2a6883374c4822d837eb85fe0f971dbc6a1d1a75a3fd55eb974384e",
     ".github/prompts/ERPEC26-00.md": "6168fbecf4b943003eaf50db158a750a1e5cddd2e4208bd5454bedcf70517c94",
     ".github/prompts/ERPEC26-01.md": "e041accd36043873edafd8abff86428b9c77c774f5d9bec262882863a02fa95c",
     ".github/prompts/ERPEC26-02.md": "c5d8a9f8e568873a89fb1ebacecc2c7b8d3655c1083dfe76de03d52d903e4367",
@@ -574,7 +565,7 @@
     "docs/PRODUCCION_TRABAJO_DEMO.md": "6f648ff8da10e7ec30b15fe487cc32dc4cabbf0c31f17c51f9673869d1ce4e8c",
     "docs/SEGUNDA_PASADA_PRODUCTO.md": "37723d0e2956a72856fa4658c0c3514dd19778416bfa5d450942e0ae85dbb23e",
     "docs/SP02_COMPRAS.md": "83a1f7540c252388c051f190bc2753b2b6c4a58e7c697b3bdd5c75e39a7ff364",
-    "docs/SP02_EXPERIENCIA_Y_ACEPTACION.md": "294b8980ebb7ec8ac4c982c5da1142264819ad06e741da38fcbf0fe19af80a13",
+    "docs/SP02_EXPERIENCIA_Y_ACEPTACION.md": "f382fb7f028c7da147ae34f777e2bd6bbd40c339c5699b3fbd2779fe2b0dc735",
     "docs/SP02_VENTAS.md": "d0f59ae0357bf9ac0b1c958545b842950497f8d3dc909e6687edc462daaad821",
     "docs/TESORERIA_LOCAL.md": "7af7e947090f65d6baf1fe3588bc4f6267686560365e13656fab8f52fbb21f43",
     "docs/VALIDACION_ARCHIVOS_BANCARIOS.md": "afcb8a009cdafe8e4677cfda73e0ef688b0505a4a35783ffed2dc4f67ffdcc71",
@@ -648,7 +639,7 @@
     "docs/referencias/RULES.FACTURADOR.md": "2de4f9c08fd72b14e44974a65eff9db2ab64f6ffb4cb9a77069182c0c7faa28c",
     "docs/referencias/RULES.SKNOMINA.md": "2e0a4597521918fa33626eeb6726aa299b2777a126ea41524c3b3f8711a4834c",
     "requirements-windows.txt": "29fb74a25f7e2554667f4ac991fbe99df70349fecbb007d10c2277f9edec38f4",
-    "scripts/acceptance-service.py": "237a1fbd22c8f92dc6a1f36ffc2cf74bf379025c414ec94524f5ca7edcfd87b5",
+    "scripts/acceptance-service.py": "504e3857a7cad9410926c9cf5be168212f95e3328e953383812c5c329c023ec5",
     "scripts/audit-community.py": "17984338a991356b45d6531a7840687b76ed7e268444f8c53f908379fca6098f",
     "scripts/close-phase.cjs": "7a66572bc6814bfe7de9b32b4a88a7b7b46a940b4fbcfae27793cac3258e9549",
     "scripts/close-uiux-phase.cjs": "40d9b9fc1b4ec73580f50139ceef4e433795fc8523dde85ae768da181d4fb69d",
@@ -700,17 +691,9 @@
     "scripts/verify-workspace.py": "02e9e9f59cc7ca186371a7aee301f88af45f1edc8b8b821b575c3931658e5e19",
     "scripts/verify-xades-local.py": "9173f1b52bbadf20932d198e0d2f7768e2c717a4749cc3e969b598c199db785c",
     "scripts/windows-local.py": "7294505c0f57ee85ad6408a4ef53497b8f8ec6bcea039dd243974a8336ac4cb0",
-    "upstream.json": "cdc7e8f8a393f2d17a840a8a41635c4a85974b4527990f4a8e479471485f3376",
-    "scripts/verify-sp02-production.py": "3a4a2f5fa400c726028357e0637d6b9b2dbdd81e8013803ca87c7626d1583dd1",
-    "docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json": "2ac0bcb132de87193f7beb055eb9cf74e797a2f92690503c9c44ca62bed9a55a",
-    "docs/evidencias/AuditLock.before-SP02-produccion-visual.json": "2fd2f24de52be06a3894052885b959eeec11c68eed548cb0dbd3814a01412a9d"
+    "upstream.json": "cdc7e8f8a393f2d17a840a8a41635c4a85974b4527990f4a8e479471485f3376"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-SP02-produccion-visual.json",
-  "previousAuditLockHash": "2fd2f24de52be06a3894052885b959eeec11c68eed548cb0dbd3814a01412a9d",
-  "signature": "4e689365ee804e44dabb851feb9db387883fdf21d60b4b2ff4d5627712b4f95c",
-  "secondPassProduction": {
-    "status": "increment-passed",
-    "phaseInProgress": "SP02",
-    "evidence": "docs/evidencias/ERPEC26-SP02-PRODUCCION-VISUAL.json"
-  }
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP05-COLATERAL-MOTOR-MENSUAL-20260913T205129Z.json",
+  "previousAuditLockHash": "8f50c6b6738e9db99e637405fb9baf73882dcfcd29c85c4c7de85c3ec1dfefb6",
+  "signature": "671a66d3e23405855d8cd5e1a517fc259bb6259547f7ca2c7b3aef34cd53d5bc"
 }

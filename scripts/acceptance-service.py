@@ -12,8 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 STATE = ROOT / '.cache/windows'
 parser = argparse.ArgumentParser()
 parser.add_argument('action', choices=['start', 'stop'])
+parser.add_argument('--directory', type=Path, help='Copia de aceptación existente; conserva el selector de pruebas.')
 args = parser.parse_args()
-current = json.loads((STATE / 'operational-current.json').read_text(encoding='utf-8'))
+current = ({'directory': str(args.directory), 'database': args.directory.resolve().name}
+           if args.directory else json.loads((STATE / 'operational-current.json').read_text(encoding='utf-8')))
 directory = Path(current['directory']).resolve()
 if not directory.is_relative_to((STATE / 'operational-tests').resolve()):
     raise RuntimeError('La carpeta no pertenece a las copias de aceptación.')
@@ -43,9 +45,11 @@ elif args.action == 'stop':
 if args.action == 'start':
     session_dir = directory / 'data/sessions'
     session_dir.mkdir(parents=True, exist_ok=True)
-    import tempfile
-    with tempfile.TemporaryFile(dir=session_dir):
-        pass
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('session_access', ROOT / 'scripts/demo-session-access.py')
+    access = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(access)
+    access.verify_session_access(directory)
     process = subprocess.Popen([sys.executable, str(ROOT / '.cache/odoo-community/odoo-bin'), '-c', str(config_path)], cwd=ROOT, env={**os.environ, 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8'}, creationflags=subprocess.CREATE_NO_WINDOW)
     value = str(process.pid)
     assert value.encode('utf-8').decode('utf-8') == value
