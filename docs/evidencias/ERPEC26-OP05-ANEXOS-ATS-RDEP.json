@@ -1,0 +1,65 @@
+{
+  "recordedAt": "2026-09-13T19:15:00.000Z",
+  "scope": "Primer incremento del complemento OP05: alcance investigado de ATS/RDEP y agregador anual RDEP de solo lectura sobre nómina ya contabilizada. No genera XML, no presenta ante el SRI y no cubre ATS; no cierra OP05.",
+  "researchSources": {
+    "note": "Esquemas oficiales descargados y leídos el 13-09-2026; fichas técnicas en PDF no legibles en este entorno (sin OCR local).",
+    "atsFichaTecnica": {"titulo": "Ficha Técnica Transaccional Simplificado ATS", "fecha": "2025-02-07", "leida": false},
+    "atsCatalogo": {"titulo": "Catálogo ATS", "fecha": "2026-03-03", "leida": false},
+    "atsXsd": {"url": "https://descargas.sri.gob.ec/download/anexos/ats/ats.xsd", "sha256": null, "leida": true, "notaSha256": "no calculado en esta evidencia; archivo local en .cache/private/xsd-source/ats.xsd (gitignored)"},
+    "rdepFichaTecnica": {"titulo": "Ficha Técnica RDEP 2024, vigente 2025", "leida": false},
+    "rdepXsd": {"url": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/62837cc4-2de7-472c-9108-9b61bce8a38e/Esquema%20RDEP%202023.xsd", "fecha": "2023-12-14", "leida": true}
+  },
+  "scopeDocument": "docs/ALCANCE_ATS_RDEP.md",
+  "decision": "ATS queda fuera de este incremento: sus catálogos de código de sustento y tipo de comprobante no se han obtenido y no se inventan. RDEP se limita a los campos con significado confirmado en el propio esquema (tipoEmpleador, enteSegSocial, discapTyp con su documentación oficial, numCargRebGastPers, convImposTyp) más los totales que ya calcula el motor de nómina nativo (gross, thirteenth, fourteenth, reserve_iess, personal_iess, tax). No se generó XML porque el esquema RDEP exige varios campos adicionales (participación de utilidades, intereses ganados, salario digno, otros ingresos gravados, deducciones desglosadas) que este incremento no calcula ni conoce; completarlos con ceros o supuestos habría presentado datos tributarios no verificados como si fueran reales.",
+  "implementation": {
+    "module": "erpec_payroll",
+    "newFile": "addons/erpec_payroll/annex_rdep.py",
+    "newModels": ["erpec.payroll.rdep", "erpec.payroll.rdep.line"],
+    "extendedModels": ["res.company (ec_rdep_employer_type, ec_rdep_social_security_entity)", "hr.employee (ec_rdep_disability_type, ec_rdep_disability_percentage, ec_rdep_disability_id_type, ec_rdep_disability_id, ec_rdep_dependents_count, ec_rdep_treaty_applies)"],
+    "menu": "Nómina local › Agregador RDEP (grupo group_payroll_manager)",
+    "readOnlyOverPayroll": true,
+    "businessDataInvented": false
+  },
+  "tests": {
+    "exitCode": 0,
+    "testedAt": "2026-09-13T19:07:20.081882+00:00",
+    "modules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
+    "totalTests": 27,
+    "newTests": 8,
+    "failed": 0,
+    "errors": 0,
+    "logSha256": "5f1906dedcbc0ae3578910cdc1cfab397032b6aaeea5ebafbc4fc804dd588dcc",
+    "runtimePassed": true,
+    "payrollMovesAfterConcurrentPost": 1
+  },
+  "runtimeSmoke": {
+    "target": "http://127.0.0.1:8369 (erpec_demo)",
+    "actionReachable": true,
+    "formCompiles": true,
+    "yearTested": 2026,
+    "employeesConsolidated": 3,
+    "recordCreatedThenRemoved": true,
+    "businessRecordsLeftInDemo": false
+  },
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\operational-install-20260913-140837",
+    "installedModules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
+    "demoRucEmpty": true,
+    "enterpriseInstalled": false
+  },
+  "checks": [
+    "8 pruebas nuevas del agregador RDEP: consolidación de períodos contabilizados, exclusión de borradores, idempotencia, permisos, rangos de campos y compilación de vistas",
+    "27/27 pruebas de erpec_manufacturing + erpec_imports + erpec_payroll aprobadas (0 regresiones)",
+    "Agregador probado en vivo contra la demo: 3 empleados consolidados para 2026, sin dejar registros de negocio",
+    "Instalación en demo con respaldo previo"
+  ],
+  "pending": [
+    "ATS completo: catálogo de códigos de sustento/comprobante sin obtener",
+    "RDEP: residencia fiscal, país de residencia, participación de utilidades, intereses ganados, salario digno, otros ingresos gravados y deducciones desglosadas por categoría",
+    "Generación de XML validado contra ats.xsd / Esquema RDEP 2023.xsd",
+    "Lectura completa de las fichas técnicas oficiales (PDF escaneado, sin OCR local)",
+    "Canal de presentación ante el SRI (el trámite oficial solo documenta software de escritorio DIMM/APS y FTP, no una API)"
+  ],
+  "externalEmissionPerformed": false,
+  "sourceRepositoriesModified": false
+}

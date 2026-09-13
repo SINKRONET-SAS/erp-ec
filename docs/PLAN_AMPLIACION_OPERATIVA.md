@@ -62,6 +62,17 @@ Base observada: SKNOMINA ofrece rutas externas de empleados, marcas, novedades y
 
 Aceptación: período sintético con al menos dos empleados y centros, ingresos variables y descuentos; reconciliar total de nómina, provisiones, pasivos y asiento. Rechazar período sin cerrar, cuenta faltante, credencial ajena y asiento desequilibrado. Probar timeout, repetición, corrección de cierre y reversión sin sobrescribir un asiento publicado. Las tasas y cálculos laborales se validan en el motor y contra normativa vigente; no se replica hr_payroll Enterprise.
 
+## OP05 — Anexos fiscales ATS y RDEP
+
+Base observada: ninguna fuente propia previa; alcance investigado el 13-09-2026 directamente contra `ats.xsd` y `Esquema RDEP 2023.xsd` del SRI (no contra resúmenes de terceros). Detalle completo, brechas y decisiones en `docs/ALCANCE_ATS_RDEP.md`. El ATS existe dentro de Facturador pero no está expuesto en su API externa (`docs/evidencias/ERPEC26-01.md`); no se puede depender de esa integración.
+
+- RDEP: agregador anual de solo lectura sobre `erpec_payroll` (períodos ya contabilizados), con clasificación de empleador/seguridad social a nivel de empresa y datos de discapacidad/cargas/convenio a nivel de empleado, tomados literalmente de la documentación del esquema oficial.
+- ATS: fuera de alcance hasta obtener el Catálogo ATS oficial (códigos de sustento y tipo de comprobante); no se inventan catálogos.
+- No genera XML ni presenta ningún anexo ante el SRI. RDEP requiere campos adicionales (utilidades, intereses, salario digno, otros ingresos gravados, deducciones desglosadas) que el motor de nómina no calcula todavía; completarlos con supuestos presentaría datos tributarios no verificados como reales.
+- Pantallas: Nómina local › Agregador RDEP, y una pestaña RDEP en el formulario de empresa y de empleado, restringidas al responsable de nómina.
+
+Aceptación de este incremento: consolidar períodos contabilizados de un año fiscal por empleado sin duplicar al repetir la agregación, excluir períodos en borrador, y bloquear la consolidación si falta la clasificación de la empresa. Probar permisos y compilación de las vistas nuevas. No declarar el anexo presentable ni homologado.
+
 ## Estado, entregas y exposición comercial
 
 | Frente | Estado comprobado al aprobar la ampliación | Entrega siguiente | Cierre obligatorio |
@@ -70,6 +81,7 @@ Aceptación: período sintético con al menos dos empleados y centros, ingresos 
 | OP02 | Modelos de órdenes, centros y productividad inspeccionados | Operaciones secuenciadas y tiempos en demo | Ciclo por operario y supervisor probado |
 | OP03 | Motor nativo de costos adicionales inspeccionado | Expediente y mapeo de costos de importación | Recepción, nacionalización documentada, valoración y contabilidad conciliadas |
 | OP04 | Rutas externas y controlador contable de SKNOMINA inspeccionados | Contrato de cierre y mapeos | Asiento y pagos trazables, sin duplicados y con reversión |
+| OP05 | Esquemas oficiales ATS/RDEP leídos y contrastados con lo nativo | Agregador RDEP de solo lectura instalado en demo | XML validado contra el esquema oficial, catálogo ATS obtenido y campos RDEP restantes calculados |
 
 La empresa Comercial Andina DEMO conserva datos ficticios y RUC vacío. La ampliación no conecta la demo al emisor SINKRONET. Los ejemplos laborales serán sintéticos; no se copian nóminas reales para ventas. La matriz de demostración comercial identificará qué ciclo está aprobado y cuál todavía no; instalar módulos no modifica ese estado automáticamente.
 
@@ -81,6 +93,7 @@ Cada frente requiere respaldo previo, pruebas en copia, instalación verificada,
 - .github/prompts/ERPEC26-OP02-ORDENES-TRABAJO.md
 - .github/prompts/ERPEC26-OP03-IMPORTACIONES.md
 - .github/prompts/ERPEC26-OP04-NOMINA.md
+- .github/prompts/ERPEC26-OP05-ANEXOS-ATS-RDEP.md
 
 Estos prompts se ejecutan con la autorización vigente y complementan ERPEC26-06, ERPEC26-07 y la aceptación de ERPEC26-08. Las firmas históricas no se reescriben para simular implementación.
 
@@ -97,3 +110,9 @@ La evidencia del incremento es ERPEC26-OPERACIONES-LOCAL.json. La guía OPERACIO
 ## Incremento de aceptación local — 11-09-2026
 
 La evidencia ERPEC26-OPERACIONES-ACEPTACION.json añade fabricación parcial con dos operaciones bajo usuarios operario/supervisor y pagos parciales de importación con diferencia de cambio conciliada. Son verificaciones ejecutadas en copia, no cierre global de OP01–OP04. La cola vigente y los límites visuales están consolidados en .github/CODEX_CONTEXT.md; continúan pendientes los pagos de nómina y la equivalencia integral.
+
+## OP05 — Primer incremento: agregador RDEP — 13-09-2026
+
+El titular pidió investigar y documentar el alcance de ATS y RDEP, tomando como referencia adicional lo ya desarrollado en Facturador y SKNOMINA. La investigación (docs/ALCANCE_ATS_RDEP.md) confirmó, contra los esquemas oficiales leídos ese mismo día, que el ATS existe dentro de Facturador sin estar expuesto en su API externa y que RDEP exige varios campos que el motor de nómina nativo no calcula todavía.
+
+Se implementó únicamente el agregador RDEP: campos de clasificación en empresa y empleado tomados de la documentación literal del esquema SRI, y una consolidación de solo lectura de los períodos de nómina ya contabilizados por año fiscal. No genera XML ni anexo presentable. 27/27 pruebas aprobadas (8 nuevas), instalado en la demo con respaldo y verificado en vivo consolidando tres empleados sintéticos sin dejar registros de negocio. Evidencia: docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json. ATS queda completamente pendiente del catálogo oficial.

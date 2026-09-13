@@ -41,3 +41,7 @@ El titular solicita trasladar también lógica de facturación al ERP. Se permit
 ## Segunda pasada autorizada — septiembre de 2026
 
 La revisión de estabilización, navegación y experiencia de producto tiene prioridad sobre nuevas ampliaciones aisladas. Su orden y puertas de aceptación están en SEGUNDA_PASADA_PRODUCTO.md. El centro de trabajo constituye un incremento local; no sustituye ni cierra las validaciones pendientes de este plan.
+
+## Anexos fiscales ATS y RDEP autorizados — 13-09-2026
+
+El titular pidió investigar y documentar el alcance de los anexos ATS y RDEP del SRI, con referencia adicional a lo ya construido en SINKRONET FACTURADOR y SKNOMINA, y ejecutar el resultado. Se amplía PLAN_AMPLIACION_OPERATIVA.md con el complemento OP05: ver docs/ALCANCE_ATS_RDEP.md para el alcance normativo y docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json para el primer incremento (agregador RDEP de solo lectura; ATS pendiente del catálogo oficial). No se declara homologación ni presentación ante el SRI.
