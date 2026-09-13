@@ -47,21 +47,31 @@
     "environment": "base de datos PostgreSQL aislada y nueva (ec_dp_test, eliminada al finalizar), no la copia operativa compartida, para no mezclar con el trabajo concurrente de otra sesión sobre erpec_workspace"
   },
   "installation": {
-    "deferred": true,
-    "reason": "La copia compartida de demo tiene cambios no comiteados de otra sesión concurrente (modelo erpec.tax.plan sin tabla, observado durante el intento de prueba). Reiniciar el proceso de la demo ahora podría desestabilizar su trabajo en curso. No se fuerza la instalación.",
-    "nextStep": "Instalar con scripts/install-operational-demo.py o equivalente cuando la demo esté en un estado estable compartido, con respaldo previo."
+    "deferred": false,
+    "recordedAt": "2026-09-13T22:20:00.000Z",
+    "note": "Instalación completada tras confirmar que la otra sesión concurrente ya comiteó y estabilizó su trabajo (erpec.tax.plan con tabla, access.csv y manifest correctos; demo respondiendo 200 antes de instalar). El addons_path de la demo es una copia aislada (.cache/windows/demo/addons), no el árbol de desarrollo en vivo, lo que ya la protegía de ediciones concurrentes sin comitear.",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\data-protection-install-20260913-171822",
+    "installedModule": "erpec_data_protection",
+    "moduleState": "installed",
+    "formCompiles": true,
+    "partnerButtonPresent": true,
+    "existingActivitiesAfterInstall": 0,
+    "demoAdminGroupGrantedThenRevoked": "El admin de la demo no pertenece a group_data_protection_officer por defecto (control de acceso correcto, confirmado por un AccessError esperado en el primer intento de verificación); se le concedió el grupo temporalmente solo para confirmar que las vistas compilan, y se retiró de inmediato después.",
+    "demoRucEmpty": true,
+    "enterpriseInstalled": false,
+    "businessRecordsCreated": false
   },
   "checks": [
     "6/6 pruebas del módulo erpec_data_protection aprobadas en base de datos aislada y limpia",
     "Dos errores de permisos encontrados y corregidos durante la prueba, documentados con su causa exacta",
     "Investigación de LOPDP y envíos por email con fuentes citadas, fecha de consulta y nivel de confianza explícito por hallazgo",
+    "Instalado en la demo con respaldo previo; vistas compiladas y control de acceso confirmado (el admin no tiene el grupo por defecto)",
     "Ningún envío de correo real, transmisión SRI ni recolección de datos personales reales de terceros"
   ],
   "pending": [
     "Tributario/Facturación Electrónica/ATS/RDEP/Laboral: brechas ya documentadas en sus propios documentos, sin cambios en este incremento",
     "Protección de Datos: derechos del titular (acceso/rectificación/eliminación/oposición/portabilidad), procedimiento de notificación de brechas, registro RNPD, evaluación de si aplica DPD obligatorio; lectura del texto primario completo de la LOPDP y su Reglamento General antes de fijar umbrales o plazos",
-    "Envíos por email: envío real sigue desactivado; confirmar contra el Reglamento de Comprobantes Electrónicos si existe un plazo de entrega al cliente distinto del plazo de transmisión al SRI",
-    "Instalación en demo aplazada por actividad concurrente de otra sesión"
+    "Envíos por email: envío real sigue desactivado; confirmar contra el Reglamento de Comprobantes Electrónicos si existe un plazo de entrega al cliente distinto del plazo de transmisión al SRI"
   ],
   "externalEmissionPerformed": false,
   "sourceRepositoriesModified": false
