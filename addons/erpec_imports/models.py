@@ -25,6 +25,14 @@ class Importation(models.Model):
     picking_ids = fields.Many2many('stock.picking', compute='_compute_pickings', string='Recepciones')
     charge_ids = fields.One2many('erpec.import.charge', 'import_id', 'Gastos y tributos clasificados')
     cost_ids = fields.One2many('stock.landed.cost', 'erpec_import_id', 'Costos y ajustes de valoración')
+    has_prepared_costs = fields.Boolean('Tiene costos preparados', compute='_compute_has_prepared_costs', compute_sudo=True)
+
+    @api.depends('cost_ids')
+    def _compute_has_prepared_costs(self):
+        # Expone solo el bloqueo de edición, sin cargar documentos contables en bodega.
+        for record in self:
+            record.has_prepared_costs = bool(record.cost_ids)
+
     regulatory_note = fields.Text('Validación aduanera', default='Expediente documental local. No acredita autorización SENAE. El responsable contable debe revisar documentos y clasificación de costos, gastos y tributos antes de operar con datos reales.', readonly=True)
     _sql_constraints = [('reference_company', 'unique(company_id,name)', 'La referencia ya existe en esta empresa.')]
 

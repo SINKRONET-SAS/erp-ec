@@ -7,12 +7,15 @@ ROOT=Path(__file__).resolve().parents[1]
 STATE=ROOT/'.cache/windows'
 parser=argparse.ArgumentParser()
 parser.add_argument('--backup',required=True,help='Respaldo operational-install dentro de .cache/windows/backups')
+parser.add_argument('--imports-ui-backup',action='store_true',help='Acepta respaldo previo al plan tributario y aceptación de importaciones')
 parser.add_argument('--closeout-backup',action='store_true',help='Acepta respaldo de instalación de tesorería anterior al cambio')
 parser.add_argument('--expect-treasury',action='store_true',help='Comprueba nómina, pagos y saneamiento en un respaldo que ya contiene tesorería')
 parser.add_argument('--expect-workspace',action='store_true',help='Comprueba un respaldo con centro de trabajo instalado')
 args=parser.parse_args()
+if args.imports_ui_backup and (args.closeout_backup or not args.expect_workspace):
+    raise ValueError('El respaldo de importaciones requiere --expect-workspace y no admite --closeout-backup')
 backup=Path(args.backup).resolve()
-if not backup.is_relative_to((STATE/'backups').resolve()) or not backup.name.startswith('closeout-install-' if args.closeout_backup else 'workspace-install-' if args.expect_workspace else 'operational-install-'):
+if not backup.is_relative_to((STATE/'backups').resolve()) or not backup.name.startswith('imports-ui-install-' if args.imports_ui_backup else 'closeout-install-' if args.closeout_backup else 'workspace-install-' if args.expect_workspace else 'operational-install-'):
     raise ValueError('El respaldo no pertenece al incremento operativo')
 for item in ['database.dump','filestore','addons']:
     if not (backup/item).exists():
@@ -47,8 +50,8 @@ else:
     code="assert not env.company.vat\nassert not env['ir.module.module'].search_count([('name','=','erpec_payroll'),('state','=','installed')])\nprint('Recuperación previa a importaciones y nómina verificada; demo actual conservada')\n"
 
 if args.expect_treasury:
-    if not args.expect_workspace or not args.closeout_backup:
-        raise ValueError('La recuperación de tesorería requiere --expect-workspace y --closeout-backup')
+    if not args.expect_workspace or not (args.closeout_backup or args.imports_ui_backup):
+        raise ValueError('La recuperación de tesorería requiere --expect-workspace y el tipo de respaldo autorizado')
     code += "assert env['ir.module.module'].search_count([('name','=','erpec_treasury'),('state','=','installed')]) == 1\n"
     code += "period=env.ref('erpec_treasury_demo.period')\nassert len(period.disbursement_ids)==2\nassert sorted(period.disbursement_ids.mapped('residual'))==[0,624.4]\n"
     code += "assert env.ref('erpec_sanitized_demo.bill').amount_total==230\nassert env.ref('erpec_sanitized_demo.invoice').amount_total==575\n"
@@ -62,5 +65,5 @@ subprocess.run([sys.executable,str(ROOT/'.cache/odoo-community/odoo-bin'),'shell
 result={'restoredDatabase':name,'configuration':str(directory/'odoo.conf'),'sourceBackup':str(backup),'currentDemoUntouched':True,'previousPayrollAbsent':not args.expect_workspace,'workspaceExpected':args.expect_workspace,'treasuryExpected':args.expect_treasury,'filestoreAndAddonsMatch':True}
 text=json.dumps(result,ensure_ascii=False,indent=2)+'\n'
 assert text.encode('utf-8').decode('utf-8')==text
-(STATE/('workspace-restore-result.json' if args.expect_workspace else 'operational-restore-result.json')).write_text(text,encoding='utf-8',newline='\n')
+(STATE/('imports-ui-restore-result.json' if args.imports_ui_backup else 'workspace-restore-result.json' if args.expect_workspace else 'operational-restore-result.json')).write_text(text,encoding='utf-8',newline='\n')
 print(json.dumps(result),flush=True)

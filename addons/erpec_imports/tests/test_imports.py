@@ -29,6 +29,7 @@ class ImportCase(TransactionCase):
         self.receipt = picking
         attachment = self.env['ir.attachment'].create({'name': 'Documento sintético.txt', 'datas': base64.b64encode(b'Sin validez aduanera')})
         self.dossier = self.env['erpec.importation'].create({'name': 'IMP-PRUEBA', 'partner_id': self.supplier.id, 'purchase_ids': [(6, 0, self.purchase.ids)], 'shipment': 'EMBARQUE-SINTETICO', 'customs_reference': 'SIN-VALIDEZ', 'attachment_ids': [(4, attachment.id)]})
+        attachment.write({'res_model': self.dossier._name, 'res_id': self.dossier.id})
         service = self.env['product.product'].create({'name': 'Flete sintético', 'type': 'service', 'property_account_expense_id': self.accounts['EXP'].id, 'supplier_taxes_id': [(5, 0, 0)]})
         self.bill = self.env['account.move'].create({'move_type': 'in_invoice', 'partner_id': self.supplier.id, 'invoice_date': fields.Date.today(), 'l10n_latam_document_number': '001-001-000000031', 'invoice_line_ids': [(0, 0, {'product_id': service.id, 'name': 'Flete', 'quantity': 1, 'price_unit': 20, 'account_id': self.accounts['EXP'].id, 'tax_ids': [(5, 0, 0)]})]})
         self.bill.action_post()
@@ -167,3 +168,18 @@ class ImportCase(TransactionCase):
             self.assertAlmostEqual(sum(move.line_ids.mapped('balance')),0)
         losses=exchange.line_ids.filtered(lambda line:line.account_id==self.env.company.expense_currency_exchange_account_id)
         self.assertAlmostEqual(sum(losses.mapped('balance')),10)
+
+    def test_warehouse_form_avoids_restricted_relations(self):
+        from lxml import etree
+        stock = new_test_user(self.env, login="import_ui_reader", groups="stock.group_stock_user", company_id=self.env.company.id, company_ids=[(6, 0, self.env.company.ids)])
+        record = self.dossier.with_user(stock)
+        arch = etree.fromstring(record.get_view(view_type="form")["arch"])
+        for name in ("cost_ids", "charge_ids", "purchase_ids"):
+            self.assertFalse(arch.xpath("//field[@name='%s']" % name))
+        self.assertFalse(record.has_prepared_costs)
+        self.prepare()
+        self.assertTrue(record.has_prepared_costs)
+        result = record.web_read({"name": {}, "has_prepared_costs": {}, "picking_ids": {"fields": {"name": {}, "state": {}}}, "attachment_ids": {"fields": {"name": {}}}})
+        self.assertTrue(result[0]["picking_ids"])
+        with self.assertRaises(AccessError):
+            record.cost_ids.read(["amount_total"])

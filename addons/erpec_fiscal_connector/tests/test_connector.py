@@ -136,3 +136,30 @@ class FiscalConnectorCase(TransactionCase):
         self.tax.tax_group_id.l10n_ec_type='exempt_vat'
         with self.assertRaises(ValidationError): self.job()
         self.assertFalse(self.move.ec_fiscal_job_ids)
+
+    def test_account_manager_form_without_fiscal_job_access(self):
+        from lxml import etree
+        from odoo.tests import new_test_user
+        user = new_test_user(self.env, login="account_manager_without_fiscal", groups="account.group_account_manager", company_id=self.env.company.id, company_ids=[(6, 0, self.env.company.ids)])
+        self.assertFalse(user.has_group("account.group_account_user"))
+        record = self.move.with_user(user)
+        arch = etree.fromstring(record.get_view(view_type="form")["arch"])
+        self.assertFalse(arch.xpath("//field[@name='ec_fiscal_job_ids']"))
+        self.assertTrue(record.web_read({"name": {}, "amount_total": {}, "invoice_line_ids": {"fields": {"name": {}, "price_subtotal": {}}}}))
+        with self.assertRaises(AccessError):
+            self.env["erpec.fiscal.job"].with_user(user).search([])
+
+        bill = self.env["account.move"].with_user(user).create({"move_type": "in_invoice", "partner_id": self.partner.id, "invoice_date": "2026-09-13", "l10n_latam_document_number": "001-001-000000991", "invoice_line_ids": [(0, 0, {"name": "Flete sintético", "quantity": 1, "price_unit": 30, "tax_ids": [(5, 0, 0)]})]})
+        bill.invoice_line_ids.write({"price_unit": 31})
+        bill.action_post()
+        self.assertEqual(bill.state, "posted")
+        bill.button_draft()
+        bill.button_cancel()
+        self.assertEqual(bill.state, "cancel")
+        self.job()
+        with self.assertRaises(ValidationError):
+            record.write({"invoice_date": "2026-09-12"})
+        with self.assertRaises(ValidationError):
+            record.invoice_line_ids.write({"price_unit": 999})
+        with self.assertRaises(ValidationError):
+            record.button_draft()

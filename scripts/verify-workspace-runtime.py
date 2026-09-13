@@ -18,7 +18,7 @@ arch = call('erpec.workspace','get_view',[],{'view_id':home['views'][0][0],'view
 assert 'Tu espacio de trabajo' in arch and 'edit="false"' in arch
 assert 'create' not in home['context'] and 'edit' not in home['context']
 results = []
-for area in ['sales','purchases','inventory','imports','manufacturing','workorders','invoices','bills','payroll','fiscal']:
+for area in ['sales','purchases','inventory','imports','manufacturing','workorders','invoices','bills','payroll','fiscal','tax_plan']:
     start = time.perf_counter()
     action = call('erpec.workspace','action_area',[[home['res_id']]],{'context':{'erpec_area':area}})
     model = action['res_model']

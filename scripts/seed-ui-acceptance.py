@@ -30,7 +30,7 @@ users = {}
 for key, (name, groups) in profiles.items():
     users[key] = env['res.users'].with_context(no_reset_password=True).create({
         'name': name, 'login': 'acceptance_' + key, 'password': password,
-        'email': False, 'notification_type': 'inbox', 'lang': 'es_EC', 'tz': 'America/Guayaquil',
+        'email': 'acceptance_' + key + '@example.invalid', 'notification_type': 'inbox', 'lang': 'es_EC', 'tz': 'America/Guayaquil',
         'company_id': company.id, 'company_ids': [(6, 0, company.ids)],
         'groups_id': [(6, 0, [env.ref(group).id for group in groups])],
         'action_id': env.ref('erpec_workspace.home_action').id,
@@ -62,6 +62,7 @@ supplier = env['res.partner'].create({'name': 'Proveedor exterior · Aceptación
 purchase = env['purchase.order'].create({'partner_id': supplier.id, 'currency_id': euro.id, 'date_order': '2026-09-11 12:00:00', 'order_line': [(0, 0, {'product_id': product.id, 'product_qty': 10, 'price_unit': price, 'taxes_id': [(5, 0, 0)]}) for product, price in zip(products, [10, 20])]})
 attachment = env['ir.attachment'].create({'name': 'Aceptacion-sin-validez-aduanera.txt', 'datas': base64.b64encode(b'Escenario ficticio. Sin validez aduanera. Referencia EUR/USD BCE 11-09-2026: 1.1592. No es cotizacion bancaria.')})
 dossier = env['erpec.importation'].create({'name': 'IMPORTACIÓN · ACEPTACIÓN UI', 'partner_id': supplier.id, 'currency_id': euro.id, 'purchase_ids': [(6, 0, purchase.ids)], 'shipment': 'ENSAYO-SIN-VALIDEZ', 'customs_reference': 'ENSAYO-NO-AUTORIZADO', 'attachment_ids': [(4, attachment.id)]})
+attachment.write({'res_model': dossier._name, 'res_id': dossier.id})
 service = env['product.product'].create({'name': 'Flete exterior · Aceptación', 'type': 'service', 'property_account_expense_id': accounts['EXP'].id, 'supplier_taxes_id': [(5, 0, 0)]})
 bill = env['account.move'].create({'move_type': 'in_invoice', 'partner_id': supplier.id, 'currency_id': euro.id, 'invoice_date': rate_date, 'date': rate_date, 'ref': 'ACEPTACIÓN UI · flete exterior ficticio', 'invoice_line_ids': [(0, 0, {'product_id': service.id, 'quantity': 1, 'price_unit': 30, 'account_id': accounts['EXP'].id, 'tax_ids': [(5, 0, 0)]})]})
 records = {'production': production, 'raw': raw, 'finished': finished, 'center': center, 'purchase': purchase, 'dossier': dossier, 'bill': bill, 'import_a': products[0], 'import_b': products[1]}

@@ -281,20 +281,25 @@ class Move(models.Model):
         job = self.env['erpec.fiscal.job'].with_context(_fiscal_internal=_INTERNAL).create({'move_id':self.id,'connection_id':connection.id,'external_reference':reference,'correlation_id':uuid.uuid4().hex,'payload':payload})
         return {'type':'ir.actions.act_window','res_model':'erpec.fiscal.job','res_id':job.id,'view_mode':'form'}
 
+    def _has_fiscal_jobs(self):
+        self.check_access('read')
+        # Consulta interna limitada al vínculo; no concede acceso a la bandeja fiscal.
+        return bool(self.sudo().ec_fiscal_job_ids)
+
     def button_draft(self):
-        if self.ec_fiscal_job_ids:
+        if self._has_fiscal_jobs():
             raise ValidationError('La factura tiene una solicitud fiscal persistente. Revisa su resultado antes de cualquier corrección fiscal.')
         return super().button_draft()
 
     def button_cancel(self):
-        if self.ec_fiscal_job_ids:
+        if self._has_fiscal_jobs():
             raise ValidationError('La cancelación contable no anula una solicitud fiscal. Revisa el documento en Facturador.')
         return super().button_cancel()
 
 
     def write(self, values):
         if set(values) & {'partner_id','company_id','currency_id','move_type','invoice_line_ids','line_ids','invoice_date','ec_fiscal_payment_code','state'}:
-            if self.ec_fiscal_job_ids:
+            if self._has_fiscal_jobs():
                 raise ValidationError('El envío fiscal conserva el contenido de esta factura. No cambies sus datos después de prepararlo.')
         return super().write(values)
 
@@ -303,19 +308,19 @@ class MoveLine(models.Model):
     _inherit = 'account.move.line'
 
     def write(self, values):
-        if set(values) & {'move_id','name','product_id','quantity','price_unit','discount','tax_ids','currency_id','balance','debit','credit','amount_currency'} and self.move_id.ec_fiscal_job_ids:
+        if set(values) & {'move_id','name','product_id','quantity','price_unit','discount','tax_ids','currency_id','balance','debit','credit','amount_currency'} and self.move_id._has_fiscal_jobs():
             raise ValidationError('Los importes y conceptos están vinculados a una solicitud fiscal persistente.')
         return super().write(values)
 
     @api.model_create_multi
     def create(self, values_list):
         for values in values_list:
-            if values.get('move_id') and self.env['account.move'].browse(values['move_id']).ec_fiscal_job_ids:
+            if values.get('move_id') and self.env['account.move'].browse(values['move_id'])._has_fiscal_jobs():
                 raise ValidationError('No se agregan apuntes a una factura con envío fiscal preparado.')
         return super().create(values_list)
 
     def unlink(self):
-        if self.move_id.ec_fiscal_job_ids:
+        if self.move_id._has_fiscal_jobs():
             raise ValidationError('No se eliminan apuntes vinculados a un envío fiscal.')
         return super().unlink()
 

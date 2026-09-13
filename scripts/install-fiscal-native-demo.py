@@ -5,11 +5,12 @@ import psutil
 os.environ.update(PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
 ROOT=Path(__file__).resolve().parents[1];STATE=ROOT/'.cache/windows';DEMO=STATE/'demo';ODOO=ROOT/'.cache/odoo-community/odoo-bin'
 closeout_mode = '--closeout' in sys.argv
-workspace_mode = '--workspace' in sys.argv or closeout_mode
-prefix = 'closeout' if closeout_mode else 'workspace' if workspace_mode else 'fiscal-native'
-expected_tests = 21 if closeout_mode else 9 if workspace_mode else 14
+imports_ui_mode = '--imports-ui' in sys.argv
+workspace_mode = '--workspace' in sys.argv or closeout_mode or imports_ui_mode
+prefix = 'imports-ui' if imports_ui_mode else 'closeout' if closeout_mode else 'workspace' if workspace_mode else 'fiscal-native'
+expected_tests = 32 if imports_ui_mode else 21 if closeout_mode else 9 if workspace_mode else 14
 report=json.loads((STATE/(prefix+'-test-result.json')).read_text(encoding='utf-8'))
-expected_modules = ['erpec_workspace','erpec_treasury'] if closeout_mode else ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
+expected_modules = ['erpec_imports','erpec_workspace','erpec_fiscal_connector'] if imports_ui_mode else ['erpec_workspace','erpec_treasury'] if closeout_mode else ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
 if report['modules'] != expected_modules: raise RuntimeError('El informe corresponde a otros módulos')
 log=Path(report['log']).read_bytes()
 if report['exitCode'] or hashlib.sha256(log).hexdigest()!=report['logSha256'] or not re.search(('0 failed, 0 error\\(s\\) of '+str(expected_tests)+' tests').encode(),log):raise RuntimeError('Faltan las pruebas aprobadas del incremento')

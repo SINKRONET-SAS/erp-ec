@@ -35,3 +35,7 @@ El cronómetro de Preparación seguía abierto desde el 11/09: su duración no r
 Para esta copia: ejecutar scripts/acceptance-service.py start --directory .cache/windows/operational-tests/ec_operational_7a74b3c051 bajo su propietario Windows; stop con el mismo directorio al terminar. El selector operational-current.json se conserva. Una copia antigua debe actualizar sus módulos antes de servirla si el código cambió; no cambiar credenciales ni ampliar permisos para resolver errores de esquema o sesiones. El servicio quedó detenido al finalizar.
 
 El contraste scripts/verify-sp02-production.py se ejecuta dentro de Odoo shell con esa configuración y revierte su transacción. Se restringe a la base y los identificadores de este escenario; no es una semilla ni acredita otros recorridos.
+
+
+## Continuación — importaciones y valoración nueva
+Los dos pendientes se ensayaron el 13/09/2026, junto con el plan de impuestos transversal. Ver SP02_IMPORTACIONES_VALORACION_IMPUESTOS.md para resultados, perfiles, distinción visual/automatizada y límites. SP02 sigue abierto.

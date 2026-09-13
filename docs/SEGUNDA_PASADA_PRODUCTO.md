@@ -90,3 +90,7 @@ Los pagos contables, parciales y conciliación exacta están instalados. El sane
 El usuario autorizó continuar otros temas manteniendo abierta esa dependencia. SP02 incorpora seguimiento de ventas y ensayo comercial completo en copia: entregas parciales, facturas, cobros, extractos, devolución y abono. Se corrigen permisos contables y la dependencia indebida de nómina, además de los vínculos de los dos documentos saneados con sus pedidos.
 
 Producción e importaciones reciben ajustes de orientación y edición coherentes con sus controles existentes. Guía y límites en SP02_VENTAS.md; pruebas, instalación, recuperación y revisión visual en ERPEC26-SP02-VENTAS.json. El recorrido visual completo por perfiles, el expediente de dos productos y divisas y los requisitos fiscales/laborales siguen pendientes; no se cierra SP02 por este incremento.
+
+
+## Continuación — importaciones y valoración nueva
+Los dos pendientes se ensayaron el 13/09/2026, junto con el plan de impuestos transversal. Ver SP02_IMPORTACIONES_VALORACION_IMPUESTOS.md para resultados, perfiles, distinción visual/automatizada y límites. SP02 sigue abierto.
