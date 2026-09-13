@@ -183,18 +183,52 @@ class RdepAnnexCase(TransactionCase):
         period.line_ids.write({'expense_housing': cap / 2, 'expense_health': cap / 2})
 
     def test_expense_cap_scales_with_dependents_and_galapagos(self):
+        # El tope esperado se calcula con la misma función que usa el código
+        # (engine.personal_expense_cap, aritmética Decimal) para no comparar
+        # contra un cálculo en punto flotante ligeramente distinto en el límite.
+        from ..engine import personal_expense_cap
         period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-11', 'policy_id': self.policy.id, 'month': 11, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
         baseline = json.loads(self.policy.parameters)['expense_limit']
         self.employee.write({'ec_rdep_dependents_count': 2})  # 11 canastas en vez de 7
-        cap_with_dependents = baseline / 7 * 11
+        cap_with_dependents = float(personal_expense_cap(baseline, 2, 'NO'))
         with self.assertRaises(ValidationError), self.cr.savepoint():
             period.line_ids.write({'expense_food': cap_with_dependents + 1})
         period.line_ids.write({'expense_food': cap_with_dependents})
         self.employee.write({'ec_rdep_ben_galpg': 'SI'})
-        cap_galapagos = cap_with_dependents * 1.803
+        cap_galapagos = float(personal_expense_cap(baseline, 2, 'SI'))
         period.line_ids.write({'expense_food': cap_galapagos})
         with self.assertRaises(ValidationError), self.cr.savepoint():
             period.line_ids.write({'expense_food': cap_galapagos + 1})
+
+    def test_monthly_engine_uses_employee_dependents_and_galapagos_cap(self):
+        # El hallazgo colateral: engine.calculate() no escalaba el tope por
+        # cargas/Galápagos, afectando la retención mensual real, no solo RDEP.
+        # Corregido: Line._inputs() agrega dependents_count/galapagos del
+        # empleado; engine.personal_expense_cap() es la única implementación.
+        self.employee.write({'ec_rdep_dependents_count': 1})
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-14', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 3000, 'approved': True, 'personal_expenses': 6000})]})
+        period.action_calculate()
+        with_dependent = json.loads(period.line_ids.result)['tax']
+        period.action_reopen()
+        self.employee.write({'ec_rdep_dependents_count': 0})
+        period.action_calculate()
+        without_dependent = json.loads(period.line_ids.result)['tax']
+        self.assertLess(with_dependent, without_dependent)
+
+    def test_action_correct_still_works_with_employee_derived_inputs(self):
+        # _copy_inputs() (usado por action_correct) no debe intentar escribir
+        # dependents_count/galapagos como campos de erpec.payroll.line: esos
+        # solo viajan por _inputs(), exclusivo de calculate().
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-15', 'policy_id': self.policy.id, 'month': 10, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        period.action_reverse()
+        action = period.action_correct()
+        correction = self.env['erpec.payroll.period'].browse(action['res_id'])
+        self.assertEqual(correction.state, 'draft')
+        correction.action_calculate()
+        self.assertEqual(correction.state, 'calculated')
 
     def test_education_and_art_culture_merge_for_reporting_not_for_cap(self):
         # Educación y arte/cultura se fusionan en deducEducartcult para el XML,

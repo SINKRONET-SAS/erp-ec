@@ -30,6 +30,30 @@ def days_worked(start, year, month):
     return 31-min(30, start.day)
 
 
+# Boletín NAC-COM-26-006 (SRI, 06-02-2026): desde la reforma tributaria de 2023
+# el tope de gastos personales es único y total (no por categoría), expresado en
+# canastas básicas familiares (CBF) de enero según las cargas familiares del
+# contribuyente, y se multiplica por el Índice de Precios al Consumidor Especial
+# de Galápagos (IPCEG) para quienes tributan en ese régimen. `expense_limit` de
+# la política ya representa el tope de 0 cargas (7 canastas: verificado
+# 5752.60 = 7 x 821.80 para 2026); esta función lo escala sin pedir la CBF por
+# separado. Única fuente de esta regla: la reutilizan tanto el cálculo mensual
+# (calculate) como el agregador anual del anexo RDEP (erpec_payroll.annex_rdep).
+DEPENDENTS_BASKETS = {0: 7, 1: 9, 2: 11, 3: 14, 4: 17}
+DEPENDENTS_BASKETS_MAX = 20  # 5 o más cargas
+BASELINE_BASKETS = 7  # cargas=0, la base sobre la que ya está expresado expense_limit
+GALAPAGOS_IPCEG_FACTOR = 1.803
+
+
+def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO'):
+    dependents_count = int(dependents_count or 0)
+    if dependents_count < 0:
+        raise ValueError('Las cargas familiares no pueden ser negativas.')
+    baskets = DEPENDENTS_BASKETS.get(dependents_count, DEPENDENTS_BASKETS_MAX)
+    cap = number(expense_limit)/BASELINE_BASKETS*baskets
+    return cap*number(GALAPAGOS_IPCEG_FACTOR) if galapagos == 'SI' else cap
+
+
 def calculate(data, parameters, year, month):
     validate_parameters(parameters)
     start = date.fromisoformat(data['start_date'])
@@ -56,7 +80,10 @@ def calculate(data, parameters, year, month):
     if annual_tax is None:
         raise ValueError('La tabla de renta no cubre la base anual.')
     # La rebaja reduce el impuesto; no resta gastos personales de la base imponible.
-    rebate = min(number(data.get('personal_expenses', 0)), number(parameters['expense_limit']))*number(parameters['rebate_rate'])
+    # El tope escala por cargas familiares y Galápagos (personal_expense_cap);
+    # sin cargas y fuera de Galápagos el resultado es expense_limit sin cambios.
+    expense_cap = personal_expense_cap(parameters['expense_limit'], data.get('dependents_count', 0), data.get('galapagos', 'NO'))
+    rebate = min(number(data.get('personal_expenses', 0)), expense_cap)*number(parameters['rebate_rate'])
     tax_after_rebate = max(Decimal(0), annual_tax-rebate)
     tax = money(tax_after_rebate/12)
     thirteenth = money(base*number(parameters['thirteenth_rate']))

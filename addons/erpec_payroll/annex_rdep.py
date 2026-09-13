@@ -53,12 +53,10 @@ familiares (CBF) según las cargas familiares del empleado (7 canastas sin
 cargas, hasta 20 con 5 o más), multiplicado por el factor IPCEG en
 Galápagos. `parameters['expense_limit']` de la política de nómina ya
 representa ese tope de 0 cargas (verificado: 5752.60 = 7 × 821.80, CBF de
-enero de 2026) y se reutiliza aquí sin duplicarlo, escalándolo según cargas
-y Galápagos en `_personal_expense_cap`. El motor de cálculo mensual
-(erpec_payroll.engine) sigue usando ese mismo tope de 0 cargas sin escalar
-por cargas familiares del empleado; queda como brecha pendiente documentada
-en docs/ALCANCE_ATS_RDEP.md, no corregida en este incremento porque afecta
-el cálculo mensual de retención, no solo el anexo RDEP.
+enero de 2026); `erpec_payroll.engine.personal_expense_cap` es la única
+implementación de esta regla, y tanto el cálculo mensual (`engine.calculate`,
+vía `Line._inputs` que agrega `dependents_count`/`galapagos` del empleado) como
+este agregador anual la reutilizan sin duplicarla.
 """
 import json
 import unicodedata
@@ -67,6 +65,7 @@ from lxml import etree
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from .models import manager
+from .engine import personal_expense_cap
 
 DISABILITY_TYPES = [
     ('00', '00 (sin descripción en el esquema oficial SRI; confirmar en la ficha técnica antes de usar)'),
@@ -94,14 +93,12 @@ EXPENSE_CATEGORY_KEYS = ('expense_housing', 'expense_health', 'expense_education
 # Boletín NAC-COM-26-006 (SRI, 06-02-2026) y fuentes tributarias consistentes con él:
 # desde la reforma de 2023 ya NO hay tope individual por categoría de gasto personal.
 # Hay un solo tope anual total, expresado en canastas básicas familiares (CBF) de enero
-# del año, que crece según las cargas familiares del contribuyente. parameters['expense_limit']
-# ya representa el tope de 0 cargas (7 canastas: 5752.60 = 7 x 821.80 para 2026); se escala
-# aquí según cargas sin duplicar ese parámetro. En Galápagos el tope se multiplica además por
-# el Índice de Precios al Consumidor Especial de Galápagos (IPCEG), 1.803 según el mismo boletín.
-DEPENDENTS_BASKETS = {0: 7, 1: 9, 2: 11, 3: 14, 4: 17}
-DEPENDENTS_BASKETS_MAX = 20  # 5 o más cargas
-BASELINE_BASKETS = 7  # cargas=0, la base sobre la que ya está expresado expense_limit
-GALAPAGOS_IPCEG_FACTOR = 1.803
+# del año, que crece según las cargas familiares del contribuyente, y que se multiplica
+# por el Índice de Precios al Consumidor Especial de Galápagos (IPCEG) para quienes
+# tributan en ese régimen. La constante y el cálculo viven en erpec_payroll.engine
+# (personal_expense_cap), reutilizados aquí sin duplicarlos: el motor mensual ya los
+# aplica sobre expense_limit (engine.calculate) y el agregador RDEP los reutiliza
+# para validar el mismo tope sobre el total anual declarado.
 
 
 def _basic_fraction(policy):
@@ -111,10 +108,8 @@ def _basic_fraction(policy):
 
 
 def _personal_expense_cap(policy, dependents_count, galapagos):
-    baseline = json.loads(policy.parameters)['expense_limit']
-    baskets = DEPENDENTS_BASKETS.get(dependents_count, DEPENDENTS_BASKETS_MAX)
-    cap = baseline / BASELINE_BASKETS * baskets
-    return cap * GALAPAGOS_IPCEG_FACTOR if galapagos == 'SI' else cap
+    expense_limit = json.loads(policy.parameters)['expense_limit']
+    return float(personal_expense_cap(expense_limit, dependents_count, galapagos))
 
 
 def _ascii_name(value):
@@ -217,6 +212,17 @@ class Line(models.Model):
         values.update({key: self[key] for key in RDEP_LINE_INPUT_KEYS})
         return values
 
+    def _inputs(self):
+        # Solo para calculate(): dependents_count/galapagos no son campos de
+        # erpec.payroll.line (vienen del empleado), así que no pueden ir en
+        # _copy_inputs(), que además se usa para duplicar la línea en
+        # action_correct(). Sin esto, engine.calculate() no podía escalar el
+        # tope de gastos personales por cargas familiares ni por Galápagos.
+        data = super()._inputs()
+        data['dependents_count'] = self.employee_id.ec_rdep_dependents_count
+        data['galapagos'] = self.employee_id.ec_rdep_ben_galpg or 'NO'
+        return data
+
     @api.constrains(*RDEP_LINE_INPUT_KEYS)
     def _check_rdep_inputs_not_negative(self):
         for line in self:
@@ -249,8 +255,8 @@ class RdepAnnex(models.Model):
         'Vista previa interna del anexo RDEP; no se presenta ante el SRI ni se homologa. '
         'El tope de gastos personales usado aquí es único y total según cargas familiares '
         '(Boletín NAC-COM-26-006 del SRI), con el factor IPCEG 1.803 para empleados de Galápagos '
-        '(campo benGalpg). El motor mensual de nómina sigue sin escalar ese tope por cargas familiares; '
-        'es una brecha pendiente documentada, no corregida en este incremento. '
+        '(campo benGalpg); el motor mensual de nómina aplica el mismo tope (erpec_payroll.engine.'
+        'personal_expense_cap). '
         'Revisa docs/ALCANCE_ATS_RDEP.md antes de continuar.'))
     _sql_constraints = [('company_year_unique', 'unique(company_id,year)', 'Ya existe un agregador para esta empresa y año.')]
 

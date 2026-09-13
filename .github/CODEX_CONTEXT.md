@@ -132,3 +132,11 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - 21/21 pruebas de regresión y 9/9 del módulo final. Instalación exclusiva de erpec_workspace con respaldo workspace-install-20260913-152951; hashes instalados coincidentes, diez accesos y vínculos comerciales comprobados. Capturas 375/562/1280 px, búsqueda móvil y teclado. Sin errores observados en la consulta final de consola.
 - Corregidos durante la aceptación el selector/prioridad CSS del inicio, la flecha duplicada y los nombres accesibles de formularios/listados. Evidencias: docs/evidencias/ERPEC26-UIUX-02.json e informe ERPEC26-UIUX-INFORME.md. No se confirmó ni emitió ningún documento de negocio durante la revisión visual.
 - Cierre técnico en AuditLock.uiUx; estados históricos conservados. Commit y push se comprueban tras cerrar los artefactos. No incluye RDEP concurrente, restauración, conformidad WCAG ni aceptación visual integral de todos los perfiles/ciclos.
+
+## OP05 — Corrección del hallazgo colateral: motor mensual escala el tope por cargas y Galápagos — 13-09-2026
+
+- El titular pidió corregir la brecha documentada en el incremento anterior: `erpec_payroll.engine.calculate()` seguía usando el tope de 0 cargas sin escalar, afectando la retención mensual real (no solo el anexo RDEP).
+- `DEPENDENTS_BASKETS`/`GALAPAGOS_IPCEG_FACTOR` y `personal_expense_cap()` se movieron a `erpec_payroll/engine.py` (única implementación); `annex_rdep.py` ahora reutiliza esa función en vez de mantener su propia copia de las constantes.
+- `erpec.payroll.line._inputs()` (exclusivo de `calculate()`, nunca de la duplicación de líneas en `action_correct()`) agrega `dependents_count`/`galapagos` leídos de `line.employee_id`; `_copy_inputs()` no se tocó para no romper `action_correct()`, que pasa esos valores directo a `create()`.
+- Compatible con lo existente: valores por defecto (0 cargas, fuera de Galápagos) reproducen exactamente el comportamiento anterior; ninguna prueba preexistente cambió su resultado esperado.
+- 40/40 pruebas aprobadas (4 nuevas: función aislada, cálculo mensual real con menos impuesto a mayor tope, `action_correct()` sigue funcionando). Instalado y verificado en demo con respaldo. Detalle completo en docs/ALCANCE_ATS_RDEP.md ("Corrección del hallazgo colateral").

@@ -107,3 +107,28 @@ class PayrollCase(TransactionCase):
         high=calculate({'start_date':'2025-01-01','wage':2400,'personal_expenses':1000},official,2026,9)
         self.assertEqual(high['tax'],96.49)
         with self.assertRaises(ValueError):calculate({'start_date':'2025-01-01','wage':481},official,2026,9)
+
+    def test_personal_expense_cap_function(self):
+        # Boletín NAC-COM-26-006 (SRI): tope único total por cargas familiares,
+        # multiplicado por 1.803 en Galápagos; sin cargas ni Galápagos, sin cambios.
+        from ..engine import personal_expense_cap
+        self.assertEqual(float(personal_expense_cap(5752.60, 0, 'NO')), 5752.60)
+        self.assertAlmostEqual(float(personal_expense_cap(5752.60, 1, 'NO')), 5752.60/7*9, places=2)
+        self.assertAlmostEqual(float(personal_expense_cap(5752.60, 4, 'NO')), 5752.60/7*17, places=2)
+        self.assertAlmostEqual(float(personal_expense_cap(5752.60, 5, 'NO')), 5752.60/7*20, places=2)
+        self.assertAlmostEqual(float(personal_expense_cap(5752.60, 9, 'NO')), 5752.60/7*20, places=2)
+        self.assertAlmostEqual(float(personal_expense_cap(5752.60, 0, 'SI')), 5752.60*1.803, places=2)
+        with self.assertRaises(ValueError):
+            personal_expense_cap(5752.60, -1, 'NO')
+
+    def test_official_2026_expense_cap_scales_monthly_withholding(self):
+        # El motor mensual debe usar el mismo tope escalado que el anexo RDEP
+        # (erpec_payroll.engine.personal_expense_cap), no solo el tope de 0 cargas.
+        from ..parameters_ec2026 import PARAMS as official
+        baseline = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500}, official, 2026, 9)
+        with_dependents = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'dependents_count': 1}, official, 2026, 9)
+        self.assertLess(with_dependents['tax'], baseline['tax'])
+        galapagos = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'galapagos': 'SI'}, official, 2026, 9)
+        self.assertLess(galapagos['tax'], baseline['tax'])
+        explicit_zero = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'dependents_count': 0, 'galapagos': 'NO'}, official, 2026, 9)
+        self.assertEqual(explicit_zero['tax'], baseline['tax'])

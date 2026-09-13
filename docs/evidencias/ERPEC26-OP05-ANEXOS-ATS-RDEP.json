@@ -58,6 +58,15 @@
     "codeChange": "annex_rdep.py: eliminados EXPENSE_CAP_RATES/EDUCATION_ART_CULTURE_CAP_RATE; nueva _personal_expense_cap(policy, dependents_count, galapagos) reutiliza expense_limit (sin duplicarlo), escalado por DEPENDENTS_BASKETS (7/9/11/14/17/20) y por GALAPAGOS_IPCEG_FACTOR=1.803; _check_expense_caps ahora valida la suma de las 7 categorías contra ese tope único.",
     "newGapFound": "erpec_payroll.engine.calculate() sigue sin escalar expense_limit por cargas familiares ni Galápagos: afecta el cálculo MENSUAL real de retención, no solo el anexo RDEP anual. No corregido en este incremento; documentado como tarea propia priorizada por afectar la retención activa."
   },
+  "collateralFix": {
+    "recordedAt": "2026-09-13T20:47:00.000Z",
+    "prompted": "El titular pidió corregir el hallazgo colateral (newGapFound arriba): el motor mensual no escalaba expense_limit por cargas familiares ni Galápagos.",
+    "design": "DEPENDENTS_BASKETS/GALAPAGOS_IPCEG_FACTOR y personal_expense_cap() se movieron a erpec_payroll/engine.py (única implementación); annex_rdep.py ahora reutiliza esa función en vez de mantener su propia copia de las constantes.",
+    "dataFlow": "erpec.payroll.line._inputs() (exclusivo de calculate(), nunca de la duplicación de líneas en action_correct()) agrega dependents_count/galapagos leídos de line.employee_id. _copy_inputs() no se tocó porque action_correct() pasa su resultado directo a create(); agregar ahí campos que no existen en el modelo habría roto la corrección de períodos.",
+    "backwardCompatibility": "calculate() usa data.get('dependents_count', 0) y data.get('galapagos', 'NO'); con esos valores por defecto el resultado es idéntico al anterior (0 cargas, fuera de Galápagos), así que ninguna prueba preexistente cambió su valor esperado.",
+    "regressionFound": "Una prueba nueva del incremento anterior (test_expense_cap_scales_with_dependents_and_galapagos) comparaba contra un tope calculado con aritmética float pura, mientras el código ahora usa Decimal (vía engine.personal_expense_cap); en el límite exacto eso causaba un ValidationError por una diferencia de céntimos. Corregido haciendo que la prueba calcule su valor esperado llamando a la misma función que usa el código.",
+    "newTests": ["test_personal_expense_cap_function", "test_official_2026_expense_cap_scales_monthly_withholding", "test_monthly_engine_uses_employee_dependents_and_galapagos_cap", "test_action_correct_still_works_with_employee_derived_inputs"]
+  },
   "implementation": {
     "atsModule": "erpec_fiscal_native",
     "atsNewFile": "addons/erpec_fiscal_native/ats_catalog.py",
@@ -76,13 +85,13 @@
   },
   "tests": {
     "exitCode": 0,
-    "testedAt": "2026-09-13T20:24:24.006461+00:00",
+    "testedAt": "2026-09-13T20:48:02.316136+00:00",
     "modules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
-    "totalTests": 36,
-    "newTestsThisIncrement": 11,
+    "totalTests": 40,
+    "newTestsThisIncrement": 15,
     "failed": 0,
     "errors": 0,
-    "logSha256": "02da3fdab4df596f2e866178f829d5248c8a25895ec2488055e30257163b89d1",
+    "logSha256": "c97aca108095dadef0b550f01b11150dee1912e699195a3267727dcfa7d2b1af",
     "runtimePassed": true,
     "payrollMovesAfterConcurrentPost": 1
   },
@@ -121,13 +130,12 @@
     "Catálogo ATS oficial descargado, transcrito y verificado con 6 pruebas de integridad cruzada (voucherTypes<->supportCodes, meses, países, fuente documentada)",
     "Motor de nómina ampliado sin duplicar cálculo: 3 valores expuestos que ya se calculaban, 14 campos nuevos de captura para lo que el motor no puede calcular",
     "XML de vista previa RDEP generado y validado con éxito contra el esquema oficial del SRI (Esquema_RDEP_2023.xsd)",
-    "36/36 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll (incluye la corrección del tope único de gastos personales y el factor Galápagos) y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
+    "40/40 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll (incluye el motor mensual escalando el tope por cargas/Galápagos) y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
     "Agregador probado en vivo contra la demo: 3 empleados consolidados para 2026; generación de XML correctamente bloqueada por RUC vacío de la demo, sin usar datos inventados",
     "Instalación en demo con respaldo previo"
   ],
   "pending": [
     "ATS: clasificación de sustento tributario por documento de compra/venta (dato inexistente en el ERP); generación de las secciones compras/ventas/anulados/exportaciones/recap/fideicomisos/rendFinancieros",
-    "PRIORITARIO — erpec_payroll.engine.calculate() no escala expense_limit por cargas familiares del empleado ni por Galápagos: subestima el tope real de gastos personales en el cálculo MENSUAL de retención para empleados con cargas o en Galápagos, no solo en el anexo RDEP",
     "RDEP: intGrabGen sigue siendo un campo de captura manual sin fuente primaria confirmada de su significado exacto",
     "Canal de presentación ante el SRI (el trámite oficial solo documenta software de escritorio DIMM/APS y FTP, no una API)",
     "Ningún anexo se ha presentado, firmado ni homologado ante el SRI"
