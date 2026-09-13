@@ -19,7 +19,8 @@
 <page string="Anexo RDEP" groups="erpec_payroll.group_payroll_manager"><div class="alert alert-info">Novedades anuales declaradas por el responsable de nómina para el anexo RDEP; no se calculan automáticamente. Ver docs/ALCANCE_ATS_RDEP.md.</div>
 <group string="Ingresos declarados"><field name="annual_profit_sharing"/><field name="decent_wage_compensation"/><field name="other_employer_taxable_income"/><field name="other_general_interest_income"/></group>
 <group string="Otros empleadores y contrato de ingreso neto"><field name="other_employer_iess"/><field name="other_employer_withheld_tax"/><field name="employer_assumed_tax"/></group>
-<group string="Gastos personales desglosados"><field name="expense_housing"/><field name="expense_health"/><field name="expense_education"/><field name="expense_food"/><field name="expense_clothing"/><field name="expense_art_culture"/><field name="expense_tourism"/></group></page>
+<group string="Gastos personales desglosados"><field name="expense_housing"/><field name="expense_health"/><field name="expense_education"/><field name="expense_art_culture"/><field name="expense_food"/><field name="expense_clothing"/><field name="expense_tourism"/></group>
+<p>Educación y arte/cultura comparten un solo tope legal: el SRI las reporta desde 2023 como una única categoría "Educación, arte y cultura".</p></page>
 <page string="Resultado"><group><field name="gross"/><field name="deductions"/><field name="net"/><field name="cost"/></group></page></notebook></sheet></form></field>
 </sheet><chatter/></form></field></record>
 <record id="policy_form" model="ir.ui.view"><field name="name">erpec.payroll.policy.form</field><field name="model">erpec.payroll.policy</field><field name="arch" type="xml"><form><header><button name="action_activate" type="object" string="Activar versión de ensayo" invisible="state != 'draft'"/><field name="state" widget="statusbar"/></header><sheet>

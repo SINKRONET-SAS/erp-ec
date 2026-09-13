@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-13T20:13:02.252Z",
+  "updatedAt": "2026-09-13T19:54:40.050Z",
   "filesModified": [
     ".dockerignore",
     ".gitattributes",
@@ -209,7 +209,6 @@
     "docs/evidencias/AuditLock.before-OP01-OP02.json",
     "docs/evidencias/AuditLock.before-OP05-ANEXOS-ATS-RDEP-20260913T191224Z.json",
     "docs/evidencias/AuditLock.before-OP05-CATALOGO-RDEP-20260913T195440Z.json",
-    "docs/evidencias/AuditLock.before-OP05-GALAPAGOS-EDUCARTCULT-20260913T201302Z.json",
     "docs/evidencias/AuditLock.before-OPERACIONES-ACEPTACION.json",
     "docs/evidencias/AuditLock.before-OPERACIONES-LOCAL.json",
     "docs/evidencias/AuditLock.before-SEGUNDA-PASADA.json",
@@ -309,11 +308,13 @@
     "upstream.json"
   ],
   "validationChecks": [
-    "deducEducartcult confirmado como la categoría \"Educación, arte y cultura\" (reforma tributaria 2023) mediante fuentes tributarias secundarias independientes (Siigo/Contifico, Factuplan); expense_education+expense_art_culture ahora se suman en ese campo con un tope combinado 0.325x",
-    "benGalpg: indicio fuerte de relación con el Régimen Especial de Galápagos (LOREG) mediante la Resolución NAC-DGERCGC16-00000443 (2016) y su derogatoria NAC-DGERCGC21-00000049 (2021); ayuda en pantalla actualizada citando ambas resoluciones y el límite de confianza, sin declarar confirmación completa",
-    "2 pruebas nuevas (suma y tope combinado educación+arte/cultura, con validación de esquema); 35/35 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll aprobadas (0 regresiones)",
-    "Instalación en demo con respaldo (operational-install-20260913-151136)",
-    "UTF-8 sin BOM y git diff --check aprobados"
+    "6 pruebas nuevas del catálogo ATS (integridad cruzada voucherTypes/supportCodes, meses, países, fuente documentada); 20/20 pruebas de erpec_fiscal_native+erpec_fiscal_connector aprobadas",
+    "6 pruebas nuevas del motor RDEP ampliado (campos anuales expuestos sin duplicar cálculo, generación y validación de XML contra el esquema oficial, topes de gastos personales, sisSalNet, corrección conserva novedades); 33/33 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll aprobadas",
+    "XML de vista previa RDEP validado con éxito contra Esquema_RDEP_2023.xsd oficial (lxml.etree.XMLSchema)",
+    "Catálogo ATS oficial (Tablas 1,2,4,5 y países) descargado y transcrito literalmente desde el archivo .xls de sri.gob.ec el 13-09-2026",
+    "Instructivo Formulario 107 del SRI leído (extracción de texto) para confirmar el significado de campos RDEP sin documentación en el XSD",
+    "Instalación en demo con respaldo (operational-install-20260913-144953); verificado en vivo que la generación de XML se bloquea correctamente por el RUC vacío de la demo, sin usar datos inventados",
+    "UTF-8 sin BOM y git diff --check aprobados en los archivos nuevos y modificados de este incremento"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -329,13 +330,12 @@
     "ATS: clasificación de sustento tributario por documento de compra/venta (dato inexistente en el ERP); generación de las secciones compras/ventas/anulados/exportaciones/recap/fideicomisos/rendFinancieros",
     "RDEP: confirmar deducEducartcult y benGalpg contra la ficha técnica narrativa (PDF escaneado, no leída) o el software DIMM",
     "RDEP: intGrabGen sigue siendo un campo de captura manual sin fuente primaria confirmada de su significado exacto",
-    "Canal de presentación ante el SRI para ambos anexos (el trámite oficial documenta solo software de escritorio DIMM/APS y FTP, no una API)",
-    "RDEP: confirmar si benGalpg conserva efecto vigente después de la derogatoria de 2021, o solo aplica a corrección de períodos 2016-2021; requiere la ficha técnica narrativa del RDEP (PDF escaneado, no leída) o consulta directa al SRI"
+    "Canal de presentación ante el SRI para ambos anexos (el trámite oficial documenta solo software de escritorio DIMM/APS y FTP, no una API)"
   ],
   "fileHashes": {
     ".dockerignore": "22b7ba5f19e10672ea1305bbf8d95a27d8ea90e4fe75cf4edb49c4df99c9876e",
     ".gitattributes": "239beb794f9306f8004f85a1b5b91a6f4f3d0c3f63be1ba3be735ceedbbb9fba",
-    ".github/CODEX_CONTEXT.md": "e902d0cdfc2ef3592440627235ce83e8d5c031b1538e1e97745c2303f7ca8cb4",
+    ".github/CODEX_CONTEXT.md": "7a5d00bbb69eca0fdc6f37146d059227e86f31d61804f45d0bf363e3ab082e90",
     ".github/prompts/ERPEC26-00.md": "6168fbecf4b943003eaf50db158a750a1e5cddd2e4208bd5454bedcf70517c94",
     ".github/prompts/ERPEC26-01.md": "e041accd36043873edafd8abff86428b9c77c774f5d9bec262882863a02fa95c",
     ".github/prompts/ERPEC26-02.md": "c5d8a9f8e568873a89fb1ebacecc2c7b8d3655c1083dfe76de03d52d903e4367",
@@ -423,7 +423,7 @@
     "addons/erpec_payphone/views/payphone.xml": "c7f457849fb83fb8e48740c6175a11dd43dfde1a51e65bb4a3dd290ece37d4ab",
     "addons/erpec_payroll/__init__.py": "cfdb61ae90aff79bd5cfbdcc2a820f5124a7e0867e9673d46a673238212bd7e1",
     "addons/erpec_payroll/__manifest__.py": "5e82a10fa43958785a6f0cc8710630af12e227db28e6ce3421817fe5915dbd3c",
-    "addons/erpec_payroll/annex_rdep.py": "be5039f3119789cb8d524ff0cfdbfc53185336432e083623478dcbd9d1e933ac",
+    "addons/erpec_payroll/annex_rdep.py": "725e811c816886aa56541af0f6508c6c1f0503e4ade30d13329777f5f156ad52",
     "addons/erpec_payroll/demo_parameters.py": "b6387d7aa7a14b6b71cb1edd3c4002d664883678f0a75bf0b366701dc0d52a0c",
     "addons/erpec_payroll/engine.py": "cad924233c27eb555b2ebecb309aaadd196d5d41a56e1b5d39a3216ea8ad45a6",
     "addons/erpec_payroll/ir.model.access.csv": "6d4d435a88fc07b591b58242ce4404950bdf1294e791902130ef5f7fe3d1346f",
@@ -431,9 +431,9 @@
     "addons/erpec_payroll/parameters_ec2026.py": "47e68a93fc310ce2c6d212047525cb46dd47feda31888d7d0b0b747ad1dbf439",
     "addons/erpec_payroll/security.xml": "d3f315d380301e4b665bac3d384b648fffd709bac513dcaab27d516975555fb6",
     "addons/erpec_payroll/tests/__init__.py": "6fc0b02cd395424b55368c75eda80af4753331472d77ab99fbc75e630a3aa48d",
-    "addons/erpec_payroll/tests/test_annex_rdep.py": "130ed42107ab4e426d11a4563ecf06db90a427dc2db6f7eab719235cdfac5e38",
+    "addons/erpec_payroll/tests/test_annex_rdep.py": "1595287e0d5e92a81feda3daf419760ee041d89d1cbd9d414d29a3276c0c5cfd",
     "addons/erpec_payroll/tests/test_payroll.py": "202ba4cd8f669b0731b57fe00ba650466ab1311fef9688c298089c03806be5ba",
-    "addons/erpec_payroll/views.xml": "12d72694e1a08e44dd4904834f5268e4e27cb35d68775caa1a2254a0bb427f26",
+    "addons/erpec_payroll/views.xml": "48ed36a75476b72013637879c5e65c65dedbcbd867cf57366cf8bdb9cae5e71c",
     "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd": "9067640f71c4c14549c5376e0f5c357d01f69189b24346ff70408adbb5c68046",
     "addons/erpec_provision/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
     "addons/erpec_provision/__manifest__.py": "0fbb84ff441469ebfbe745891f73dfa06f560398c23867f41c9211a999abc24d",
@@ -500,7 +500,7 @@
     "deployment/linux/requirements-linux.lock": "a10857532738590f14e544bdbb38b53f80720cedb036dd8a35b11a38bc15bbb6",
     "deployment/linux/runtime.py": "58b7e50c07e55d36eedb68aefd9809d0ad0a2988c4a51bf1982975e6171f6cb4",
     "deployment/render.customer.example.yaml": "d50eae6a90d2c5069445d626981d4e3ae8fb4879d6c502cbb1dd0f81174c6d79",
-    "docs/ALCANCE_ATS_RDEP.md": "d86786ec1a1325b3debc094f2eb4186e7cd4a28a222ee5f8136e923896674a3f",
+    "docs/ALCANCE_ATS_RDEP.md": "8c79d9dbc3a618055194fbfc0cdb7e044823addd6f4fbf0b41579fe7a02fa289",
     "docs/ALCANCE_COMMUNITY_ECUADOR.md": "14525ab3ef8e21e8095fd1d8e2c3c2863cbaa40629ac4a7220186289453c5bbe",
     "docs/APROVISIONAMIENTO_WINDOWS.md": "be388b4453cbfae8b48f9b4ae165f5350e52bea2af0fcb0493f74138860243f4",
     "docs/ARQUITECTURA_Y_CONTRATOS.md": "344bf60ad6d76f4e831de4d2f2c39077350c17a07da5983d2342e63c991c576a",
@@ -536,7 +536,6 @@
     "docs/evidencias/AuditLock.before-OP01-OP02.json": "149c7102e018bcbfd73f36e3287750ef483ca933905ecc4de598449d318b206f",
     "docs/evidencias/AuditLock.before-OP05-ANEXOS-ATS-RDEP-20260913T191224Z.json": "99943a4c4523213d15ffa024a2bb9af5dba6d1d69d47af331a1658758155497f",
     "docs/evidencias/AuditLock.before-OP05-CATALOGO-RDEP-20260913T195440Z.json": "11d785e017d0de4d1087ff1535e137ee0a33f99093be164840a6e0a418f1f617",
-    "docs/evidencias/AuditLock.before-OP05-GALAPAGOS-EDUCARTCULT-20260913T201302Z.json": "d3eaf56d3bdaa2367934e76ffc290858d885735ff849978ea2214699572ba865",
     "docs/evidencias/AuditLock.before-OPERACIONES-ACEPTACION.json": "7e9351727f5a74312157a1d8df207107b9b773773c6a01732f6de2d8fa82b837",
     "docs/evidencias/AuditLock.before-OPERACIONES-LOCAL.json": "71fdb11054abce9d9b9c778d5588a30eabfbfb1932f5bae65ef1a30b623355de",
     "docs/evidencias/AuditLock.before-SEGUNDA-PASADA.json": "935319571390a5cb0f8fe4464b53c633391b751b002e70cc5453375ba0935454",
@@ -563,7 +562,7 @@
     "docs/evidencias/ERPEC26-ACCESO-DEMO.json": "9042f9931e70d8836ff3da0c879bda67fbcf0cd7fa1aa445371238ea66fff3d5",
     "docs/evidencias/ERPEC26-FISCAL-NATIVO.json": "cbc47aa30daeec487b569fc5671993697b280e01505e0837fb6afcb594a8e03a",
     "docs/evidencias/ERPEC26-OP01-OP02.json": "b9aff37f66c4acf1993d5faf202a34124182d87dc5faed341eb22b133aa29a47",
-    "docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json": "f5d02456d010d7d859ecf3cf306c411d3a8c62a6fc16455fc6d18955fede81ae",
+    "docs/evidencias/ERPEC26-OP05-ANEXOS-ATS-RDEP.json": "9c58601b21c1be77c3dce1f64d3a41eb3fffc99d20762b55b36d90d6966fc49b",
     "docs/evidencias/ERPEC26-OPERACIONES-ACEPTACION.json": "c630792ef36029c9dc6c08ec96f056a592326f7f52faa637bb6557ecc8274ae1",
     "docs/evidencias/ERPEC26-OPERACIONES-LOCAL.json": "775e32a97e2927fcebde4a70bfc1d2eed4ca786e9ead906baee186d8c7764eb5",
     "docs/evidencias/ERPEC26-SEGUNDA-PASADA.json": "f7bd9549c5eaad6cc7ada29e8ffd00b5305ba739afefe6ba371aa489e3060048",
@@ -635,7 +634,7 @@
     "scripts/windows-local.py": "7294505c0f57ee85ad6408a4ef53497b8f8ec6bcea039dd243974a8336ac4cb0",
     "upstream.json": "cdc7e8f8a393f2d17a840a8a41635c4a85974b4527990f4a8e479471485f3376"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP05-GALAPAGOS-EDUCARTCULT-20260913T201302Z.json",
-  "previousAuditLockHash": "d3eaf56d3bdaa2367934e76ffc290858d885735ff849978ea2214699572ba865",
-  "signature": "75dd4e819eceb0850e8a0aade069d76da3fabdecb4f5dd8cd35f92ceafb98819"
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP05-CATALOGO-RDEP-20260913T195440Z.json",
+  "previousAuditLockHash": "11d785e017d0de4d1087ff1535e137ee0a33f99093be164840a6e0a418f1f617",
+  "signature": "05b6e5a211d8f3cf3420a91091c5e16be39b57a258a410453125f44cb4da6234"
 }

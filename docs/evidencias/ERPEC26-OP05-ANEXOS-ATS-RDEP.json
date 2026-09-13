@@ -20,7 +20,25 @@
     }
   },
   "scopeDocument": "docs/ALCANCE_ATS_RDEP.md",
-  "decision": "Se obtuvo y transcribió el Catálogo ATS oficial completo (Tablas 1,2,4,5 y países), cerrando la brecha de codSustento/tipoComprobante/identificación. La generación de compras/ventas del ATS sigue sin implementarse: requiere clasificar el sustento tributario por documento, dato que no existe en ningún modelo del ERP y no se infiere. El motor de nómina se amplió (sin duplicar el cálculo existente: se reutilizan gross/salary/overtime/thirteenth/fourteenth/reserve_iess/personal_iess/tax ya calculados, y se expusieron annual_tax_caused/personal_expense_rebate/annual_tax_after_rebate que ya se calculaban internamente) con 14 campos nuevos de captura para los valores que el motor no puede calcular por sí mismo (utilidades, salario digno, ingresos/aportes/impuesto con otros empleadores, gastos personales desglosados). Dos campos del esquema RDEP (deducEducartcult, benGalpg) carecen de documentación en toda fuente primaria revisada; se envían con un valor neutro marcado explícitamente en el código, no con datos inventados presentados como confirmados.",
+  "decision": "Se obtuvo y transcribió el Catálogo ATS oficial completo (Tablas 1,2,4,5 y países), cerrando la brecha de codSustento/tipoComprobante/identificación. La generación de compras/ventas del ATS sigue sin implementarse: requiere clasificar el sustento tributario por documento, dato que no existe en ningún modelo del ERP y no se infiere. El motor de nómina se amplió (sin duplicar el cálculo existente: se reutilizan gross/salary/overtime/thirteenth/fourteenth/reserve_iess/personal_iess/tax ya calculados, y se expusieron annual_tax_caused/personal_expense_rebate/annual_tax_after_rebate que ya se calculaban internamente) con 14 campos nuevos de captura para los valores que el motor no puede calcular por sí mismo (utilidades, salario digno, ingresos/aportes/impuesto con otros empleadores, gastos personales desglosados). Dos campos del esquema RDEP (deducEducartcult, benGalpg) quedaron inicialmente sin resolver; verificados en la misma sesión (ver 'verification' más abajo) contra hipótesis del titular.",
+  "verification": {
+    "recordedAt": "2026-09-13T20:05:00.000Z",
+    "prompted": "El titular pidió verificar si deducEducartcult correspondía a la deducción de Educación, Arte y Cultura, y si benGalpg correspondía a un beneficio especial para Galápagos.",
+    "deducEducartcult": {
+      "conclusion": "confirmado por fuentes secundarias consistentes",
+      "sources": ["Siigo/Contifico: guía gastos personales Ecuador 2026", "Factuplan: gastos personales deducibles Ecuador 2026"],
+      "finding": "El SRI agrupa los gastos personales deducibles en 6 categorías desde la reforma que reintrodujo la rebaja del 18% (2023): vivienda, salud, educación arte y cultura (una sola categoría), alimentación, vestimenta, turismo nacional. deducEduca/deducArtycult (opcionales en el esquema) son campos legados de cuando eran categorías separadas.",
+      "codeChange": "expense_education + expense_art_culture se suman en deducEducartcult; deducEduca/deducArtycult ya no se emiten; el tope 0.325x se aplica a la suma combinada, no a cada campo por separado.",
+      "confidenceNote": "No se leyó la ficha técnica narrativa del RDEP (PDF escaneado); confirmación por fuentes tributarias secundarias, no por la fuente primaria del propio anexo."
+    },
+    "benGalpg": {
+      "conclusion": "indicio fuerte, no confirmación completa",
+      "sources": ["Resolución NAC-DGERCGC16-00000443 (Registro Oficial Sup. 874, 01-11-2016)", "Resolución NAC-DGERCGC21-00000049 (Registro Oficial 596, 13-12-2021, derogatoria)"],
+      "finding": "La Resolución 2016 estableció una tabla diferenciada de deducción de gastos personales para el Régimen Especial de la Provincia de Galápagos (LOREG); fue derogada en 2021. Coherente con el nombre y tipo SI/NO del campo, pero el esquema RDEP es de 2023 (posterior a la derogatoria) y ninguna fuente confirma si el campo conserva efecto vigente hoy.",
+      "codeChange": "La ayuda en pantalla de ec_rdep_ben_galpg ahora cita ambas resoluciones y el límite de confianza explícitamente, en vez de decir 'sin documentación'. Se mantiene NO como valor por defecto.",
+      "confidenceNote": "No se encontró el texto de una ficha técnica o resolución que documente el campo benGalpg por su nombre exacto; la relación con LOREG es inferida de la coincidencia temática y del nombre del campo."
+    }
+  },
   "implementation": {
     "atsModule": "erpec_fiscal_native",
     "atsNewFile": "addons/erpec_fiscal_native/ats_catalog.py",
@@ -30,18 +48,19 @@
     "rdepNewEmployeeFields": ["ec_rdep_id_type", "ec_rdep_fiscal_residence", "ec_rdep_residence_country", "ec_rdep_ben_galpg", "ec_rdep_establishment"],
     "rdepXsdCopy": "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd",
     "rdepXmlGeneration": "erpec.payroll.rdep.action_generate_xml, validado con lxml.etree.XMLSchema contra el esquema oficial copiado",
-    "unresolvedFieldsSentNeutral": ["deducEducartcult=0 (nombre ambiguo sin fuente)", "benGalpg='NO' si no se confirma explícitamente (sin documentación en ninguna fuente)"],
+    "unresolvedFieldsSentNeutral": ["benGalpg='NO' por defecto (indicio fuerte de Régimen Especial de Galápagos derogado en 2021; sin confirmación completa de efecto vigente)"],
+    "resolvedThisSession": ["deducEducartcult = expense_education + expense_art_culture (categoría 'Educación, arte y cultura' confirmada por fuentes tributarias secundarias)"],
     "businessDataInvented": false
   },
   "tests": {
     "exitCode": 0,
-    "testedAt": "2026-09-13T19:47:40.254110+00:00",
+    "testedAt": "2026-09-13T20:09:00.626187+00:00",
     "modules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
-    "totalTests": 33,
-    "newTestsThisIncrement": 6,
+    "totalTests": 35,
+    "newTestsThisIncrement": 8,
     "failed": 0,
     "errors": 0,
-    "logSha256": "f6ed4dddbca63a155005ddc2e6c423a738dc361a4334cf788ed45b125440b1c9",
+    "logSha256": "78ebeba7ec1dbcae8210fe0b2b1d350305513dd1bceb2ec8e8e878de1547cdec",
     "runtimePassed": true,
     "payrollMovesAfterConcurrentPost": 1
   },
@@ -80,13 +99,13 @@
     "Catálogo ATS oficial descargado, transcrito y verificado con 6 pruebas de integridad cruzada (voucherTypes<->supportCodes, meses, países, fuente documentada)",
     "Motor de nómina ampliado sin duplicar cálculo: 3 valores expuestos que ya se calculaban, 14 campos nuevos de captura para lo que el motor no puede calcular",
     "XML de vista previa RDEP generado y validado con éxito contra el esquema oficial del SRI (Esquema_RDEP_2023.xsd)",
-    "33/33 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
+    "35/35 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll (incluye la verificación de deducEducartcult/Galápagos) y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
     "Agregador probado en vivo contra la demo: 3 empleados consolidados para 2026; generación de XML correctamente bloqueada por RUC vacío de la demo, sin usar datos inventados",
     "Instalación en demo con respaldo previo"
   ],
   "pending": [
     "ATS: clasificación de sustento tributario por documento de compra/venta (dato inexistente en el ERP); generación de las secciones compras/ventas/anulados/exportaciones/recap/fideicomisos/rendFinancieros",
-    "RDEP: confirmar deducEducartcult y benGalpg contra la ficha técnica narrativa (no leída, PDF escaneado) o el software DIMM",
+    "RDEP: confirmar benGalpg contra la ficha técnica narrativa del RDEP (no leída, PDF escaneado) o el software DIMM; deducEducartcult ya quedó razonablemente confirmado por fuentes secundarias",
     "RDEP: intGrabGen sigue siendo un campo de captura manual sin fuente primaria confirmada de su significado exacto",
     "Canal de presentación ante el SRI (el trámite oficial solo documenta software de escritorio DIMM/APS y FTP, no una API)",
     "Ningún anexo se ha presentado, firmado ni homologado ante el SRI"

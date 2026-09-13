@@ -136,6 +136,22 @@ class RdepAnnexCase(TransactionCase):
         self.assertEqual(tree.find('numRuc').text, '1790012345001')
         self.assertEqual(tree.find('retRelDep/datRetRelDep/empleado/tipIdRet').text, 'C')
 
+    def test_education_and_art_culture_merge_into_deducEducartcult(self):
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-12', 'policy_id': self.policy.id, 'month': 12, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'expense_education': 10, 'expense_art_culture': 5})]})
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        self._setup_employee_for_xml(self.employee)
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        annex.action_generate_xml()
+        tree = etree.fromstring(base64.b64decode(annex.xml_file))
+        detail = tree.find('retRelDep/datRetRelDep')
+        self.assertEqual(detail.find('deducEducartcult').text, '15.0')
+        self.assertIsNone(detail.find('deducEduca'))
+        self.assertIsNone(detail.find('deducArtycult'))
+
     def test_generate_xml_requires_complete_employee_data(self):
         self._post_period(7)
         self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
@@ -163,6 +179,16 @@ class RdepAnnexCase(TransactionCase):
         with self.assertRaises(ValidationError), self.cr.savepoint():
             period.line_ids.write({'expense_housing': fraction * 0.325 + 1})
         period.line_ids.write({'expense_housing': fraction * 0.325})
+
+    def test_education_and_art_culture_share_combined_cap(self):
+        # Desde la reforma de 2023 el SRI reporta educación y arte/cultura como una
+        # sola categoría (deducEducartcult); el tope 0.325x se aplica a su suma.
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-11', 'policy_id': self.policy.id, 'month': 11, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
+        fraction = json.loads(self.policy.parameters)['tax_brackets'][0]['to']
+        cap = fraction * 0.325
+        period.line_ids.write({'expense_education': cap / 2, 'expense_art_culture': cap / 2})
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            period.line_ids.write({'expense_art_culture': cap / 2 + 1})
 
     def test_correction_copies_rdep_novelties(self):
         period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-10', 'policy_id': self.policy.id, 'month': 10, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'annual_profit_sharing': 300, 'expense_health': 20})]})

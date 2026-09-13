@@ -21,12 +21,26 @@ salvo que el responsable de nómina realmente los declare así.
 
 No genera un anexo homologado ni presentado ante el SRI: la vista previa XML
 se valida contra el esquema oficial descargado, pero no hay firma, envío ni
-autoridad SRI involucrados. Dos campos del esquema quedan explícitamente sin
-resolver por falta de fuente autorizada: `deducEducartcult` (nombre ambiguo,
-no documentado en ninguna fuente consultada) y `benGalpg` (sin documentación
-en el esquema ni en las guías del SRI revisadas); se envían en 0 y "NO"
-respectivamente, marcados en el código, y deben confirmarse antes de usar el
-anexo para un caso real.
+autoridad SRI involucrados.
+
+`deducEducartcult` corresponde a la categoría "Educación, arte y cultura"
+que el SRI usa desde la reforma tributaria de 2023 para agrupar en una sola
+categoría lo que antes eran gastos de educación y de arte/cultura por
+separado (confirmado por múltiples guías tributarias post-reforma; no por la
+ficha técnica narrativa del RDEP, que sigue sin leerse). Los campos legados
+`deducEduca`/`deducArtycult` (opcionales en el esquema) ya no se usan para
+períodos corrientes y se omiten en la vista previa.
+
+`benGalpg` corresponde al beneficio del Régimen Especial de la Provincia de
+Galápagos (LOREG): la Resolución NAC-DGERCGC16-00000443 (Registro Oficial
+Sup. 874, 01-11-2016) estableció una tabla diferenciada de deducción de
+gastos personales para ese régimen, derogada por la Resolución
+NAC-DGERCGC21-00000049 (Registro Oficial 596, 13-12-2021). No está
+confirmado si el campo conserva un efecto vigente para períodos posteriores
+a la derogatoria o si solo importa para corregir períodos 2016-2021; se
+mantiene como declaración explícita del responsable de nómina, con "NO"
+como valor por defecto razonable dado que el beneficio diferenciado está
+derogado, no como un hecho confirmado para cada empleado.
 """
 import json
 import unicodedata
@@ -62,7 +76,11 @@ RDEP_LINE_INPUT_KEYS = (
 # topes de gastos personales del Instructivo Formulario 107 se expresan como
 # múltiplos suyos: vivienda/educación/alimentación/vestimenta 0.325 veces,
 # salud 1.3 veces.
-EXPENSE_CAP_RATES = {'expense_housing': 0.325, 'expense_education': 0.325, 'expense_food': 0.325, 'expense_clothing': 0.325, 'expense_health': 1.3}
+# expense_education y expense_art_culture comparten un solo tope: desde la reforma
+# tributaria de 2023 el SRI las reporta como una única categoría "Educación, arte y
+# cultura" (deducEducartcult), no como dos categorías independientes.
+EXPENSE_CAP_RATES = {'expense_housing': 0.325, 'expense_food': 0.325, 'expense_clothing': 0.325, 'expense_health': 1.3}
+EDUCATION_ART_CULTURE_CAP_RATE = 0.325
 
 
 def _basic_fraction(policy):
@@ -120,8 +138,8 @@ class Employee(models.Model):
         'País de residencia (RDEP)', default='593',
         help='Campo paisResidencia: código SRI de 3 dígitos. 593 = Ecuador. Catálogo completo de países en addons/erpec_fiscal_native/ats_catalog.py (COUNTRY_CODES).')
     ec_rdep_ben_galpg = fields.Selection(
-        BEN_GALPG, string='Campo benGalpg (RDEP)',
-        help='Campo benGalpg del esquema SRI, requerido pero sin documentación en el esquema ni en las guías revisadas el 13-09-2026. Confirmar su significado antes de presentar un anexo real.')
+        BEN_GALPG, string='Beneficiario Régimen Especial de Galápagos (RDEP)', default='NO',
+        help='Campo benGalpg del esquema SRI. Corresponde al Régimen Especial de la Provincia de Galápagos (LOREG): la tabla diferenciada de gastos personales de la Resolución NAC-DGERCGC16-00000443 (2016) fue derogada por la NAC-DGERCGC21-00000049 (2021). No está confirmado si el campo conserva efecto vigente después de la derogatoria; "NO" es el valor por defecto razonable, no un hecho verificado para cada empleado.')
     ec_rdep_establishment = fields.Char('Establecimiento (RDEP)', help='Campo estab: 3 dígitos, código de establecimiento del RUC donde trabaja el empleado.')
 
     @api.constrains('ec_rdep_disability_percentage')
@@ -160,10 +178,10 @@ class Line(models.Model):
     other_general_interest_income = fields.Float('Otros intereses/ingresos gravados generales (RDEP)', help='Campo intGrabGen del esquema SRI; su significado no está confirmado por ninguna fuente primaria revisada el 13-09-2026. Completar solo tras validar con el contador o la ficha técnica.')
     expense_housing = fields.Float('Gastos personales · vivienda (RDEP)', help='Campo deducVivienda; tope legal 0.325 veces la fracción básica exenta.')
     expense_health = fields.Float('Gastos personales · salud (RDEP)', help='Campo deducSalud; tope legal 1.3 veces la fracción básica exenta.')
-    expense_education = fields.Float('Gastos personales · educación (RDEP)', help='Campo deducEduca; tope legal 0.325 veces la fracción básica exenta.')
+    expense_education = fields.Float('Gastos personales · educación (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_art_culture. Tope combinado legal 0.325 veces la fracción básica exenta.')
     expense_food = fields.Float('Gastos personales · alimentación (RDEP)', help='Campo deducAliement; tope legal 0.325 veces la fracción básica exenta.')
     expense_clothing = fields.Float('Gastos personales · vestimenta (RDEP)', help='Campo deducVestim; tope legal 0.325 veces la fracción básica exenta.')
-    expense_art_culture = fields.Float('Gastos personales · arte y cultura (RDEP)', help='Campo deducArtycult; tope legal no confirmado en las fuentes revisadas.')
+    expense_art_culture = fields.Float('Gastos personales · arte y cultura (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_education. Tope combinado legal 0.325 veces la fracción básica exenta.')
     expense_tourism = fields.Float('Gastos personales · turismo (RDEP)', help='Campo deduccionTurismo; tope legal no confirmado en las fuentes revisadas.')
 
     def _copy_inputs(self):
@@ -177,13 +195,17 @@ class Line(models.Model):
             if any(line[key] < 0 for key in RDEP_LINE_INPUT_KEYS):
                 raise ValidationError('Las novedades del RDEP deben ser no negativas.')
 
-    @api.constrains(*EXPENSE_CAP_RATES)
+    @api.constrains(*EXPENSE_CAP_RATES, 'expense_education', 'expense_art_culture')
     def _check_expense_caps(self):
         for line in self:
             fraction = _basic_fraction(line.period_id.policy_id)
             for key, rate in EXPENSE_CAP_RATES.items():
                 if line[key] > fraction * rate:
                     raise ValidationError('%s supera el tope legal (%.2f veces la fracción básica exenta) del Instructivo Formulario 107.' % (line._fields[key].string, rate))
+            # Educación y arte/cultura comparten un solo tope desde la reforma de 2023:
+            # el SRI las reporta como una única categoría (deducEducartcult).
+            if line.expense_education + line.expense_art_culture > fraction * EDUCATION_ART_CULTURE_CAP_RATE:
+                raise ValidationError('Educación + arte y cultura supera el tope legal combinado (%.3f veces la fracción básica exenta).' % EDUCATION_ART_CULTURE_CAP_RATE)
 
 
 class RdepAnnex(models.Model):
@@ -199,8 +221,9 @@ class RdepAnnex(models.Model):
     digest = fields.Char('SHA256 del XML', readonly=True)
     pending_notice = fields.Text('Pendiente', readonly=True, default=(
         'Vista previa interna del anexo RDEP; no se presenta ante el SRI ni se homologa. '
-        'Dos campos del esquema (deducEducartcult y benGalpg) se completan con un valor neutro '
-        'porque ninguna fuente primaria revisada confirma su significado; revisar antes de un caso real. '
+        'benGalpg (Régimen Especial de Galápagos, LOREG) se declara por empleado con "NO" por defecto, '
+        'ya que la tabla diferenciada de gastos personales de ese régimen (Resolución NAC-DGERCGC16-00000443) '
+        'está derogada desde 2021; no está confirmado si el campo conserva otro efecto vigente. '
         'Revisa docs/ALCANCE_ATS_RDEP.md antes de continuar.'))
     _sql_constraints = [('company_year_unique', 'unique(company_id,year)', 'Ya existe un agregador para esta empresa y año.')]
 
@@ -311,16 +334,13 @@ class RdepAnnex(models.Model):
             add(detail, 'aporPerIessConOtrosEmpls', round(line.other_employer_iess, 2))
             add(detail, 'deducVivienda', round(line.expense_housing, 2))
             add(detail, 'deducSalud', round(line.expense_health, 2))
-            if line.expense_education:
-                add(detail, 'deducEduca', round(line.expense_education, 2))
-            # deducEducartcult: nombre ambiguo sin documentación en ninguna fuente
-            # primaria revisada (distinto de deducArtycult, que sí está definido);
-            # se envía en 0 hasta confirmar su significado real.
-            add(detail, 'deducEducartcult', 0)
+            # deducEducartcult es la categoría "Educación, arte y cultura" que el SRI
+            # reporta fusionada desde la reforma tributaria de 2023; deducEduca y
+            # deducArtycult son campos legados (opcionales) de las categorías separadas
+            # previas y ya no se emiten para períodos corrientes.
+            add(detail, 'deducEducartcult', round(line.expense_education + line.expense_art_culture, 2))
             add(detail, 'deducAliement', round(line.expense_food, 2))
             add(detail, 'deducVestim', round(line.expense_clothing, 2))
-            if line.expense_art_culture:
-                add(detail, 'deducArtycult', round(line.expense_art_culture, 2))
             if line.expense_tourism:
                 add(detail, 'deduccionTurismo', round(line.expense_tourism, 2))
             add(detail, 'exoDiscap', disability_relief)
@@ -372,8 +392,8 @@ class RdepAnnexLine(models.Model):
     other_general_interest_income = fields.Float('Otros intereses/ingresos gravados generales (intGrabGen)', readonly=True)
     expense_housing = fields.Float('Gastos personales · vivienda (deducVivienda)', readonly=True)
     expense_health = fields.Float('Gastos personales · salud (deducSalud)', readonly=True)
-    expense_education = fields.Float('Gastos personales · educación (deducEduca)', readonly=True)
+    expense_education = fields.Float('Gastos personales · educación (parte de deducEducartcult)', readonly=True)
     expense_food = fields.Float('Gastos personales · alimentación (deducAliement)', readonly=True)
     expense_clothing = fields.Float('Gastos personales · vestimenta (deducVestim)', readonly=True)
-    expense_art_culture = fields.Float('Gastos personales · arte y cultura (deducArtycult)', readonly=True)
+    expense_art_culture = fields.Float('Gastos personales · arte y cultura (parte de deducEducartcult)', readonly=True)
     expense_tourism = fields.Float('Gastos personales · turismo (deduccionTurismo)', readonly=True)
