@@ -57,7 +57,8 @@ def calculate(data, parameters, year, month):
         raise ValueError('La tabla de renta no cubre la base anual.')
     # La rebaja reduce el impuesto; no resta gastos personales de la base imponible.
     rebate = min(number(data.get('personal_expenses', 0)), number(parameters['expense_limit']))*number(parameters['rebate_rate'])
-    tax = money(max(Decimal(0), annual_tax-rebate)/12)
+    tax_after_rebate = max(Decimal(0), annual_tax-rebate)
+    tax = money(tax_after_rebate/12)
     thirteenth = money(base*number(parameters['thirteenth_rate']))
     fourteenth = money(number(parameters['minimum_salary'])*number(parameters['fourteenth_rate'])*days/30)
     vacation = money(base*number(parameters['vacation_rate']))
@@ -75,7 +76,10 @@ def calculate(data, parameters, year, month):
         raise ValueError('El neto a recibir no puede ser negativo.')
     accrued13, accrued14, reserve_iess = thirteenth-monthly13, fourteenth-monthly14, reserve-reserve_paid
     cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess)
-    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost}.items()}
+    # annual_tax y rebate ya estaban calculados; se exponen sin duplicar el cálculo
+    # para que el agregador RDEP obtenga la base imponible anual y la rebaja de
+    # gastos personales sin recalcularlas por su cuenta (docs/ALCANCE_ATS_RDEP.md).
+    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'annual_tax_after_rebate':tax_after_rebate}.items()}
 
 
 def validate_parameters(parameters):

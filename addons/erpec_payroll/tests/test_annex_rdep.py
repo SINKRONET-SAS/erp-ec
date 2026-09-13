@@ -1,8 +1,13 @@
-"""Pruebas del agregador RDEP: solo consolida datos ya contabilizados, sin generar XML."""
+"""Pruebas del agregador RDEP: consolidación de nómina y vista previa XML validada contra el esquema oficial."""
+import base64
+import hashlib
 import json
+from pathlib import Path
+from lxml import etree
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import TransactionCase, tagged
 from ..demo_parameters import PARAMS
+from ..engine import calculate
 
 
 @tagged('post_install', '-at_install')
@@ -98,3 +103,74 @@ class RdepAnnexCase(TransactionCase):
         self.assertIn('ec_rdep_disability_type', arch)
         company_arch = self.env['res.company'].with_user(manager_user).get_view(view_type='form')['arch']
         self.assertIn('ec_rdep_employer_type', company_arch)
+
+    def _setup_employee_for_xml(self, employee):
+        employee.write({
+            'ec_rdep_id_type': 'C', 'identification_id': '1712345678', 'ec_rdep_establishment': '001',
+            'ec_rdep_fiscal_residence': '00', 'ec_rdep_residence_country': '593',
+            'ec_rdep_treaty_applies': 'NO', 'ec_rdep_disability_type': '04',
+        })
+
+    def test_engine_exposes_annual_tax_fields_without_duplicating(self):
+        result = calculate({'start_date': '2025-01-01', 'wage': 1200, 'personal_expenses': 1000}, PARAMS, 2098, 9)
+        self.assertIn('annual_tax_caused', result)
+        self.assertIn('personal_expense_rebate', result)
+        self.assertIn('annual_tax_after_rebate', result)
+        self.assertAlmostEqual(result['annual_tax_after_rebate'], max(0.0, result['annual_tax_caused'] - result['personal_expense_rebate']), places=2)
+
+    def test_generate_xml_validates_against_official_schema(self):
+        self._post_period(6)
+        self._setup_employee_for_xml(self.employee)
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        with self.assertRaises(ValidationError):
+            annex.action_generate_xml()
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex.action_generate_xml()
+        self.assertEqual(annex.state, 'generated')
+        decoded = base64.b64decode(annex.xml_file)
+        self.assertEqual(hashlib.sha256(decoded).hexdigest(), annex.digest)
+        schema = etree.XMLSchema(etree.parse(str(Path(__file__).parent.parent / 'xsd/Esquema_RDEP_2023.xsd')))
+        tree = etree.fromstring(decoded)
+        self.assertTrue(schema.validate(tree), schema.error_log)
+        self.assertEqual(tree.find('numRuc').text, '1790012345001')
+        self.assertEqual(tree.find('retRelDep/datRetRelDep/empleado/tipIdRet').text, 'C')
+
+    def test_generate_xml_requires_complete_employee_data(self):
+        self._post_period(7)
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        with self.assertRaises(ValidationError):
+            annex.action_generate_xml()
+
+    def test_sis_sal_net_reflects_employer_assumed_tax(self):
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'employer_assumed_tax': 50})]})
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        self._setup_employee_for_xml(self.employee)
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        annex.action_generate_xml()
+        tree = etree.fromstring(base64.b64decode(annex.xml_file))
+        self.assertEqual(tree.find('retRelDep/datRetRelDep/sisSalNet').text, '2')
+
+    def test_expense_caps_enforced(self):
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-9', 'policy_id': self.policy.id, 'month': 9, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
+        fraction = json.loads(self.policy.parameters)['tax_brackets'][0]['to']
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            period.line_ids.write({'expense_housing': fraction * 0.325 + 1})
+        period.line_ids.write({'expense_housing': fraction * 0.325})
+
+    def test_correction_copies_rdep_novelties(self):
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-10', 'policy_id': self.policy.id, 'month': 10, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'annual_profit_sharing': 300, 'expense_health': 20})]})
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        period.action_reverse()
+        action = period.action_correct()
+        correction = self.env['erpec.payroll.period'].browse(action['res_id'])
+        self.assertEqual(correction.line_ids.annual_profit_sharing, 300)
+        self.assertEqual(correction.line_ids.expense_health, 20)

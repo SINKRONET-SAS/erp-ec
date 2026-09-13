@@ -1,36 +1,64 @@
 {
-  "recordedAt": "2026-09-13T19:15:00.000Z",
-  "scope": "Primer incremento del complemento OP05: alcance investigado de ATS/RDEP y agregador anual RDEP de solo lectura sobre nómina ya contabilizada. No genera XML, no presenta ante el SRI y no cubre ATS; no cierra OP05.",
+  "recordedAt": "2026-09-13T19:55:00.000Z",
+  "scope": "Segundo incremento del complemento OP05: catálogo ATS oficial obtenido y transcrito; motor de nómina ampliado para cubrir los campos RDEP restantes y generar/validar una vista previa XML contra el esquema oficial. ATS sigue sin generar XML: falta clasificar el sustento tributario por documento. No cierra OP05.",
+  "previousIncrement": "docs/evidencias/AuditLock.before-OP05-ANEXOS-ATS-RDEP-20260913T191224Z.json (primer incremento: alcance investigado + agregador RDEP de solo lectura)",
   "researchSources": {
-    "note": "Esquemas oficiales descargados y leídos el 13-09-2026; fichas técnicas en PDF no legibles en este entorno (sin OCR local).",
-    "atsFichaTecnica": {"titulo": "Ficha Técnica Transaccional Simplificado ATS", "fecha": "2025-02-07", "leida": false},
-    "atsCatalogo": {"titulo": "Catálogo ATS", "fecha": "2026-03-03", "leida": false},
-    "atsXsd": {"url": "https://descargas.sri.gob.ec/download/anexos/ats/ats.xsd", "sha256": null, "leida": true, "notaSha256": "no calculado en esta evidencia; archivo local en .cache/private/xsd-source/ats.xsd (gitignored)"},
-    "rdepFichaTecnica": {"titulo": "Ficha Técnica RDEP 2024, vigente 2025", "leida": false},
-    "rdepXsd": {"url": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/62837cc4-2de7-472c-9108-9b61bce8a38e/Esquema%20RDEP%202023.xsd", "fecha": "2023-12-14", "leida": true}
+    "note": "Catálogo ATS y esquema RDEP leídos directamente de archivos oficiales descargados el 13-09-2026; Instructivo Formulario 107 (SRI) extraído con PyPDF2 (PDF de texto, no escaneado) para confirmar el significado de campos RDEP sin documentación en el XSD.",
+    "atsCatalogo": {
+      "titulo": "Catálogo Anexo Transaccional Simplificado ATS.xls",
+      "hoja": "TABLAS REFERENCIALES",
+      "url": "https://www.sri.gob.ec/DocumentosAlfrescoPortlet/descargar/e6a826af-b22c-40bb-8752-d711f293b8f9/Cat%C3%A1logo%20Anexo%20Transaccional%20Simplificado%20ATS.xls",
+      "listadoActualizado": "2026-03-03", "descargado": "2026-09-13", "leida": true,
+      "transcritoEn": "addons/erpec_fiscal_native/ats_catalog.py",
+      "tablas": {"tabla1_meses": 12, "tabla2_identificacion": 20, "tabla4_tiposComprobante": 39, "tabla5_sustento": 16, "paises": 236}
+    },
+    "instructivoFormulario107": {
+      "titulo": "INSTRUCTIVO FORMULARIO 107 COMPROBANTE DE RETENCIONES EN LA FUENTE DEL IMPUESTO A LA RENTA POR INGRESOS DEL TRABAJO EN RELACIÓN DE DEPENDENCIA",
+      "url": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/1e4b0c85-f309-45b0-8a5e-dfd92a8e63d0/INSTRUCTIVO+FORMULARIO+107+COMPROBANTE+DE+RETENCIONES+EN+LA+FUENTE+DEL+IMPUESTO+A+LA+RENTA+POR+INGRESOS+DEL+TRABAJO+EN+RELACI_N+DE+DEPENDENCIA.pdf",
+      "leida": true, "metodo": "extracción de texto (PyPDF2), documento de 3 páginas no escaneado",
+      "usadoPara": "confirmar decimTer/decimCuar/fondoReserva como exentos, apoPerIess, topes de gastos personales por categoría (0.325x/1.3x fracción básica), rebajas por discapacidad>=30% y tercera edad>=65, impuesto asumido por contrato de ingreso neto"
+    }
   },
   "scopeDocument": "docs/ALCANCE_ATS_RDEP.md",
-  "decision": "ATS queda fuera de este incremento: sus catálogos de código de sustento y tipo de comprobante no se han obtenido y no se inventan. RDEP se limita a los campos con significado confirmado en el propio esquema (tipoEmpleador, enteSegSocial, discapTyp con su documentación oficial, numCargRebGastPers, convImposTyp) más los totales que ya calcula el motor de nómina nativo (gross, thirteenth, fourteenth, reserve_iess, personal_iess, tax). No se generó XML porque el esquema RDEP exige varios campos adicionales (participación de utilidades, intereses ganados, salario digno, otros ingresos gravados, deducciones desglosadas) que este incremento no calcula ni conoce; completarlos con ceros o supuestos habría presentado datos tributarios no verificados como si fueran reales.",
+  "decision": "Se obtuvo y transcribió el Catálogo ATS oficial completo (Tablas 1,2,4,5 y países), cerrando la brecha de codSustento/tipoComprobante/identificación. La generación de compras/ventas del ATS sigue sin implementarse: requiere clasificar el sustento tributario por documento, dato que no existe en ningún modelo del ERP y no se infiere. El motor de nómina se amplió (sin duplicar el cálculo existente: se reutilizan gross/salary/overtime/thirteenth/fourteenth/reserve_iess/personal_iess/tax ya calculados, y se expusieron annual_tax_caused/personal_expense_rebate/annual_tax_after_rebate que ya se calculaban internamente) con 14 campos nuevos de captura para los valores que el motor no puede calcular por sí mismo (utilidades, salario digno, ingresos/aportes/impuesto con otros empleadores, gastos personales desglosados). Dos campos del esquema RDEP (deducEducartcult, benGalpg) carecen de documentación en toda fuente primaria revisada; se envían con un valor neutro marcado explícitamente en el código, no con datos inventados presentados como confirmados.",
   "implementation": {
-    "module": "erpec_payroll",
-    "newFile": "addons/erpec_payroll/annex_rdep.py",
-    "newModels": ["erpec.payroll.rdep", "erpec.payroll.rdep.line"],
-    "extendedModels": ["res.company (ec_rdep_employer_type, ec_rdep_social_security_entity)", "hr.employee (ec_rdep_disability_type, ec_rdep_disability_percentage, ec_rdep_disability_id_type, ec_rdep_disability_id, ec_rdep_dependents_count, ec_rdep_treaty_applies)"],
-    "menu": "Nómina local › Agregador RDEP (grupo group_payroll_manager)",
-    "readOnlyOverPayroll": true,
+    "atsModule": "erpec_fiscal_native",
+    "atsNewFile": "addons/erpec_fiscal_native/ats_catalog.py",
+    "rdepModule": "erpec_payroll",
+    "rdepEngineChange": "addons/erpec_payroll/engine.py expone annual_tax_caused, personal_expense_rebate, annual_tax_after_rebate (ya calculados; sin duplicar lógica)",
+    "rdepNewLineFields": ["annual_profit_sharing", "decent_wage_compensation", "other_employer_taxable_income", "other_employer_iess", "other_employer_withheld_tax", "employer_assumed_tax", "other_general_interest_income", "expense_housing", "expense_health", "expense_education", "expense_food", "expense_clothing", "expense_art_culture", "expense_tourism"],
+    "rdepNewEmployeeFields": ["ec_rdep_id_type", "ec_rdep_fiscal_residence", "ec_rdep_residence_country", "ec_rdep_ben_galpg", "ec_rdep_establishment"],
+    "rdepXsdCopy": "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd",
+    "rdepXmlGeneration": "erpec.payroll.rdep.action_generate_xml, validado con lxml.etree.XMLSchema contra el esquema oficial copiado",
+    "unresolvedFieldsSentNeutral": ["deducEducartcult=0 (nombre ambiguo sin fuente)", "benGalpg='NO' si no se confirma explícitamente (sin documentación en ninguna fuente)"],
     "businessDataInvented": false
   },
   "tests": {
     "exitCode": 0,
-    "testedAt": "2026-09-13T19:07:20.081882+00:00",
+    "testedAt": "2026-09-13T19:47:40.254110+00:00",
     "modules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
-    "totalTests": 27,
-    "newTests": 8,
+    "totalTests": 33,
+    "newTestsThisIncrement": 6,
     "failed": 0,
     "errors": 0,
-    "logSha256": "5f1906dedcbc0ae3578910cdc1cfab397032b6aaeea5ebafbc4fc804dd588dcc",
+    "logSha256": "f6ed4dddbca63a155005ddc2e6c423a738dc361a4334cf788ed45b125440b1c9",
     "runtimePassed": true,
     "payrollMovesAfterConcurrentPost": 1
+  },
+  "testsFiscalNative": {
+    "exitCode": 0,
+    "modules": ["erpec_fiscal_native", "erpec_fiscal_connector"],
+    "totalTests": 20,
+    "newTestsThisIncrement": 6,
+    "failed": 0,
+    "errors": 0,
+    "logSha256": "79502a239335d3fbade5a5f9a5672495c22633d3f18788920f3df61e1ce4c632",
+    "note": "Incluye 6 pruebas de integridad cruzada del catálogo ATS (test_ats_catalog.py)"
+  },
+  "xmlSchemaValidation": {
+    "test": "test_generate_xml_validates_against_official_schema",
+    "result": "XML generado por action_generate_xml valida contra Esquema_RDEP_2023.xsd oficial (lxml.etree.XMLSchema.validate)",
+    "passed": true
   },
   "runtimeSmoke": {
     "target": "http://127.0.0.1:8369 (erpec_demo)",
@@ -38,27 +66,30 @@
     "formCompiles": true,
     "yearTested": 2026,
     "employeesConsolidated": 3,
-    "recordCreatedThenRemoved": true,
+    "xmlGenerationBlockedByEmptyDemoVat": true,
+    "note": "La demo mantiene RUC vacío por convención del proyecto; action_generate_xml se bloquea correctamente en lugar de usar un RUC inventado. La generación de XML solo se probó con RUC sintético dentro de una transacción de prueba revertida (test_generate_xml_validates_against_official_schema).",
     "businessRecordsLeftInDemo": false
   },
   "installation": {
-    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\operational-install-20260913-140837",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\operational-install-20260913-144953",
     "installedModules": ["erpec_manufacturing", "erpec_imports", "erpec_payroll"],
     "demoRucEmpty": true,
     "enterpriseInstalled": false
   },
   "checks": [
-    "8 pruebas nuevas del agregador RDEP: consolidación de períodos contabilizados, exclusión de borradores, idempotencia, permisos, rangos de campos y compilación de vistas",
-    "27/27 pruebas de erpec_manufacturing + erpec_imports + erpec_payroll aprobadas (0 regresiones)",
-    "Agregador probado en vivo contra la demo: 3 empleados consolidados para 2026, sin dejar registros de negocio",
+    "Catálogo ATS oficial descargado, transcrito y verificado con 6 pruebas de integridad cruzada (voucherTypes<->supportCodes, meses, países, fuente documentada)",
+    "Motor de nómina ampliado sin duplicar cálculo: 3 valores expuestos que ya se calculaban, 14 campos nuevos de captura para lo que el motor no puede calcular",
+    "XML de vista previa RDEP generado y validado con éxito contra el esquema oficial del SRI (Esquema_RDEP_2023.xsd)",
+    "33/33 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll y 20/20 de erpec_fiscal_native+erpec_fiscal_connector aprobadas (0 regresiones)",
+    "Agregador probado en vivo contra la demo: 3 empleados consolidados para 2026; generación de XML correctamente bloqueada por RUC vacío de la demo, sin usar datos inventados",
     "Instalación en demo con respaldo previo"
   ],
   "pending": [
-    "ATS completo: catálogo de códigos de sustento/comprobante sin obtener",
-    "RDEP: residencia fiscal, país de residencia, participación de utilidades, intereses ganados, salario digno, otros ingresos gravados y deducciones desglosadas por categoría",
-    "Generación de XML validado contra ats.xsd / Esquema RDEP 2023.xsd",
-    "Lectura completa de las fichas técnicas oficiales (PDF escaneado, sin OCR local)",
-    "Canal de presentación ante el SRI (el trámite oficial solo documenta software de escritorio DIMM/APS y FTP, no una API)"
+    "ATS: clasificación de sustento tributario por documento de compra/venta (dato inexistente en el ERP); generación de las secciones compras/ventas/anulados/exportaciones/recap/fideicomisos/rendFinancieros",
+    "RDEP: confirmar deducEducartcult y benGalpg contra la ficha técnica narrativa (no leída, PDF escaneado) o el software DIMM",
+    "RDEP: intGrabGen sigue siendo un campo de captura manual sin fuente primaria confirmada de su significado exacto",
+    "Canal de presentación ante el SRI (el trámite oficial solo documenta software de escritorio DIMM/APS y FTP, no una API)",
+    "Ningún anexo se ha presentado, firmado ni homologado ante el SRI"
   ],
   "externalEmissionPerformed": false,
   "sourceRepositoriesModified": false
