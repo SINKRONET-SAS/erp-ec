@@ -1,0 +1,3 @@
+# UIUX-02 — Instalación y aceptación visual
+
+Depende de UIUX-01 firmado y válido. Instalar el módulo de interfaz mediante el instalador existente con respaldo y hashes aprobados. Respetar comprobación de acceso a sesiones antes de detener la demo. Revisar inicio, listado/tarjetas, detalle y Áreas en 562 px y escritorio; comprobar también 375 px y teclado. No confirmar ni emitir documentos de negocio en la demo. Verificar accesos y enlaces comerciales sin escritura de negocio; usar copia aislada para transiciones de estado. Corregir defectos y repetir pruebas afectadas antes de reinstalar. Guardar capturas y evidencia ERPEC26-UIUX-02.json, con límites y referencia del respaldo; cerrar y validar lock.

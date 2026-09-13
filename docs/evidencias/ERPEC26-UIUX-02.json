@@ -1,0 +1,206 @@
+{
+  "status": "passed",
+  "checks": [
+    "9/9 pruebas finales tras correcciones visuales",
+    "Archivos instalados coinciden con hashes probados",
+    "Instalación exclusiva de erpec_workspace con respaldo",
+    "Diez áreas compilan y conservan acceso",
+    "Enlaces y totales comerciales conservados: venta 575 y compra 230",
+    "Capturas revisadas a 375, 562 y 1280 px",
+    "Búsqueda S00002 devuelve una tarjeta; quitar filtro devuelve dos",
+    "Áreas: flechas y Enter abren períodos; Escape devuelve foco",
+    "Inicio sin panel de registro: display none comprobado en DOM",
+    "Consola del navegador sin errores en la consulta final"
+  ],
+  "corrections": [
+    "Selector del contenedor de inicio y prioridad frente a d-flex nativo",
+    "Flecha duplicada retirada: se conserva indicador nativo",
+    "Nombre accesible aplicado a FormCogMenu y ListCogMenu concretos"
+  ],
+  "workspaceTests": {
+    "exitCode": 0,
+    "testedAt": "2026-09-13T20:29:42.202036+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_22e2259e51",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_22e2259e51\\workspace-tests-20260913-152904.log",
+    "logSha256": "4ef9a49c028cf4a520eb7453724d2f18a3fde282467dcf192dbb51c6ce5cc1c8",
+    "modules": [
+      "erpec_workspace"
+    ],
+    "fileHashes": {
+      "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+      "addons/erpec_workspace/legacy_demo.py": "7e340ec0497344906a9cd90f2928399001e6f19347e5cb2d0be675a3f11cd34e",
+      "addons/erpec_workspace/legacy_demo_views.xml": "d5da7d7645a8b21db190e6637761cc49332f021ee26a5fdc84175ef947d1aa63",
+      "addons/erpec_workspace/login_views.xml": "39388644f268d67abe848fd0af13448fa6efda1ae3fe9deefd41a9317d813b40",
+      "addons/erpec_workspace/operation_views.xml": "565aea54958ee1f899300502235fae782b225b6c9e5ca147212a5ef51708d94a",
+      "addons/erpec_workspace/purchase.py": "f9f3c4043dbdaf3568184a7eb2575cc8176f6eb2a7f3005513f9c84f3bfdc9b1",
+      "addons/erpec_workspace/purchase_views.xml": "d1a77fef1c08dd8c7b0d8918d3b45d28e83aace941b18dbf591f65bf6e2db2f1",
+      "addons/erpec_workspace/sale.py": "5d4e422ae07a47e8c7c8b7da7cadab1ca28c4bc520c3989921560454415f1b42",
+      "addons/erpec_workspace/sale_views.xml": "7938547009bf8dc8b9d9bc783af6516628ec1e6e125321a4c5409114d8d97f52",
+      "addons/erpec_workspace/views.xml": "9d2354d33dc143cc7e8cf1bc678161243d6a3befe5b74a8ac98d8f5c89dfb9d0",
+      "addons/erpec_workspace/workspace.py": "e3a688928a2eaeac78129956310384637af45a6156c26e0cb843c4b989905a78",
+      "addons/erpec_workspace/__init__.py": "6783f77d085bd335eb7401798f32f32c196a6056d30a32f77465e3eb5df6dbaa",
+      "addons/erpec_workspace/__manifest__.py": "e21d1785febaed147b1e8a555d02ef170c651c68622cbcd60bd87eab9bcf6e58",
+      "addons/erpec_workspace/tests/test_purchase_flow.py": "4e94cc7d2eeaa1f46702c2fc7d014f9e20d2e0382f9cd91313a4782f36841a84",
+      "addons/erpec_workspace/tests/test_uiux.py": "e8924869596a5d5d4429f636366f37332f9d2082a37623a00d482dad628d357c",
+      "addons/erpec_workspace/tests/test_workspace.py": "e63a3b6980f08b6ac35fe062b5190584d032fb53cc04ea68a14fb87f86f3ec0b",
+      "addons/erpec_workspace/tests/__init__.py": "a0b5327cfb2ea5fe2309e6130638e9ddd02cbf24464d5fcd3a2df0ca8c0ca37e",
+      "addons/erpec_workspace/static/src/login.scss": "23d67ca730adbac478c07f2098ac6b0e75617983eed2281871c3dcd404596478",
+      "addons/erpec_workspace/static/src/product_shell.js": "7f73afbe07ece32d0de66a4cebb96a5d4bef2d7cb4d8b5ad772a4bffecfb252a",
+      "addons/erpec_workspace/static/src/product_shell.scss": "5b2c1f8c7d70c933c618b31be6138325bfe615c731d6252eae0c9b6ab646692f",
+      "addons/erpec_workspace/static/src/product_shell.xml": "aa47240ddc201e87a4774e6060d9b80cf6276dd7cf66eaeca122a2008b35a071"
+    }
+  },
+  "install": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\workspace-install-20260913-152951",
+    "views": {
+      "home": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-582",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_workspace"
+    ]
+  },
+  "backupSha256": "f70d1c3b6c62241f76102f5e9e11c508304dbdc265d95e28ee85e2d31a291227",
+  "runtime": {
+    "authenticated": true,
+    "homeRecord": 1,
+    "homeAction": 583,
+    "areas": [
+      {
+        "area": "sales",
+        "model": "sale.order",
+        "listCompiled": true,
+        "seconds": 0.426
+      },
+      {
+        "area": "purchases",
+        "model": "purchase.order",
+        "listCompiled": true,
+        "seconds": 0.252
+      },
+      {
+        "area": "inventory",
+        "model": "stock.picking.type",
+        "listCompiled": true,
+        "seconds": 0.236
+      },
+      {
+        "area": "imports",
+        "model": "erpec.importation",
+        "listCompiled": true,
+        "seconds": 0.236
+      },
+      {
+        "area": "manufacturing",
+        "model": "mrp.production",
+        "listCompiled": true,
+        "seconds": 0.475
+      },
+      {
+        "area": "workorders",
+        "model": "mrp.workorder",
+        "listCompiled": true,
+        "seconds": 0.269
+      },
+      {
+        "area": "invoices",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.293
+      },
+      {
+        "area": "bills",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.232
+      },
+      {
+        "area": "payroll",
+        "model": "erpec.payroll.period",
+        "listCompiled": true,
+        "seconds": 0.239
+      },
+      {
+        "area": "fiscal",
+        "model": "account.move",
+        "listCompiled": true,
+        "seconds": 0.228
+      }
+    ],
+    "purchaseGuidance": [
+      {
+        "id": 2,
+        "name": "P00002",
+        "receipt_status": "partial",
+        "invoice_status": "to invoice",
+        "erpec_purchase_guide": "Recepción parcial: revisa el traslado pendiente antes de dar por completo el abastecimiento. Hay cantidades por facturar o abonar. Revisa si corresponde factura o nota de crédito y contrástala con el documento del proveedor."
+      },
+      {
+        "id": 1,
+        "name": "P00001",
+        "receipt_status": false,
+        "invoice_status": "invoiced",
+        "erpec_purchase_guide": "Sin traslados activos. En servicios, verifica la cantidad recibida o la política de facturación. Facturas generadas. Abre Facturas del proveedor para revisar su validación, saldo y pagos; facturado no significa pagado."
+      }
+    ],
+    "businessRecordsCreated": false,
+    "scope": "Accesos y vistas con el perfil demo; no acredita ciclos completos ni carga concurrente"
+  },
+  "commercial": {
+    "checkedAt": "2026-09-13T20:31:13.199021+00:00",
+    "authenticated": true,
+    "demoWithoutRuc": true,
+    "commercialLinks": [
+      {
+        "document": "Fact 999-999-000900002",
+        "order": "S00001",
+        "total": 575,
+        "invoiceStatus": "invoiced",
+        "linked": true
+      },
+      {
+        "document": "Fact 999-999-000900001",
+        "order": "P00001",
+        "total": 230,
+        "invoiceStatus": "invoiced",
+        "linked": true
+      }
+    ],
+    "importCostsReadOnly": true,
+    "externalTransfers": false,
+    "sriEmission": false
+  },
+  "screenshots": {
+    "docs/evidencias/uiux/00-confirmacion-menu.png": "35ae6bd74668589012e124703a939d2f17f4ea12b69a7cc6299177144b20d7a6",
+    "docs/evidencias/uiux/01-confirmacion-562.png": "afeb551017ed9cab107010ac36d12a5d8b7caf2b4b7abf3eb988716e0f51b5d3",
+    "docs/evidencias/uiux/02-areas-562.png": "0e2657e90556dafc1bf2a872a47ddc90b80da54c8d104ee3e234af208f07291a",
+    "docs/evidencias/uiux/03-ventas-562.png": "bb85f3eb9054fe074db264e3b3f337707f1177a98a5280be25f519afde39131a",
+    "docs/evidencias/uiux/04-ventas-375.png": "605fc3b2f69e331ed9ef34637bb8e203fc9e68a78cfce1c4b7c1c881e6e0d889",
+    "docs/evidencias/uiux/05-busqueda-375.png": "e7f96fae9543f756f5dd49402bfce5c80d6f2e8131adc812212eb216a1f5d048",
+    "docs/evidencias/uiux/06-ventas-1280.png": "60745b1594cef9ee8162d410e81e6c9a1093b8bf942d68433f087d3263e32f27",
+    "docs/evidencias/uiux/07-submenu-375.png": "2b3ba83d2ee8b253a5d647b08bf27942ae482155bbe931be35258ceea7c41a4d",
+    "docs/evidencias/uiux/08-inicio-375.png": "a69d01d36143ed84bc6fc4bda9f1dbedc0bdbb37e658b652156a5b81c53eec29",
+    "docs/evidencias/uiux/09-inicio-562.png": "4f3610f62a5e21ac4b88e1722d34468a7b5a2b24f6a48e5287df54b3d1e51742",
+    "docs/evidencias/uiux/10-inicio-1280.png": "d34ffbe14b001272ddc9de73683c433670bd6fed73146a5c809b1dcd37f5b087"
+  },
+  "visualScope": {
+    "widths": [
+      375,
+      562,
+      1280
+    ],
+    "mobileSalesOverflow": false,
+    "homeDesktopOverflow": false,
+    "browserErrorsObserved": 0,
+    "businessOperationsPerformed": false
+  },
+  "limits": [
+    "No certifica WCAG; no se ensayó lector de pantalla ni todos los perfiles visuales",
+    "No se ejecutó restauración del respaldo",
+    "La matriz comercial automatizada no equivale a aceptación visual de todos los ciclos",
+    "RDEP concurrente queda fuera del alcance validado de UI/UX"
+  ]
+}

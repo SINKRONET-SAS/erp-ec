@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-13T20:33:32.185Z",
+  "updatedAt": "2026-09-13T20:32:11.567Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
     ".github/prompts/ERPEC26-UIUX-00.md",
@@ -36,24 +36,24 @@
     "docs/evidencias/AuditLock.before-UIUX-00.json",
     "docs/evidencias/AuditLock.before-UIUX-01.json",
     "docs/evidencias/AuditLock.before-UIUX-02.json",
-    "docs/evidencias/AuditLock.before-UIUX-03.json",
     "docs/evidencias/ERPEC26-UIUX-00.json",
     "docs/evidencias/ERPEC26-UIUX-01.json",
     "docs/evidencias/ERPEC26-UIUX-02.json",
-    "docs/evidencias/ERPEC26-UIUX-03.json",
-    "docs/evidencias/ERPEC26-UIUX-INFORME.md",
     "docs/evidencias/ERPEC26-UIUX-regresion.json",
     "scripts/close-uiux-phase.cjs",
     "scripts/install-fiscal-native-demo.py"
   ],
   "validationChecks": [
-    "Plan y cuatro prompts ejecutados con evidencias independientes de planificación",
-    "UIUX-02 firmado y validado antes del cierre",
-    "23 enlaces previos de cadena verificados hasta génesis",
-    "11 capturas verificadas contra SHA256",
-    "UTF-8 sin BOM validado en los entregables por el cierre",
-    "git diff --check aprobado",
-    "Alcance de commit limitado a UI/UX y gobierno compartido; RDEP conservado fuera del código publicado por este incremento"
+    "9/9 pruebas finales tras correcciones visuales",
+    "Archivos instalados coinciden con hashes probados",
+    "Instalación exclusiva de erpec_workspace con respaldo",
+    "Diez áreas compilan y conservan acceso",
+    "Enlaces y totales comerciales conservados: venta 575 y compra 230",
+    "Capturas revisadas a 375, 562 y 1280 px",
+    "Búsqueda S00002 devuelve una tarjeta; quitar filtro devuelve dos",
+    "Áreas: flechas y Enter abren períodos; Escape devuelve foco",
+    "Inicio sin panel de registro: display none comprobado en DOM",
+    "Consola del navegador sin errores en la consulta final"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -73,7 +73,7 @@
     "RDEP: confirmar si benGalpg conserva efecto vigente después de la derogatoria de 2021, o solo aplica a corrección de períodos 2016-2021; requiere la ficha técnica narrativa del RDEP (PDF escaneado, no leída) o consulta directa al SRI"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "09d9ade689f5775f9fc4bda2070c0b41390fb6fe9664c69242e0fddf783d4fe2",
+    ".github/CODEX_CONTEXT.md": "22141f971d19b3b3b296b8428c7151af949adf821b034f7ce21cd1113268dd80",
     ".github/prompts/ERPEC26-UIUX-00.md": "4f7019cd629c8a21422e7e0f9e723fda2dfb46461827b0908280766b45afc3ed",
     ".github/prompts/ERPEC26-UIUX-01.md": "5f12e4dd585e91e2992c7cbff77e2db4eb7764065720ea24850d1cb264da09d6",
     ".github/prompts/ERPEC26-UIUX-02.md": "9d88423dbca18f985216437c5f4a4605d2384e5a710db4dfdd49b0c25604d832",
@@ -99,26 +99,23 @@
     "addons/erpec_workspace/tests/test_workspace.py": "e63a3b6980f08b6ac35fe062b5190584d032fb53cc04ea68a14fb87f86f3ec0b",
     "addons/erpec_workspace/views.xml": "9d2354d33dc143cc7e8cf1bc678161243d6a3befe5b74a8ac98d8f5c89dfb9d0",
     "addons/erpec_workspace/workspace.py": "e3a688928a2eaeac78129956310384637af45a6156c26e0cb843c4b989905a78",
-    "docs/PLAN_HAIKY_UI_UX.md": "49277832cbc3bbc83d08ccaff00a3915faf15b6f88885e4b23db6b2677dfde1e",
+    "docs/PLAN_HAIKY_UI_UX.md": "fe9e652b15588859b036b2f10deda3fe98236580d59adeeac3b8de5d662a4438",
     "docs/evidencias/AuditLock.before-UIUX-00.json": "3221d26285512bcd7e6621f26cf5477d5cdb2195998e5d0c0cd02e96facf30a6",
     "docs/evidencias/AuditLock.before-UIUX-01.json": "106dfed0bc58edc8f1d9ec73a84bf26474ce448a565c34aed961f9791bbc086e",
     "docs/evidencias/AuditLock.before-UIUX-02.json": "3ff35986ea12d5fe8692f28903dc2b15d2742ffa65ccf616323cde3ebceb09fb",
-    "docs/evidencias/AuditLock.before-UIUX-03.json": "52d3c90938f49f64e42deecc08ba1b8adc805f83e780264078e40ef261c313ef",
     "docs/evidencias/ERPEC26-UIUX-00.json": "06a3ff7945eaaaa14317e71c8643c6fa29c60c82ad7370e6d83aeb7fd85e1ab8",
     "docs/evidencias/ERPEC26-UIUX-01.json": "e26b3452cbe62a9516e46925cfd3569e1160d5027aff667893ad200959ae24bf",
     "docs/evidencias/ERPEC26-UIUX-02.json": "1ec0d29bf21745e6048406adef9d75ce009032217a99bca8738bcffe6d23486c",
-    "docs/evidencias/ERPEC26-UIUX-03.json": "311f64fcd7b1f87d90f04153d55d4dc4dd4f10c3e97f461ceb811326ded010e2",
-    "docs/evidencias/ERPEC26-UIUX-INFORME.md": "b9f86d57b133c3506512428279aa54823bf51edba6586c9e557d5b105d2b5b71",
     "docs/evidencias/ERPEC26-UIUX-regresion.json": "dd016df61404132ec90b0e082a307c4ee077bc3d995058e7aadf0a80e70dfb24",
     "scripts/close-uiux-phase.cjs": "40d9b9fc1b4ec73580f50139ceef4e433795fc8523dde85ae768da181d4fb69d",
     "scripts/install-fiscal-native-demo.py": "3cd4b3c43627b9831d7949b922a6fb61490ce573049e2d47082c65962e34a722"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-UIUX-03.json",
-  "previousAuditLockHash": "52d3c90938f49f64e42deecc08ba1b8adc805f83e780264078e40ef261c313ef",
-  "signature": "120e17c7739b88e4800674b655240e47ade7a412d4d84ef2301291c7a88e7118",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-UIUX-02.json",
+  "previousAuditLockHash": "3ff35986ea12d5fe8692f28903dc2b15d2742ffa65ccf616323cde3ebceb09fb",
+  "signature": "34346c9ad4820cce3cd17c5181bc9340acc947d8e8f46513331a79ff442ef3b8",
   "uiUx": {
-    "phaseCompleted": "ERPEC26-UIUX-03",
-    "status": "completed-pass",
-    "evidence": "docs/evidencias/ERPEC26-UIUX-03.json"
+    "phaseCompleted": "ERPEC26-UIUX-02",
+    "status": "increment-passed",
+    "evidence": "docs/evidencias/ERPEC26-UIUX-02.json"
   }
 }

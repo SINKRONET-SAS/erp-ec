@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "checks": [
+    "21/21 pruebas centro, compras, ventas y Tesorería en copia aislada",
+    "9/9 pruebas del centro para instalación de módulo único",
+    "Confirmación nativa desde draft y sent; ocultación en sale y cancel",
+    "Perfil sin ventas no obtiene acceso comercial",
+    "git diff --check aprobado"
+  ],
+  "implementation": [
+    "Confirmar pedido visible junto a la guía sin cambiar action_confirm",
+    "Tarjetas móviles y listado de escritorio mediante mobile_view_mode nativo",
+    "Inicio compacto y sin controles de ficha",
+    "Submenús nativos por área y nombres accesibles de acciones, búsqueda y selector"
+  ],
+  "workspaceTests": {
+    "exitCode": 0,
+    "testedAt": "2026-09-13T20:21:48.073475+00:00",
+    "directory": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_22e2259e51",
+    "log": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\operational-tests\\ec_operational_22e2259e51\\workspace-tests-20260913-152108.log",
+    "logSha256": "921464e738467c6738dbf1ee095bbfc09c4c2b9e87483a6645dd3f1356d7231e",
+    "modules": [
+      "erpec_workspace"
+    ],
+    "fileHashes": {
+      "addons/erpec_workspace/ir.model.access.csv": "91f827614ec6f38e0263535147246efee8d5064f52450c30db197955c8ecbba4",
+      "addons/erpec_workspace/legacy_demo.py": "7e340ec0497344906a9cd90f2928399001e6f19347e5cb2d0be675a3f11cd34e",
+      "addons/erpec_workspace/legacy_demo_views.xml": "d5da7d7645a8b21db190e6637761cc49332f021ee26a5fdc84175ef947d1aa63",
+      "addons/erpec_workspace/login_views.xml": "39388644f268d67abe848fd0af13448fa6efda1ae3fe9deefd41a9317d813b40",
+      "addons/erpec_workspace/operation_views.xml": "565aea54958ee1f899300502235fae782b225b6c9e5ca147212a5ef51708d94a",
+      "addons/erpec_workspace/purchase.py": "f9f3c4043dbdaf3568184a7eb2575cc8176f6eb2a7f3005513f9c84f3bfdc9b1",
+      "addons/erpec_workspace/purchase_views.xml": "d1a77fef1c08dd8c7b0d8918d3b45d28e83aace941b18dbf591f65bf6e2db2f1",
+      "addons/erpec_workspace/sale.py": "5d4e422ae07a47e8c7c8b7da7cadab1ca28c4bc520c3989921560454415f1b42",
+      "addons/erpec_workspace/sale_views.xml": "7938547009bf8dc8b9d9bc783af6516628ec1e6e125321a4c5409114d8d97f52",
+      "addons/erpec_workspace/views.xml": "9d2354d33dc143cc7e8cf1bc678161243d6a3befe5b74a8ac98d8f5c89dfb9d0",
+      "addons/erpec_workspace/workspace.py": "e3a688928a2eaeac78129956310384637af45a6156c26e0cb843c4b989905a78",
+      "addons/erpec_workspace/__init__.py": "6783f77d085bd335eb7401798f32f32c196a6056d30a32f77465e3eb5df6dbaa",
+      "addons/erpec_workspace/__manifest__.py": "e21d1785febaed147b1e8a555d02ef170c651c68622cbcd60bd87eab9bcf6e58",
+      "addons/erpec_workspace/tests/test_purchase_flow.py": "4e94cc7d2eeaa1f46702c2fc7d014f9e20d2e0382f9cd91313a4782f36841a84",
+      "addons/erpec_workspace/tests/test_uiux.py": "e8924869596a5d5d4429f636366f37332f9d2082a37623a00d482dad628d357c",
+      "addons/erpec_workspace/tests/test_workspace.py": "e63a3b6980f08b6ac35fe062b5190584d032fb53cc04ea68a14fb87f86f3ec0b",
+      "addons/erpec_workspace/tests/__init__.py": "a0b5327cfb2ea5fe2309e6130638e9ddd02cbf24464d5fcd3a2df0ca8c0ca37e",
+      "addons/erpec_workspace/static/src/login.scss": "23d67ca730adbac478c07f2098ac6b0e75617983eed2281871c3dcd404596478",
+      "addons/erpec_workspace/static/src/product_shell.js": "7f73afbe07ece32d0de66a4cebb96a5d4bef2d7cb4d8b5ad772a4bffecfb252a",
+      "addons/erpec_workspace/static/src/product_shell.scss": "946c0a5871487e8524aa5a4285e5b0c7a5b0a600644cdbb80603cea5bcd1af9d",
+      "addons/erpec_workspace/static/src/product_shell.xml": "a2c5e39af6577fc28b4813eb8a561653e78e41d48d6e66aa7901763fc2750278"
+    }
+  },
+  "regressionEvidence": "docs/evidencias/ERPEC26-UIUX-regresion.json",
+  "limits": [
+    "No instalada todavía; aceptación visual corresponde a UIUX-02",
+    "No se modifica lógica fiscal/laboral ni se certifica WCAG"
+  ]
+}

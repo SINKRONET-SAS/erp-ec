@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "checks": [
+    "Plan y cuatro prompts ejecutados con evidencias independientes de planificación",
+    "UIUX-02 firmado y validado antes del cierre",
+    "23 enlaces previos de cadena verificados hasta génesis",
+    "11 capturas verificadas contra SHA256",
+    "UTF-8 sin BOM validado en los entregables por el cierre",
+    "git diff --check aprobado",
+    "Alcance de commit limitado a UI/UX y gobierno compartido; RDEP conservado fuera del código publicado por este incremento"
+  ],
+  "report": "docs/evidencias/ERPEC26-UIUX-INFORME.md",
+  "historicalPhasesUnchanged": true,
+  "technicalStatus": "completed",
+  "publication": {
+    "status": "Se verifica después de este lock con commit y push, conforme al orden solicitado",
+    "branch": "codex/erpec26-implementacion"
+  },
+  "limits": [
+    "No acredita cambios concurrentes RDEP",
+    "No afirma conformidad WCAG, restauración ni emisión fiscal"
+  ]
+}

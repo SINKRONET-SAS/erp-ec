@@ -1,0 +1,3 @@
+# UIUX-01 — Implementación y regresión aislada
+
+Depende de UIUX-00 firmado y válido. Ejecutar el alcance de docs/PLAN_HAIKY_UI_UX.md usando los componentes existentes. Exponer Confirmar pedido conservando action_confirm, contexto y estado nativos; tarjetas móviles con listado de escritorio; inicio compacto; Áreas agrupadas y controles con nombres accesibles. No modificar permisos ni lógica fiscal/laboral. Ejecutar pruebas relevantes del centro, ventas y Tesorería en copia aislada; corregir fallos. Registrar comprobaciones reales y hashes en ERPEC26-UIUX-01.json, cerrar lock y verificar antes de instalar.
