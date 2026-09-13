@@ -4,18 +4,41 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-13T22:43:18.452Z",
+  "updatedAt": "2026-09-13T22:37:43.582Z",
   "filesModified": [
-    ".github/CODEX_CONTEXT.md",
-    "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md",
-    "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json",
-    "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json"
+    "docs/PLAN_HAIKY_IMPUESTOS_SP02.md",
+    ".github/prompts/ERPEC26-TX03-TX05-CASOS-IMPUESTOS.md",
+    "docs/evidencias/AuditLock.before-TX03.json"
+  ],
+  "filesSkippedBinary": [
+    "docs/evidencias/sp02-importacion-valoracion/01-expediente-bodega.png",
+    "docs/evidencias/sp02-importacion-valoracion/02-recepcion-parcial.png",
+    "docs/evidencias/sp02-importacion-valoracion/03-distribucion-flete.png",
+    "docs/evidencias/sp02-importacion-valoracion/04-ajuste-inverso.png",
+    "docs/evidencias/sp02-importacion-valoracion/05-fabricacion-tiempo-nuevo.png",
+    "docs/evidencias/sp02-importacion-valoracion/06-valoracion-nueva.png",
+    "docs/evidencias/sp02-importacion-valoracion/07-plan-impuestos.png",
+    "docs/evidencias/sp02-importacion-valoracion/08-catalogo-cuentas.png",
+    "docs/evidencias/sp02-importacion-valoracion/09-asiento-visible.png",
+    "docs/evidencias/sp02-produccion/01-estado-retomado.png",
+    "docs/evidencias/sp02-produccion/02-pausa-operario.png",
+    "docs/evidencias/sp02-produccion/03-parcial-supervisor.png",
+    "docs/evidencias/sp02-produccion/04-produccion-terminada.png",
+    "docs/evidencias/uiux/00-confirmacion-menu.png",
+    "docs/evidencias/uiux/01-confirmacion-562.png",
+    "docs/evidencias/uiux/02-areas-562.png",
+    "docs/evidencias/uiux/03-ventas-562.png",
+    "docs/evidencias/uiux/04-ventas-375.png",
+    "docs/evidencias/uiux/05-busqueda-375.png",
+    "docs/evidencias/uiux/06-ventas-1280.png",
+    "docs/evidencias/uiux/07-submenu-375.png",
+    "docs/evidencias/uiux/08-inicio-375.png",
+    "docs/evidencias/uiux/09-inicio-562.png",
+    "docs/evidencias/uiux/10-inicio-1280.png"
   ],
   "validationChecks": [
-    "Segunda pasada de OP06 (Protección de Datos): derechos del titular (Arts. 11-24 LOPDP), notificación de brechas (Arts. 43 y 46 LOPDP) y umbral del RAT (Arts. 38-39 del Reglamento General) confirmados por lectura directa del texto primario completo (PDF extraíble, Lexis S.A., cotejado con Registro Oficial Suplemento 459 y Suplemento 435)",
-    "Verificación de vigencia 2026: sin reforma encontrada a la LOPDP (2022-2026) ni al Reglamento General (2024-2026); SPDP confirmada sancionando activamente a privados (LIGAPRO y Federación Ecuatoriana de Fútbol, diciembre 2025)",
-    "Solo investigación y documentación; ningún archivo de código de erpec_data_protection ni de ningún otro módulo modificado en este incremento",
-    "UTF-8 sin BOM verificado en los tres archivos de este incremento"
+    "Gobierno previo verificado",
+    "Diagnóstico de consulta existente y alcance aprobado; no acredita implementación"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -35,21 +58,18 @@
     "RDEP: confirmar si benGalpg conserva efecto vigente después de la derogatoria de 2021, o solo aplica a corrección de períodos 2016-2021; requiere la ficha técnica narrativa del RDEP (PDF escaneado, no leída) o consulta directa al SRI",
     "PRIORITARIO: escalar expense_limit por cargas familiares y Galápagos en erpec_payroll.engine.calculate() — afecta el cálculo mensual real de retención, no solo el anexo RDEP anual",
     "OP06: Tributario/Facturación/ATS/RDEP/Laboral siguen con sus brechas ya documentadas por separado",
+    "OP06 LOPDP: derechos del titular, notificación de brechas, registro RNPD, evaluación de DPD obligatorio; leer el texto primario completo de la LOPDP y su Reglamento General antes de fijar umbrales/plazos",
     "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos",
-    "OP06 LOPDP: confirmar la vigencia 2026 (ausencia de reforma 2022-2026) mediante lectura directa del Registro Oficial, hoy solo confianza media por fuente secundaria consistente",
-    "OP06 LOPDP: formato/canal definitivo de la SPDP para presentar el RAT y notificar una vulneración; la norma técnica de notificación de brechas sigue en borrador (mayo 2026)",
-    "OP06 LOPDP: implementar en código el procedimiento operativo de derechos del titular y de notificación de brechas (plantillas, canal, responsable) — requiere autorización de un incremento OP06.3 separado",
-    "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos"
+    "OP06: instalar erpec_data_protection en la demo cuando el estado compartido lo permita con seguridad"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "1c5dff4f9c5401a8a38c77346dfe5ace5391d4ed17c46a3020f379a5588cdda3",
-    "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md": "64126fb4c38ec2d3e3ff4a3905e77326cbb76332de578d0014b5d8b2b2faf57d",
-    "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json": "a0a6ed68318ef985ab3845964ec6bb661d11162e3216710d1cebe402521c061f",
-    "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json": "609217e596dcc59ecf41e683270638d7a8fc38ea43da14aab1007709263d819e"
+    "docs/PLAN_HAIKY_IMPUESTOS_SP02.md": "66844387c1a358bb646322883128e8fd09f1fb58183e68cf29c1ae5138485cf6",
+    ".github/prompts/ERPEC26-TX03-TX05-CASOS-IMPUESTOS.md": "f9b37390a42287f70ce98acc1cf4978054a50106bbc935a29de98891a86f80cf",
+    "docs/evidencias/AuditLock.before-TX03.json": "cc3c97f1bd5e8a0625730b91e453610306915f36cbd9aaf324ba4d1bd5336d06"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json",
-  "previousAuditLockHash": "a0a6ed68318ef985ab3845964ec6bb661d11162e3216710d1cebe402521c061f",
-  "signature": "b0a48ef6d0e5a5c39d3972f35bbcd0604ff504c867c5ad77c540479b78471880",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-TX03.json",
+  "previousAuditLockHash": "cc3c97f1bd5e8a0625730b91e453610306915f36cbd9aaf324ba4d1bd5336d06",
+  "signature": "46ae910757fc029c5a624e28f4a74620a24935bf2336504e3a611f9cf8eceed1",
   "taxProcess": {
     "phaseCompleted": "TX03",
     "status": "documental",

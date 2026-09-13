@@ -70,9 +70,35 @@
   ],
   "pending": [
     "Tributario/Facturación Electrónica/ATS/RDEP/Laboral: brechas ya documentadas en sus propios documentos, sin cambios en este incremento",
-    "Protección de Datos: derechos del titular (acceso/rectificación/eliminación/oposición/portabilidad), procedimiento de notificación de brechas, registro RNPD, evaluación de si aplica DPD obligatorio; lectura del texto primario completo de la LOPDP y su Reglamento General antes de fijar umbrales o plazos",
+    "Protección de Datos: procedimiento operativo de atención de derechos del titular y de notificación de brechas (plantillas, canal, responsable) — código aún no implementado; evaluación de si aplica DPD obligatorio en este caso concreto",
     "Envíos por email: envío real sigue desactivado; confirmar contra el Reglamento de Comprobantes Electrónicos si existe un plazo de entrega al cliente distinto del plazo de transmisión al SRI"
   ],
+  "secondPass": {
+    "recordedAt": "2026-09-13T22:45:00.000Z",
+    "trigger": "Solicitud del titular: 'segunda pasada del plan para cerrar cualquier brecha', tras recordatorio explícito de verificar vigencia para 2026",
+    "method": "Agente de investigación en segundo plano; lectura directa del texto primario completo (PDF extraíble, no escaneado) de la LOPDP (Lexis S.A., cotejado con Registro Oficial Suplemento 459, 26-05-2021) y del Reglamento General (Decreto Ejecutivo 904, Registro Oficial Suplemento 435, 13-11-2023)",
+    "resolvedFromNoVerificadoAPrimaryConfirmed": {
+      "derechosDelTitular": "Capítulo III, Arts. 11-24 LOPDP: Art.12 información, Art.13 acceso (15 días), Art.14 rectificación/actualización (15 días), Art.15 eliminación (15 días, 7 causales), Art.16 oposición (15 días, 3 causales), Art.17 portabilidad (4 condiciones), Art.18 excepciones (10 causales), Art.19 suspensión, Art.20-21 decisiones automatizadas, Art.24 irrenunciabilidad de derechos",
+      "notificacionDeBrechas": "Art.43 LOPDP: responsable a la SPDP/ARCOTEL en 5 días; encargado al responsable en 2 días. Art.46 LOPDP: al titular en 3 días si hay riesgo a derechos fundamentales, con 3 excepciones tasadas",
+      "umbralRAT": "Reglamento General Art.38: obligatorio con 100+ trabajadores (9 elementos mínimos). Art.39: también obligatorio con menos de 100 si hay riesgo, tratamiento no ocasional, o datos de categoría especial — el umbral no es un piso absoluto"
+    },
+    "staleness2026Check": {
+      "recordedAt": "2026-09-13T23:05:00.000Z",
+      "method": "Agente de investigación en segundo plano; búsqueda de reformas 2022-2026 y de resoluciones SPDP 2024-2026",
+      "reformaLopdp20222026": "No encontrada (confianza media, fuentes secundarias consistentes entre sí, sin lectura directa de cada boletín del Registro Oficial)",
+      "reemplazoReglamento20242026": "No encontrado; el Decreto 904 sigue vigente y es citado como tal en resoluciones SPDP 2024-2026",
+      "normasGeneralesSpdp20242026": "SPDP emite normas subordinadas (tratamiento a gran escala, interés legítimo, tratamiento doméstico, metodología de sanciones) sin modificar los artículos del Reglamento ya citados",
+      "notificacionDeBrechasNormaTecnica": "Existe un proyecto de resolución ('PR_vulneraciones', spdp.gob.ec, mayo 2026) aún en borrador, no confirmado como versión final; no altera los plazos estatutarios de 5/2/3 días",
+      "sancionesActivas": "Confirmado: SPDP sancionó en diciembre de 2025 a LIGAPRO (USD 259.644,01) y a la Federación Ecuatoriana de Fútbol (USD 194.856,16) por consentimiento inválido (Art. 68.1 LOPDP) tras inspección formal — la SPDP sí sanciona activamente a privados, no solo orienta"
+    },
+    "stillPendingAfterSecondPass": [
+      "Confirmar la vigencia 2026 mediante lectura directa del Registro Oficial (hoy es fuente secundaria consistente para la ausencia de reforma, no primaria)",
+      "Formato/canal exacto y definitivo exigido por la SPDP para presentar el RAT y notificar una vulneración — la norma técnica de brechas sigue en borrador",
+      "Procedimiento operativo de código para derechos del titular y notificación de brechas (plantillas, canal, responsable) — no implementado, requeriría OP06.3 con autorización separada"
+    ],
+    "codeChanges": false,
+    "note": "Este incremento es exclusivamente de verificación e investigación (actualiza docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md con los artículos y plazos confirmados); no modifica el módulo erpec_data_protection ni agrega procedimientos operativos de código. Cerrar el procedimiento de derechos del titular y de notificación de brechas en código requeriría autorización de un incremento OP06.3 separado."
+  },
   "externalEmissionPerformed": false,
   "sourceRepositoriesModified": false
 }
