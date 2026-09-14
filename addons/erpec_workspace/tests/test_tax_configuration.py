@@ -168,6 +168,65 @@ class TaxConfigurationCase(TransactionCase):
             self.assertIn(tax, self.env['account.tax'].search(safe_eval(action.domain)))
             arch = self.env['erpec.tax.case'].get_view(view_type='form')['arch']
             self.assertIn(kind + '_withholding_ids', arch)
+        tax.erpec_reference_id = False
+        self.assertEqual(tax.erpec_rate_status, 'Referencia SRI pendiente.')
+        self.assertEqual(tax.erpec_rate_state, 'missing')
+
+    def test_fixed_retention_rate_is_reconciled_and_mismatch_blocks_case(self):
+        tax = self._retention('income', '303', 10)
+        self.case.income_withholding_ids = tax
+        self.assertEqual(tax.erpec_reference_id.rate_mode, 'single')
+        self.assertEqual(tax.erpec_reference_id.fixed_rate, 10)
+        self.assertTrue(tax.erpec_rate_review_current)
+        self.assertFalse(self.case._configuration_issue())
+        tax.amount = -8
+        self.assertFalse(tax.erpec_rate_review_current)
+        self.assertEqual(tax.erpec_rate_state, 'mismatch')
+        self.assertIn('no coincide', self.case._configuration_issue())
+        tax.erpec_rate_review_note = 'La operación fue revisada, pero no puede sustituir la tarifa publicada.'
+        with self.assertRaises(ValidationError):
+            tax.action_erpec_confirm_rate_review()
+
+    def test_conditional_retention_requires_traceable_review_and_invalidates(self):
+        tax = self._retention('income', '310', 1)
+        self.case.income_withholding_ids = tax
+        self.assertEqual(tax.erpec_reference_id.rate_mode, 'conditional')
+        self.assertIn('revisión', self.case._configuration_issue())
+        with self.assertRaises(ValidationError):
+            tax.action_erpec_confirm_rate_review()
+        tax.erpec_rate_review_note = 'Caso sintético: porcentaje sustentado por la condición aplicable.'
+        tax.action_erpec_confirm_rate_review()
+        self.assertTrue(tax.erpec_rate_review_current)
+        self.assertEqual(tax.erpec_rate_state, 'reviewed')
+        self.assertFalse(self.case._configuration_issue())
+        reviewed_at = tax.erpec_rate_reviewed_at
+        self.assertEqual(tax.erpec_rate_reviewed_by_id, self.env.user)
+        self.assertTrue(reviewed_at)
+        tax.amount = -2
+        self.assertFalse(tax.erpec_rate_review_current)
+        self.assertIn('revisión', self.case._configuration_issue())
+
+    def test_rate_review_permissions_and_protected_audit_fields(self):
+        tax = self._retention('income', '310', 1)
+        tax.erpec_rate_review_note = 'Condición sintética revisada.'
+        user = self.env['res.users'].create({'name': 'Comprador sin revisión', 'login': 'buyer_no_rate_review',
+            'groups_id': [Command.set(self.env.ref('purchase.group_purchase_user').ids)]})
+        with self.assertRaises(AccessError):
+            tax.with_user(user).action_erpec_confirm_rate_review()
+        with self.assertRaises(AccessError):
+            tax.write({'erpec_rate_review_key': 'no-permitido'})
+        tax.action_erpec_confirm_rate_review()
+        tax.erpec_reference_id.rate_description = '1 o 2 según condición actualizada'
+        self.assertFalse(tax.erpec_rate_review_current)
+        self.assertIn('pendiente', tax.erpec_rate_status.lower())
+        list_arch = self.env.ref('erpec_workspace.tax_retention_detail_list').arch_db
+        form_arch = self.env['account.tax'].get_view(view_type='form')['arch']
+        self.assertIn('erpec_rate_status', list_arch)
+        self.assertIn('action_erpec_confirm_rate_review', form_arch)
+        self.assertEqual(self.env.ref('erpec_workspace.tax_income_detail_action').view_id,
+                         self.env.ref('erpec_workspace.tax_retention_detail_list'))
+        self.assertEqual(self.env.ref('erpec_workspace.tax_vat_detail_action').view_id,
+                         self.env.ref('erpec_workspace.tax_retention_detail_list'))
 
     def _intersection_setup(self, retention=False):
         self.taxes[1].erpec_reference_id = self.reference.copy({'code': 'TX-SP02-B'})

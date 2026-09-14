@@ -29,6 +29,14 @@ En ventas se muestra la previsión consolidada; el comprobante de retención rec
 
 Se incluyen nueve referencias IVA de la tabla 17, ocho códigos de retención IVA de la tabla 20 de la ficha SRI 2.34 y 123 referencias de Renta del catálogo ATS desde 06/08/2026. Las tarifas condicionadas se preservan como texto. No se sustituyen masivamente porcentajes históricos de detalles operativos.
 
+## Conciliación de tarifas de retención
+
+En **Retenciones de Renta y cuentas** y **Retenciones de IVA y cuentas**, el listado compacto muestra el código SRI, la tarifa operativa y uno de estos estados: Falta referencia, Coincide, No coincide, Revisión pendiente o Revisada. La tarifa publicada y el mensaje completo pueden activarse como columnas opcionales y siempre aparecen en el formulario.
+
+Una tarifa numérica única coincide cuando su valor absoluto es igual al porcentaje operativo del detalle. Una divergencia bloquea el caso y no puede aprobarse manualmente. Las tarifas condicionadas, múltiples o narrativas exigen que el responsable contable escriba la justificación y use **Confirmar revisión de tarifa**. La huella conserva referencia, versión, texto de fuente, tipo de cálculo y porcentaje; si cualquiera cambia, la revisión queda pendiente otra vez.
+
+La instalación no enlaza los detalles históricos por su nombre. En la demo existen 74 detalles nativos de retención y ninguno estaba vinculado al catálogo al cerrar TX08; aparecen como **Falta referencia** para que el responsable seleccione el código correcto. Inferir o actualizar masivamente esos vínculos habría ocultado diferencias reales, como el detalle histórico 304E al 8 % frente a la referencia ATS actual al 10 %.
+
 Fuente y huella del catálogo: evidencias/ERPEC26-TX06-FUENTES.json. Un código publicado no acredita por sí solo el tratamiento de una transacción. ICE, IRBPNR, bases especiales y aceptación fiscal integral siguen pendientes.
 
 ## Venta y valoración visual anterior

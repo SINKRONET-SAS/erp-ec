@@ -1,6 +1,9 @@
 """Configuración de casos tributarios; el cálculo y las cuentas siguen siendo nativos."""
+import hashlib
+import re
+
 from odoo import api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 OPERATIONS = [('purchase', 'Compras'), ('bill', 'Factura de proveedor'),
               ('import', 'Importaciones'), ('sale', 'Ventas / factura de cliente')]
@@ -15,11 +18,32 @@ class SriReference(models.Model):
     family = fields.Char('Catálogo / familia', required=True)
     category = fields.Selection([('tax', 'Impuesto'), ('income', 'Retención en la fuente de Renta'), ('vat', 'Retención de IVA')], default='tax', required=True, string='Clase')
     rate_description = fields.Char('Tarifa y condiciones de la fuente')
+    rate_mode = fields.Selection([
+        ('single', 'Tarifa numérica única'),
+        ('conditional', 'Tarifa condicionada o múltiple'),
+        ('unspecified', 'Sin tarifa especificada'),
+    ], string='Lectura de la tarifa', compute='_compute_rate_structure')
+    fixed_rate = fields.Float('Tarifa única publicada (%)', compute='_compute_rate_structure', digits=(16, 6))
     version = fields.Char('Versión de la fuente', required=True)
     source_url = fields.Char('Fuente oficial', required=True)
     active = fields.Boolean('Activo', default=True)
     tax_ids = fields.One2many('account.tax', 'erpec_reference_id', 'Detalles vinculados')
     _sql_constraints = [('reference_unique', 'unique(family, code, version)', 'Ya existe este código en la versión del catálogo.')]
+
+    @api.depends('rate_description')
+    def _compute_rate_structure(self):
+        pattern = re.compile(r'^\s*\d+(?:[\.,]\d+)?\s*$')
+        for record in self:
+            description = record.rate_description or ''
+            if not description.strip():
+                record.rate_mode = 'unspecified'
+                record.fixed_rate = 0
+            elif pattern.fullmatch(description):
+                record.rate_mode = 'single'
+                record.fixed_rate = float(description.strip().replace(',', '.'))
+            else:
+                record.rate_mode = 'conditional'
+                record.fixed_rate = 0
 
     @api.constrains('source_url')
     def _check_source(self):
@@ -33,6 +57,125 @@ class SriReference(models.Model):
 class TaxDetail(models.Model):
     _inherit = 'account.tax'
     erpec_reference_id = fields.Many2one('erpec.tax.reference', 'Referencia del catálogo SRI', ondelete='restrict')
+    erpec_reference_rate_description = fields.Char(
+        related='erpec_reference_id.rate_description', string='Tarifa publicada', readonly=True)
+    erpec_reference_code = fields.Char(
+        related='erpec_reference_id.code', string='Código SRI', readonly=True)
+    erpec_reference_rate_mode = fields.Selection(
+        related='erpec_reference_id.rate_mode', string='Lectura de tarifa', readonly=True)
+    erpec_rate_review_note = fields.Text('Justificación de la tarifa condicionada', copy=False)
+    erpec_rate_review_key = fields.Char('Huella de revisión tributaria', copy=False, readonly=True)
+    erpec_rate_reviewed_at = fields.Datetime('Tarifa revisada el', copy=False, readonly=True)
+    erpec_rate_reviewed_by_id = fields.Many2one(
+        'res.users', 'Tarifa revisada por', copy=False, readonly=True)
+    erpec_rate_review_current = fields.Boolean(
+        'Conciliación vigente', compute='_compute_erpec_rate_status')
+    erpec_rate_state = fields.Selection([
+        ('missing', 'Falta referencia'),
+        ('matched', 'Coincide'),
+        ('mismatch', 'No coincide'),
+        ('review_pending', 'Revisión pendiente'),
+        ('reviewed', 'Revisada'),
+        ('not_applicable', 'No aplica'),
+    ], string='Conciliación', compute='_compute_erpec_rate_status')
+    erpec_rate_status = fields.Char('Estado de conciliación', compute='_compute_erpec_rate_status')
+
+    def _erpec_review_fingerprint(self):
+        self.ensure_one()
+        reference = self.erpec_reference_id
+        source = '|'.join([
+            str(reference.id or ''),
+            reference.code or '',
+            reference.category or '',
+            reference.family or '',
+            reference.version or '',
+            reference.rate_description or '',
+            reference.source_url or '',
+            self.amount_type or '',
+            format(abs(self.amount), '.12g'),
+        ])
+        return hashlib.sha256(source.encode('utf-8')).hexdigest()
+
+    def _erpec_fixed_rate_matches(self):
+        self.ensure_one()
+        return (self.amount_type == 'percent'
+                and abs(abs(self.amount) - self.erpec_reference_id.fixed_rate) <= 0.000001)
+
+    @api.depends('erpec_reference_id', 'erpec_reference_id.code', 'erpec_reference_id.category',
+                 'erpec_reference_id.family', 'erpec_reference_id.version',
+                 'erpec_reference_id.rate_description', 'erpec_reference_id.source_url',
+                 'erpec_reference_id.rate_mode', 'amount', 'amount_type',
+                 'tax_group_id.l10n_ec_type', 'erpec_rate_review_key', 'erpec_rate_review_note')
+    def _compute_erpec_rate_status(self):
+        for tax in self:
+            reference = tax.erpec_reference_id
+            withholding = (tax.tax_group_id.l10n_ec_type or '').startswith('withhold_')
+            if not reference:
+                tax.erpec_rate_review_current = False
+                tax.erpec_rate_state = 'missing' if withholding else 'not_applicable'
+                tax.erpec_rate_status = ('Referencia SRI pendiente.' if withholding
+                                         else 'No aplica conciliación de retención.')
+            elif reference.category not in ('income', 'vat'):
+                tax.erpec_rate_review_current = False
+                tax.erpec_rate_state = 'mismatch' if withholding else 'not_applicable'
+                tax.erpec_rate_status = ('La referencia vinculada no corresponde a una retención.' if withholding
+                                         else 'No aplica conciliación de retención.')
+            elif reference.rate_mode == 'single':
+                matches = tax._erpec_fixed_rate_matches()
+                tax.erpec_rate_review_current = matches
+                tax.erpec_rate_state = 'matched' if matches else 'mismatch'
+                tax.erpec_rate_status = (
+                    'Tarifa operativa coincide con la referencia.' if matches
+                    else 'La tarifa operativa no coincide con la referencia.'
+                )
+            else:
+                current = bool(tax.erpec_rate_review_note and tax.erpec_rate_review_key
+                               and tax.erpec_rate_review_key == tax._erpec_review_fingerprint())
+                tax.erpec_rate_review_current = current
+                tax.erpec_rate_state = 'reviewed' if current else 'review_pending'
+                tax.erpec_rate_status = (
+                    'Condición revisada para la versión y tarifa actuales.' if current
+                    else 'Revisión contable pendiente para esta condición.'
+                )
+
+    def _erpec_retention_rate_issue(self):
+        self.ensure_one()
+        reference = self.erpec_reference_id
+        if not reference or reference.category not in ('income', 'vat'):
+            return False
+        if reference.rate_mode == 'single' and not self._erpec_fixed_rate_matches():
+            return ('La tarifa operativa de %s no coincide con %s %% publicada para el código %s.'
+                    % (self.display_name, format(reference.fixed_rate, 'g'), reference.code))
+        if reference.rate_mode != 'single' and not self.erpec_rate_review_current:
+            return ('La tarifa de %s es condicionada o no está especificada; registre una revisión '
+                    'vigente con justificación antes de usarla en un plan.' % self.display_name)
+        return False
+
+    def action_erpec_confirm_rate_review(self):
+        if not self.env.user.has_group('account.group_account_manager'):
+            raise AccessError('Solo el responsable contable puede confirmar una tarifa condicionada.')
+        for tax in self:
+            reference = tax.erpec_reference_id
+            if not reference or reference.category not in ('income', 'vat'):
+                raise ValidationError('Vincule primero una referencia de retención de Renta o IVA.')
+            if reference.rate_mode == 'single':
+                if not tax._erpec_fixed_rate_matches():
+                    raise ValidationError('Corrija la tarifa operativa; una divergencia fija no admite confirmación manual.')
+                raise ValidationError('La tarifa numérica ya coincide automáticamente y no requiere confirmación manual.')
+            if not (tax.erpec_rate_review_note or '').strip():
+                raise ValidationError('Registre la justificación contable de la tarifa condicionada.')
+            tax.with_context(erpec_confirming_rate_review=True).write({
+                'erpec_rate_review_key': tax._erpec_review_fingerprint(),
+                'erpec_rate_reviewed_at': fields.Datetime.now(),
+                'erpec_rate_reviewed_by_id': self.env.user.id,
+            })
+        return True
+
+    def write(self, vals):
+        protected = {'erpec_rate_review_key', 'erpec_rate_reviewed_at', 'erpec_rate_reviewed_by_id'}
+        if protected & vals.keys() and not self.env.context.get('erpec_confirming_rate_review'):
+            raise AccessError('La revisión tributaria solo puede registrarse mediante la acción del formulario.')
+        return super().write(vals)
 
 
 class TaxClassification(models.Model):
@@ -120,6 +263,9 @@ class TaxCase(models.Model):
                     return 'Revise la clase, operación y porcentaje de los detalles de retención.'
                 if tax.erpec_reference_id.category != kind:
                     return 'Vincule cada retención con su clase de catálogo SRI.'
+                rate_issue = tax._erpec_retention_rate_issue()
+                if rate_issue:
+                    return rate_issue
         leaves |= self.income_withholding_ids | self.vat_withholding_ids
         for tax in leaves:
             if not tax.active or not tax.erpec_reference_id or not tax.erpec_reference_id.active:

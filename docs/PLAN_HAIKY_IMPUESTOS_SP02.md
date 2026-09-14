@@ -33,3 +33,11 @@ Prompt: .github/prompts/ERPEC26-TX07-INTERSECCION.md. Secuencia: alcance → imp
 ### Cierre TX07
 
 Implementación, regresión, instalación y revisión visual completadas. Evidencia: `docs/evidencias/ERPEC26-TX07-CIERRE.json`. El cierre cubre la intersección automática y sus límites; no cierra SP02 ni certifica tratamientos tributarios reales.
+
+## TX08 — Conciliación de tarifas de retención
+
+Antes de admitir un detalle de retención en un caso, comparar su porcentaje operativo con la tarifa publicada en la referencia SRI. Una tarifa numérica única puede validarse automáticamente; una tarifa condicionada, múltiple o narrativa requiere una revisión explícita del responsable contable, vinculada a la versión, descripción y porcentaje vigentes. Cualquier cambio posterior deja esa revisión desactualizada.
+
+Mostrar en Catálogos SRI, Retenciones de Renta y Retenciones de IVA la tarifa de fuente, el porcentaje operativo y el estado de conciliación. Bloquear casos con tarifa fija divergente o revisión condicionada pendiente, sin modificar porcentajes históricos en masa. Conservar las cuentas de repartición y la intersección por línea como controles independientes.
+
+Prompt: `.github/prompts/ERPEC26-TX08-CONCILIACION-TARIFAS.md`. Secuencia: gobierno previo → implementación y pruebas → instalación con respaldo → revisión de pantallas → cierre de evidencia y Git. TX08 no acredita vigencia normativa integral, base imponible, condición material de una operación ni emisión de comprobantes de retención.

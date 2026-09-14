@@ -199,3 +199,11 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Las retenciones se muestran separadas del IVA facturado. En compras USD, cuando ambos casos confirman las bases, se prepara Renta sobre subtotal neto e IVA sobre IVA causado, consolidando por detalle con desglose por línea. El cálculo preliminar sigue en erpec.purchase.withholding y no genera asiento. En ventas se muestra la previsión; el comprobante recibido sigue el flujo erpec.withholding.
 - 60/60 pruebas finales aprobadas en copia, incluidos documentos y contabilidad de retenciones existentes; 66 archivos instalados coincidentes en la demo con respaldo imports-ui-install-20260913-203656. Revisión visual de tres líneas: subtotal 250,00, IVA 22,50 + 5,00 y total 277,50; Renta base 150,00 e IVA retenido base 22,50. Evidencia: docs/evidencias/ERPEC26-TX07-CIERRE.json.
 - SP02 permanece abierto: falta validación tributaria de operaciones reales, cobertura de tratamientos y aceptación integral. No se declara emisión, firma ni autorización SRI de retenciones.
+
+## SP02 — TX08: conciliación de tarifas de retención — 14-09-2026
+
+- Las referencias clasifican su tarifa como numérica única, condicionada/múltiple o no especificada. Los detalles nativos de retención muestran código SRI, tarifa operativa y un estado compacto; tarifa de fuente y explicación quedan disponibles en el formulario y como columnas opcionales.
+- Una tarifa fija divergente bloquea el caso. Una tarifa condicionada requiere justificación y confirmación del responsable contable; la revisión se invalida si cambia la referencia, versión, texto publicado, tipo de cálculo o porcentaje.
+- No se actualizaron ni enlazaron detalles históricos por nombre. La demo tiene 74 detalles nativos de retención y cero vinculados: se muestran como Falta referencia. El detalle histórico 304E al 8 % no se presentó como equivalente a la referencia ATS de 10 %.
+- 63/63 pruebas aprobadas en cinco módulos; 66 archivos instalados coinciden con la revisión probada. Respaldo final `imports-ui-install-20260914-103044`. Catálogo y listado compacto revisados en navegador, sin errores de consola. Evidencia: `docs/evidencias/ERPEC26-TX08-CIERRE.json`.
+- SP02 continúa abierto: falta mapear y validar los tratamientos que realmente use cada empresa, además de emisión/autorización SRI y aceptación integral.

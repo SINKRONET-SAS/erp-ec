@@ -1,0 +1,86 @@
+{
+  "planCode": "ERPEC26",
+  "phase": "TX08",
+  "closedAt": "2026-09-14T15:31:48.712Z",
+  "scope": "Conciliación entre la tarifa operativa de detalles de retención y la tarifa publicada en su referencia SRI.",
+  "implementation": {
+    "fixedRates": "Coincidencia automática por valor absoluto; una divergencia bloquea el uso en casos.",
+    "conditionalRates": "Revisión explícita del responsable contable con justificación, fecha, usuario y huella de referencia, versión, descripción, tipo de cálculo y porcentaje.",
+    "invalidation": "La revisión deja de estar vigente cuando cambia cualquiera de los datos incluidos en la huella.",
+    "historicalMutation": false,
+    "accountingEntriesCreated": false,
+    "withholdingDocumentsCreated": false
+  },
+  "tests": {
+    "database": "ec_operational_22e2259e51",
+    "modules": [
+      "erpec_imports",
+      "erpec_workspace",
+      "erpec_fiscal_connector",
+      "erpec_fiscal_documents",
+      "erpec_withholding_accounting"
+    ],
+    "passed": 63,
+    "failed": 0,
+    "errors": 0,
+    "log": ".cache/windows/operational-tests/ec_operational_22e2259e51/imports-ui-tests-20260914-084309.log",
+    "logSha256": "904f7883f14f665012ea66ba873bf49dd63b7ae957cc7bb9c6f75680fd0752a7",
+    "resultSha256": "858b362f621ac65c4a94bb4ecf8471da90c9376455ba931633166885f78c1686"
+  },
+  "installation": {
+    "database": "erpec_demo",
+    "backup": ".cache/windows/backups/imports-ui-install-20260914-103044",
+    "resultSha256": "22459c11d6293fa3370fd970b4698f34518f97433199144ade4c33052fa33105",
+    "testedAndInstalledFilesMatched": 66,
+    "testedAndInstalledFilesTotal": 66,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false
+  },
+  "runtime": {
+    "catalogReferences": 140,
+    "rateModes": {
+      "single": 79,
+      "conditional": 52,
+      "unspecified": 9
+    },
+    "nativeWithholdingDetails": 74,
+    "linkedWithholdingDetails": 0,
+    "unlinkedState": "missing",
+    "referenceListCompiled": true,
+    "retentionListCompiled": true,
+    "detailFormCompiled": true
+  },
+  "visualReview": {
+    "referenceAction": 592,
+    "incomeWithholdingAction": 597,
+    "vatWithholdingAction": 598,
+    "compactColumns": [
+      "Nombre del impuesto",
+      "Código SRI",
+      "Tarifa operativa (%)",
+      "Conciliación"
+    ],
+    "optionalColumns": [
+      "Tarifa publicada",
+      "Estado de conciliación"
+    ],
+    "observedStates": [
+      "Tarifa numérica única",
+      "Tarifa condicionada o múltiple",
+      "Falta referencia"
+    ],
+    "browserConsoleWarningsOrErrors": 0
+  },
+  "governance": {
+    "previousSnapshot": "docs/evidencias/AuditLock.before-TX08.json",
+    "previousSnapshotSha256": "0bd8a17ec6ee57d9d24683461a9084e2261a1d9309e3d7b7aab682613163f6a4",
+    "utf8WithoutBom": true
+  },
+  "limits": [
+    "La clasificación de tarifa no acredita por sí sola la condición material ni la vigencia normativa de una operación.",
+    "No se enlazaron automáticamente los detalles históricos por nombre o código aparente.",
+    "La demo conserva los 74 detalles nativos sin referencia para que Contabilidad valide cada mapeo real.",
+    "No se emitieron, firmaron ni autorizaron comprobantes de retención ante el SRI.",
+    "TX08 no cierra SP02 ni la aceptación tributaria integral."
+  ]
+}

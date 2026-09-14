@@ -8,7 +8,7 @@ closeout_mode = '--closeout' in sys.argv
 imports_ui_mode = '--imports-ui' in sys.argv
 workspace_mode = '--workspace' in sys.argv or closeout_mode or imports_ui_mode
 prefix = 'imports-ui' if imports_ui_mode else 'closeout' if closeout_mode else 'workspace' if workspace_mode else 'fiscal-native'
-expected_tests = 60 if imports_ui_mode else 21 if closeout_mode else 9 if workspace_mode else 14
+expected_tests = 63 if imports_ui_mode else 21 if closeout_mode else 9 if workspace_mode else 14
 report=json.loads((STATE/(prefix+'-test-result.json')).read_text(encoding='utf-8'))
 expected_modules = ['erpec_imports','erpec_workspace','erpec_fiscal_connector','erpec_fiscal_documents','erpec_withholding_accounting'] if imports_ui_mode else ['erpec_workspace','erpec_treasury'] if closeout_mode else ['erpec_workspace'] if workspace_mode else ['erpec_fiscal_native','erpec_fiscal_connector']
 if report['modules'] != expected_modules: raise RuntimeError('El informe corresponde a otros módulos')
