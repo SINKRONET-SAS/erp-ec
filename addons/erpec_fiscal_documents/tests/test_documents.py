@@ -79,6 +79,10 @@ class FiscalCase(TransactionCase):
 
     def test_posted_support_immutable(self):
         support=self.support()
+        if 'invoice_line_id' in support._fields:
+            # El módulo contable exige conciliar el sustento antes de publicar.
+            self.bill.invoice_line_ids.ec_reimbursement = True
+            support.write({'invoice_line_id': self.bill.invoice_line_ids.id, 'untaxed_amount': 100, 'tax_amount': 0})
         self.bill.invoice_date='2026-09-10'
         self.bill.l10n_latam_document_number='001-001-000000999'
         self.bill.action_post()

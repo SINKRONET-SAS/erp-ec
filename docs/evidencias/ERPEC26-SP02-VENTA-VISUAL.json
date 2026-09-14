@@ -1,0 +1,22 @@
+{
+  "database": "ec_operational_7a74b3c051",
+  "order": "S00049",
+  "total": 60.0,
+  "delivery": "WH/OUT/00029",
+  "pendingDelivery": "WH/OUT/00030",
+  "return": "WH/IN/00196",
+  "netDelivered": 0.0,
+  "inventory": 2.0,
+  "valuation": 20.63,
+  "journals": [
+    "UIAC/2026/09/0009",
+    "UIAC/2026/09/0010"
+  ],
+  "balancedPosted": true,
+  "invoiceCreated": false,
+  "screenshots": {
+    "docs/evidencias/sp02-venta-visual/01-pedido-confirmado.png": "8602bd4f485389bbdc05f8830ac85ffcdfb436f591459e22daf0c6a92063b132",
+    "docs/evidencias/sp02-venta-visual/02-entrega-parcial.png": "e821e5eb7368c2f054fbc9737bca2e1aafe97635db9896172626b5ffb49967aa",
+    "docs/evidencias/sp02-venta-visual/03-devolucion.png": "d69a833338181818bf1c06c2860a49b79636ea1c3d2ca5c73c09471333916500"
+  }
+}

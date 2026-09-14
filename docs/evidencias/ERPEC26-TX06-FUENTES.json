@@ -1,0 +1,19 @@
+{
+  "catalog": "Catálogo ATS, hoja TABLAS RETENCIONES, columnas B:E, desde 06/08/2026",
+  "sha256": "bd3f7834f2cd31187af39cd2f4c685a646d7e49316e92ee493da5f2dd9776e3e",
+  "incomeCodes": 123,
+  "conditionalRatesPreserved": true,
+  "vatSource": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/f8d9bb36-5632-4f96-b463-b9265b55338c/FICHA%20TE%CC%81CNICA%20COMPROBANTES%20ELECTRO%CC%81NICOS%20ESQUEMA%20OFFLINE%20Versio%CC%81n%202.34.pdf",
+  "vatTable": 20,
+  "vatCodes": [
+    "9",
+    "10",
+    "1",
+    "11",
+    "2",
+    "3",
+    "7",
+    "8"
+  ],
+  "operationalRatesUpdated": false
+}

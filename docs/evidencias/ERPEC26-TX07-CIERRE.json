@@ -1,0 +1,98 @@
+{
+  "phase": "TX07",
+  "status": "instalado-y-verificado",
+  "implemented": {
+    "intersectionUnit": "detalle nativo común",
+    "samePolicyRequired": false,
+    "perLine": true,
+    "duplicateDetailAppliedOnce": true,
+    "directions": [
+      "compra",
+      "venta",
+      "factura de proveedor",
+      "factura de cliente"
+    ],
+    "nativeTaxCalculation": true,
+    "withholdingConsolidation": "por detalle, con bases aportadas por cada línea",
+    "purchaseRetentionPreparation": "automática en USD cuando ambos casos confirman bases y tarifas",
+    "saleRetentionTreatment": "previsión; el comprobante recibido usa el flujo contable existente"
+  },
+  "catalogs": {
+    "incomeReferences": 123,
+    "incomeVersion": "ATS desde 06/08/2026",
+    "vatWithholdingReferences": 8,
+    "vatSource": "Ficha SRI 2.34, tabla 20",
+    "conditionalRatesPreserved": true
+  },
+  "validation": {
+    "tests": {
+      "count": 60,
+      "failed": 0,
+      "errors": 0,
+      "exitCode": 0,
+      "log": ".cache/windows/operational-tests/ec_operational_7a74b3c051/sp02-intersection-complete2.log",
+      "sha256": "ed32a89850e60cd2368fda1b78439fdbad75bc91ecabdb70c018c85e532f73a"
+    },
+    "testedFiles": {
+      "count": 66,
+      "evidence": "docs/evidencias/ERPEC26-TX07-PRUEBAS.json",
+      "sha256": "2202d75e733f32a801b461917a07ef6911ccd2cae737ad6ba7ecd424593b9277"
+    },
+    "installation": {
+      "database": "erpec_demo",
+      "backup": ".cache/windows/backups/imports-ui-install-20260913-203656",
+      "result": ".cache/windows/imports-ui-install-result.json",
+      "sha256": "322bd03bf7a70c39bcfb71014839c15a50fa4cbedae664059564a940f1ca8232",
+      "installedFilesMatched": 66,
+      "demoRucEmpty": true
+    },
+    "runtime": [
+      {
+        "database": "erpec_demo",
+        "file": ".cache/windows/tax-cases-runtime-erpec_demo.json",
+        "sha256": "b85e6a30fe32af83ae675aaf85be8f19a7aa6e6260efb126165c2a224e51310c"
+      },
+      {
+        "database": "ec_operational_7a74b3c051",
+        "file": ".cache/windows/tax-cases-runtime-ec_operational_7a74b3c051.json",
+        "sha256": "f4cf14836080275c6822650b489acfd406b89735b064ea9fa29ab487185dee5e"
+      }
+    ],
+    "visual": {
+      "consoleErrors": 0,
+      "example": {
+        "lines": 3,
+        "untaxed": 250,
+        "tax15": 22.5,
+        "tax5": 5,
+        "total": 277.5,
+        "incomeBase": 150,
+        "vatWithholdingBase": 22.5
+      },
+      "screenshots": [
+        {
+          "file": "docs/evidencias/sp02-interseccion/01-compra-lineas.png",
+          "sha256": "08b179453f20a0c38cadd7b31d39c831802aa15893192181c7b8156fff857083"
+        },
+        {
+          "file": "docs/evidencias/sp02-interseccion/02-retenciones-consolidadas.png",
+          "sha256": "3224d337fabb2c389c283ace8c8a16638e7577058754ee4f2c5c9f453a864f1f"
+        },
+        {
+          "file": "docs/evidencias/sp02-interseccion/03-venta-lineas.png",
+          "sha256": "c2b01b2943b2a484a002c809d6cfac4cf115facdc3246ea5d7db6e4a8f40853f"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "No valida el tratamiento tributario de una operación real.",
+    "No emite, firma ni autoriza comprobantes de retención ante el SRI.",
+    "No reescribe documentos confirmados ni tasas históricas.",
+    "SP02 permanece abierto por cobertura tributaria y aceptación integral."
+  ],
+  "recovery": {
+    "backupRestored": false,
+    "note": "El respaldo se creó antes de instalar; no se declara recuperación."
+  }
+}

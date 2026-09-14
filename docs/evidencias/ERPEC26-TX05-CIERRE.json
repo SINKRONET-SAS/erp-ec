@@ -1,0 +1,101 @@
+{
+  "phase": "TX05",
+  "status": "configuracion-instalada-verificada",
+  "checkedAt": "2026-09-13T22:55:37.356Z",
+  "tests": "docs/evidencias/ERPEC26-TX04-FINAL.json",
+  "installation": {
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\imports-ui-install-20260913-175202",
+    "views": {
+      "home": true
+    },
+    "url": "http://127.0.0.1:8369/odoo/action-582",
+    "authenticated": true,
+    "demoRucEmpty": true,
+    "fiscalEmissionPerformed": false,
+    "installedModules": [
+      "erpec_imports",
+      "erpec_workspace",
+      "erpec_fiscal_connector"
+    ]
+  },
+  "runtime": {
+    "database": "erpec_demo",
+    "views": {
+      "reference": true,
+      "policy": true,
+      "case": true,
+      "classification": true,
+      "assignment": true
+    },
+    "actions": {
+      "reference": 592,
+      "policy": 594,
+      "case": 595,
+      "classification": 593,
+      "assignment": 596
+    },
+    "ivaReferences": 9,
+    "homeConfigurationLink": true,
+    "nativeDetailAndClassificationFields": true,
+    "businessWrites": false,
+    "automaticDocumentApplication": false
+  },
+  "acceptance": {
+    "database": "ec_operational_7a74b3c051",
+    "views": {
+      "reference": true,
+      "policy": true,
+      "case": true,
+      "classification": true,
+      "assignment": true
+    },
+    "actions": {
+      "reference": 591,
+      "policy": 593,
+      "case": 594,
+      "classification": 592,
+      "assignment": 595
+    },
+    "ivaReferences": 9,
+    "homeConfigurationLink": true,
+    "nativeDetailAndClassificationFields": true,
+    "businessWrites": false,
+    "automaticDocumentApplication": false,
+    "scenarioId": 46,
+    "caseId": 12,
+    "plannedAccount": "TXSP02CASE",
+    "uiNotePersisted": true,
+    "differenceVisible": true
+  },
+  "installedFilesMatch": 44,
+  "screenshots": {
+    "docs/evidencias/sp02-casos-impuestos/01-comparacion-cuentas.png": "4757c9fa0f39d5fbe675ad692e79da7d6cf47a422cf371fcac70d1b7a33760d6",
+    "docs/evidencias/sp02-casos-impuestos/02-caso-asignaciones.png": "a98fc9e2c7e2d6fff38bb831d0d19ae5fa1ef7aba16431d8662b1252d1ce3fc8",
+    "docs/evidencias/sp02-casos-impuestos/03-detalle-cuentas.png": "ff15eb9eb2c319653cdf577d38a6ed07036aedbcc3e4c847c0f403b2a5188ae1",
+    "docs/evidencias/sp02-casos-impuestos/04-detalle-sri.png": "14bbe92213091939be26203b76dc504dedd51a9ccd8902a35e48e234e91ddbe7",
+    "docs/evidencias/sp02-casos-impuestos/05-catalogo-demo.png": "3671b5558ac0e9675374d402c2e7426c3cdbe30465ae3c240ea9867f8dfde266"
+  },
+  "visualChecks": [
+    "Perfil contable: abrir plan/caso y guardar justificación; persistencia comprobada",
+    "Caso con detalles y asignación por tipos visibles",
+    "Comparación señala diferencia y muestra cuentas previstas",
+    "Detalle nativo enlaza referencia SRI y reparticiones de factura/devolución",
+    "Catálogo de nueve códigos visible en demo",
+    "Consulta final de consola: sin errores capturados"
+  ],
+  "corrections": [
+    "Etiqueta Activo en español",
+    "Cuentas previstas visibles aunque difieran los impuestos operativos",
+    "Cambios posteriores de operación/empresa del caso detectados al resolver",
+    "Grupo nativo del impuesto sintético corregido a IVA 15 %; semilla corregida",
+    "Guía del vendedor coordina con bodega sin exigir botón no autorizado"
+  ],
+  "source": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/f8d9bb36-5632-4f96-b463-b9265b55338c/FICHA%20TE%CC%81CNICA%20COMPROBANTES%20ELECTRO%CC%81NICOS%20ESQUEMA%20OFFLINE%20Versio%CC%81n%202.34.pdf",
+  "limits": [
+    "Sin aplicación automática a pedidos o facturas",
+    "Catálogo inicial IVA, no totalidad de ICE/IRBPNR/retenciones",
+    "Sin homologación, emisión fiscal ni restauración del nuevo respaldo",
+    "SP02 permanece abierto"
+  ],
+  "salesEvidence": "docs/evidencias/ERPEC26-SP02-VENTA-VISUAL.json"
+}

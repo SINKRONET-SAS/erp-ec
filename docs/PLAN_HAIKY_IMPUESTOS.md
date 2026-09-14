@@ -19,3 +19,6 @@ La clasificación/régimen real del emisor, tratamiento específico por producto
 
 ## Resultado de ejecución
 TX00 documental, TX01 probado y TX02 instalado/verificado: completados para este incremento local. Evidencia: evidencias/ERPEC26-SP02-IMPORTACIONES-VALORACION.json. 32/32 pruebas y navegación contable revisada. Los límites tributarios y SP02 permanecen abiertos.
+
+## Corrección posterior autorizada: planes con casos
+El titular precisó que el plan debe configurar casos y asignarlos por tipos de proveedor y producto, conservando el enlace detalle de impuesto ↔ cuenta contable. El modelo funcional de este documento describe solo el incremento histórico TX00–TX02. La continuidad está en PLAN_HAIKY_IMPUESTOS_SP02.md y SP02_CONFIGURACION_IMPUESTOS.md; no interpretar las consultas antiguas como planes operativos completos.

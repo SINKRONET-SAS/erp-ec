@@ -18,7 +18,7 @@ class SaleOrder(models.Model):
             else:
                 messages = []
                 if order.delivery_status == 'pending':
-                    messages.append('Abre Entregas y registra únicamente lo despachado. Revisa disponibilidad antes de validar.')
+                    messages.append('Coordina con bodega el registro de lo despachado y la revisión de disponibilidad antes de validar la entrega.')
                 elif order.delivery_status in ('partial', 'started'):
                     messages.append('Entrega parcial o en curso: revisa el traslado pendiente y las cantidades antes de dar por finalizado el pedido.')
                 elif order.delivery_status == 'full':

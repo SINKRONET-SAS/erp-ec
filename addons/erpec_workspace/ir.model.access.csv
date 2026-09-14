@@ -1,3 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 workspace_internal_read,Consultar centro de trabajo,erpec_base.model_erpec_workspace,base.group_user,1,0,0,0
 tax_plan_manager,Plan de impuestos,model_erpec_tax_plan,account.group_account_manager,1,1,1,1
+
+tax_reference_manager,Configurar reference,model_erpec_tax_reference,account.group_account_manager,1,1,1,1
+tax_classification_manager,Configurar classification,model_erpec_tax_classification,account.group_account_manager,1,1,1,1
+tax_policy_manager,Configurar policy,model_erpec_tax_policy,account.group_account_manager,1,1,1,1
+tax_case_manager,Configurar case,model_erpec_tax_case,account.group_account_manager,1,1,1,1
+tax_assignment_manager,Configurar assignment,model_erpec_tax_assignment,account.group_account_manager,1,1,1,1

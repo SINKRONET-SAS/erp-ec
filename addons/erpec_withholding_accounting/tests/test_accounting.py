@@ -109,6 +109,10 @@ class RetentionCase(TransactionCase):
         self.assertIn('ec_accounting_withholding_ids',invoice_view['arch'])
 
     def test_trial_balance_and_ledger(self):
+        # La copia de aceptación puede contener movimientos ajenos al ensayo.
+        baseline = sum(self.env['account.move.line'].search([
+            ('company_id', '=', self.env.company.id), ('parent_state', '=', 'posted'),
+            ('date', '=', '2026-09-11')]).mapped('debit'))
         invoice=self.invoice()
         retention=self.retention(invoice)
         retention.action_post()
@@ -124,7 +128,8 @@ class RetentionCase(TransactionCase):
         report.write({'date_from':'2026-09-11','date_to':'2026-09-11'})
         report.action_generate()
         self.assertEqual(report.line_ids.filtered(lambda line:line.account_id==self.liability).opening,-2)
-        self.assertEqual(report.total_debit,0)
+        self.assertEqual(report.total_debit,baseline)
+        self.assertEqual(report.line_ids.filtered(lambda line:line.account_id==self.liability).debit,0)
         with self.assertRaises(ValidationError),self.cr.savepoint():
             report.date_from='2026-09-12'
             report.action_generate()

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "planCode": "ERPEC26",
+  "phaseCompleted": "ERPEC26-03",
+  "phaseInProgress": "ERPEC26-04",
+  "status": "partial-awaiting-external-validation",
+  "updatedAt": "2026-09-13T22:43:18.452Z",
+  "filesModified": [
+    ".github/CODEX_CONTEXT.md",
+    "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md",
+    "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json",
+    "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json"
+  ],
+  "validationChecks": [
+    "Segunda pasada de OP06 (Protección de Datos): derechos del titular (Arts. 11-24 LOPDP), notificación de brechas (Arts. 43 y 46 LOPDP) y umbral del RAT (Arts. 38-39 del Reglamento General) confirmados por lectura directa del texto primario completo (PDF extraíble, Lexis S.A., cotejado con Registro Oficial Suplemento 459 y Suplemento 435)",
+    "Verificación de vigencia 2026: sin reforma encontrada a la LOPDP (2022-2026) ni al Reglamento General (2024-2026); SPDP confirmada sancionando activamente a privados (LIGAPRO y Federación Ecuatoriana de Fútbol, diciembre 2025)",
+    "Solo investigación y documentación; ningún archivo de código de erpec_data_protection ni de ningún otro módulo modificado en este incremento",
+    "UTF-8 sin BOM verificado en los tres archivos de este incremento"
+  ],
+  "pendingChecks": [
+    "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
+    "Importaciones: aceptación visual de dos productos y revisión aduanera de operación real",
+    "Nómina: regímenes adicionales, cargas/exenciones, acumulados y retenciones previas, bases independientes por novedad, ausencias, liquidaciones, pagos conciliados y equivalencia integral",
+    "Contrato externo de cierre SKNOMINA, migración y corte productivo por organización; no se modificó el producto fuente",
+    "Gates históricos externos y publicación Render aplazada; PAYPHONE local ya probado",
+    "Fiscal nativo: firma XAdES, autoridad/secuencias durables, transporte/consulta SRI, RIDE, archivo y equivalencia integral",
+    "Recuperación ensayada del respaldo fiscal-native-install-20260911-131601",
+    "OP05 ATS: obtener y parsear el Catálogo ATS oficial (códigos de sustento y tipo de comprobante) antes de modelar compras/ventas",
+    "OP05 RDEP: participación de utilidades, intereses ganados, salario digno, otros ingresos gravados, deducciones desglosadas, residencia fiscal y país de residencia",
+    "OP05: generación y validación de XML contra ats.xsd / Esquema RDEP 2023.xsd, y confirmación del canal de presentación ante el SRI (el trámite oficial documenta solo software de escritorio y FTP)",
+    "ATS: clasificación de sustento tributario por documento de compra/venta (dato inexistente en el ERP); generación de las secciones compras/ventas/anulados/exportaciones/recap/fideicomisos/rendFinancieros",
+    "RDEP: confirmar deducEducartcult y benGalpg contra la ficha técnica narrativa (PDF escaneado, no leída) o el software DIMM",
+    "RDEP: intGrabGen sigue siendo un campo de captura manual sin fuente primaria confirmada de su significado exacto",
+    "Canal de presentación ante el SRI para ambos anexos (el trámite oficial documenta solo software de escritorio DIMM/APS y FTP, no una API)",
+    "RDEP: confirmar si benGalpg conserva efecto vigente después de la derogatoria de 2021, o solo aplica a corrección de períodos 2016-2021; requiere la ficha técnica narrativa del RDEP (PDF escaneado, no leída) o consulta directa al SRI",
+    "PRIORITARIO: escalar expense_limit por cargas familiares y Galápagos en erpec_payroll.engine.calculate() — afecta el cálculo mensual real de retención, no solo el anexo RDEP anual",
+    "OP06: Tributario/Facturación/ATS/RDEP/Laboral siguen con sus brechas ya documentadas por separado",
+    "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos",
+    "OP06 LOPDP: confirmar la vigencia 2026 (ausencia de reforma 2022-2026) mediante lectura directa del Registro Oficial, hoy solo confianza media por fuente secundaria consistente",
+    "OP06 LOPDP: formato/canal definitivo de la SPDP para presentar el RAT y notificar una vulneración; la norma técnica de notificación de brechas sigue en borrador (mayo 2026)",
+    "OP06 LOPDP: implementar en código el procedimiento operativo de derechos del titular y de notificación de brechas (plantillas, canal, responsable) — requiere autorización de un incremento OP06.3 separado",
+    "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos"
+  ],
+  "fileHashes": {
+    ".github/CODEX_CONTEXT.md": "1c5dff4f9c5401a8a38c77346dfe5ace5391d4ed17c46a3020f379a5588cdda3",
+    "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md": "64126fb4c38ec2d3e3ff4a3905e77326cbb76332de578d0014b5d8b2b2faf57d",
+    "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json": "a0a6ed68318ef985ab3845964ec6bb661d11162e3216710d1cebe402521c061f",
+    "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json": "609217e596dcc59ecf41e683270638d7a8fc38ea43da14aab1007709263d819e"
+  },
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json",
+  "previousAuditLockHash": "a0a6ed68318ef985ab3845964ec6bb661d11162e3216710d1cebe402521c061f",
+  "signature": "b0a48ef6d0e5a5c39d3972f35bbcd0604ff504c867c5ad77c540479b78471880",
+  "taxProcess": {
+    "phaseCompleted": "TX03",
+    "status": "documental",
+    "plan": "docs/PLAN_HAIKY_IMPUESTOS_SP02.md"
+  }
+}

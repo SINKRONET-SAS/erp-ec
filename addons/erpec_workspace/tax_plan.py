@@ -33,6 +33,9 @@ class TaxPlan(models.Model):
                       else scoped.product_id.supplier_taxes_id)._filter_taxes_by_company(record.company_id)
             if scoped.operation == 'sale' and scoped.product_id.type == 'combo':
                 source = scoped.env['account.tax']
+            intersection = self.env['erpec.tax.policy']._intersection(record.company_id, record.operation, record.partner_id, record.product_id)
+            if intersection['configured']:
+                source = intersection['taxes']
             effective = position.map_tax(source)
             leaves = effective.flatten_taxes_hierarchy()
             repartitions = (leaves.invoice_repartition_line_ids | leaves.refund_repartition_line_ids).filtered(
@@ -41,7 +44,7 @@ class TaxPlan(models.Model):
             record.source_tax_ids = source
             record.effective_tax_ids = effective
             record.account_ids = repartitions.account_id
-            messages = []
+            messages = [intersection['message']] if intersection['configured'] else []
             if not record.product_id or not record.partner_id:
                 messages.append('Seleccione artículo y tercero para consultar la configuración.')
             if not source:

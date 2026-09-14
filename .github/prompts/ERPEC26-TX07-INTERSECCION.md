@@ -1,0 +1,5 @@
+# TX07 — Aplicación automática por intersección
+
+Autorizado expresamente: proveedor e ítem, y cliente y producto de venta. Extender TX06 con planes múltiples en tipos y terceros/productos, resolver detalles nativos comunes entre planes diferentes por empresa y operación, elegir casos sin asignaciones o con asignación coincidente, bloquear ambigüedades e impuestos duplicados por referencia. Cargar impuestos nativos al elegir tercero/producto en borradores de compra, venta y factura; conservar posición fiscal y documentos publicados. Exponer retenciones previstas separadamente y generar preparación de compra USD cuando el responsable haya confirmado bases y tarifas. No registrar automáticamente retenciones recibidas sin comprobante. Probar cruce, ausencia, duplicados, permisos, cambios de tercero y flujo a factura. Instalar con respaldo, revisión visual, gobierno y commit/push.
+
+Corrección explícita del titular: no se exige compartir el plan; basta compartir el mismo detalle nativo. Intersección de detalles, no unión ni igualdad de planes.
