@@ -97,7 +97,51 @@
       "Procedimiento operativo de código para derechos del titular y notificación de brechas (plantillas, canal, responsable) — no implementado, requeriría OP06.3 con autorización separada"
     ],
     "codeChanges": false,
-    "note": "Este incremento es exclusivamente de verificación e investigación (actualiza docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md con los artículos y plazos confirmados); no modifica el módulo erpec_data_protection ni agrega procedimientos operativos de código. Cerrar el procedimiento de derechos del titular y de notificación de brechas en código requeriría autorización de un incremento OP06.3 separado."
+    "note": "Este incremento es exclusivamente de verificación e investigación (actualiza docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md con los artículos y plazos confirmados); no modifica el módulo erpec_data_protection ni agrega procedimientos operativos de código."
+  },
+  "thirdIncrement": {
+    "recordedAt": "2026-09-13T23:40:00.000Z",
+    "trigger": "Solicitud del titular: 'Se debe implementar el procedimiento operativo de derechos del titular y notificación de brechas'",
+    "scope": "Implementación de código sobre los artículos ya confirmados en la segunda pasada (Arts. 13-19, 43 y 46 LOPDP). No investigación nueva.",
+    "newModels": {
+      "erpec.data.subject.request": "Registra y da seguimiento a solicitudes de acceso/rectificación/eliminación/oposición/portabilidad/suspensión (Arts. 13-17 y 19 LOPDP). Plazo de 15 días calculado desde la recepción (confirmado por artículo para acceso/rectificación/eliminación/oposición; aplicado como práctica operativa uniforme a portabilidad/suspensión). Exige verificar identidad antes de responder o rechazar (Art. 13); exige motivar el rechazo (Art. 18); marca visualmente las solicitudes vencidas; agenda un recordatorio interno vía mail.activity.mixin con el plazo como fecha límite, sin envío de correo real.",
+      "erpec.data.breach.incident": "Registra incidentes y calcula automáticamente los plazos del Art. 43 (2 días encargado→responsable, 5 días responsable→Autoridad/ARCOTEL, encadenado cuando el encargado avisa) y del Art. 46 (3 días al titular si hay riesgo para sus derechos fundamentales, con las 3 excepciones tasadas disponibles como campo). Impide cerrar sin notificar a la Autoridad, y sin notificar al titular o registrar una excepción cuando hay riesgo. Agenda un recordatorio interno del plazo de notificación a la Autoridad."
+    },
+    "designDecisionsNotFabricated": [
+      "No se introdujo ir.sequence (sin precedente en el proyecto): la referencia es un Char libre, igual que el resto de modelos del proyecto",
+      "El plazo de 15 días para portabilidad/suspensión se documenta explícitamente como práctica operativa uniforme, no como un plazo confirmado por artículo específico para esos dos derechos",
+      "internal_risk_triage se documenta explícitamente como triaje interno del ERP, no como la calificación legal de gravedad que corresponde a la SPDP",
+      "No se agregó employee_id (hr.employee) para no introducir una dependencia nueva del módulo 'hr' que el resto de erpec_base no requiere; se usa partner_id (res.partner) y campos de texto libre para el titular"
+    ],
+    "tests": {
+      "exitCode": 0,
+      "totalTests": 24,
+      "failed": 0,
+      "errors": 0,
+      "newTests": 18,
+      "environment": "base de datos PostgreSQL aislada y nueva (ec_dp2_test, template0, eliminada al finalizar), rol dedicado no superusuario creado y eliminado en la misma ejecución; no se tocó la copia operativa compartida"
+    },
+    "installation": {
+      "deferred": false,
+      "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\data-protection-second-increment-20260913-204003",
+      "installedModule": "erpec_data_protection",
+      "formsCompile": true,
+      "existingRecordsAfterInstall": {"erpec.data.subject.request": 0, "erpec.data.breach.incident": 0},
+      "demoRucEmpty": true,
+      "enterpriseInstalled": false,
+      "businessRecordsCreated": false
+    },
+    "checks": [
+      "24/24 pruebas aprobadas en base de datos aislada y limpia (6 preexistentes del RAT + 18 nuevas)",
+      "Instalado en la demo con respaldo previo; ambos formularios compilan; sin registros de negocio creados",
+      "Ningún correo real enviado: los recordatorios usan mail.activity.mixin (tareas internas), no ir.mail_server"
+    ],
+    "stillPending": [
+      "Formato/canal definitivo de la SPDP para el RAT y la notificación de brechas (norma técnica aún en borrador, mayo 2026)",
+      "Evaluación caso por caso de si aplica DPD obligatorio (Art. 49)",
+      "Confirmar vigencia 2026 mediante lectura directa del Registro Oficial (hoy fuente secundaria consistente)",
+      "Envíos por email: envío real sigue desactivado"
+    ]
   },
   "externalEmissionPerformed": false,
   "sourceRepositoriesModified": false

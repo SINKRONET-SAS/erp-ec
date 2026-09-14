@@ -1,4 +1,6 @@
 <odoo>
 <record id="group_data_protection_officer" model="res.groups"><field name="name">Responsable de protección de datos ERP EC</field><field name="implied_ids" eval="[(4, ref('base.group_user')), (4, ref('base.group_partner_manager'))]"/></record>
 <record id="activity_company_rule" model="ir.rule"><field name="name">Actividad de tratamiento por empresa</field><field name="model_id" ref="model_erpec_data_processing_activity"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="subject_request_company_rule" model="ir.rule"><field name="name">Solicitud de derechos por empresa</field><field name="model_id" ref="model_erpec_data_subject_request"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="breach_incident_company_rule" model="ir.rule"><field name="name">Incidente de brecha por empresa</field><field name="model_id" ref="model_erpec_data_breach_incident"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 </odoo>

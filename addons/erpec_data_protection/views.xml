@@ -13,5 +13,59 @@
 <record id="activity_action" model="ir.actions.act_window"><field name="name">Registro de actividades de tratamiento (RAT)</field><field name="res_model">erpec.data.processing.activity</field><field name="view_mode">list,form</field></record>
 <menuitem id="data_protection_menu" name="Protección de datos" parent="erpec_base.suite_root" groups="group_data_protection_officer" sequence="90"/>
 <menuitem id="activity_menu" name="Registro de tratamiento (RAT)" parent="data_protection_menu" action="activity_action" sequence="10"/>
+<record id="subject_request_list" model="ir.ui.view"><field name="name">erpec.data.subject.request.list</field><field name="model">erpec.data.subject.request</field><field name="arch" type="xml"><list decoration-danger="is_overdue"><field name="name"/><field name="request_type"/><field name="requester_name"/><field name="received_date"/><field name="deadline_date"/><field name="responsible_id"/><field name="state"/><field name="is_overdue" column_invisible="1"/></list></field></record>
+<record id="subject_request_form" model="ir.ui.view"><field name="name">erpec.data.subject.request.form</field><field name="model">erpec.data.subject.request</field><field name="arch" type="xml"><form>
+<header>
+<button name="action_start" type="object" string="Iniciar trámite" class="oe_highlight" invisible="state != 'new'"/>
+<button name="action_mark_answered" type="object" string="Marcar como respondida" class="oe_highlight" invisible="state not in ('new','in_progress')"/>
+<button name="action_reject" type="object" string="Rechazar" invisible="state not in ('new','in_progress')"/>
+<button name="action_close" type="object" string="Cerrar" invisible="state not in ('answered','rejected')"/>
+<field name="state" widget="statusbar" statusbar_visible="new,in_progress,answered,closed"/>
+</header>
+<sheet>
+<div class="alert alert-warning" role="status" invisible="not is_overdue">Esta solicitud superó el plazo de respuesta (Art. 13-16 LOPDP).</div>
+<div class="alert alert-info" role="status">Solicitud de derecho del titular (LOPDP, Arts. 13-19). No declara cumplimiento legal por sí sola; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06.</div>
+<group><field name="name"/><field name="company_id"/><field name="responsible_id"/></group>
+<group string="Titular"><field name="requester_name"/><field name="requester_identification"/><field name="partner_id"/><field name="identity_verified"/></group>
+<group string="Solicitud"><field name="request_type"/><field name="description"/><field name="received_date"/><field name="deadline_date"/></group>
+<group string="Resolución"><field name="response_date"/><field name="response_notes"/><field name="exception_notes"/></group>
+<group><field name="notes"/></group>
+</sheet><chatter/></form></field></record>
+<record id="subject_request_search" model="ir.ui.view"><field name="name">erpec.data.subject.request.search</field><field name="model">erpec.data.subject.request</field><field name="arch" type="xml"><search>
+<field name="requester_name"/><field name="request_type"/><field name="responsible_id"/>
+<filter string="Vencidas" name="overdue" domain="[('deadline_date','&lt;', context_today().strftime('%Y-%m-%d')), ('state','not in', ['answered','rejected','closed'])]"/>
+<filter string="Abiertas" name="open" domain="[('state','not in', ['closed'])]"/>
+<group expand="0" string="Agrupar por"><filter string="Derecho" name="group_type" context="{'group_by':'request_type'}"/><filter string="Estado" name="group_state" context="{'group_by':'state'}"/></group>
+</search></field></record>
+<record id="subject_request_action" model="ir.actions.act_window"><field name="name">Solicitudes de derechos del titular</field><field name="res_model">erpec.data.subject.request</field><field name="view_mode">list,form</field><field name="search_view_id" ref="subject_request_search"/><field name="context">{'search_default_open': 1}</field></record>
+<menuitem id="subject_request_menu" name="Solicitudes de derechos" parent="data_protection_menu" action="subject_request_action" sequence="20"/>
+<record id="breach_incident_list" model="ir.ui.view"><field name="name">erpec.data.breach.incident.list</field><field name="model">erpec.data.breach.incident</field><field name="arch" type="xml"><list decoration-danger="is_authority_notice_overdue or is_titular_notice_overdue"><field name="name"/><field name="detected_date"/><field name="discovered_by"/><field name="risk_to_rights"/><field name="authority_notice_deadline"/><field name="responsible_id"/><field name="state"/><field name="is_authority_notice_overdue" column_invisible="1"/><field name="is_titular_notice_overdue" column_invisible="1"/></list></field></record>
+<record id="breach_incident_form" model="ir.ui.view"><field name="name">erpec.data.breach.incident.form</field><field name="model">erpec.data.breach.incident</field><field name="arch" type="xml"><form>
+<header>
+<button name="action_start_assessment" type="object" string="Iniciar evaluación" class="oe_highlight" invisible="state != 'draft'"/>
+<button name="action_notify_authority" type="object" string="Notificar a la Autoridad" class="oe_highlight" invisible="state not in ('draft','assessing') or authority_notified_date"/>
+<button name="action_notify_titular" type="object" string="Notificar al titular" invisible="not risk_to_rights or titular_notified_date"/>
+<button name="action_close" type="object" string="Cerrar" invisible="state not in ('notified',) or state == 'closed'"/>
+<field name="state" widget="statusbar" statusbar_visible="draft,assessing,notified,closed"/>
+</header>
+<sheet>
+<div class="alert alert-warning" role="status" invisible="not is_authority_notice_overdue">La notificación a la Autoridad de Protección de Datos superó el plazo de 5 días (Art. 43 LOPDP).</div>
+<div class="alert alert-warning" role="status" invisible="not is_titular_notice_overdue">La notificación al titular superó el plazo de 3 días (Art. 46 LOPDP).</div>
+<div class="alert alert-info" role="status">Incidente de vulneración de seguridad de datos personales (LOPDP, Arts. 43 y 46). No declara cumplimiento legal por sí solo; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06.</div>
+<group><field name="name"/><field name="company_id"/><field name="responsible_id"/></group>
+<group string="Detección"><field name="discovered_by"/><field name="detected_date"/><field name="encargado_notice_date" invisible="discovered_by != 'encargado'"/><field name="encargado_notice_deadline" invisible="discovered_by != 'encargado'"/></group>
+<group string="Descripción"><field name="description"/><field name="affected_data_categories"/><field name="affected_subjects_estimate"/><field name="containment_measures"/><field name="internal_risk_triage"/></group>
+<group string="Notificación a la Autoridad (Art. 43 LOPDP)"><field name="authority_notice_deadline"/><field name="authority_notified_date"/></group>
+<group string="Notificación al titular (Art. 46 LOPDP)"><field name="risk_to_rights"/><field name="titular_notice_deadline" invisible="not risk_to_rights"/><field name="titular_notified_date" invisible="not risk_to_rights"/><field name="titular_notice_exception" invisible="not risk_to_rights"/></group>
+<group><field name="notes"/></group>
+</sheet><chatter/></form></field></record>
+<record id="breach_incident_search" model="ir.ui.view"><field name="name">erpec.data.breach.incident.search</field><field name="model">erpec.data.breach.incident</field><field name="arch" type="xml"><search>
+<field name="name"/><field name="responsible_id"/>
+<filter string="Notificación a la Autoridad vencida" name="authority_overdue" domain="[('authority_notified_date','=',False), ('authority_notice_deadline','&lt;', datetime.datetime.now())]"/>
+<filter string="Abiertos" name="open" domain="[('state','!=','closed')]"/>
+<group expand="0" string="Agrupar por"><filter string="Estado" name="group_state" context="{'group_by':'state'}"/></group>
+</search></field></record>
+<record id="breach_incident_action" model="ir.actions.act_window"><field name="name">Incidentes de seguridad (brechas)</field><field name="res_model">erpec.data.breach.incident</field><field name="view_mode">list,form</field><field name="search_view_id" ref="breach_incident_search"/><field name="context">{'search_default_open': 1}</field></record>
+<menuitem id="breach_incident_menu" name="Incidentes de seguridad (brechas)" parent="data_protection_menu" action="breach_incident_action" sequence="30"/>
 <record id="partner_marketing_opt_out" model="ir.ui.view"><field name="name">res.partner.erpec.data.protection</field><field name="model">res.partner</field><field name="inherit_id" ref="base.view_partner_form"/><field name="arch" type="xml"><xpath expr="//div[@name='button_box']" position="inside"><button name="action_ec_mark_marketing_opt_out" type="object" string="Excluir de correo comercial" class="oe_stat_button" icon="fa-envelope-o" invisible="ec_marketing_email_opt_out" groups="erpec_data_protection.group_data_protection_officer"/></xpath><xpath expr="//div[@name='button_box']" position="inside"><field name="ec_marketing_email_opt_out" invisible="1"/></xpath></field></record>
 </odoo>

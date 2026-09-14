@@ -4,18 +4,25 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-13T22:43:18.452Z",
+  "updatedAt": "2026-09-14T01:42:37.069Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
+    "addons/erpec_data_protection/ir.model.access.csv",
+    "addons/erpec_data_protection/models.py",
+    "addons/erpec_data_protection/security.xml",
+    "addons/erpec_data_protection/tests/__init__.py",
+    "addons/erpec_data_protection/tests/test_data_subject_rights.py",
+    "addons/erpec_data_protection/views.xml",
     "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md",
-    "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json",
+    "docs/evidencias/AuditLock.before-OP06-TERCER-INCREMENTO-20260914T014237Z.json",
     "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json"
   ],
   "validationChecks": [
-    "Segunda pasada de OP06 (Protección de Datos): derechos del titular (Arts. 11-24 LOPDP), notificación de brechas (Arts. 43 y 46 LOPDP) y umbral del RAT (Arts. 38-39 del Reglamento General) confirmados por lectura directa del texto primario completo (PDF extraíble, Lexis S.A., cotejado con Registro Oficial Suplemento 459 y Suplemento 435)",
-    "Verificación de vigencia 2026: sin reforma encontrada a la LOPDP (2022-2026) ni al Reglamento General (2024-2026); SPDP confirmada sancionando activamente a privados (LIGAPRO y Federación Ecuatoriana de Fútbol, diciembre 2025)",
-    "Solo investigación y documentación; ningún archivo de código de erpec_data_protection ni de ningún otro módulo modificado en este incremento",
-    "UTF-8 sin BOM verificado en los tres archivos de este incremento"
+    "Tercer incremento de OP06: erpec.data.subject.request y erpec.data.breach.incident implementados sobre los artículos ya confirmados en la segunda pasada (Arts. 13-19, 43 y 46 LOPDP), sin investigación nueva",
+    "24/24 pruebas aprobadas en base aislada y nueva (18 nuevas + 6 preexistentes del RAT); ec_dp2_test creada con rol dedicado no superusuario y eliminada al finalizar",
+    "Instalado en la demo con respaldo previo (data-protection-second-increment-20260913-204003); ambos formularios compilan; sin registros de negocio creados",
+    "Ningún correo real enviado: recordatorios vía mail.activity.mixin, no ir.mail_server",
+    "UTF-8 sin BOM verificado en los nueve archivos de este incremento"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -38,21 +45,31 @@
     "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos",
     "OP06 LOPDP: confirmar la vigencia 2026 (ausencia de reforma 2022-2026) mediante lectura directa del Registro Oficial, hoy solo confianza media por fuente secundaria consistente",
     "OP06 LOPDP: formato/canal definitivo de la SPDP para presentar el RAT y notificar una vulneración; la norma técnica de notificación de brechas sigue en borrador (mayo 2026)",
-    "OP06 LOPDP: implementar en código el procedimiento operativo de derechos del titular y de notificación de brechas (plantillas, canal, responsable) — requiere autorización de un incremento OP06.3 separado",
-    "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos"
+    "OP06 email: envío real sigue desactivado; confirmar plazo de entrega al cliente contra el Reglamento de Comprobantes Electrónicos",
+    "OP06 LOPDP: canal/formato definitivo de la SPDP para el RAT y la notificación de brechas — la norma técnica de brechas sigue en borrador (mayo 2026)",
+    "OP06 LOPDP: evaluar caso por caso si aplica DPD obligatorio (Art. 49)"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "1c5dff4f9c5401a8a38c77346dfe5ace5391d4ed17c46a3020f379a5588cdda3",
-    "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md": "64126fb4c38ec2d3e3ff4a3905e77326cbb76332de578d0014b5d8b2b2faf57d",
-    "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json": "a0a6ed68318ef985ab3845964ec6bb661d11162e3216710d1cebe402521c061f",
-    "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json": "609217e596dcc59ecf41e683270638d7a8fc38ea43da14aab1007709263d819e"
+    ".github/CODEX_CONTEXT.md": "7ae014a440738e3f2fe398758f81e107cc3e5a3bfa7c16901db90964093a56c1",
+    "addons/erpec_data_protection/ir.model.access.csv": "6b3b4e897e94bd267a68cf67d5f3810a123871666e12e85df636773e61603065",
+    "addons/erpec_data_protection/models.py": "000c5a865232c5f81184422b259d5c5e5a6abd8bd46871e87bc5237c4feafcb7",
+    "addons/erpec_data_protection/security.xml": "f71ecb2e90b226f850faffcf7481d837efa594d9888b53dd0b2062c1185dcd7f",
+    "addons/erpec_data_protection/tests/__init__.py": "3e539a2fd081ecc6dd1016a362038ec06945ef7e37084d3bc50d9e65801c9125",
+    "addons/erpec_data_protection/tests/test_data_subject_rights.py": "8efc660a44586306e2169a148cbae766856e1e0d3b848260ce3ad8009b655e8f",
+    "addons/erpec_data_protection/views.xml": "81cf82613dbe00ea33bc725cb674e5e2d6a40f932a66d9455ab2a1e352856d13",
+    "docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md": "90e82e8afb348c79b8f139baf16bbf2c40547f24103b0c608c5ab7ffc304b1b3",
+    "docs/evidencias/AuditLock.before-OP06-TERCER-INCREMENTO-20260914T014237Z.json": "cc04f62cc4ded33dfe6742f8c87b23def85825e029deaf7b6273796de86fd248",
+    "docs/evidencias/ERPEC26-OP06-CUMPLIMIENTO-LEGAL-EC.json": "5c531177cb2d813eaaad128d1e0dcfa26f8e1cacb231f48c3f9bd15514f2de45"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP06-SEGUNDA-PASADA-20260913T224318Z.json",
-  "previousAuditLockHash": "a0a6ed68318ef985ab3845964ec6bb661d11162e3216710d1cebe402521c061f",
-  "signature": "b0a48ef6d0e5a5c39d3972f35bbcd0604ff504c867c5ad77c540479b78471880",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP06-TERCER-INCREMENTO-20260914T014237Z.json",
+  "previousAuditLockHash": "cc04f62cc4ded33dfe6742f8c87b23def85825e029deaf7b6273796de86fd248",
+  "signature": "66f22a799107099d7c2c21f380043bb6d3431fc27d9b40a6dfa6453eae124bf9",
   "taxProcess": {
-    "phaseCompleted": "TX03",
-    "status": "documental",
-    "plan": "docs/PLAN_HAIKY_IMPUESTOS_SP02.md"
+    "phaseCompleted": "TX05",
+    "status": "TX07-implementado-60-pruebas-pendiente-instalacion",
+    "plan": "docs/PLAN_HAIKY_IMPUESTOS_SP02.md",
+    "evidence": "docs/evidencias/ERPEC26-TX05-CIERRE.json",
+    "sp02Closed": false,
+    "automaticDocumentApplication": false
   }
 }
