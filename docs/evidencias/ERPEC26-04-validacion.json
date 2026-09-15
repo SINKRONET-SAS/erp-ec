@@ -8,14 +8,16 @@
     "Trabajador Windows crea la base del cliente bajo el rol compartido erp_tenants en el servidor compartido; autentica salud en la base exacta por subdominio",
     "Reinicio de trabajador no duplica instancia",
     "Suspensión bloquea conexiones nuevas a la base (ALLOW_CONNECTIONS false), sin detener ningún proceso propio; reactivación conserva el contacto sintético",
-    "Reservas vencidas, tokens obsoletos y límite de reintentos verificados transaccionalmente"
+    "Reservas vencidas, tokens obsoletos y límite de reintentos verificados transaccionalmente",
+    "Techo por inquilino (statement_timeout de PostgreSQL) aplicado en la base del cliente y verificado con una consulta lenta cancelada de verdad"
   ],
   "pendingChecks": [
     "Proveedor y ambiente de pagos",
     "Servidor Windows y dominio/HTTPS",
-    "Adaptación del servidor compartido a Render"
+    "Adaptación del servidor compartido a Render",
+    "Aislamiento de CPU/memoria/tiempo por petición (Odoo --workers) requiere os.fork(), inexistente en Windows; solo aplicará en Render/Linux"
   ],
-  "instance": "5c4ec71b39b041eda176775e951654dd",
-  "endpoint": "http://5c4ec71b39b041eda176775e951654dd.localtest.me:8200",
-  "scope": "Alta comercial sintética local, sin pago externo, DNS público ni HTTPS. Modelo multi-tenant compartido (OP08): sin proceso ni puerto dedicado por cliente; bases de clientes bajo un rol de PostgreSQL compartido, aisladas por separación física de bases y por credencial de aplicación Odoo, no por rol."
+  "instance": "0c12f759dbfe4ee6ac28a4568ad2f8dd",
+  "endpoint": "http://0c12f759dbfe4ee6ac28a4568ad2f8dd.localtest.me:8200",
+  "scope": "Alta comercial sintética local, sin pago externo, DNS público ni HTTPS. Modelo multi-tenant compartido (OP08): sin proceso ni puerto dedicado por cliente; bases de clientes bajo un rol de PostgreSQL compartido, aisladas por separación física de bases y por credencial de aplicación Odoo, no por rol. Techo por inquilino (OP08.2): statement_timeout de PostgreSQL por base, único mecanismo de aislamiento de rendimiento disponible en Windows."
 }

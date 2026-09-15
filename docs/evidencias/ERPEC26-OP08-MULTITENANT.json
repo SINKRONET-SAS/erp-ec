@@ -43,9 +43,19 @@
     "Adaptacion del servidor compartido y el trabajador a Render (disco persistente, despliegue declarativo, dominio real detras de Cloudflare en vez de *.localtest.me)",
     "Registrar el servidor compartido o el trabajador como servicios de arranque automatico de Windows",
     "Migrar clientes ya aprovisionados con el modelo de un proceso por cliente (instancias previas en .cache/windows/instances, si existen, no se tocaron)",
-    "Limites de recursos por inquilino dentro del servidor compartido (un cliente con uso intensivo podria afectar a otros; trade-off documentado, no resuelto)",
     "Credenciales reales de produccion de PayPhone (heredado de OP07, sin cambios en este incremento)"
   ],
+  "secondIncrement": {
+    "recordedAt": "2026-09-15T17:05:00.000Z",
+    "trigger": "El titular pidio aclarar el punto de 'aislamiento de procesos' del primer incremento; tras la aclaracion (aislamiento de DATOS garantizado por separacion fisica de bases, lo pendiente era solo aislamiento de RENDIMIENTO), pidio explicitamente trabajar en el limite de rendimiento por inquilino.",
+    "research": {
+      "method": "Lectura directa del codigo fuente real de Odoo (odoo/service/server.py)",
+      "finding": "start() (lineas 1467-1471): --workers>0 usa PreforkServer, que llama os.fork() (linea 871) -- inexistente en Windows. El aislamiento nativo de Odoo por peticion (--workers, --limit-time-cpu, --limit-time-real, --limit-memory-*) solo sera alcanzable al desplegar en Render (Linux); en Windows el proceso fallaria al arrancar con --workers mayor que cero."
+    },
+    "implementation": "provision-worker.py aplica ALTER DATABASE erp_<instancia> SET statement_timeout = '30s' al crear cada base de cliente (TENANT_STATEMENT_TIMEOUT). Cancela automaticamente cualquier consulta que exceda el limite.",
+    "verification": "Verificado de verdad, no solo documentado: una consulta de prueba (pg_sleep(5)) con statement_timeout=1s se cancelo exactamente al segundo con el error nativo de PostgreSQL 'canceling statement due to statement timeout'; el valor real de 30s se restauro y quedo verificado como assertion nueva en scripts/verify-provision.py (SHOW statement_timeout contra la base del cliente recien aprovisionado).",
+    "scopeLimitation": "No resuelve el aislamiento de rendimiento completo: un cliente con muchas peticiones concurrentes cortas (no una sola consulta larga) podria seguir acaparando el unico proceso compartido en modo workers=0. Mitigacion real pero parcial, documentada como tal en docs/PLAN_HAIKY_MULTITENANT.md."
+  },
   "externalEmissionPerformed": false,
   "realMoneyMoved": false,
   "sourceRepositoriesModified": false

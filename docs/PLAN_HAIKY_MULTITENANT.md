@@ -32,3 +32,22 @@ Entrega y prueba el modelo completo **en local** (mismo patrón de todo el proye
 2. `scripts/verify-provision.py` adaptado: ya no verifica que un proceso se detenga al suspender (no existe un proceso por cliente); verifica en su lugar que la base deje de responder tras `ALLOW_CONNECTIONS false` y vuelva a responder tras reactivarla, y que dos clientes aprovisionados en el mismo servidor compartido no se mezclen (módulos del operador ausentes, acceso cruzado de roles rechazado — igual que antes).
 3. Ensayo real: levantar el servidor compartido, aprovisionar un cliente sintético vía la cola de `erpec_a` (igual que hoy), y confirmar por HTTP real que `<instancia>.localtest.me:8200` sirve esa base específica — sin abrir un puerto ni un proceso nuevo.
 4. Gobierno del proyecto: este plan, `CODEX_CONTEXT.md`, `AuditLock.json` y prompt de fase, mismo patrón que los incrementos anteriores.
+
+## Segundo incremento — techo por inquilino (rendimiento, no datos) — 15-09-2026
+
+El titular pidió aclarar y luego cerrar el punto de "aislamiento de procesos" dejado pendiente en el primer incremento. Aclaración: **el aislamiento de datos entre clientes nunca estuvo en duda** (separación física de bases de PostgreSQL, verificada desde el primer incremento); lo pendiente era solo el aislamiento de **rendimiento** — que un cliente con una carga pesada no afecte la respuesta de otro.
+
+Investigación contra el código fuente real de Odoo (`odoo/service/server.py:1467-1471`, función `start()`): el mecanismo nativo de Odoo para limitar CPU/memoria/tiempo por petición (`--workers`, `--limit-time-cpu`, `--limit-time-real`, `--limit-memory-*`) usa `PreforkServer`, que llama `os.fork()` (línea 871) — **inexistente en Windows**. Ese aislamiento real de proceso por inquilino solo será posible al desplegar en Render (Linux); en Windows el proceso fallaría al arrancar con `--workers` mayor que cero.
+
+Lo que sí es posible en Windows hoy: `ALTER DATABASE erp_<instancia> SET statement_timeout = '30s'`, aplicado por `scripts/provision-worker.py` al crear cada base de cliente. Cancela automáticamente cualquier consulta que exceda el límite, evitando que un cliente cuelgue el servidor compartido indefinidamente. Verificado de verdad, no solo documentado: una consulta de prueba de 5 segundos con un timeout de 1 segundo se canceló exactamente al segundo (`canceling statement due to statement timeout`, el error nativo de PostgreSQL); el valor real de 30s quedó aplicado y verificado en el ensayo automatizado (`scripts/verify-provision.py`).
+
+Esto NO resuelve el aislamiento de rendimiento completo — un cliente con muchas peticiones concurrentes cortas seguiría pudiendo acaparar el único proceso compartido en modo `workers=0`; es una mitigación real pero parcial, documentada como tal, no como un aislamiento completo.
+
+## Pendiente explícito
+
+- Credenciales reales de producción de PayPhone.
+- Registrar el servidor compartido o el trabajador como servicio de arranque automático de Windows.
+- Migrar clientes ya aprovisionados con el modelo de un proceso por cliente.
+- Aislamiento completo de CPU/memoria/tiempo por petición (`--workers` de Odoo): requiere Linux/Render, no es alcanzable en Windows.
+- Cuotas por cantidad de peticiones concurrentes por inquilino, más allá del techo de duración de una consulta individual.
+- Diferenciar módulos instalados por tipo de plan; textos legales/términos y condiciones del formulario de alta.

@@ -30,6 +30,7 @@ STATE = ROOT / '.cache/windows'
 SOURCE = ROOT / '.cache/odoo-community'
 PYTHON = ROOT / '.venv/Scripts/python.exe'
 SHARED_URL = 'http://{}.localtest.me:8200'
+TENANT_STATEMENT_TIMEOUT = '30s'  # Ver nota junto a su uso: único techo por inquilino posible en Windows hoy.
 
 def write(path, text):
     if text.encode('utf-8').decode('utf-8') != text:
@@ -97,6 +98,12 @@ def operate(job):
                     raise ValueError('La base existente no pertenece al rol compartido de clientes')
                 if not owner:
                     cursor.execute(sql.SQL("CREATE DATABASE {} OWNER {} ENCODING 'UTF8' TEMPLATE template0").format(sql.Identifier(name), sql.Identifier(tenants['db_user'])))
+                    # Techo por inquilino disponible en Windows: Odoo --workers (CPU/memoria/
+                    # tiempo por petición) requiere os.fork(), inexistente en Windows -- solo
+                    # aplicará al desplegar en Render (Linux). Mientras tanto, statement_timeout
+                    # evita que una consulta de un cliente cuelgue indefinidamente al servidor
+                    # compartido y afecte a los demás.
+                    cursor.execute(sql.SQL('ALTER DATABASE {} SET statement_timeout = %s').format(sql.Identifier(name)), [TENANT_STATEMENT_TIMEOUT])
                 cursor.execute(sql.SQL('REVOKE ALL ON DATABASE {} FROM PUBLIC').format(sql.Identifier(name)))
         finally:
             connection.close()
