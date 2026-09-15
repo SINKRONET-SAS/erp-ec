@@ -1,6 +1,6 @@
 <odoo noupdate="1">
 <record id="payment_cron" model="ir.cron">
-  <field name="name">SK ERP: confirmar y conciliar pagos de prueba</field>
+  <field name="name">SK ERP: confirmar y conciliar pagos PayPhone</field>
   <field name="model_id" ref="model_erpec_payphone_payment"/>
   <field name="state">code</field><field name="code">model._cron_process()</field>
   <field name="user_id" ref="base.user_admin"/>

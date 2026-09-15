@@ -53,3 +53,13 @@ Consultadas el 10 de septiembre de 2026:
 - https://docs.payphone.app/boton-de-pago
 - https://docs.payphone.app/configuracion-de-ambiente-y-credenciales
 - https://developers.cloudflare.com/tunnel/routing/
+
+## Autoservicio: segundo incremento — 14-09-2026
+
+El titular pidió que el alta de nuevos clientes sea autoservicio (landing → plan → pago → aprovisionamiento automático, sin clics de administrador entre el pago y la instancia). Detalle completo del diseño en docs/CONTRATOS_SUITE.md y docs/ALCANCE_AUTOSERVICIO.md; aquí solo el cambio a este módulo.
+
+**Se quitó el rotulado de "ensayo/modo Prueba" y el tope de USD 100** (`_validate_amounts` en `models/payphone.py`), por decisión explícita del titular: la misma vía de pago ya probada (verificación server-side, `_contract_digest`, `_lock`, idempotencia del retorno) ahora sirve tanto para pruebas como para cobros reales; el nuevo techo (USD 100 000) es un límite anti fat-finger, no una restricción de ambiente. El campo interno `billing_owner='payphone_test'` no se renombró (evita romper datos/evidencia existente), solo se corrigió su etiqueta visible a "PayPhone". El dominio `public_url` ya no tiene un valor por defecto de "pruebas.sinkronet.com.ec": cada organización debe configurar su propio dominio autorizado explícitamente.
+
+**La ruta `/payment/payphone/checkout/<reference>` pasó de `auth='user'` a `auth='public'`** (con `.sudo()` en la búsqueda), porque ahora un visitante anónimo del autoservicio también llega a esa página. Es una excepción acotada y verificada: la referencia es un UUID no adivinable y la página solo muestra el enlace de checkout ya generado por PayPhone, ningún dato privado.
+
+**Rehearsal local real** (14-09-2026, sin credenciales de producción de PayPhone): landing pública en `erpec_fundador` (http://127.0.0.1:8199/autoservicio) → formulario completo → `POST /autoservicio/solicitar` real por HTTP → PayPhone rechazó el `Prepare` por credenciales placeholder inválidas (`PAYPHONE_CREDENTIALS`, HTTP 401/403 según su API) → la solicitud quedó en `failed` con el contrato y el pago creados y visibles para revisión, sin ningún cargo. Esto confirma que la conexión real con PayPhone funciona de punta a punta; falta únicamente sustituir el token/StoreID placeholder por credenciales reales cuando el titular las entregue.

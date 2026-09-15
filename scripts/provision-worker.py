@@ -32,9 +32,9 @@ def write(path, text):
     temporary.write_text(text, encoding='utf-8', newline='\n')
     temporary.replace(path)
 
-def rpc(url, database, password):
+def rpc(url, database, password, login='admin'):
     common = xmlrpc.client.ServerProxy(url+'/xmlrpc/2/common')
-    uid = common.authenticate(database, 'admin', password, {})
+    uid = common.authenticate(database, login, password, {})
     if not uid:
         raise ValueError('No se autenticó el operador o la instancia')
     models = xmlrpc.client.ServerProxy(url+'/xmlrpc/2/object')
@@ -135,6 +135,12 @@ def operate(job):
             print('Esperando salud de instancia correlationId='+instance+' intento='+str(attempt+1))
             time.sleep(1)
 
+OPERATOR_URL = 'http://127.0.0.1:8199'
+OPERATOR_DATABASE = 'erpec_fundador'
+OPERATOR_LOGIN = 'fundador'
+OPERATOR_CREDENTIALS = STATE / 'fundador/credentials.json'
+
+
 def main():
     # Un único trabajador por host evita ejecutar dos operaciones físicas simultáneas.
     with (STATE/'worker.lock').open('a+b') as lock:
@@ -144,8 +150,8 @@ def main():
             lock.flush()
         lock.seek(0)
         msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
-        private = json.loads((STATE/'credentials.json').read_text(encoding='utf-8'))
-        call = rpc('http://127.0.0.1:8169','erpec_a',private['admin_a'])
+        private = json.loads(OPERATOR_CREDENTIALS.read_text(encoding='utf-8'))
+        call = rpc(OPERATOR_URL, OPERATOR_DATABASE, private['admin'], OPERATOR_LOGIN)
         job = call('erpec.provision','claim_next',[])
         if not job:
             print('No hay trabajos pendientes')

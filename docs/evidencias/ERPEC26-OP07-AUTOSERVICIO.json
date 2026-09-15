@@ -1,0 +1,70 @@
+{
+  "recordedAt": "2026-09-14T20:45:00.000Z",
+  "scope": "Primer incremento de OP07 (autoservicio de altas): landing pública, formulario de alta, orquestación de contrato/pago, y aprovisionamiento automático encadenado. Reutiliza la mecánica ya probada de erpec_suite/erpec_payphone/erpec_provision sin duplicarla.",
+  "planDocument": "docs/ALCANCE_AUTOSERVICIO.md",
+  "prompt": ".github/prompts/ERPEC26-OP07-AUTOSERVICIO.md",
+  "authorization": "Titular pidió autoservicio de creación de clientes desde una landing en función de un plan contratado; confirmó alcance 'flujo completo de punta a punta' vía AskUserQuestion. Decisiones confirmadas: reutilizar la vía de pago existente quitando el tope de USD 100 (en vez de un camino paralelo); instancia operadora = erpec_fundador (empresa real de SINKRONET).",
+  "changes": {
+    "erpec_suite": "erpec.plan.published (default False) y erpec.plan.price/currency_id nuevos; constraint: un plan publicado exige price > 0. Ningún plan existente quedó publicado por instalar el incremento.",
+    "erpec_payphone": "Tope de _validate_amounts subido de USD 100 a USD 100000 (techo anti fat-finger, no de 'modo prueba'). Rotulado 'ensayo/sin alta productiva' corregido en modelos, vistas, controlador y manifest; billing_owner interno 'payphone_test' no se renombró (evita romper datos existentes). public_url sin valor por defecto (antes 'pruebas.sinkronet.com.ec'): cada organización configura su propio dominio. Ruta /payment/payphone/checkout/<reference> cambiada de auth='user' a auth='public' con .sudo() en la búsqueda -- excepción acotada: referencia UUID no adivinable, sin datos privados en la página.",
+    "erpec_selfservice": "Addon nuevo. Modelo erpec.selfservice.request (solo base.group_system tiene acceso ORM). create_from_signup() crea solicitud + erpec.subscription + erpec.payphone.payment, llama action_prepare() y fuerza _cron_process() para redirigir al checkout dentro de la misma solicitud HTTP. Controlador público GET /autoservicio y POST /autoservicio/solicitar, HTML plano (mismo patrón que erpec_payphone, sin depender de website/portal). Formulario protegido con el token CSRF estándar de Odoo.",
+    "provision-worker.py": "rpc() acepta login configurable; conexión operadora reapuntada de erpec_a/8169 (piloto sintético) a erpec_fundador/8199 (instancia operadora real), login 'fundador'. scripts/verify-provision.py no se tocó (sigue probando erpec_a de forma independiente)."
+  },
+  "explicitAssumptionsNotFabricated": [
+    "La suscripción de autoservicio dura un mes calendario desde la solicitud: erpec.plan no tiene hoy un campo de periodicidad; ajustar si se decide otra.",
+    "El régimen tributario del formulario es declarado por quien lo completa, no validado contra el SRI.",
+    "Sin protección anti-abuso (límite de solicitudes, CAPTCHA) en las rutas públicas nuevas -- razonable mientras el flujo corre solo en local."
+  ],
+  "bugsFoundAndFixedDuringTesting": [
+    "page() de erpec_selfservice usaba el operador %% de formateo de cadenas sobre un CSS con 'width:100%', lo que producía ValueError en cada solicitud a /autoservicio; se escapó a '100%%%%' (dos porcentajes).",
+    "Prueba propia intentaba unlink() sobre erpec.payphone.provider, bloqueado por diseño (perm_unlink=0); corregida para usar una compañía sin proveedor configurado en vez de borrar uno existente.",
+    "Prueba propia esperaba HTTP 403 para un POST sin csrf_token; Odoo devuelve 400 -- corregida la expectativa, la protección CSRF sí está activa.",
+    "test_permissions_and_organization (erpec_payphone, preexistente) creaba un proveedor sin public_url, que dejó de tener valor por defecto; se agregó el campo explícito a la prueba."
+  ],
+  "tests": {
+    "exitCode": 0,
+    "totalTests": 34,
+    "failed": 0,
+    "errors": 0,
+    "environment": "Base de datos PostgreSQL aislada y nueva (ec_selfservice_test, template0), rol dedicado no superusuario creado y eliminado en la misma ejecución; no se tocó la copia operativa compartida ni el trabajo concurrente de otra sesión."
+  },
+  "installation": {
+    "target": "erpec_fundador",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fundador-selfservice-install-20260914-201956",
+    "modulesInstalled": ["erpec_suite", "erpec_provision", "erpec_payphone", "erpec_selfservice"],
+    "viewsCompiled": ["erpec.plan", "erpec.subscription", "erpec.payphone.provider", "erpec.payphone.payment", "erpec.selfservice.request", "erpec.provision"]
+  },
+  "rehearsal": {
+    "recordedAt": "2026-09-14T20:40:00.000Z",
+    "method": "HTTP real contra erpec_fundador (puerto 8199): GET /autoservicio, luego POST /autoservicio/solicitar con datos sintéticos y token CSRF real obtenido del propio GET.",
+    "result": "El servidor creó erpec.selfservice.request + erpec.subscription + erpec.payphone.payment y llegó a llamar de verdad a la API de PayPhone (Prepare), que rechazó las credenciales placeholder (PAYPHONE_CREDENTIALS). La solicitud quedó en estado 'failed' con el contrato y el pago visibles para revisión; ningún cargo se realizó.",
+    "syntheticRecordsLeftInFundador": {
+      "note": "No se pueden eliminar por diseño (perm_unlink=0 en erpec.selfservice.request y erpec.payphone.payment, igual que el resto de erpec_payphone/erpec_suite). Documentados aquí explícitamente como sintéticos del rehearsal, no clientes reales.",
+      "plan": "SS-DEMO (id 1, 'ERP EC · Plan estándar', USD 49.00, publicado)",
+      "provider": "id 1, token/store_id placeholder, public_url 'https://autoservicio.sinkronet.com.ec'",
+      "selfserviceRequest": "id 1, 'Cliente de rehearsal S.A.S.', estado 'failed'",
+      "subscription": "id 1, 'Autoservicio <referencia>', no activado",
+      "payment": "id 1, estado 'draft', last_error PAYPHONE_CREDENTIALS"
+    },
+    "realPayphoneCredentialsUsed": false,
+    "realChargeOccurred": false
+  },
+  "checks": [
+    "34/34 pruebas aprobadas en base aislada y nueva",
+    "Instalado en erpec_fundador con respaldo previo; seis vistas relevantes compilan",
+    "Rehearsal real por HTTP hasta el rechazo esperado de PayPhone por credenciales placeholder, sin mover dinero ni usar una cuenta válida",
+    "Ningún grupo público tiene acceso ORM directo a erpec.selfservice.request (verificado con AccessError en prueba dedicada)",
+    "Ningún plan existente quedó publicado ni con precio por el solo hecho de instalar el incremento"
+  ],
+  "pending": [
+    "Credenciales reales de producción de PayPhone (las debe proporcionar el titular)",
+    "Registrar provision-worker.py --watch como servicio de arranque automático de Windows, o adaptarlo a Render -- sigue siendo manual",
+    "Diferenciar el conjunto de módulos instalados por tipo de plan (ERP completo vs. solo nómina/facturación)",
+    "Verificar que ningún job.id futuro de erpec.provision colisione con el puerto 8199 (erpec_fundador mismo, no un cliente aprovisionado)",
+    "Sin protección anti-abuso en las rutas públicas nuevas",
+    "Textos legales/términos y condiciones del formulario de alta"
+  ],
+  "externalEmissionPerformed": false,
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false
+}

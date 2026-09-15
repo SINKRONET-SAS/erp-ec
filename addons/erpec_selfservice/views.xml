@@ -1,0 +1,14 @@
+<odoo>
+<record id="request_list" model="ir.ui.view"><field name="name">erpec.selfservice.request.list</field><field name="model">erpec.selfservice.request</field><field name="arch" type="xml"><list><field name="reference"/><field name="company_name"/><field name="company_vat"/><field name="plan_id"/><field name="state"/></list></field></record>
+<record id="request_form" model="ir.ui.view"><field name="name">erpec.selfservice.request.form</field><field name="model">erpec.selfservice.request</field><field name="arch" type="xml"><form>
+<header><field name="state" widget="statusbar"/></header>
+<sheet>
+<div class="alert alert-info" role="status">Solicitud recibida desde la landing pública de autoservicio. Los campos de la empresa son declarados por quien completó el formulario, no verificados contra el SRI.</div>
+<group><field name="reference" readonly="1"/><field name="plan_id" readonly="1"/></group>
+<group string="Empresa"><field name="company_name" readonly="1"/><field name="company_vat" readonly="1"/><field name="company_regime" readonly="1"/><field name="street" readonly="1"/></group>
+<group string="Contacto"><field name="contact_name" readonly="1"/><field name="contact_email" readonly="1"/><field name="contact_phone" readonly="1"/></group>
+<group string="Contrato y pago"><field name="subscription_id"/><field name="payment_id"/></group>
+</sheet><chatter/></form></field></record>
+<record id="request_action" model="ir.actions.act_window"><field name="name">Solicitudes de autoservicio</field><field name="res_model">erpec.selfservice.request</field><field name="view_mode">list,form</field></record>
+<menuitem id="request_menu" name="Solicitudes de autoservicio" parent="erpec_base.suite_root" action="request_action" sequence="47" groups="base.group_system"/>
+</odoo>

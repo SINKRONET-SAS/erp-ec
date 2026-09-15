@@ -1,4 +1,4 @@
-"""Cobros de ensayo, confirmación remota y conciliación durable con la suite."""
+"""Cobros PayPhone, confirmación remota y conciliación durable con la suite."""
 import hashlib
 import json
 import logging
@@ -14,6 +14,7 @@ from odoo.addons.erpec_suite.models.commercial import administrator
 _logger = logging.getLogger(__name__)
 API_URL = 'https://pay.payphonetodoesposible.com/api/button/'
 RETURN_PATH = '/payment/payphone/return'
+MAX_AMOUNT_CENTS = 10000000  # Techo de seguridad anti fat-finger (USD 100 000), no un tope de "modo prueba".
 
 
 class ConfigurationError(ValidationError):
@@ -29,15 +30,15 @@ def cents(value):
 
 class Provider(models.Model):
     _name = 'erpec.payphone.provider'
-    _description = 'Configuración privada de PayPhone de pruebas'
-    name = fields.Char(default='PayPhone · Pruebas', required=True)
+    _description = 'Configuración privada de PayPhone'
+    name = fields.Char(default='PayPhone', required=True)
     company_id = fields.Many2one('res.company', string='Organización operadora', required=True,
                                 default=lambda self: self.env.company)
-    token = fields.Char('Token de la aplicación de prueba', groups='base.group_system', copy=False)
+    token = fields.Char('Token de la aplicación', groups='base.group_system', copy=False)
     store_id = fields.Char('StoreID de la tienda', groups='base.group_system', copy=False)
     public_url = fields.Char('Dominio autorizado', required=True,
-                            default='https://pruebas.sinkronet.com.ec')
-    test_acknowledged = fields.Boolean('He comprobado que SK_ERP está en Prueba en PayPhone')
+                            help='Dominio HTTPS público desde el que PayPhone confirmará el pago (sin ruta ni parámetros).')
+    test_acknowledged = fields.Boolean('He verificado que el Token y el StoreID configurados corresponden al ambiente que quiero usar')
     return_url = fields.Char('URL de respuesta', compute='_compute_status')
     status = fields.Char('Preparación', compute='_compute_status')
     _sql_constraints = [('provider_company_unique', 'unique(company_id)',
@@ -47,9 +48,9 @@ class Provider(models.Model):
     def _compute_status(self):
         for record in self:
             record.return_url = (record.public_url or '').rstrip('/') + RETURN_PATH
-            record.status = ('Lista para preparar un ensayo; conexión externa aún no verificada'
+            record.status = ('Lista para preparar un cobro; conexión externa aún no verificada'
                              if record.token and record.store_id and record.test_acknowledged
-                             else 'Pendiente: Token, StoreID y confirmación del modo Prueba')
+                             else 'Pendiente: Token, StoreID y confirmación del ambiente configurado')
 
     @api.constrains('public_url')
     def _validate_url(self):
@@ -75,7 +76,7 @@ class Provider(models.Model):
     def _request(self, endpoint, payload):
         self.ensure_one()
         if not self.token or not self.store_id or not self.test_acknowledged:
-            raise ValidationError('Configura Token, StoreID y confirma el ambiente Prueba antes de continuar.')
+            raise ValidationError('Configura Token, StoreID y confirma el ambiente antes de continuar.')
         try:
             response = requests.post(API_URL + endpoint, json=payload, headers={
                 'Authorization': 'Bearer ' + self.token.strip(),
@@ -98,12 +99,12 @@ class Provider(models.Model):
 
 class Subscription(models.Model):
     _inherit = 'erpec.subscription'
-    billing_owner = fields.Selection(selection_add=[('payphone_test', 'PayPhone: ensayo local, sin alta productiva')],
+    billing_owner = fields.Selection(selection_add=[('payphone_test', 'PayPhone')],
                                      ondelete={'payphone_test': lambda records: records._prevent_payment_uninstall()})
 
     def _prevent_payment_uninstall(self):
         if self:
-            raise ValidationError('Conserva los contratos de ensayo: archiva su evidencia antes de retirar la integración.')
+            raise ValidationError('Conserva los contratos con pagos PayPhone: archiva su evidencia antes de retirar la integración.')
 
     def action_activate(self):
         self._lock_organization()
@@ -111,27 +112,27 @@ class Subscription(models.Model):
             payment = self.env['erpec.payphone.payment'].search([
                 ('subscription_id', '=', self.id), ('state', '=', 'approved')], limit=1)
             if not payment or payment.contract_digest != payment._contract_digest():
-                raise ValidationError('Este contrato de ensayo requiere un pago confirmado por PayPhone y conciliado con sus condiciones.')
+                raise ValidationError('Este contrato requiere un pago confirmado por PayPhone y conciliado con sus condiciones.')
         return super().action_activate()
 
 
 class Payment(models.Model):
     _name = 'erpec.payphone.payment'
-    _description = 'Pago y conciliación de prueba PayPhone'
+    _description = 'Pago y conciliación PayPhone'
     _rec_name = 'reference'
     _order = 'id desc'
     company_id = fields.Many2one('res.company', related='subscription_id.company_id', store=True, readonly=True, string='Organización')
-    subscription_id = fields.Many2one('erpec.subscription', required=True, ondelete='restrict', string='Contrato de ensayo')
+    subscription_id = fields.Many2one('erpec.subscription', required=True, ondelete='restrict', string='Contrato')
     provider_id = fields.Many2one('erpec.payphone.provider', required=True, ondelete='restrict', string='Configuración PayPhone')
     reference = fields.Char('Referencia única', readonly=True, copy=False, index=True)
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD'), required=True, readonly=True)
     amount_without_tax = fields.Monetary('Base sin impuesto', currency_field='currency_id')
     amount_with_tax = fields.Monetary('Base gravada, sin impuesto', currency_field='currency_id')
-    tax = fields.Monetary('Impuesto del ensayo', currency_field='currency_id')
+    tax = fields.Monetary('Impuesto', currency_field='currency_id')
     amount = fields.Monetary('Total USD', compute='_compute_amount', store=True, currency_field='currency_id')
     state = fields.Selection([
         ('draft', 'Borrador'), ('queued', 'Preparación en cola'), ('prepared', 'Listo para pagar'),
-        ('confirming', 'Confirmación pendiente'), ('approved', 'Aprobado en prueba'),
+        ('confirming', 'Confirmación pendiente'), ('approved', 'Aprobado'),
         ('canceled', 'Cancelado por PayPhone'), ('review', 'Revisión necesaria'),
     ], default='draft', required=True, readonly=True, string='Estado del pago')
     checkout_url = fields.Char(readonly=True, copy=False, groups='base.group_system')
@@ -157,8 +158,8 @@ class Payment(models.Model):
     def _validate_amounts(self):
         for record in self:
             total = sum(cents(value) for value in (record.amount_without_tax, record.amount_with_tax, record.tax))
-            if total <= 0 or total > 10000 or record.currency_id.name != 'USD':
-                raise ValidationError('El piloto admite ensayos en USD mayores que cero y hasta USD 100.')
+            if total <= 0 or total > MAX_AMOUNT_CENTS or record.currency_id.name != 'USD':
+                raise ValidationError('Usa un importe en USD mayor que cero y hasta USD %s.' % (MAX_AMOUNT_CENTS // 100))
             if record.tax and not record.amount_with_tax:
                 raise ValidationError('El impuesto requiere una base gravada.')
 
@@ -177,7 +178,7 @@ class Payment(models.Model):
             provider.check_access('read')
             if (subscription.billing_owner != 'payphone_test' or subscription.activated_at
                     or provider.company_id != subscription.company_id):
-                raise ValidationError('Usa un contrato borrador de ensayo PayPhone y configuración de la misma organización.')
+                raise ValidationError('Usa un contrato borrador PayPhone y configuración de la misma organización.')
             values.update(company_id=subscription.company_id.id, reference=uuid.uuid4().hex,
                           currency_id=self.env.ref('base.USD').id)
         return super().create(values_list)
@@ -221,9 +222,9 @@ class Payment(models.Model):
             raise ValidationError('El pago ya fue enviado. Revisa su estado; no se enviará un segundo cobro.')
         provider = self.provider_id
         if not provider.token or not provider.store_id or not provider.test_acknowledged:
-            raise ValidationError('Completa la configuración privada de PayPhone de pruebas.')
+            raise ValidationError('Completa la configuración privada de PayPhone.')
         if self.subscription_id.billing_owner != 'payphone_test' or self.subscription_id.activated_at:
-            raise ValidationError('El contrato ya no corresponde a un borrador de ensayo.')
+            raise ValidationError('El contrato ya no corresponde a un borrador pendiente de pago.')
         self._update({'state': 'queued', 'contract_digest': self._contract_digest(), 'last_error': False})
         self.env.ref('erpec_payphone.payment_cron')._trigger()
         return True
@@ -237,7 +238,7 @@ class Payment(models.Model):
             'amount': sum(cents(value) for value in (self.amount_without_tax, self.amount_with_tax, self.tax)),
             'amountWithoutTax': cents(self.amount_without_tax), 'amountWithTax': cents(self.amount_with_tax),
             'tax': cents(self.tax), 'currency': 'USD', 'clientTransactionId': self.reference,
-            'storeId': self.provider_id.store_id.strip(), 'reference': 'SK ERP - ensayo de integración',
+            'storeId': self.provider_id.store_id.strip(), 'reference': 'SK ERP',
             'responseUrl': self.provider_id.return_url,
         }
         data = self.provider_id._request('Prepare', payload)

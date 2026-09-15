@@ -5,7 +5,7 @@ import requests
 from odoo import fields
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests.common import TransactionCase, new_test_user
-from odoo.addons.erpec_payphone.models.payphone import Provider, cents
+from odoo.addons.erpec_payphone.models.payphone import MAX_AMOUNT_CENTS, Provider, cents
 
 class TestPayphone(TransactionCase):
     def setUp(self):
@@ -17,7 +17,8 @@ class TestPayphone(TransactionCase):
             'ends_on': fields.Date.today() + timedelta(days=10), 'billing_owner': 'payphone_test',
             'billing_reference': 'PayPhone de pruebas', 'authorization': 'Caso sintético'})
         self.provider = self.env['erpec.payphone.provider'].create({'company_id': self.env.company.id,
-            'token': 'TOKEN-SINTETICO-NO-VALIDO', 'store_id': 'STORE-SINTETICO', 'test_acknowledged': True})
+            'token': 'TOKEN-SINTETICO-NO-VALIDO', 'store_id': 'STORE-SINTETICO', 'test_acknowledged': True,
+            'public_url': 'https://pruebas.sinkronet.com.ec'})
         self.payment = self.env['erpec.payphone.payment'].create({'subscription_id': self.contract.id,
             'provider_id': self.provider.id, 'amount_without_tax': 1.0})
 
@@ -114,9 +115,20 @@ class TestPayphone(TransactionCase):
         with self.assertRaises(AccessError):
             self.payment.with_user(user).read(['amount'])
         other = self.env['res.company'].create({'name': 'Otra organización sintética'})
-        foreign = self.env['erpec.payphone.provider'].sudo().create({'company_id': other.id})
+        foreign = self.env['erpec.payphone.provider'].sudo().create({'company_id': other.id,
+            'public_url': 'https://otra-organizacion-sintetica.example.com'})
         with self.assertRaises(AccessError):
             foreign.with_user(self.env.user).read(['name'])
+
+    def test_amount_cap_is_a_safety_ceiling_not_a_test_limit(self):
+        big = self.contract.copy({'name': 'Contrato de monto alto'})
+        payment = self.env['erpec.payphone.payment'].create({'subscription_id': big.id,
+            'provider_id': self.provider.id, 'amount_without_tax': 5000.0})
+        self.assertEqual(payment.amount, 5000.0)
+        too_big = self.contract.copy({'name': 'Contrato sobre el techo de seguridad'})
+        with self.assertRaises(ValidationError):
+            self.env['erpec.payphone.payment'].create({'subscription_id': too_big.id,
+                'provider_id': self.provider.id, 'amount_without_tax': MAX_AMOUNT_CENTS / 100 + 1})
 
     def test_cents_and_provider_validation(self):
         self.assertEqual(cents(1.15), 115)
@@ -200,6 +212,12 @@ from odoo.tests import HttpCase, tagged
 
 @tagged('post_install', '-at_install')
 class TestPayphoneHttp(HttpCase):
+    def test_checkout_link_is_reachable_without_login(self):
+        # El autoservicio redirige aquí a un visitante anónimo; debe responder sin exigir sesión.
+        response = self.url_open('/payment/payphone/checkout/' + 'a' * 32)
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn('/web/login', response.url)
+
     def test_public_return_does_not_accept_forged_payment(self):
         response = self.url_open('/payment/payphone/return')
         self.assertEqual(response.status_code, 400)

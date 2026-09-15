@@ -27,6 +27,11 @@ class Plan(models.Model):
     max_users = fields.Integer('Usuarios ERP', default=5)
     max_companies = fields.Integer('Empresas ERP', default=1)
     terms = fields.Text('Condiciones y referencia de tarifa', required=True)
+    published = fields.Boolean('Publicado en autoservicio', default=False,
+                                help='Visible en la landing pública de autoservicio. Ningún plan se publica automáticamente.')
+    currency_id = fields.Many2one('res.currency', string='Moneda', default=lambda self: self.env.ref('base.USD'), required=True)
+    price = fields.Monetary('Precio mensual (autoservicio)', currency_field='currency_id',
+                             help='Monto que se cobra por PayPhone en el autoservicio. Obligatorio y mayor que cero para publicar el plan.')
     _sql_constraints = [('version_unique', 'unique(code, version)', 'La versión del plan ya existe.')]
 
     @api.depends('name', 'version')
@@ -45,6 +50,12 @@ class Plan(models.Model):
                 raise ValidationError('Las cuotas no pueden ser negativas.')
             if record.api_access and (record.max_connections < 1 or not 1 <= record.requests_per_minute <= 120):
                 raise ValidationError('La API requiere conexiones positivas y entre 1 y 120 solicitudes por minuto.')
+
+    @api.constrains('published', 'price')
+    def _validate_publishable_price(self):
+        for record in self:
+            if record.published and record.price <= 0:
+                raise ValidationError('Un plan publicado necesita un precio mayor que cero.')
 
     def write(self, values):
         administrator(self.env)
