@@ -1,11 +1,18 @@
-"""Trabajador Windows local. No acepta comandos, rutas ni destinos del navegador."""
+"""Trabajador Windows local. No acepta comandos, rutas ni destinos del navegador.
+
+Cada cliente corre en el servidor compartido (scripts/shared-tenant-server.py), no en un
+proceso ni puerto propio: ver docs/PLAN_HAIKY_MULTITENANT.md. Este trabajador crea la base de
+PostgreSQL del cliente PROPIEDAD DEL ROL COMPARTIDO erp_tenants (Odoo abre cada base con un
+único db_user/db_password de proceso; no hay credencial por base en su capa de conexión, así
+que un rol nuevo por cliente no sería alcanzable por el servidor compartido). El aislamiento
+real entre clientes es la separación física de bases de PostgreSQL (una conexión a una base no
+puede leer otra) y la contraseña de aplicación Odoo (res.users) propia de cada base -- nunca
+una credencial de PostgreSQL por cliente. Instala los módulos con una llamada de un solo uso
+(sin proceso persistente) y activa/suspende el acceso con ALTER DATABASE ... ALLOW_CONNECTIONS.
+SHARED_URL debe coincidir con ENDPOINT_SCHEME de addons/erpec_provision/models/provision.py."""
 import argparse
-import configparser
-import io
-import shutil
 import json
 import msvcrt
-import os
 import pathlib
 import re
 import secrets
@@ -13,7 +20,6 @@ import socket
 import subprocess
 import time
 import xmlrpc.client
-import psutil
 import psycopg2
 from psycopg2 import sql
 
@@ -23,6 +29,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 STATE = ROOT / '.cache/windows'
 SOURCE = ROOT / '.cache/odoo-community'
 PYTHON = ROOT / '.venv/Scripts/python.exe'
+SHARED_URL = 'http://{}.localtest.me:8200'
 
 def write(path, text):
     if text.encode('utf-8').decode('utf-8') != text:
@@ -40,18 +47,23 @@ def rpc(url, database, password, login='admin'):
     models = xmlrpc.client.ServerProxy(url+'/xmlrpc/2/object')
     return lambda model, method, args: models.execute_kw(database, uid, password, model, method, args)
 
-def matching_process(directory):
-    pidfile = directory/'pid'
-    if not pidfile.exists():
-        return None
-    pid = int(pidfile.read_text())
-    if not psutil.pid_exists(pid):
-        return None
-    process = psutil.Process(pid)
-    arguments = process.cmdline()
-    if str(directory/'odoo.conf') not in arguments or str(SOURCE/'odoo-bin') not in arguments:
-        raise ValueError('El proceso registrado no pertenece a esta instancia')
-    return process
+def _cluster_connection(cluster):
+    connection = psycopg2.connect(host='127.0.0.1', port=55487, dbname='postgres', user='postgres', password=cluster['postgres'])
+    connection.autocommit = True
+    return connection
+
+def set_allow_connections(cluster, database, allowed):
+    # ALTER DATABASE no admite %s para ALLOW_CONNECTIONS (no es un valor, es una palabra de la
+    # DDL); allowed es un bool interno, no dato de usuario, por lo que interpolarlo es seguro.
+    connection = _cluster_connection(cluster)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql.SQL('ALTER DATABASE {} WITH ALLOW_CONNECTIONS {}').format(
+                sql.Identifier(database), sql.SQL('true' if allowed else 'false')))
+            if not allowed:
+                cursor.execute('SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname=%s AND pid <> pg_backend_pid()', [database])
+    finally:
+        connection.close()
 
 def operate(job):
     instance = job['instance']
@@ -59,11 +71,10 @@ def operate(job):
         raise ValueError('Identificador fuera del rango del piloto')
     directory = STATE/'instances'/instance
     directory.mkdir(parents=True, exist_ok=True)
-    process = matching_process(directory)
+    name = 'erp_'+instance
+    cluster = json.loads((STATE/'credentials.json').read_text(encoding='utf-8'))
     if job['desired'] == 'stop':
-        if process:
-            process.terminate()
-            process.wait(30)
+        set_allow_connections(cluster, name, False)
         print('Instancia suspendida; datos conservados correlationId='+instance)
         return
     if job['desired'] != 'start':
@@ -72,60 +83,54 @@ def operate(job):
     if secretfile.exists():
         private = json.loads(secretfile.read_text(encoding='utf-8'))
     else:
-        private = {'database':secrets.token_urlsafe(32), 'admin':secrets.token_urlsafe(24), 'manager':secrets.token_urlsafe(32)}
+        private = {'admin': secrets.token_urlsafe(24)}
         write(secretfile, json.dumps(private))
-    name = 'erp_'+instance
-    port = 8180+job['id']
-    url = f'http://127.0.0.1:{port}'
-    customer_addons = directory/'addons'
-    shutil.copytree(ROOT/'addons/erpec_base', customer_addons/'erpec_base', dirs_exist_ok=True, ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
-    expected_addons = f'{SOURCE/"addons"},{SOURCE/"odoo/addons"},{customer_addons}'
-    if (directory/'odoo.conf').exists():
-        config = configparser.ConfigParser(interpolation=None)
-        config.read(directory/'odoo.conf', encoding='utf-8')
-        if config['options']['addons_path'] != expected_addons:
-            config['options']['addons_path'] = expected_addons
-            content = io.StringIO()
-            config.write(content)
-            write(directory/'odoo.conf', content.getvalue())
-            if process:
-                process.terminate()
-                process.wait(30)
-                process = None
+    tenants = json.loads((STATE/'shared/credentials.json').read_text(encoding='utf-8'))
+    addons_path = f'{SOURCE/"addons"},{SOURCE/"odoo/addons"},{ROOT/"addons"}'
     if not (directory/'initialized.json').exists():
-        cluster = json.loads((STATE/'credentials.json').read_text(encoding='utf-8'))
-        connection = psycopg2.connect(host='127.0.0.1',port=55487,dbname='postgres',user='postgres',password=cluster['postgres'])
-        connection.autocommit = True
+        connection = _cluster_connection(cluster)
         try:
             with connection.cursor() as cursor:
-                cursor.execute('SELECT 1 FROM pg_roles WHERE rolname=%s', [name])
-                if not cursor.fetchone():
-                    cursor.execute(sql.SQL('CREATE ROLE {} LOGIN PASSWORD %s NOSUPERUSER NOCREATEDB NOCREATEROLE').format(sql.Identifier(name)), [private['database']])
                 cursor.execute('SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname=%s', [name])
                 owner = cursor.fetchone()
-                if owner and owner[0] != name:
-                    raise ValueError('La base existente no pertenece a la instancia')
+                if owner and owner[0] != tenants['db_user']:
+                    raise ValueError('La base existente no pertenece al rol compartido de clientes')
                 if not owner:
-                    cursor.execute(sql.SQL("CREATE DATABASE {} OWNER {} ENCODING 'UTF8' TEMPLATE template0").format(sql.Identifier(name),sql.Identifier(name)))
+                    cursor.execute(sql.SQL("CREATE DATABASE {} OWNER {} ENCODING 'UTF8' TEMPLATE template0").format(sql.Identifier(name), sql.Identifier(tenants['db_user'])))
                 cursor.execute(sql.SQL('REVOKE ALL ON DATABASE {} FROM PUBLIC').format(sql.Identifier(name)))
         finally:
             connection.close()
-        config = f'[options]\nadmin_passwd = {private["manager"]}\ndb_host = 127.0.0.1\ndb_port = 55487\ndb_user = {name}\ndb_password = {private["database"]}\ndb_name = {name}\ndbfilter = ^{name}$\nlist_db = False\nhttp_interface = 127.0.0.1\nhttp_port = {port}\nworkers = 0\nmax_cron_threads = 1\nwithout_demo = all\ndata_dir = {directory/"data"}\naddons_path = {SOURCE/"addons"},{SOURCE/"odoo/addons"},{customer_addons}\nlogfile = {directory/"odoo.log"}\n'
-        write(directory/'odoo.conf', config)
-        subprocess.run([str(PYTHON),str(SOURCE/'odoo-bin'),'-c',str(directory/'odoo.conf'),'-i','base,l10n_ec,erpec_base','--stop-after-init','--no-http'],check=True,timeout=600)
-        code = "import json\nfrom pathlib import Path\np=json.loads(Path("+repr(str(secretfile))+").read_text())\nenv.ref('base.user_admin').write({'login':'admin','password':p['admin']})\nc=env.company\nc.write({'name':"+repr(job['company'])+",'country_id':env.ref('base.ec').id})\nenv['account.chart.template'].try_loading('ec',c,install_demo=False)\nlang=env['res.lang'].with_context(active_test=False).search([('code','=','es_EC')],limit=1)\nenv['base.language.install'].create({'lang_ids':[(6,0,lang.ids)],'overwrite':False}).lang_install()\nenv.ref('base.user_admin').write({'lang':'es_EC','tz':'America/Guayaquil'})\nif not env['erpec.workspace'].search_count([('company_id','=',c.id)]):\n    env['erpec.workspace'].create({'company_id':c.id})\nenv.cr.commit()\n"
-        subprocess.run([str(PYTHON),str(SOURCE/'odoo-bin'),'shell','-c',str(directory/'odoo.conf'),'--no-http'],input=code,text=True,check=True,timeout=300)
-        write(directory/'initialized.json', json.dumps({'instance':instance,'database':name}))
-    if not process:
-        with socket.socket() as probe:
-            if probe.connect_ex(('127.0.0.1',port)) == 0:
-                raise ValueError('El puerto está ocupado por un proceso no registrado')
-        process = subprocess.Popen([str(PYTHON),str(SOURCE/'odoo-bin'),'-c',str(directory/'odoo.conf')],cwd=ROOT,creationflags=subprocess.CREATE_NO_WINDOW)
-        write(directory/'pid', str(process.pid))
+        # Instalación de un solo uso contra el clúster compartido: sin -c/odoo.conf propio,
+        # sin proceso persistente ni puerto dedicado a este cliente. Usa el rol compartido
+        # erp_tenants (ver shared-tenant-server.py) porque el servidor compartido solo puede
+        # abrir bases con ESE db_user/db_password de proceso.
+        db_args = ['--db_host', '127.0.0.1', '--db_port', '55487', '--db_user', tenants['db_user'],
+                    '--db_password', tenants['db_password'], '--addons-path', addons_path]
+        subprocess.run([str(PYTHON), str(SOURCE/'odoo-bin'), '-d', name, *db_args,
+                         '-i', 'base,l10n_ec,erpec_base', '--stop-after-init', '--no-http'],
+                        check=True, timeout=600)
+        code = ("import json\nfrom pathlib import Path\n"
+                "p=json.loads(Path(" + repr(str(secretfile)) + ").read_text())\n"
+                "env.ref('base.user_admin').write({'login':'admin','password':p['admin']})\n"
+                "c=env.company\n"
+                "c.write({'name':" + repr(job['company']) + ",'country_id':env.ref('base.ec').id})\n"
+                "env['account.chart.template'].try_loading('ec',c,install_demo=False)\n"
+                "lang=env['res.lang'].with_context(active_test=False).search([('code','=','es_EC')],limit=1)\n"
+                "env['base.language.install'].create({'lang_ids':[(6,0,lang.ids)],'overwrite':False}).lang_install()\n"
+                "env.ref('base.user_admin').write({'lang':'es_EC','tz':'America/Guayaquil'})\n"
+                "if not env['erpec.workspace'].search_count([('company_id','=',c.id)]):\n"
+                "    env['erpec.workspace'].create({'company_id':c.id})\n"
+                "env.cr.commit()\n")
+        subprocess.run([str(PYTHON), str(SOURCE/'odoo-bin'), 'shell', '-d', name, *db_args, '--no-http'],
+                        input=code, text=True, check=True, timeout=300)
+        write(directory/'initialized.json', json.dumps({'instance': instance, 'database': name}))
+    else:
+        set_allow_connections(cluster, name, True)
+    url = SHARED_URL.format(instance)
     for attempt in range(60):
         try:
-            call = rpc(url,name,private['admin'])
-            if call('erpec.workspace','search_count',[[]]) != 1:
+            call = rpc(url, name, private['admin'])
+            if call('erpec.workspace', 'search_count', [[]]) != 1:
                 raise ValueError('La instancia no tiene la configuración esperada')
             print('Instancia autenticada y disponible correlationId='+instance)
             return
@@ -135,13 +140,20 @@ def operate(job):
             print('Esperando salud de instancia correlationId='+instance+' intento='+str(attempt+1))
             time.sleep(1)
 
-OPERATOR_URL = 'http://127.0.0.1:8199'
-OPERATOR_DATABASE = 'erpec_fundador'
-OPERATOR_LOGIN = 'fundador'
-OPERATOR_CREDENTIALS = STATE / 'fundador/credentials.json'
+# Dos operadores válidos: la instancia operadora real (empresa del Fundador, OP07) y el
+# piloto sintético erpec_a, usado solo por scripts/verify-provision.py para ensayos
+# repetibles sin tocar datos reales. Ambos comparten el mismo servidor compartido de
+# clientes (scripts/shared-tenant-server.py); solo cambia dónde vive la cola de contratos.
+OPERATORS = {
+    'fundador': {'url': 'http://127.0.0.1:8199', 'database': 'erpec_fundador', 'login': 'fundador',
+                 'credentials': STATE / 'fundador/credentials.json', 'password_key': 'admin'},
+    'a': {'url': 'http://127.0.0.1:8169', 'database': 'erpec_a', 'login': 'admin',
+          'credentials': STATE / 'credentials.json', 'password_key': 'admin_a'},
+}
 
 
-def main():
+def main(operator='fundador'):
+    config = OPERATORS[operator]
     # Un único trabajador por host evita ejecutar dos operaciones físicas simultáneas.
     with (STATE/'worker.lock').open('a+b') as lock:
         lock.seek(0)
@@ -150,8 +162,8 @@ def main():
             lock.flush()
         lock.seek(0)
         msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
-        private = json.loads(OPERATOR_CREDENTIALS.read_text(encoding='utf-8'))
-        call = rpc(OPERATOR_URL, OPERATOR_DATABASE, private['admin'], OPERATOR_LOGIN)
+        private = json.loads(config['credentials'].read_text(encoding='utf-8'))
+        call = rpc(config['url'], config['database'], private[config['password_key']], config['login'])
         job = call('erpec.provision','claim_next',[])
         if not job:
             print('No hay trabajos pendientes')
@@ -168,10 +180,13 @@ def main():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--watch', action='store_true', help='Procesar la cola cada diez segundos')
-    watch = parser.parse_args().watch
+    parser.add_argument('--operator', choices=list(OPERATORS), default='fundador',
+                         help='fundador = instancia operadora real; a = piloto sintético de scripts/verify-provision.py')
+    args = parser.parse_args()
+    watch = args.watch
     while True:
         try:
-            main()
+            main(args.operator)
         except Exception as error:
             if not watch:
                 raise

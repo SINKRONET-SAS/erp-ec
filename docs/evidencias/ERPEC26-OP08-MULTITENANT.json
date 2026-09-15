@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-09-15T14:50:00.000Z",
+  "scope": "Primer incremento de OP08: reemplaza el modelo de aprovisionamiento de OP07 (un proceso Odoo y un puerto dedicados por cliente) por un servidor compartido, una base de datos por cliente, ruteado por subdominio (db_filter). Motivado por una preocupacion de viabilidad financiera: un servicio dedicado por cliente en Render se cobra de forma continua sin importar el uso.",
+  "planDocument": "docs/PLAN_HAIKY_MULTITENANT.md",
+  "prompt": ".github/prompts/ERPEC26-OP08-MULTITENANT.md",
+  "authorization": "Titular planteo la preocupacion de costo de un proceso por cliente en Render; pidio explicitamente rediseñar hacia el modelo multi-tenant compartido con el mismo flujo de gobierno (Plan Haiky, CODEX_CONTEXT, AuditLock, prompts, ejecucion, verificacion, cierre, commit y push).",
+  "research": {
+    "method": "Agente de investigacion en segundo plano leyendo el codigo fuente real de Odoo 18 (.cache/odoo-community/odoo), no solo conocimiento general",
+    "findings": {
+      "dbFilter": "odoo/http.py, funcion db_filter: %d = primera etiqueta del host (antes del primer punto), %h = host completo sin puerto. Usa .match() (ancla solo el inicio); dbfilter=^erp_%d$ ancla ambos extremos.",
+      "sinReinicio": "odoo/service/db.py list_dbs() consulta PostgreSQL en vivo en cada peticion sin cache/TTL; crear una base nueva no requiere reiniciar el servidor compartido.",
+      "suspensionNativa": "No existe un indicador nativo de base suspendida que db_filter respete. list_dbs() filtra por datallowconn de PostgreSQL -- por eso ALTER DATABASE ... WITH ALLOW_CONNECTIONS false/true (superusuario del cluster) es el mecanismo correcto, verificado en el rehearsal real.",
+      "listDb": "list_db=False es obligatorio en produccion multi-tenant: con list_db=True cualquier visitante podria listar los nombres de todas las bases de clientes."
+    }
+  },
+  "designCorrectionDuringImplementation": {
+    "problem": "El diseño inicial creaba un rol de PostgreSQL nuevo por cliente (como el modelo anterior), pero Odoo abre CUALQUIER base con un unico db_user/db_password fijado en el proceso -- no hay credencial por base en su capa de conexion. Un rol nuevo por cliente habria sido inalcanzable por el servidor compartido (confirmado por un error real: 'fe_sendauth: no password supplied' al intentar autenticar contra una base con rol propio).",
+    "fix": "Todas las bases de clientes quedan bajo UN rol compartido (erp_tenants), creado por scripts/shared-tenant-server.py. El aislamiento real entre clientes ya no depende de permisos de rol de PostgreSQL: viene de la separacion fisica de bases de datos (una conexion a una base no puede leer otra, a diferencia de MySQL) y de la contraseña de aplicacion Odoo (res.users) propia de cada base, nunca una credencial de PostgreSQL por cliente. Documentado explicitamente como trade-off del modelo compartido en docs/PLAN_HAIKY_MULTITENANT.md y en los docstrings de scripts/shared-tenant-server.py y scripts/provision-worker.py.",
+    "foundBy": "Ejecucion real del rehearsal (scripts/verify-provision.py), no solo pruebas unitarias -- coherente con la disciplina del proyecto de no declarar algo probado sin ejecutarlo de verdad."
+  },
+  "changes": {
+    "erpec_provision": "erpec.provision.endpoint pasa de http://127.0.0.1:{8180+id} a http://{instancia}.localtest.me:8200 (ENDPOINT_SCHEME, constante nueva). Sin cambios de contrato/seguridad del modelo.",
+    "shared-tenant-server.py": "Script nuevo: bootstrap() crea el rol compartido erp_tenants y el odoo.conf del servidor compartido (dbfilter=^erp_%d$, list_db=False, puerto 8200); start()/restart() lo arrancan con verificacion de puerto y de proceso propio.",
+    "provision-worker.py": "operate() simplificado: ya no genera odoo.conf por cliente, no copia addons/, no arranca ni administra un proceso ni puerto por cliente. Crea la base bajo erp_tenants, instala base/l10n_ec/erpec_base con una llamada CLI de un solo uso (sin -c), y usa ALTER DATABASE ... ALLOW_CONNECTIONS para suspender/reactivar. main() acepta --operator (fundador real u a, piloto sintetico de verify-provision.py) en vez de estar fijo a un solo operador -- corrige un bug real encontrado durante el rehearsal (el trabajador quedo fijo a erpec_fundador tras OP07, pero verify-provision.py crea sus trabajos en el piloto erpec_a).",
+    "verify-provision.py": "Adaptado: ya no verifica que un proceso se detenga al suspender (no existe uno por cliente); verifica que la base deje de aceptar conexiones nuevas (ALLOW_CONNECTIONS false) y las reciba de nuevo al reactivar. El chequeo de acceso cruzado ahora usa el rol compartido erp_tenants en vez de un rol por cliente."
+  },
+  "tests": {
+    "unitExitCode": 0,
+    "unitTotalTests": 7,
+    "unitFailed": 0,
+    "unitErrors": 0,
+    "unitEnvironment": "Base de datos PostgreSQL aislada y nueva (ec_provision_mt_test, template0), rol dedicado no superusuario creado y eliminado en la misma ejecucion.",
+    "rehearsal": "scripts/verify-provision.py ejecutado de verdad contra el piloto sintetico erpec_a y el servidor compartido real (puerto 8200): aprovisionamiento, persistencia entre reinicios del trabajador, suspension real (conexion rechazada por PostgreSQL con 'is not currently accepting connections'), reactivacion, aislamiento de modulos y acceso cruzado de roles rechazado en ambas direcciones. Exit code 0. Evidencia: docs/evidencias/ERPEC26-04-validacion.json (bloque scope actualizado a OP08)."
+  },
+  "checks": [
+    "7/7 pruebas unitarias de erpec_provision aprobadas en base aislada y nueva",
+    "Rehearsal real (no solo mockeado) contra el servidor compartido: instancia provisionada, suspendida y reactivada sin ningun proceso ni puerto dedicado",
+    "Suspension verificada como rechazo real de conexion en PostgreSQL (ALLOW_CONNECTIONS false), no una simulacion",
+    "Aislamiento entre operador y clientes verificado en ambas direcciones con el nuevo rol compartido erp_tenants",
+    "Bug real encontrado y corregido durante el rehearsal (operador fijo a erpec_fundador impedia el ensayo sintetico en erpec_a), documentado con su causa exacta"
+  ],
+  "pending": [
+    "Adaptacion del servidor compartido y el trabajador a Render (disco persistente, despliegue declarativo, dominio real detras de Cloudflare en vez de *.localtest.me)",
+    "Registrar el servidor compartido o el trabajador como servicios de arranque automatico de Windows",
+    "Migrar clientes ya aprovisionados con el modelo de un proceso por cliente (instancias previas en .cache/windows/instances, si existen, no se tocaron)",
+    "Limites de recursos por inquilino dentro del servidor compartido (un cliente con uso intensivo podria afectar a otros; trade-off documentado, no resuelto)",
+    "Credenciales reales de produccion de PayPhone (heredado de OP07, sin cambios en este incremento)"
+  ],
+  "externalEmissionPerformed": false,
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false
+}

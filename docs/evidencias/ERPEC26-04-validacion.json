@@ -2,20 +2,20 @@
   "status": "passed-local",
   "phaseComplete": false,
   "checks": [
-    "Acceso cruzado entre operador y cliente rechazado; módulos del operador excluidos del cliente",
+    "Acceso cruzado entre operador y rol compartido de clientes rechazado en ambas direcciones; módulos del operador no instalados en la base del cliente",
     "Siete pruebas transaccionales de contratos y cola: cero fallos, cero errores",
     "Solicitud repetida conserva una sola instancia",
-    "Trabajador Windows crea rol, base, filestore y proceso reales; autentica salud en la base exacta",
+    "Trabajador Windows crea la base del cliente bajo el rol compartido erp_tenants en el servidor compartido; autentica salud en la base exacta por subdominio",
     "Reinicio de trabajador no duplica instancia",
-    "Suspensión detiene el proceso; reactivación conserva el contacto sintético",
-    "Reservas vencidas, tokens obsoletos y límite de reintentos verificados transaccionalmente",
-    "Pantalla de instancias accesible bajo la compañía autorizada; sin errores JavaScript capturados"
+    "Suspensión bloquea conexiones nuevas a la base (ALLOW_CONNECTIONS false), sin detener ningún proceso propio; reactivación conserva el contacto sintético",
+    "Reservas vencidas, tokens obsoletos y límite de reintentos verificados transaccionalmente"
   ],
   "pendingChecks": [
     "Proveedor y ambiente de pagos",
-    "Servidor Windows y dominio/HTTPS"
+    "Servidor Windows y dominio/HTTPS",
+    "Adaptación del servidor compartido a Render"
   ],
-  "instance": "111d87fbc82f4a96906586f8707988af",
-  "endpoint": "http://127.0.0.1:8183",
-  "scope": "Alta comercial sintética local, sin pago externo, DNS público ni HTTPS"
+  "instance": "5c4ec71b39b041eda176775e951654dd",
+  "endpoint": "http://5c4ec71b39b041eda176775e951654dd.localtest.me:8200",
+  "scope": "Alta comercial sintética local, sin pago externo, DNS público ni HTTPS. Modelo multi-tenant compartido (OP08): sin proceso ni puerto dedicado por cliente; bases de clientes bajo un rol de PostgreSQL compartido, aisladas por separación física de bases y por credencial de aplicación Odoo, no por rol."
 }

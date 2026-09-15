@@ -1,4 +1,12 @@
-"""Cola persistente con arrendamientos; solo el operador administra infraestructura."""
+"""Cola persistente con arrendamientos; solo el operador administra infraestructura.
+
+Cada cliente listo corre en el servidor Odoo COMPARTIDO (scripts/shared-tenant-server.py),
+no en un proceso ni puerto propio: un servicio dedicado por cliente en Render se cobra de
+forma continua sin importar el uso. El servidor compartido rutea por subdominio
+(`db_filter = ^erp_%d$`, ver docs/PLAN_HAIKY_MULTITENANT.md); ENDPOINT_SCHEME construye ese
+subdominio en local (`*.localtest.me` resuelve públicamente a 127.0.0.1). En producción sería
+`https://{instancia}.<dominio real>` sin puerto, detrás de Cloudflare.
+"""
 import hashlib
 import hmac
 import logging
@@ -10,6 +18,7 @@ from odoo.exceptions import AccessError, ValidationError
 from odoo.addons.erpec_suite.models.commercial import administrator
 
 _logger = logging.getLogger(__name__)
+ENDPOINT_SCHEME = 'http://{}.localtest.me:8200'
 
 class Subscription(models.Model):
     _inherit = 'erpec.subscription'
@@ -101,7 +110,7 @@ class Provision(models.Model):
         state = ('ready' if self.desired == 'start' else 'suspended') if succeeded else 'failed'
         if succeeded and self._desired_state() != self.desired:
             state = 'queued'
-        self._update({'state':state,'lease_hash':False,'lease_until':False,'attempts':0 if succeeded else self.attempts,'endpoint':f'http://127.0.0.1:{8180+self.id}' if state == 'ready' else False,'last_error':False if succeeded else 'PROVISION_FAILED: revisar el registro local del trabajador antes de reintentar.'})
+        self._update({'state':state,'lease_hash':False,'lease_until':False,'attempts':0 if succeeded else self.attempts,'endpoint':ENDPOINT_SCHEME.format(self.name) if state == 'ready' else False,'last_error':False if succeeded else 'PROVISION_FAILED: revisar el registro local del trabajador antes de reintentar.'})
         _logger.info('Resultado de aprovisionamiento state=%s correlationId=%s userId=%s', state, self.name, self.env.uid)
         return True
 

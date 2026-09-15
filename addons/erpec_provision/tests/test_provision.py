@@ -24,6 +24,8 @@ class TestProvision(TransactionCase):
             job.finish(claim['token'], True)
         job.finish(recovered['token'], True)
         self.assertEqual(job.state, 'ready')
+        # Servidor compartido por subdominio (OP08), no un puerto dedicado por cliente.
+        self.assertEqual(job.endpoint, 'http://%s.localtest.me:8200' % job.name)
         with self.assertRaises(AccessError):
             job.finish(recovered['token'], True)
         self.contract.action_suspend()
