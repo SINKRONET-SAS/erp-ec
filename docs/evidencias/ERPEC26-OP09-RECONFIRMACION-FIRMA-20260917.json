@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-09-17T12:10:00.000Z",
+  "scope": "Reconfirmacion del pendiente de firma electronica real de OP09 tras los commits de CF01 (divulgacion RUC del proveedor del sistema) y el endurecimiento de verify-payphone.py, incluyendo un nuevo ensayo real de emision en el ambiente de pruebas del SRI.",
+  "planDocument": "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+  "authorization": "Titular pidio reconfirmar el pendiente de la firma electronica tras el commit y push anteriores, y aclaro que eso implicaba verificar la emision en entorno de pruebas (no solo revisar documentacion).",
+  "environmentRecovery": {
+    "issue": "Cluster de PostgreSQL dedicado del proyecto (puerto 55487) estaba caido (Connection refused) al iniciar esta verificacion",
+    "action": "Reiniciado con pg_ctl -D .cache/windows/pgdata -l .cache/windows/postgres.log -w start; confirmado en LISTENING antes de continuar"
+  },
+  "regressionChecks": {
+    "xadesTests": {"total": 11, "failed": 0, "errors": 0, "method": "base PostgreSQL aislada y nueva (template0)"},
+    "fiscalSriTests": {"total": 24, "failed": 0, "errors": 0, "method": "base PostgreSQL aislada y nueva (template0)"},
+    "conclusion": "Sin regresion tras CF01 (que modifico erpec_fiscal_native/models.py, dependencia de erpec_fiscal_sri) ni tras el endurecimiento de verify-payphone.py (script no relacionado, sin tocar addons fiscales)"
+  },
+  "realRehearsal": {
+    "method": "Script standalone (fuera de Odoo, importando xades.py/engine.py/sri_client.py directamente) que genero una NUEVA clave de acceso (documento sintetico distinto del primer ensayo de OP09), la firmo con un certificado sintetico autofirmado nuevo (no emitido por una entidad certificadora acreditada), transmitio de verdad a celcer.sri.gob.ec y consulto de verdad la autorizacion.",
+    "accessKey": "1709202601179323532700110010010000010018765432114",
+    "recepcion": "RECIBIDA",
+    "autorizacion": "NO AUTORIZADO, codigo 39: 'FIRMA INVALIDA' - 'La validacion de la cadena de confianza ha fallado: No existen un certificado root registrado para la entidad certificadora'",
+    "comparisonToFirstRehearsal": "Resultado identico en tipo y motivo de rechazo al ensayo del primer incremento de OP09 (16-09-2026) -- confirma que el canal generar->firmar->transmitir->consultar sigue funcionando de punta a punta sin regresion, con una clave de acceso y un ensayo genuinamente nuevos, no una repeticion cacheada del resultado anterior.",
+    "realCertificateUsed": false,
+    "realAuthorizationObtained": false
+  },
+  "pendingStatus": {
+    "unchanged": true,
+    "detail": "El pendiente de un certificado de firma electronica real emitido por una entidad certificadora acreditada por el SRI sigue exactamente igual: sin el no se puede obtener una autorizacion real. No se recibio, obtuvo ni utilizo ningun certificado real en esta reconfirmacion."
+  },
+  "externalEmissionPerformed": true,
+  "externalEmissionDetail": "Un segundo documento sintetico (no una operacion comercial real) se transmitio de verdad al ambiente de PRUEBAS del SRI y fue rechazado por certificado no confiable; no se obtuvo ninguna autorizacion, no se emitio ningun comprobante valido, no hay efecto tributario.",
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false,
+  "codeChanged": false
+}

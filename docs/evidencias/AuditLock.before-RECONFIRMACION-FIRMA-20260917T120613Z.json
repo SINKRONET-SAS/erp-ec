@@ -4,17 +4,18 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T12:06:13.058Z",
+  "updatedAt": "2026-09-17T04:43:36.100Z",
   "filesModified": [
-    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
-    "docs/evidencias/AuditLock.before-RECONFIRMACION-FIRMA-20260917T120613Z.json",
-    "docs/evidencias/ERPEC26-OP09-RECONFIRMACION-FIRMA-20260917.json"
+    "docs/evidencias/AuditLock.before-VERIFY-PAYPHONE-HARDENING-20260917T044336Z.json",
+    "scripts/install-fiscal-native-demo.py",
+    "scripts/verify-payphone.py"
   ],
   "validationChecks": [
-    "Reconfirmacion pedida explicitamente por el titular tras el commit y push de CF01, con el requisito adicional de verificar la emision en el ambiente de pruebas del SRI, no solo revisar documentacion",
-    "Cluster de PostgreSQL dedicado del proyecto encontrado caido y reiniciado antes de verificar",
-    "11/11 pruebas de xades.py y 24/24 de erpec_fiscal_sri reconfirmadas en bases aisladas nuevas contra el HEAD actual, sin regresion tras CF01",
-    "Ensayo real (no mockeado) nuevo contra celcer.sri.gob.ec con una clave de acceso distinta a la del primer ensayo: mismo resultado (RECIBIDA / NO AUTORIZADO codigo 39, certificado no confiable) -- confirma el canal sin regresion, sin fabricar una autorizacion que no ocurrio"
+    "verify-payphone.py: la base de prueba ahora parte vacia (template0) en vez de restaurar el respaldo del piloto -- el restore anterior mezclaba contratos/proveedores PayPhone reales con los casos de prueba, un problema real de higiene de datos de prueba",
+    "verify-payphone.py: agrega verificacion de hashes de los modulos comerciales antes/despues de la corrida (mismo patron que verify-fiscal-native.py) y logSha256 para evidencia a prueba de manipulacion",
+    "Rehearsal real ejecutado en esta sesion sobre el script ya refactorizado: base vacia aislada, 0 fallos/0 errores de 26 pruebas (erpec_suite+erpec_provision+erpec_payphone), comparacion de hashes antes/despues aprobada",
+    "install-fiscal-native-demo.py: el conteo esperado de pruebas del modo por defecto (fiscal-native) estaba desactualizado en 21 (correcto al 14-09-2026, antes de OP09); se corrigio a 32 porque OP09 agrego 11 pruebas nuevas a addons/erpec_fiscal_native/tests/test_xades.py, que cuentan bajo el mismo alcance de modulos (erpec_fiscal_native+erpec_fiscal_connector)",
+    "Instalacion real ejecutada en esta sesion con el valor corregido: exit 0, vistas compilan, RUC de la demo vacio, respaldo previo generado"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -60,13 +61,13 @@
     "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento"
   ],
   "fileHashes": {
-    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "b2d3cae6794e4fac794bbb1aa07147d639e2aec39eb9c5c19102a0b04868f7f4",
-    "docs/evidencias/AuditLock.before-RECONFIRMACION-FIRMA-20260917T120613Z.json": "e647c39273dc666fa29b61f649329225ef73b1888a4493e5c191b6bc77c9b53a",
-    "docs/evidencias/ERPEC26-OP09-RECONFIRMACION-FIRMA-20260917.json": "9894ebe708f4dffe6eedbae7e87689d7b734ca0fe39c0fd81efecfb5da8efcf8"
+    "docs/evidencias/AuditLock.before-VERIFY-PAYPHONE-HARDENING-20260917T044336Z.json": "18f40c468560b4144f7da892f59f7c1abbf9fe0f4c490ee498fa585dab0d8fe6",
+    "scripts/install-fiscal-native-demo.py": "4218ce2f85b544eda594f6df9f2c4040b75ff31f9f78947d0dd05b5cd8672897",
+    "scripts/verify-payphone.py": "14f4138b9e721cff339c26eb359b6b0d9117f7c908c423a6b3dda84b5b99b994"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-RECONFIRMACION-FIRMA-20260917T120613Z.json",
-  "previousAuditLockHash": "e647c39273dc666fa29b61f649329225ef73b1888a4493e5c191b6bc77c9b53a",
-  "signature": "23cd8033f3ad75eaa755de3a526f47354cd8378516d4da8398d7df795bde1585",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-VERIFY-PAYPHONE-HARDENING-20260917T044336Z.json",
+  "previousAuditLockHash": "18f40c468560b4144f7da892f59f7c1abbf9fe0f4c490ee498fa585dab0d8fe6",
+  "signature": "c031bfcdfd3e4f05286dec2c49fba12ee300335caf23cc8092fcf8589d5d1fd0",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

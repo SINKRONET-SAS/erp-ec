@@ -56,9 +56,13 @@ No se implementó: logo (no hay activo de marca en este incremento), QR (no es u
 
 Verificación: 3 pruebas nuevas (24 en total en `erpec_fiscal_sri`, 0 fallos/errores) que extraen el texto real del PDF generado (PyPDF2, ya declarado en `requirements-windows.txt`) y confirman que AMBIENTE, EMISIÓN, las etiquetas oficiales, el código auxiliar, la placa y la guía de remisión aparecen literalmente. Reinstalado en la demo con respaldo previo (`fiscal-sri-install-20260916-231142`); vistas compilan; sin registros de negocio creados.
 
+## Reconfirmación del pendiente de firma electrónica — 17-09-2026
+
+Tras los commits de CF01 (divulgación del RUC del proveedor del sistema) y el endurecimiento de `verify-payphone.py`, el titular pidió reconfirmar explícitamente el pendiente de la firma electrónica real, lo que implicó repetir la verificación de emisión en el ambiente de pruebas del SRI (no solo revisar documentación). Se re-ejecutaron las 11 pruebas de `xades.py` y las 24 de `erpec_fiscal_sri` contra el HEAD actual (0 fallos, 0 errores en ambas) y se repitió el ensayo real, no mockeado, de punta a punta contra `celcer.sri.gob.ec` con un documento sintético nuevo (clave de acceso `17092026...`, distinta de la del primer ensayo): **RECIBIDA** en recepción, **NO AUTORIZADO** en autorización, exactamente por el mismo motivo que el primer ensayo — código 39, "FIRMA INVALIDA... no existe un certificado root registrado para la entidad certificadora". Resultado idéntico al del primer incremento: el canal generar→firmar→transmitir→consultar sigue funcionando de punta a punta sin regresión, y el pendiente no cambió — sigue haciendo falta un certificado real emitido por una entidad certificadora acreditada por el SRI. No se usó ninguna credencial ni certificado real; ninguna autorización real se obtuvo.
+
 ## Pendiente explícito (actualizado)
 
-- **Certificado de firma electrónica real**, emitido por una entidad certificadora acreditada por el SRI (Security Data, ANF AC, BCE u otra) — sin él no se puede obtener una autorización real, solo se demostró el canal completo hasta el rechazo esperado por confianza de certificado.
+- **Certificado de firma electrónica real**, emitido por una entidad certificadora acreditada por el SRI (Security Data, ANF AC, BCE u otra) — sin él no se puede obtener una autorización real, solo se demostró el canal completo hasta el rechazo esperado por confianza de certificado. Reconfirmado el 17-09-2026 tras CF01, sin cambios.
 - Activar ambiente de producción (`cel.sri.gob.ec`) — deliberadamente deshabilitado en el código.
 - Guarda recíproca en `erpec_fiscal_connector` (bloquear el conector externo si ya existe una emisión nativa) — pendiente de que la sesión concurrente libere ese archivo.
 - Consolidar `_gather_native_data()` con la lógica de `action_native_preview` una vez que `erpec_fiscal_native/models.py` esté libre.
