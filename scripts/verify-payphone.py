@@ -4,7 +4,6 @@ import datetime
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import uuid
@@ -17,6 +16,16 @@ PYTHON = ROOT / '.venv/Scripts/python.exe'
 ODOO = ROOT / '.cache/odoo-community/odoo-bin'
 STATE = ROOT / '.cache/windows'
 PG = Path(r'C:\Program Files\PostgreSQL\17\bin')
+MODULES = ('erpec_suite', 'erpec_provision', 'erpec_payphone')
+
+
+def module_hashes():
+    return {
+        path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for module in MODULES
+        for path in (ROOT / 'addons' / module).rglob('*')
+        if path.is_file() and path.suffix in ('.py', '.xml', '.csv')
+    }
 
 private = json.loads((STATE / 'credentials.json').read_text())
 stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -31,18 +40,21 @@ with connection.cursor() as cursor:
     cursor.execute(sql.SQL('CREATE DATABASE {} OWNER erpec_a TEMPLATE template0').format(sql.Identifier(db)))
     cursor.execute(sql.SQL('REVOKE ALL ON DATABASE {} FROM PUBLIC').format(sql.Identifier(db)))
 connection.close()
-subprocess.run([str(PG/'pg_restore.exe'), '-h', '127.0.0.1', '-p', '55487', '-U', 'erpec_a', '-d', db, '--exit-on-error', str(backup/'database.dump')], env=env, check=True)
-filestore = STATE / 'a/data/filestore/erpec_a'
-if filestore.exists():
-    shutil.copytree(filestore, backup/'test-data/filestore'/db)
+# Los fixtures comerciales deben partir de una base vacía. Restaurar el piloto aquí
+# mezclaba contratos y proveedores PayPhone existentes con los casos de prueba.
 log = STATE / ('payphone-test-' + stamp + '.log')
+before = module_hashes()
 args = [str(PYTHON), str(ODOO), '-c', str(STATE/'a/odoo.conf'), '-d', db, '--db-filter', '^' + db + '$',
-        '--data-dir', str(backup/'test-data'), '-i', 'erpec_payphone', '-u', 'erpec_suite,erpec_provision,erpec_payphone', '--test-enable', '--test-tags',
+        '--data-dir', str(backup/'test-data'), '-i', ','.join(MODULES), '--test-enable', '--test-tags',
         '/erpec_payphone,/erpec_provision,/erpec_suite', '--stop-after-init', '--no-http', '--max-cron-threads', '0', '--http-port', '8199', '--logfile', str(log)]
 result = subprocess.run(args)
+if before != module_hashes():
+    raise RuntimeError('Los archivos comerciales cambiaron durante las pruebas; repite el ensayo.')
 report = {'database': db, 'backup': str(backup), 'log': str(log), 'exitCode': result.returncode,
-          'scope': 'Copia aislada; respuestas PayPhone simuladas; sin cargos externos',
-          'moduleHashes': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'addons/erpec_payphone').rglob('*') if p.is_file() and p.suffix in ('.py','.xml','.csv')}}
-(STAGE/'payphone-test-result.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+          'scope': 'Base vacía aislada; respuestas PayPhone simuladas; sin cargos externos ni datos del piloto',
+          'sourceDataCopied': False,
+          'logSha256': hashlib.sha256(log.read_bytes()).hexdigest(),
+          'moduleHashes': before}
+(STAGE/'payphone-test-result.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')
 print(json.dumps(report))
 sys.exit(result.returncode)

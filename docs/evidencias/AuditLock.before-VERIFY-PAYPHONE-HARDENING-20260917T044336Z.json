@@ -4,18 +4,26 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T04:43:36.100Z",
+  "updatedAt": "2026-09-17T04:32:22.319Z",
   "filesModified": [
-    "docs/evidencias/AuditLock.before-VERIFY-PAYPHONE-HARDENING-20260917T044336Z.json",
-    "scripts/install-fiscal-native-demo.py",
-    "scripts/verify-payphone.py"
+    ".github/CODEX_CONTEXT.md",
+    ".github/prompts/ERPEC26-SP02-CF01-NOMINA-FISCAL-MONETIZACION.md",
+    "addons/erpec_fiscal_connector/__manifest__.py",
+    "addons/erpec_fiscal_connector/connector.py",
+    "addons/erpec_fiscal_connector/tests/test_connector.py",
+    "addons/erpec_fiscal_native/__manifest__.py",
+    "addons/erpec_fiscal_native/models.py",
+    "addons/erpec_fiscal_native/tests/test_native.py",
+    "docs/FACTURACION_LOCAL.md",
+    "docs/PLAN_HAIKY_ERPEC26.md",
+    "docs/PLAN_HAIKY_REVISION_NOMINA_FISCAL_MONETIZACION.md",
+    "docs/evidencias/AuditLock.before-CF01-20260917T043222Z.json"
   ],
   "validationChecks": [
-    "verify-payphone.py: la base de prueba ahora parte vacia (template0) en vez de restaurar el respaldo del piloto -- el restore anterior mezclaba contratos/proveedores PayPhone reales con los casos de prueba, un problema real de higiene de datos de prueba",
-    "verify-payphone.py: agrega verificacion de hashes de los modulos comerciales antes/despues de la corrida (mismo patron que verify-fiscal-native.py) y logSha256 para evidencia a prueba de manipulacion",
-    "Rehearsal real ejecutado en esta sesion sobre el script ya refactorizado: base vacia aislada, 0 fallos/0 errores de 26 pruebas (erpec_suite+erpec_provision+erpec_payphone), comparacion de hashes antes/despues aprobada",
-    "install-fiscal-native-demo.py: el conteo esperado de pruebas del modo por defecto (fiscal-native) estaba desactualizado en 21 (correcto al 14-09-2026, antes de OP09); se corrigio a 32 porque OP09 agrego 11 pruebas nuevas a addons/erpec_fiscal_native/tests/test_xades.py, que cuentan bajo el mismo alcance de modulos (erpec_fiscal_native+erpec_fiscal_connector)",
-    "Instalacion real ejecutada en esta sesion con el valor corregido: exit 0, vistas compilan, RUC de la demo vacio, respaldo previo generado"
+    "CF01: divulgacion del RUC del proveedor del sistema (Resolucion SRI NAC-DGERCGC26-00000027) agregada como pendiente visible en fiscal_scope y ec_native_notice, con prueba nueva por modulo",
+    "Trabajo generado en sesion previa (sin commitear) revisado y confirmado coherente contra el HEAD actual (posterior a los dos commits de OP09) antes de cerrarlo",
+    "Verificado con la metodologia oficial del proyecto (scripts/verify-fiscal-native.py sobre la copia operativa seedeada, no una base aislada nueva sin compania configurada para Ecuador): 0 fallos, 0 errores, 32 pruebas",
+    "UTF-8 sin BOM verificado en los archivos de este complemento"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -61,13 +69,22 @@
     "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento"
   ],
   "fileHashes": {
-    "docs/evidencias/AuditLock.before-VERIFY-PAYPHONE-HARDENING-20260917T044336Z.json": "18f40c468560b4144f7da892f59f7c1abbf9fe0f4c490ee498fa585dab0d8fe6",
-    "scripts/install-fiscal-native-demo.py": "4218ce2f85b544eda594f6df9f2c4040b75ff31f9f78947d0dd05b5cd8672897",
-    "scripts/verify-payphone.py": "14f4138b9e721cff339c26eb359b6b0d9117f7c908c423a6b3dda84b5b99b994"
+    ".github/CODEX_CONTEXT.md": "a5d1caa1addcab4cdc6b0b85ad23ad16e1440b39777d2b2817a0b2d90a9296a1",
+    ".github/prompts/ERPEC26-SP02-CF01-NOMINA-FISCAL-MONETIZACION.md": "50be7051cfdd6e39b8d9b9f680ac8a8c5dcb102c2e347514219928a520cc4747",
+    "addons/erpec_fiscal_connector/__manifest__.py": "5a2890590e2857f155392510515aa78330505e85b692c67e75b2780897080db7",
+    "addons/erpec_fiscal_connector/connector.py": "54774459476d718a7f068e17ea5dc73065a96f7938e2065f2816fe5d2620ff77",
+    "addons/erpec_fiscal_connector/tests/test_connector.py": "cf1fba27ff64d699e1679b7437ea6d12f2f00673762503aff476956b0bfe6bfc",
+    "addons/erpec_fiscal_native/__manifest__.py": "a8f14cf389ca7578db18456bec9434b6ece76ed6eecad0d94b18ca305d9188e7",
+    "addons/erpec_fiscal_native/models.py": "b81825214491db03a7ded0f14826a4e095eff4a99d3e07742770848bffa2c68e",
+    "addons/erpec_fiscal_native/tests/test_native.py": "4a406361096579e08443ddc68a82639ef20791bcc99140d41393f415a419f9c6",
+    "docs/FACTURACION_LOCAL.md": "571af90d375db1e3fc962a097f2ec25d9b92c0ad0925e6eb1386b7cd628890bb",
+    "docs/PLAN_HAIKY_ERPEC26.md": "f072cd7342682bd62f322535fa2587d87f9b13e77c33f1864a08dad3de040502",
+    "docs/PLAN_HAIKY_REVISION_NOMINA_FISCAL_MONETIZACION.md": "f7bbd9cc68abe7ac23543e8d579e31d982abacb08a99a36b6896aa62106b1e4a",
+    "docs/evidencias/AuditLock.before-CF01-20260917T043222Z.json": "41a489e5188ee77bceab210883a664b3681e238e8d752be2dadf6aa806e9f741"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-VERIFY-PAYPHONE-HARDENING-20260917T044336Z.json",
-  "previousAuditLockHash": "18f40c468560b4144f7da892f59f7c1abbf9fe0f4c490ee498fa585dab0d8fe6",
-  "signature": "c031bfcdfd3e4f05286dec2c49fba12ee300335caf23cc8092fcf8589d5d1fd0",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-CF01-20260917T043222Z.json",
+  "previousAuditLockHash": "41a489e5188ee77bceab210883a664b3681e238e8d752be2dadf6aa806e9f741",
+  "signature": "e68f8482c96d5fdd6587c9d228821d31436c816aabec0dc72464250d178c200a",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
