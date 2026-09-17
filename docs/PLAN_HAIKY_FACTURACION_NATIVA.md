@@ -45,4 +45,21 @@ Consultado el 16-09-2026 en sri.gob.ec, "Ficha Técnica de Comprobantes Electró
 - Activar ambiente de producción (`cel.sri.gob.ec`) — deliberadamente deshabilitado en el código.
 - Guarda recíproca en `erpec_fiscal_connector` (bloquear el conector externo si ya existe una emisión nativa) — pendiente de que la sesión concurrente libere ese archivo.
 - Consolidar `_gather_native_data()` con la lógica de `action_native_preview` una vez que `erpec_fiscal_native/models.py` esté libre.
-- Conformidad visual completa del RIDE contra la Ficha Técnica 2.34 (su layout es una imagen, no se pudo verificar campo por campo).
+
+## Segundo incremento — conformidad visual del RIDE (16/17-09-2026)
+
+Con el clúster de PostgreSQL local ya confirmado en marcha, se retomó el único pendiente de OP09 que no dependía de la sesión concurrente ni de un certificado del titular: la conformidad visual del RIDE. Un agente en segundo plano descargó el PDF oficial vigente de la Ficha Técnica 2.34 (sri.gob.ec, 142 páginas) y renderizó como imagen la página 60 (Anexo 2, ejemplo de RIDE de FACTURA) para inspeccionarla campo por campo — hasta ahora esa imagen incrustada no se había podido verificar. El titular pidió además usar como referencia de consulta el renderizador RIDE real de `sinkroniq-mobile` (`backend/src/pdf/renderers/classicRideStrategy.js` + `baseRideRenderer.js`, PDFKit), que ya está en producción y coincide en arquitectura con el ejemplo oficial: recuadro de emisor a la izquierda, recuadro de comprobante/autorización a la derecha, caja de comprador, tabla con barra de encabezado, totales alineados a la derecha.
+
+Se reescribió `addons/erpec_fiscal_sri/ride.py` (archivo propio, sin tocar sinkroniq-mobile ni copiar su código) reproduciendo esa arquitectura de dos columnas con reportlab, y se agregaron los campos que el ejemplo oficial exige y que antes faltaban: AMBIENTE (PRUEBAS/PRODUCCIÓN) y EMISIÓN (NORMAL/CONTINGENCIA), etiquetas oficiales "NÚMERO DE AUTORIZACIÓN"/"FECHA Y HORA DE AUTORIZACIÓN", clave de acceso impresa debajo del código de barras (no antes), nombre comercial/dirección de sucursal/contribuyente especial/agente de retención/RIMPE/obligado a llevar contabilidad en el recuadro emisor, placa/guía de remisión en la caja de comprador, código auxiliar del ítem junto al código principal, y desglose oficial de SUBTOTAL por tarifa. Cada nombre de campo XML citado se confirmó contra `addons/erpec_fiscal_native/xsd/factura_V2.1.0.xsd` (fuente primaria) antes de usarlo — no se inventó ningún campo; los impuestos con código distinto de IVA (p. ej. ICE/IRBPNR) se muestran genéricos por número, sin asumir su nombre oficial no confirmado en esta revisión.
+
+No se implementó: logo (no hay activo de marca en este incremento), QR (no es un requisito confirmado en la ficha 2.34, solo el código de barras Code128, que sí y es opcional), ni las secciones de reembolso/nota de crédito/guía de remisión del renderizador de referencia (nuestro `engine.py` solo genera factura ordinaria en este incremento).
+
+Verificación: 3 pruebas nuevas (24 en total en `erpec_fiscal_sri`, 0 fallos/errores) que extraen el texto real del PDF generado (PyPDF2, ya declarado en `requirements-windows.txt`) y confirman que AMBIENTE, EMISIÓN, las etiquetas oficiales, el código auxiliar, la placa y la guía de remisión aparecen literalmente. Reinstalado en la demo con respaldo previo (`fiscal-sri-install-20260916-231142`); vistas compilan; sin registros de negocio creados.
+
+## Pendiente explícito (actualizado)
+
+- **Certificado de firma electrónica real**, emitido por una entidad certificadora acreditada por el SRI (Security Data, ANF AC, BCE u otra) — sin él no se puede obtener una autorización real, solo se demostró el canal completo hasta el rechazo esperado por confianza de certificado.
+- Activar ambiente de producción (`cel.sri.gob.ec`) — deliberadamente deshabilitado en el código.
+- Guarda recíproca en `erpec_fiscal_connector` (bloquear el conector externo si ya existe una emisión nativa) — pendiente de que la sesión concurrente libere ese archivo.
+- Consolidar `_gather_native_data()` con la lógica de `action_native_preview` una vez que `erpec_fiscal_native/models.py` esté libre.
+- RIDE: sin logo ni QR; sin las secciones de reembolso/nota de crédito/guía de remisión (fuera de alcance de `engine.py` hoy); layout no es pixel-perfect contra la imagen oficial (posiciones aproximadas, no medidas al milímetro desde el PDF).

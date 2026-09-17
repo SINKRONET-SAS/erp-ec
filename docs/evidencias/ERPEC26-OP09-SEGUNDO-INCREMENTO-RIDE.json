@@ -1,0 +1,82 @@
+{
+  "recordedAt": "2026-09-17T04:15:00.000Z",
+  "scope": "Segundo incremento de OP09: conformidad visual del RIDE contra el ejemplo oficial de la Ficha Tecnica 2.34 del SRI (imagen incrustada, verificada por primera vez), usando como referencia de consulta el renderizador RIDE real de sinkroniq-mobile.",
+  "planDocument": "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+  "prompt": ".github/prompts/ERPEC26-OP09-FACTURACION-NATIVA-SRI.md",
+  "authorization": "Titular pidio continuar la segunda pasada de facturacion nativa tras confirmar que el cluster de PostgreSQL arranco correctamente; durante la investigacion pidio explicitamente usar como consulta para el RIDE el proyecto sinkroniq-facturador (el modulo Facturador dentro de sinkroniq-mobile, backend/src/pdf).",
+  "postgresClusterCheck": {
+    "method": "netstat -ano sobre el puerto 55487 del cluster dedicado del proyecto (distinto del servicio Postgres del sistema en 5432)",
+    "result": "Cluster activo: puerto 55487 en LISTENING, PID 26984, multiples conexiones ESTABLISHED"
+  },
+  "priorGapAnalysis": {
+    "method": "Agente en segundo plano: descargo el PDF oficial vigente de la Ficha Tecnica 2.34 (sri.gob.ec, 142 paginas), renderizo la pagina 60 (Anexo 2, ejemplo de RIDE de FACTURA) como imagen con pymupdf y la inspecciono visualmente -- esa imagen no se habia podido verificar antes porque no es texto extraible.",
+    "gapsFound": [
+      "Sin layout de dos columnas con recuadros (ride.py era estrictamente vertical de una columna)",
+      "Faltaban campos de emisor: nombre comercial, direccion de sucursal, contribuyente especial, obligado a llevar contabilidad, agente de retencion",
+      "Faltaban por completo AMBIENTE (PRUEBAS/PRODUCCION) y EMISION (NORMAL/CONTINGENCIA)",
+      "Etiquetas distintas a las oficiales ('Autorizacion SRI' vs 'NUMERO DE AUTORIZACION'; 'Fecha de autorizacion' vs 'FECHA Y HORA DE AUTORIZACION'); clave de acceso impresa antes del codigo de barras en vez de debajo",
+      "Faltaban Placa/Matricula y Guia de Remision en el bloque de comprador",
+      "Tabla de items incompleta (sin Cod. Principal como columna propia, sin Cod. Auxiliar)",
+      "Totales sin el desglose oficial de SUBTOTAL por tarifa",
+      "Sin recuadros/grid: solo lineas horizontales separadoras"
+    ]
+  },
+  "referenceConsulted": {
+    "project": "C:\\proyectos web\\sinkroniq-mobile",
+    "files": [
+      "backend/src/pdf/pdfService.js",
+      "backend/src/pdf/renderers/classicRenderer.js",
+      "backend/src/pdf/renderers/classicRideStrategy.js",
+      "backend/src/pdf/renderers/baseRideRenderer.js"
+    ],
+    "purpose": "Arquitectura de referencia ya validada en produccion (RIDE de dos columnas con recuadros: emisor a la izquierda, comprobante/autorizacion a la derecha, caja de comprador, tabla con barra de encabezado, totales a la derecha) -- coincide con el ejemplo oficial encontrado en la ficha.",
+    "codeChanges": "Ninguno en sinkroniq-mobile; solo lectura. No se copio codigo (PDFKit vs reportlab, stacks distintos) ni datos reales; se replico la arquitectura de layout con herramientas propias del proyecto."
+  },
+  "xsdFieldNameVerification": {
+    "source": "addons/erpec_fiscal_native/xsd/factura_V2.1.0.xsd (fuente primaria ya presente en el proyecto)",
+    "method": "grep de nombres de elemento confirmados antes de usarlos en ride.py, incluida su ubicacion exacta dentro de infoTributaria vs infoFactura",
+    "fieldsConfirmed": ["ambiente", "tipoEmision", "nombreComercial", "agenteRetencion", "contribuyenteRimpe", "dirEstablecimiento", "contribuyenteEspecial", "obligadoContabilidad", "guiaRemision", "placa", "codigoAuxiliar", "valorDevolucionIva"],
+    "bugsCaughtBeforeShipping": [
+      "contribuyenteEspecial es hijo de infoFactura, no de infoTributaria -- error inicial corregido antes de la primera corrida de pruebas, detectado al revisar el XSD linea por linea.",
+      "valorDevolucionIva esta anidado dentro de cada totalImpuesto (junto a 'valor'), no es un campo suelto de infoFactura -- error inicial corregido de la misma forma."
+    ],
+    "notInvented": "Codigos de impuesto distintos de '2' (IVA) se muestran genericos como 'Impuesto (codigo N)', sin asumir nombres como ICE/IRBPNR que no se confirmaron contra el XSD en esta revision."
+  },
+  "implementation": {
+    "fileRewritten": "addons/erpec_fiscal_sri/ride.py",
+    "approach": "Reescritura completa (no parche incremental) para pasar de layout vertical de una columna a dos columnas con recuadros, con reportlab (canvas de bajo nivel, sin nuevas dependencias)",
+    "notImplemented": ["logo (sin activo de marca en este incremento)", "QR (no confirmado como requisito en la ficha 2.34; solo el codigo de barras Code128, que si y es opcional)", "secciones de reembolso/nota de credito/guia de remision (fuera del alcance de engine.py hoy, que solo genera factura ordinaria)", "layout pixel-perfect (posiciones aproximadas, no medidas al milimetro desde el PDF oficial)"]
+  },
+  "tests": {
+    "newTests": 3,
+    "totalAddonTests": 24,
+    "failed": 0,
+    "errors": 0,
+    "method": "Extraccion de texto real del PDF generado con PyPDF2 (ya declarado en requirements-windows.txt, no es una dependencia nueva) para confirmar literalmente AMBIENTE, EMISION, etiquetas oficiales, codigo auxiliar, placa y guia de remision -- no solo que el PDF se genera sin excepcion.",
+    "environment": "Base de datos PostgreSQL aislada y nueva (template0), rol dedicado no superusuario eliminado al finalizar."
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal-sri-install-20260916-231142",
+    "viewsCompiled": ["erpec.fiscal.certificate", "erpec.fiscal.emission"],
+    "businessRecordsCreated": false
+  },
+  "checks": [
+    "Cluster de PostgreSQL confirmado activo antes de retomar el trabajo",
+    "Imagen oficial del RIDE (pagina 60 de la Ficha Tecnica 2.34) inspeccionada visualmente por primera vez, gap concreto documentado antes de escribir codigo",
+    "Cada nombre de campo XML usado se confirmo contra el XSD oficial ya presente en el proyecto, con dos errores de ubicacion detectados y corregidos antes de la primera corrida de pruebas",
+    "24/24 pruebas del addon aprobadas (21 previas + 3 nuevas) en base aislada y nueva",
+    "Reinstalado en demo con respaldo previo; vistas compilan; sin registros de negocio creados",
+    "Ningun archivo en conflicto con la sesion concurrente modificado"
+  ],
+  "pending": [
+    "Certificado de firma electronica real emitido por una entidad certificadora acreditada por el SRI",
+    "Activar ambiente de produccion (cel.sri.gob.ec)",
+    "Guarda reciproca en erpec_fiscal_connector -- pendiente de que la sesion concurrente libere ese archivo",
+    "Consolidar _gather_native_data() con action_native_preview cuando erpec_fiscal_native/models.py este libre",
+    "RIDE: sin logo ni QR; sin secciones de reembolso/nota de credito/guia de remision; layout no pixel-perfect"
+  ],
+  "externalEmissionPerformed": false,
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false
+}
