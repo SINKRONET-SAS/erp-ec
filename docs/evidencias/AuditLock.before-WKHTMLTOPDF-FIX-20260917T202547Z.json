@@ -4,15 +4,23 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T20:25:47.598Z",
+  "updatedAt": "2026-09-17T19:34:59.917Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "docs/evidencias/AuditLock.before-WKHTMLTOPDF-FIX-20260917T202547Z.json"
+    "addons/erpec_payroll/__init__.py",
+    "addons/erpec_payroll/__manifest__.py",
+    "addons/erpec_payroll/hooks.py",
+    "addons/erpec_payroll/models.py",
+    "addons/erpec_payroll/tests/test_legal_parameters.py",
+    "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+    "docs/evidencias/AuditLock.before-OP10-A1B-20260917T193459Z.json",
+    "docs/evidencias/ERPEC26-OP10-A1B-SIEMBRA-AUTOMATICA-20260917.json"
   ],
   "validationChecks": [
-    "wkhtmltopdf instalado (release oficial 0.12.6-1 msvc2015-win64, Qt parcheado) tras reporte real del titular; verificado con peticion HTTP real (GET /report/pdf/sale.report_saleorder/2 -> 200, PDF valido de 19556 bytes) contra la demo reiniciada",
-    "No es una regresion de este proyecto: dependencia del sistema que nunca se instalo en esta maquina; no afecta el RIDE nativo de erpec_fiscal_sri (usa reportlab, no wkhtmltopdf)",
-    "Cambio de entorno, no de codigo del repositorio: unico archivo tocado es CODEX_CONTEXT.md, para continuidad entre sesiones"
+    "OP10-A1b: patron de nuevo_nomina (legalParameterService.js, fila global tenant_id IS NULL) investigado y adaptado correctamente al modelo de base-por-cliente de este proyecto via post_init_hook, no copiado literalmente",
+    "Tres bugs reales encontrados y corregidos durante pruebas de instalacion desde cero (-i real, no solo -u): violacion de llave foranea por diario provisional, campo account.account.company_id inexistente en esta version de Odoo, y chart_template no confiable como senal -- solucion final elimina la dependencia de diario/plan de cuentas del hook por completo",
+    "33/33 pruebas del modulo (30 previas + 3 nuevas), 0 fallos/errores, en base aislada instalada desde cero",
+    "Reinstalado en demo con respaldo previo; formulario compila; sin registros de negocio creados"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -64,12 +72,19 @@
     "OP10-B3: reportes de cumplimiento de visitas (aun sin implementar)"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "e0e365a259c4caf57f271d47a4f91e0f2b5e9ed73646c2d9dd75dc1b225aa709",
-    "docs/evidencias/AuditLock.before-WKHTMLTOPDF-FIX-20260917T202547Z.json": "ebafd2e27539f9e841a2e430bc917daedde268911125cffa2ebb54d67a3fccc5"
+    ".github/CODEX_CONTEXT.md": "745ff9415e25e56d59f209ddc2ee82599c205382678b89fcda9517be9ccddf9f",
+    "addons/erpec_payroll/__init__.py": "22216f1e00f07c5024f06790cbc2b221ca6e5827fd2489d4929bfe335fb657f0",
+    "addons/erpec_payroll/__manifest__.py": "a609ead1cc35b70e004eca3c96bd39e73d7946554a7d3c624cb426f6ec4f3d3f",
+    "addons/erpec_payroll/hooks.py": "1ee57f0cbf1955c6072226eb647806463b18ce20a7f358246367fa00e69e81c8",
+    "addons/erpec_payroll/models.py": "55b9f40a7b4aeea706bdf40d200f137e3440fe9d3591ee32f4a88334613086f6",
+    "addons/erpec_payroll/tests/test_legal_parameters.py": "f938f5a6ee70676cc8c1a19f16cab5e5d3b263ab740e9b2e80e830523e2c3a73",
+    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "8e186f772600d2ee33a1de78ddc7c60411bdfac484ffd51f65ac458a88366192",
+    "docs/evidencias/AuditLock.before-OP10-A1B-20260917T193459Z.json": "0e398574e77b244a40c5b219a401f51889750846fb9d9536a5daaa3978f1c146",
+    "docs/evidencias/ERPEC26-OP10-A1B-SIEMBRA-AUTOMATICA-20260917.json": "8f6c3f54088d945ea6a144f4c4bec1f04b46b38af18928af4b99758863d33791"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-WKHTMLTOPDF-FIX-20260917T202547Z.json",
-  "previousAuditLockHash": "ebafd2e27539f9e841a2e430bc917daedde268911125cffa2ebb54d67a3fccc5",
-  "signature": "d070cd0254708b901d355d731f97b333f9c51687f452b9cf474b6a1a96359764",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-A1B-20260917T193459Z.json",
+  "previousAuditLockHash": "0e398574e77b244a40c5b219a401f51889750846fb9d9536a5daaa3978f1c146",
+  "signature": "1c825e85146cb8ceaf26a84ce7fd78bf9c3c4c39ee847346597853c8b1a5ef98",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
