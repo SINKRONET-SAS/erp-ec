@@ -4,26 +4,23 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T04:32:22.319Z",
+  "updatedAt": "2026-09-17T04:16:22.034Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    ".github/prompts/ERPEC26-SP02-CF01-NOMINA-FISCAL-MONETIZACION.md",
-    "addons/erpec_fiscal_connector/__manifest__.py",
-    "addons/erpec_fiscal_connector/connector.py",
-    "addons/erpec_fiscal_connector/tests/test_connector.py",
-    "addons/erpec_fiscal_native/__manifest__.py",
-    "addons/erpec_fiscal_native/models.py",
-    "addons/erpec_fiscal_native/tests/test_native.py",
-    "docs/FACTURACION_LOCAL.md",
-    "docs/PLAN_HAIKY_ERPEC26.md",
-    "docs/PLAN_HAIKY_REVISION_NOMINA_FISCAL_MONETIZACION.md",
-    "docs/evidencias/AuditLock.before-CF01-20260917T043222Z.json"
+    ".github/prompts/ERPEC26-OP09-FACTURACION-NATIVA-SRI.md",
+    "addons/erpec_fiscal_sri/ride.py",
+    "addons/erpec_fiscal_sri/tests/test_ride.py",
+    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+    "docs/evidencias/AuditLock.before-OP09-SEGUNDO-INCREMENTO-20260917T041622Z.json",
+    "docs/evidencias/ERPEC26-OP09-SEGUNDO-INCREMENTO-RIDE.json"
   ],
   "validationChecks": [
-    "CF01: divulgacion del RUC del proveedor del sistema (Resolucion SRI NAC-DGERCGC26-00000027) agregada como pendiente visible en fiscal_scope y ec_native_notice, con prueba nueva por modulo",
-    "Trabajo generado en sesion previa (sin commitear) revisado y confirmado coherente contra el HEAD actual (posterior a los dos commits de OP09) antes de cerrarlo",
-    "Verificado con la metodologia oficial del proyecto (scripts/verify-fiscal-native.py sobre la copia operativa seedeada, no una base aislada nueva sin compania configurada para Ecuador): 0 fallos, 0 errores, 32 pruebas",
-    "UTF-8 sin BOM verificado en los archivos de este complemento"
+    "OP09 segundo incremento: conformidad visual del RIDE verificada por primera vez contra la imagen oficial de la Ficha Tecnica 2.34 (pagina 60, Anexo 2), inspeccionada por un agente en segundo plano",
+    "Arquitectura de referencia consultada (renderizador RIDE real de sinkroniq-mobile, ya en produccion) sin copiar codigo ni datos, coincide con el ejemplo oficial del SRI",
+    "Cada nombre de campo XML usado se confirmo contra addons/erpec_fiscal_native/xsd/factura_V2.1.0.xsd (fuente primaria); dos errores de ubicacion de campo detectados y corregidos antes de la primera corrida de pruebas",
+    "24/24 pruebas del addon aprobadas (21 previas + 3 nuevas) en base aislada y nueva, verificando contenido real extraido del PDF (PyPDF2), no solo que se genera sin excepcion",
+    "Reinstalado en demo con respaldo previo; vistas compilan; sin registros de negocio creados",
+    "UTF-8 sin BOM verificado en los archivos de este incremento"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -64,27 +61,20 @@
     "OP09: guarda reciproca en erpec_fiscal_connector (bloquear el conector externo si ya existe una emision nativa) -- pendiente de que la sesion concurrente libere ese archivo",
     "OP09: consolidar _gather_native_data() con action_native_preview cuando erpec_fiscal_native/models.py este libre",
     "OP09: conformidad visual completa del RIDE contra la Ficha Tecnica 2.34 (layout en imagen, no verificado campo por campo)",
-    "OP09: RIDE sin logo ni QR; sin secciones de reembolso/nota de credito/guia de remision (fuera de alcance de engine.py); layout no pixel-perfect contra la imagen oficial",
-    "CF01: el RUC del proveedor del sistema todavia no se transporta realmente en el XML/contrato, solo se avisa como pendiente en fiscal_scope/ec_native_notice",
-    "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento"
+    "OP09: RIDE sin logo ni QR; sin secciones de reembolso/nota de credito/guia de remision (fuera de alcance de engine.py); layout no pixel-perfect contra la imagen oficial"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "a5d1caa1addcab4cdc6b0b85ad23ad16e1440b39777d2b2817a0b2d90a9296a1",
-    ".github/prompts/ERPEC26-SP02-CF01-NOMINA-FISCAL-MONETIZACION.md": "50be7051cfdd6e39b8d9b9f680ac8a8c5dcb102c2e347514219928a520cc4747",
-    "addons/erpec_fiscal_connector/__manifest__.py": "5a2890590e2857f155392510515aa78330505e85b692c67e75b2780897080db7",
-    "addons/erpec_fiscal_connector/connector.py": "54774459476d718a7f068e17ea5dc73065a96f7938e2065f2816fe5d2620ff77",
-    "addons/erpec_fiscal_connector/tests/test_connector.py": "cf1fba27ff64d699e1679b7437ea6d12f2f00673762503aff476956b0bfe6bfc",
-    "addons/erpec_fiscal_native/__manifest__.py": "a8f14cf389ca7578db18456bec9434b6ece76ed6eecad0d94b18ca305d9188e7",
-    "addons/erpec_fiscal_native/models.py": "b81825214491db03a7ded0f14826a4e095eff4a99d3e07742770848bffa2c68e",
-    "addons/erpec_fiscal_native/tests/test_native.py": "4a406361096579e08443ddc68a82639ef20791bcc99140d41393f415a419f9c6",
-    "docs/FACTURACION_LOCAL.md": "571af90d375db1e3fc962a097f2ec25d9b92c0ad0925e6eb1386b7cd628890bb",
-    "docs/PLAN_HAIKY_ERPEC26.md": "f072cd7342682bd62f322535fa2587d87f9b13e77c33f1864a08dad3de040502",
-    "docs/PLAN_HAIKY_REVISION_NOMINA_FISCAL_MONETIZACION.md": "f7bbd9cc68abe7ac23543e8d579e31d982abacb08a99a36b6896aa62106b1e4a",
-    "docs/evidencias/AuditLock.before-CF01-20260917T043222Z.json": "41a489e5188ee77bceab210883a664b3681e238e8d752be2dadf6aa806e9f741"
+    ".github/CODEX_CONTEXT.md": "1ae79a8ad8d659c0ab92c1c8ff798069ac1c17ae33fba6e26803feee6547b65c",
+    ".github/prompts/ERPEC26-OP09-FACTURACION-NATIVA-SRI.md": "2ebb1cf393cb40690bcf17b9523e2b0a8ef268d933c0bafcd72cb2ca3c29a359",
+    "addons/erpec_fiscal_sri/ride.py": "2f2a5c5e4155a73da8709948360871a31722ed3142103f7a3b2dcbe3071a08a9",
+    "addons/erpec_fiscal_sri/tests/test_ride.py": "5f8267d4f3465fddc1f59c9a841f982c8453bc149a1d871e1dbabc19c5a8f005",
+    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "4174d1c83c536c6ed3892bb1c77a60fc73376bd6784c4f54db2dbdb63c96c647",
+    "docs/evidencias/AuditLock.before-OP09-SEGUNDO-INCREMENTO-20260917T041622Z.json": "cceaf1fabe62745950197ea7f97834e6c67ba9d5c58b3390fe4f76f4561d511c",
+    "docs/evidencias/ERPEC26-OP09-SEGUNDO-INCREMENTO-RIDE.json": "10029c7a640a303d7623193dfb21c388be17405190b27ccfd3830a50bf184ecc"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-CF01-20260917T043222Z.json",
-  "previousAuditLockHash": "41a489e5188ee77bceab210883a664b3681e238e8d752be2dadf6aa806e9f741",
-  "signature": "e68f8482c96d5fdd6587c9d228821d31436c816aabec0dc72464250d178c200a",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP09-SEGUNDO-INCREMENTO-20260917T041622Z.json",
+  "previousAuditLockHash": "cceaf1fabe62745950197ea7f97834e6c67ba9d5c58b3390fe4f76f4561d511c",
+  "signature": "1001304fc3115a527917f1e9de6c79ce65f2c7a794d2abdbf7e24efec1c77dcb",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

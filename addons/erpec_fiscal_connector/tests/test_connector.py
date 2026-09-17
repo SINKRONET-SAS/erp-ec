@@ -131,6 +131,7 @@ class FiscalConnectorCase(TransactionCase):
         self.assertIn('ec_fiscal_job_ids',self.move.get_view(view_type='form')['arch'])
         workspace=self.env['erpec.workspace'].search([],limit=1)
         self.assertIn('Conector de pruebas instalado',workspace.fiscal_scope)
+        self.assertIn('RUC del proveedor del sistema',workspace.fiscal_scope)
 
     def test_unsupported_tax_blocks_queue(self):
         self.tax.tax_group_id.l10n_ec_type='exempt_vat'

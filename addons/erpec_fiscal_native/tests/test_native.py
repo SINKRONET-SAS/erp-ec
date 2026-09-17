@@ -31,6 +31,7 @@ class NativeCase(TransactionCase):
         self.assertEqual(self.preview().xml_file,p.xml_file)
         self.assertEqual(len(p.access_key),49);self.assertEqual(p.access_key[23],'1')
         self.assertFalse(self.move.ec_fiscal_job_ids)
+        self.assertIn('RUC del proveedor del sistema',self.move.ec_native_notice)
         with self.assertRaises(ValidationError):p.write({'access_key':'falsa'})
         with self.assertRaises(ValidationError):self.env['erpec.fiscal.preview'].create({'move_id':self.move.id})
         self.assertIn('ec_native_notice',self.move.get_view(view_type='form')['arch'])

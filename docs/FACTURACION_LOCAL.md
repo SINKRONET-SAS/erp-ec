@@ -32,6 +32,12 @@ El esquema factura_V2.1.0.xsd procede del ZIP oficial https://www.sri.gob.ec/o/s
 4. RIDE y archivo durables vinculados a autorización verificada. Incluir perfiles especiales, documentos adicionales y revisión de tarifas antes de declararlos soportados.
 5. Ensayo con emisor real autorizado para pruebas y corte controlado si elige migrar. La preparación no cierra ERPEC26-05 ni sustituye firma o validación externa.
 
+## Revisión de producción — septiembre de 2026
+
+La Resolución SRI NAC-DGERCGC26-00000027 exige que los proveedores de sistemas o servicios de facturación electrónica registren esa actividad y que el emisor que usa un proveedor tercero incluya el RUC del proveedor en la información adicional del comprobante, dentro de los plazos de la resolución. El XML local y el contrato del conector todavía no transportan ese dato; por ello la producción queda bloqueada aunque el XSD básico, la firma aislada o el transporte lleguen a funcionar. El pendiente se muestra también en la factura y en el centro de trabajo.
+
+La impresión PDF nativa de Odoo sigue disponible como reporte contable, pero no es un RIDE vinculado a una autorización del SRI. No debe entregarse como comprobante electrónico autorizado.
+
 ## Reversión
 
 No se migran facturas ni se cambian secuencias. El respaldo anterior está indicado en la evidencia de instalación. Antes de retirar módulos, detener la demo y conservar también su estado actual. Recuperar database.dump junto con filestore y addons del mismo respaldo en una base nueva con rol propio; validar y cambiar a esa copia de manera controlada. No sobrescribir una demo que haya recibido nuevas operaciones. La recuperación de este respaldo específico aún no se ha ensayado; no utilizar sin adaptar el verificador antiguo que supone ausencia de nómina.

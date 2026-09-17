@@ -24,7 +24,7 @@ class Move(models.Model):
             if not move.company_id.street:missing.append('dirección matriz')
             if not move.company_id.ec_native_ordinary or not move.company_id.ec_native_accounting:missing.append('perfil fiscal y obligación contable verificados en la empresa')
             if move.state!='posted':missing.append('factura contabilizada')
-            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Preparación XML dentro del ERP, sin servicio Facturador. Ambiente PRUEBAS. Falta implementar y validar firma XAdES, envío/consulta SRI y RIDE autorizado; esta vista previa no emite ni autoriza.'
+            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Preparación XML dentro del ERP, sin servicio Facturador. Ambiente PRUEBAS. Falta implementar y validar firma XAdES, envío/consulta SRI, RIDE autorizado y el RUC del proveedor del sistema en la información adicional cuando corresponda; esta vista previa no emite ni autoriza.'
 
     def action_native_preview(self):
         self.ensure_one();self.check_access('read')

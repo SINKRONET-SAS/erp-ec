@@ -53,3 +53,7 @@ El titular pidió, en respuesta a la necesidad de garantizar cumplimiento legal 
 
 ## Plan tributario transversal autorizado — 13-09-2026
 Complemento local TX00–TX02: PLAN_HAIKY_IMPUESTOS.md. Relaciona catálogo, cuentas, artículos, proveedores y operaciones con las posiciones fiscales nativas. No sustituye los gates de emisión, retenciones, ATS ni validación legal.
+
+## Revisión transversal autorizada — 14-09-2026
+
+El titular pidió una pasada al funcionamiento, cálculos y reportes de nómina, facturación electrónica en pruebas y producción, y monetización. Se ejecuta como complemento CF01 de SP02 conforme a `docs/PLAN_HAIKY_REVISION_NOMINA_FISCAL_MONETIZACION.md`. La revisión puede corregir defectos locales reproducibles, pero no convierte simulaciones en homologación externa ni cierra las fases 04–08.
