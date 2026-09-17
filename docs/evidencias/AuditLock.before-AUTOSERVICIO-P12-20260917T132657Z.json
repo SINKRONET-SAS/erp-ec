@@ -4,24 +4,18 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T13:26:57.418Z",
+  "updatedAt": "2026-09-17T12:17:09.914Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "addons/erpec_fiscal_sri/models.py",
-    "addons/erpec_fiscal_sri/security/ir.model.access.csv",
-    "addons/erpec_fiscal_sri/tests/__init__.py",
-    "addons/erpec_fiscal_sri/tests/test_certificate.py",
-    "addons/erpec_fiscal_sri/views.xml",
     "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
-    "docs/evidencias/AuditLock.before-AUTOSERVICIO-P12-20260917T132657Z.json",
-    "docs/evidencias/ERPEC26-OP09-AUTOSERVICIO-P12-20260917.json"
+    "docs/evidencias/AuditLock.before-PRIMERA-AUTORIZACION-REAL-20260917T121709Z.json",
+    "docs/evidencias/ERPEC26-OP09-PRIMERA-AUTORIZACION-REAL-20260917.json"
   ],
   "validationChecks": [
-    "Autoservicio adaptado de sinkroniq-mobile (certificateLifecycleService.js/certificadoController.js, solo lectura, sin copiar codigo): permiso ampliado de erpec.fiscal.certificate a account.group_account_user, vista previa sin persistir, catalogo de CA reconocidas, limite de tamano, limite de intentos, prueba de firma real",
-    "9 pruebas nuevas (33 en total en erpec_fiscal_sri, 0 fallos/errores) en base aislada y nueva",
-    "Reinstalado en demo con respaldo previo tras reiniciar el proceso caido junto con el cluster de PostgreSQL",
-    "Ensayo real por XML-RPC contra la demo ya corriendo: un usuario con unicamente account.group_account_user (sin base.group_system) creo, verifico y probo la firma de su propio certificado sin privilegios de administrador -- confirma el autoservicio contra una instancia real, no solo en pruebas aisladas",
-    "Artefactos sinteticos residuales en la demo (empresa, usuario, certificado) documentados explicitamente como no eliminables por diseno (perm_unlink=0)"
+    "Titular confirmo explicitamente que la identidad del certificado real (Betty Rosmery Guaman Correa) es de un founder/colaborador de confianza del proyecto, autorizado para este uso",
+    "Verificacion local del certificado real con xades.credentials() (mismo chequeo que action_verify()) y xades.verify() sobre la firma generada: ambas aprobadas",
+    "PRIMERA AUTORIZACION REAL (no simulada) de punta a punta en este proyecto: RECIBIDA en recepcion y AUTORIZADO en autorizacion contra celcer.sri.gob.ec, con numero y fecha de autorizacion reales, en ambiente PRUEBAS, sin usar el RUC de ningun tercero real como comprador",
+    "Clave y contenido del .p12 nunca registrados en el repositorio ni en la evidencia; solo metadatos publicos del certificado (sujeto, emisor, vigencia, huella del archivo)"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -65,24 +59,18 @@
     "OP09: RIDE sin logo ni QR; sin secciones de reembolso/nota de credito/guia de remision (fuera de alcance de engine.py); layout no pixel-perfect contra la imagen oficial",
     "CF01: el RUC del proveedor del sistema todavia no se transporta realmente en el XML/contrato, solo se avisa como pendiente en fiscal_scope/ec_native_notice",
     "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento",
-    "OP09: activar ambiente de produccion sigue deliberadamente deshabilitado y es una decision separada -- requiere el certificado real de la empresa emisora en produccion, no de un colaborador de pruebas",
-    "OP09: certificado sin cifrado adicional en reposo (mismo nivel que PayPhone, documentado, no resuelto)",
-    "OP09: catalogo de CAs confiables es una lista local (TRUSTED_CA_PATTERNS), no una verificacion de cadena de confianza real contra el repositorio oficial del SRI"
+    "OP09: definir el esquema de carga del certificado .p12 para clientes en produccion (hoy solo un administrador con base.group_system puede cargarlo via el formulario interno; falta autoservicio coherente con el modelo multi-tenant de OP08)",
+    "OP09: activar ambiente de produccion sigue deliberadamente deshabilitado y es una decision separada -- requiere el certificado real de la empresa emisora en produccion, no de un colaborador de pruebas"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "93ffdc2881dcb378736b99b9de7ecc4f7fc37d3e0947d674eaca005b0536c227",
-    "addons/erpec_fiscal_sri/models.py": "75e027f23043d4fd62b2d270b0405015830af49244f9ea6af1997735298c0a13",
-    "addons/erpec_fiscal_sri/security/ir.model.access.csv": "b3b0f36fbe4f88840413320e30080fcc8155524aa9ea838cef7ccb65d788c6b1",
-    "addons/erpec_fiscal_sri/tests/__init__.py": "988774c7748dc26aec393400cf0a0f6e164251410b3ef4eb4dd78b9c30e9e6c3",
-    "addons/erpec_fiscal_sri/tests/test_certificate.py": "7ac3603a31d105e776c9a78023bd6ddedcec9e6aa8940544cd25623c75bc76c7",
-    "addons/erpec_fiscal_sri/views.xml": "34b32b173bfd793e61805d22a4e3112c99f504f0847ef16868295c5df3ee1450",
-    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "95b0c0a60d37ad1ac7a42c530c88fe50017e942cd334e3c32333a8ac77b5e463",
-    "docs/evidencias/AuditLock.before-AUTOSERVICIO-P12-20260917T132657Z.json": "d77d98217ffa77eeb2f97391b30ac6a126f52e975c91610c2892b0189acffb43",
-    "docs/evidencias/ERPEC26-OP09-AUTOSERVICIO-P12-20260917.json": "25fba31502323648dc9e1eebd51bed8acf6c2021663eddcd14f0e95a3fe91b49"
+    ".github/CODEX_CONTEXT.md": "d2e4b05e8065c7daf9613b2d9c9a2500e507611a181fb9f23f3559878adbb1fd",
+    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "9162e9efe63af49d48f92867a99fea52031200ab962e2663134a9cdc3cc241be",
+    "docs/evidencias/AuditLock.before-PRIMERA-AUTORIZACION-REAL-20260917T121709Z.json": "9f3215ee05e89393984672ebe72998f48bcd1f42d7174e45c4642fe58aebf019",
+    "docs/evidencias/ERPEC26-OP09-PRIMERA-AUTORIZACION-REAL-20260917.json": "eec3c7a805cfdb431b1659e965e9a580ccea90006114aa16abd74f47ea8cd547"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-AUTOSERVICIO-P12-20260917T132657Z.json",
-  "previousAuditLockHash": "d77d98217ffa77eeb2f97391b30ac6a126f52e975c91610c2892b0189acffb43",
-  "signature": "31ef699014a8c036b57abedaa30238121177c455800d5797081f73c867a9e906",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-PRIMERA-AUTORIZACION-REAL-20260917T121709Z.json",
+  "previousAuditLockHash": "9f3215ee05e89393984672ebe72998f48bcd1f42d7174e45c4642fe58aebf019",
+  "signature": "bb8c976dc6902e0e61558cea574ad9aa1d334f0b896d38883f482aef8afbdc38",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

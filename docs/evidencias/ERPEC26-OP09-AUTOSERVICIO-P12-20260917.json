@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-09-17T13:30:00.000Z",
+  "scope": "Autoservicio de carga del certificado .p12 para clientes: erpec.fiscal.certificate ahora accesible por account.group_account_user (no solo base.group_system), con vista previa, catalogo de CA confiable, limite de tamano, limite de intentos y prueba de firma real, adaptado de sinkroniq-mobile.",
+  "planDocument": "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+  "authorization": "Titular senalo el pendiente tras obtener la primera autorizacion real del SRI, y pidio tomar como referencia sinkroniq-mobile (backend/src/services/certificados) y adaptarlo a las especificaciones de Odoo y a lo requerido en el proyecto.",
+  "referenceResearch": {
+    "project": "C:\\proyectos web\\sinkroniq-mobile",
+    "files": ["backend/src/controllers/certificadoController.js", "backend/src/services/certificados/certificateLifecycleService.js"],
+    "codeChanges": "Ninguno en sinkroniq-mobile; solo lectura",
+    "patternsAdopted": ["catalogo de CAs reconocidas (SRI_AUTHORIZED_CA_PATTERNS -> TRUSTED_CA_PATTERNS)", "vista previa sin persistir (validarPreview -> @api.onchange)", "prueba de firma real separada de la validacion de credenciales (probarFirma -> action_test_signature)", "limite de tamano de archivo (MAX_CERT_BYTES -> MAX_P12_BYTES, mismo valor 262144)", "limite de intentos de verificacion (Redis rate limit -> contador propio del registro, mismo patron ya usado en erpec.fiscal.emission)"],
+    "patternsNotAdopted": ["cifrado en reposo del .p12 (EncryptionService) -- se mantiene el mismo nivel de proteccion ya documentado para PayPhone (permisos, no cifrado) para no generar falsa confianza con una capa de cifrado parcial sin gestion de claves completa", "mapeo de mensajes de error tecnico a amigable -- los mensajes de xades.py ya son suficientemente claros"]
+  },
+  "implementation": {
+    "fileModified": "addons/erpec_fiscal_sri/models.py (clase Certificate)",
+    "permissionChange": "ir.model.access.csv: certificate_account gana perm_write=1, perm_create=1 (antes solo perm_read=1). Campos p12_file/p12_password: groups ampliado de 'base.group_system' a 'base.group_system,account.group_account_user'.",
+    "newFields": ["issuer_summary", "issuer_trusted", "signature_tested", "signature_tested_at", "verify_attempts", "verify_window_start"],
+    "newMethods": ["_check_p12_size (constrains)", "_onchange_p12_preview", "_issuer_trusted (static)", "_check_verify_rate", "action_test_signature"],
+    "viewsUpdated": "addons/erpec_fiscal_sri/views.xml: boton 'Probar firma', campos nuevos en el formulario, menu ya no restringido a base.group_system"
+  },
+  "tests": {
+    "newTests": 9,
+    "totalAddonTests": 33,
+    "failed": 0,
+    "errors": 0,
+    "coverage": ["autoservicio sin sudo()", "aislamiento por empresa (ir.rule)", "CA no confiable -> advertencia no bloqueante", "CA confiable -> reconocida", "archivo sobredimensionado -> ValidationError", "vista previa via odoo.tests.Form sin persistir", "limite de intentos de verificacion (5 por 15 min)", "prueba de firma requiere certificado verificado", "prueba de firma exitosa"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal-sri-install-20260917-082325",
+    "note": "El proceso de la demo se habia caido junto con el cluster de PostgreSQL (verificado con pid inexistente); se reinicio con scripts/start-demo.py --restart antes de instalar",
+    "viewsCompiled": ["erpec.fiscal.certificate", "erpec.fiscal.emission"],
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "Script standalone via XML-RPC contra la demo ya corriendo (no la bateria de pruebas aislada): crea una empresa y un usuario limitado exclusivamente a account.group_account_user (sin base.group_system), autentica como ese usuario, y ese usuario -- sin sudo ni privilegios de administrador -- crea, verifica y prueba la firma de su propio certificado.",
+    "certificateUsed": "Sintetico autofirmado, generado para este ensayo (no el certificado real del titular)",
+    "results": {
+      "certificateCreatedByLimitedUser": true,
+      "verificationResult": {"verified": true, "issuerTrusted": false, "notice": "Certificado verificado: firma RSA valida, vigente, y coincide con el RUC de la empresa. Advertencia: la entidad certificadora no esta en el catalogo local de CAs reconocidas por el SRI; verificala manualmente antes de usarla en produccion."},
+      "signatureProbeResult": {"signatureTested": true, "notice": "Certificado verificado y firma de prueba exitosa: el certificado puede firmar comprobantes."}
+    },
+    "conclusion": "Autoservicio confirmado de punta a punta contra una instancia Odoo real, sin privilegios de administrador -- no solo en pruebas aisladas."
+  },
+  "demoResidualArtifacts": {
+    "created": ["res.company 'Empresa autoservicio ensayo'", "res.users login 'selfservice_test_<id>'", "erpec.fiscal.certificate sintetico"],
+    "removable": false,
+    "reason": "erpec.fiscal.certificate tiene perm_unlink=0 para todos los grupos (conservacion de auditoria, mismo patron que erpec.fiscal.job/emission); la empresa tiene ondelete='restrict' hacia el certificado, por lo que tampoco se puede eliminar sin antes eliminar el certificado. Quedan documentados aqui como artefactos sinteticos de este ensayo, sin efecto de negocio real."
+  },
+  "realCertificateUsedInThisIncrement": false,
+  "externalEmissionPerformed": false,
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false
+}

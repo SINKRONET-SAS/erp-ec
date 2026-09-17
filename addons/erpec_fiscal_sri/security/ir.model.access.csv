@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 certificate_admin,Certificado fiscal,model_erpec_fiscal_certificate,base.group_system,1,1,1,0
-certificate_account,Consulta certificado fiscal,model_erpec_fiscal_certificate,account.group_account_user,1,0,0,0
+certificate_account,Autoservicio certificado fiscal,model_erpec_fiscal_certificate,account.group_account_user,1,1,1,0
 emission_account,Emisión nativa SRI,model_erpec_fiscal_emission,account.group_account_user,1,1,1,0

@@ -1,14 +1,14 @@
 <odoo>
-<record id="certificate_list" model="ir.ui.view"><field name="name">erpec.fiscal.certificate.list</field><field name="model">erpec.fiscal.certificate</field><field name="arch" type="xml"><list><field name="company_id"/><field name="subject_summary"/><field name="verified"/><field name="not_valid_after"/></list></field></record>
+<record id="certificate_list" model="ir.ui.view"><field name="name">erpec.fiscal.certificate.list</field><field name="model">erpec.fiscal.certificate</field><field name="arch" type="xml"><list><field name="company_id"/><field name="subject_summary"/><field name="issuer_trusted"/><field name="verified"/><field name="not_valid_after"/></list></field></record>
 <record id="certificate_form" model="ir.ui.view"><field name="name">erpec.fiscal.certificate.form</field><field name="model">erpec.fiscal.certificate</field><field name="arch" type="xml"><form>
-<header><button name="action_verify" type="object" string="Verificar certificado" class="oe_highlight"/></header>
+<header><button name="action_verify" type="object" string="Verificar certificado" class="oe_highlight"/><button name="action_test_signature" type="object" string="Probar firma" invisible="not verified"/></header>
 <sheet>
-<div class="alert alert-info" role="status">Certificado de firma electrónica para emisión nativa (firma XAdES + transmisión SOAP directa al SRI, ambiente PRUEBAS). El archivo y la contraseña se guardan sin cifrado adicional en reposo, protegidos solo por permisos de administración — igual que la credencial de PayPhone.</div>
+<div class="alert alert-info" role="status">Certificado de firma electrónica para emisión nativa (firma XAdES + transmisión SOAP directa al SRI, ambiente PRUEBAS). Autoservicio: cada empresa carga y reemplaza su propio certificado. El archivo y la contraseña se guardan sin cifrado adicional en reposo, protegidos solo por permisos de la empresa — igual que la credencial de PayPhone.</div>
 <group><field name="company_id"/><field name="p12_file" filename="'certificado.p12'"/><field name="p12_password" password="True"/></group>
-<group string="Estado"><field name="verified"/><field name="subject_summary"/><field name="not_valid_before"/><field name="not_valid_after"/><field name="checked_at"/><field name="notice"/></group>
+<group string="Estado"><field name="verified"/><field name="subject_summary"/><field name="issuer_summary"/><field name="issuer_trusted"/><field name="not_valid_before"/><field name="not_valid_after"/><field name="checked_at"/><field name="signature_tested"/><field name="signature_tested_at"/><field name="notice"/></group>
 </sheet></form></field></record>
 <record id="certificate_action" model="ir.actions.act_window"><field name="name">Certificado de firma (SRI)</field><field name="res_model">erpec.fiscal.certificate</field><field name="view_mode">list,form</field></record>
-<menuitem id="certificate_menu" name="Certificado de firma (SRI)" parent="erpec_fiscal_connector.fiscal_root" action="certificate_action" sequence="5" groups="base.group_system"/>
+<menuitem id="certificate_menu" name="Certificado de firma (SRI)" parent="erpec_fiscal_connector.fiscal_root" action="certificate_action" sequence="5" groups="account.group_account_user"/>
 
 <record id="emission_list" model="ir.ui.view"><field name="name">erpec.fiscal.emission.list</field><field name="model">erpec.fiscal.emission</field><field name="arch" type="xml"><list decoration-danger="state in ('rejected','returned','blocked')" decoration-success="state == 'authorized'"><field name="move_id"/><field name="access_key"/><field name="ambiente"/><field name="state"/><field name="attempts"/></list></field></record>
 <record id="emission_form" model="ir.ui.view"><field name="name">erpec.fiscal.emission.form</field><field name="model">erpec.fiscal.emission</field><field name="arch" type="xml"><form>

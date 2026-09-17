@@ -10,6 +10,7 @@ escribir este incremento, así que no se pudo extraer a una función compartida.
 incremento posterior cuando el archivo esté libre.
 """
 import base64
+import re
 import secrets
 from datetime import timedelta
 
@@ -27,6 +28,27 @@ MAX_ATTEMPTS = 5
 RETRY_DELAY_SECONDS = 60
 POLL_DELAY_SECONDS = 30
 
+# Autoservicio de carga del .p12 (adaptado de sinkroniq-mobile, backend/src/services/certificados/
+# certificateLifecycleService.js: allowlist de CAs conocidas para el SRI, tope de tamaño de
+# archivo y límite de intentos de verificación). Odoo no tiene un servicio de firma separado ni
+# Redis en este proyecto, así que el límite de intentos se guarda en el propio registro en vez de
+# un contador externo, y la "vista previa" se resuelve con un @api.onchange (corre en el cliente
+# antes de guardar) en vez de un endpoint aparte.
+MAX_P12_BYTES = 262144
+MAX_VERIFY_ATTEMPTS = 5
+VERIFY_WINDOW_MINUTES = 15
+TRUSTED_CA_PATTERNS = [re.compile(p, re.IGNORECASE) for p in (
+    r'security\s*data', r'banco\s*central\s*del?\s*ecuador', r'\bbce\b', r'\banf\s*ac\b',
+    r'uanataca', r'datil', r'consejo\s*de\s*la\s*judicatura',
+)]
+SIGNATURE_PROBE_XML = (
+    b'<factura id="comprobante" version="2.1.0"><infoTributaria><ambiente>1</ambiente>'
+    b'<tipoEmision>1</tipoEmision><razonSocial>PRUEBA FIRMA ELECTRONICA</razonSocial>'
+    b'<ruc>%(ruc)s</ruc><claveAcceso>' + b'0' * 49 + b'</claveAcceso><codDoc>01</codDoc>'
+    b'<estab>001</estab><ptoEmi>001</ptoEmi><secuencial>000000000</secuencial>'
+    b'<dirMatriz>PRUEBA</dirMatriz></infoTributaria></factura>'
+)
+
 
 class Certificate(models.Model):
     _name = 'erpec.fiscal.certificate'
@@ -34,34 +56,126 @@ class Certificate(models.Model):
     _check_company_auto = True
 
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
-    p12_file = fields.Binary('Archivo .p12', groups='base.group_system', attachment=False)
-    p12_password = fields.Char('Contraseña del .p12', groups='base.group_system')
+    # Autoservicio: la empresa (cliente) del propio inquilino puede cargar y reemplazar su
+    # certificado -- ampliado de solo base.group_system a incluir account.group_account_user.
+    # Cambio de postura deliberado: mismo nivel de protección de reposo que la credencial de
+    # PayPhone (sin cifrado adicional, solo permisos), pero ahora el grupo con acceso incluye al
+    # cliente dueño de la empresa, no solo administración interna -- es el requisito explícito de
+    # este incremento (autoservicio real para clientes, modelo multi-tenant de OP08).
+    p12_file = fields.Binary('Archivo .p12', groups='base.group_system,account.group_account_user', attachment=False)
+    p12_password = fields.Char('Contraseña del .p12', groups='base.group_system,account.group_account_user')
     verified = fields.Boolean('Verificado', readonly=True, copy=False)
     subject_summary = fields.Char('Titular (según certificado)', readonly=True, copy=False)
+    issuer_summary = fields.Char('Entidad certificadora', readonly=True, copy=False)
+    issuer_trusted = fields.Boolean('Entidad certificadora reconocida', readonly=True, copy=False)
     not_valid_before = fields.Datetime('Vigente desde', readonly=True, copy=False)
     not_valid_after = fields.Datetime('Vigente hasta', readonly=True, copy=False)
     checked_at = fields.Datetime('Última comprobación', readonly=True, copy=False)
+    signature_tested = fields.Boolean('Firma de prueba realizada', readonly=True, copy=False)
+    signature_tested_at = fields.Datetime('Última prueba de firma', readonly=True, copy=False)
+    verify_attempts = fields.Integer('Intentos de verificación', readonly=True, copy=False, default=0)
+    verify_window_start = fields.Datetime('Inicio de ventana de intentos', readonly=True, copy=False)
     notice = fields.Text('Estado', readonly=True, default='Cargar el archivo .p12 y su contraseña, luego verificar.')
     _sql_constraints = [('one_company', 'unique(company_id)', 'Ya existe un certificado para esta empresa.')]
+
+    @api.constrains('p12_file')
+    def _check_p12_size(self):
+        for record in self:
+            if record.p12_file and len(base64.b64decode(record.p12_file)) > MAX_P12_BYTES:
+                raise ValidationError('El archivo .p12 supera el tamaño máximo permitido (%d KB).' % (MAX_P12_BYTES // 1024))
+
+    @api.onchange('p12_file', 'p12_password')
+    def _onchange_p12_preview(self):
+        """Vista previa sin persistir: valida en memoria al elegir el archivo/clave, antes de
+        guardar -- equivalente al endpoint separado de "preview" de sinkroniq-mobile, pero
+        resuelto con el ciclo de onchange propio de Odoo (no llega a la base de datos)."""
+        if not self.p12_file or not self.p12_password:
+            return
+        try:
+            p12_bytes = base64.b64decode(self.p12_file)
+        except (TypeError, ValueError):
+            self.notice = 'El archivo .p12 no es válido.'
+            return
+        ruc = self.company_id.vat or ''
+        try:
+            _key, cert, _chain = xades.credentials(p12_bytes, self.p12_password.encode('utf-8'), ruc)
+            trusted = self._issuer_trusted(cert.issuer.rfc4514_string())
+            preview = 'Vista previa: certificado válido para %s, vigente hasta %s.' % (
+                cert.subject.rfc4514_string(), cert.not_valid_after_utc.date().isoformat())
+            if not trusted:
+                preview += ' Advertencia: la entidad certificadora no está en el catálogo local de CAs reconocidas por el SRI; verifícala manualmente.'
+            self.notice = preview
+        except ValueError as error:
+            self.notice = 'Vista previa: ' + str(error)
+
+    @staticmethod
+    def _issuer_trusted(issuer_text):
+        return any(pattern.search(issuer_text or '') for pattern in TRUSTED_CA_PATTERNS)
+
+    def _check_verify_rate(self):
+        self.ensure_one()
+        now = fields.Datetime.now()
+        window_start = self.verify_window_start
+        if not window_start or now - window_start > timedelta(minutes=VERIFY_WINDOW_MINUTES):
+            self.write({'verify_attempts': 0, 'verify_window_start': now})
+            return
+        if self.verify_attempts >= MAX_VERIFY_ATTEMPTS:
+            raise UserError('Demasiados intentos de verificación. Espera %d minutos e inténtalo de nuevo.' % VERIFY_WINDOW_MINUTES)
 
     def action_verify(self):
         self.ensure_one()
         self.check_access('write')
+        self._check_verify_rate()
         p12_bytes = base64.b64decode(self.sudo().p12_file or b'')
         password = (self.sudo().p12_password or '').encode('utf-8')
         ruc = self.company_id.vat or ''
         try:
             _key, cert, _chain = xades.credentials(p12_bytes, password, ruc)
+            issuer_text = cert.issuer.rfc4514_string()
+            trusted = self._issuer_trusted(issuer_text)
+            notice = 'Certificado verificado: firma RSA válida, vigente, y coincide con el RUC de la empresa.'
+            if not trusted:
+                notice += ' Advertencia: la entidad certificadora no está en el catálogo local de CAs reconocidas por el SRI; verifícala manualmente antes de usarla en producción.'
             values = {
                 'verified': True,
                 'subject_summary': cert.subject.rfc4514_string(),
+                'issuer_summary': issuer_text,
+                'issuer_trusted': trusted,
                 'not_valid_before': cert.not_valid_before_utc.replace(tzinfo=None),
                 'not_valid_after': cert.not_valid_after_utc.replace(tzinfo=None),
-                'notice': 'Certificado verificado: firma RSA válida, vigente, y coincide con el RUC de la empresa.',
+                'notice': notice,
+                'signature_tested': False,
+                'signature_tested_at': False,
             }
         except ValueError as error:
             values = {'verified': False, 'notice': 'No se pudo verificar: ' + str(error)}
-        self.write(dict(values, checked_at=fields.Datetime.now()))
+        self.write(dict(values, checked_at=fields.Datetime.now(), verify_attempts=self.verify_attempts + 1))
+        return True
+
+    def action_test_signature(self):
+        """Firma un XML sintético mínimo (no un comprobante real ni un envío al SRI) para
+        confirmar que el certificado puede firmar de verdad -- credentials() solo confirma que el
+        .p12 abre y coincide con el RUC, no que xades.sign() completa sin error sobre un documento
+        real. Mismo objetivo que probarFirma()/probeCertificateSignature() de sinkroniq-mobile,
+        sin necesitar un servicio de firma aparte ni tocar la red."""
+        self.ensure_one()
+        self.check_access('write')
+        if not self.verified:
+            raise UserError('Verifica el certificado antes de probar la firma.')
+        p12_bytes = base64.b64decode(self.sudo().p12_file or b'')
+        password = (self.sudo().p12_password or '').encode('utf-8')
+        ruc = self.company_id.vat or ''
+        probe_xml = SIGNATURE_PROBE_XML % {b'ruc': ruc.encode('utf-8')}
+        try:
+            signed = xades.sign(probe_xml, p12_bytes, password, ruc)
+            xades.verify(signed, xades.credentials(p12_bytes, password, ruc)[1])
+            self.write({
+                'signature_tested': True,
+                'signature_tested_at': fields.Datetime.now(),
+                'notice': 'Certificado verificado y firma de prueba exitosa: el certificado puede firmar comprobantes.',
+            })
+        except ValueError as error:
+            self.write({'signature_tested': False, 'notice': 'La prueba de firma falló: ' + str(error)})
         return True
 
 
