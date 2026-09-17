@@ -86,3 +86,32 @@ class LegalParameterCase(TransactionCase):
         policy = self.env['erpec.payroll.policy'].create(self._base_values(minimum_salary=480.0))
         with self.assertRaises(ValidationError):
             policy.action_activate()
+
+    def test_post_init_hook_seeds_national_policy_without_journal_or_chart_dependency(self):
+        """El hook no referencia ningún diario a propósito (regresión real encontrada en
+        pruebas: instalar erpec_payroll puede ocurrir antes de que el plan de cuentas termine
+        de cargarse o se reemplace por dependencias posteriores del mismo lote de instalación;
+        referenciar entonces un diario provisional rompía esa carga con una violación de llave
+        foránea). Por eso siembra sin importar el estado del plan de cuentas, y journal_id queda
+        vacío hasta que alguien lo asigna al activar."""
+        from ..hooks import SEED_YEAR, post_init_hook
+        from ..parameters_ec2026 import PARAMS as OFFICIAL_PARAMS
+        post_init_hook(self.env)  # ya corrió al instalar el módulo; debe ser idempotente aquí también.
+        seeded = self.env['erpec.payroll.policy'].search([
+            ('company_id', '=', self.env.company.id), ('year', '=', SEED_YEAR)])
+        self.assertEqual(len(seeded), 1, 'El hook debe sembrar una sola versión nacional por empresa/año.')
+        self.assertEqual(seeded.minimum_salary, OFFICIAL_PARAMS['minimum_salary'])
+        self.assertEqual(len(seeded.tax_bracket_ids), len(OFFICIAL_PARAMS['tax_brackets']))
+        params = json.loads(seeded.parameters)
+        validate_parameters(params)
+        self.assertEqual(seeded.state, 'draft')
+        self.assertFalse(seeded.journal_id, 'La siembra no debe inventar ni buscar un diario.')
+        with self.assertRaises(ValidationError):
+            seeded.action_activate()
+        seeded.journal_id = self.journal
+        seeded.action_activate()
+        self.assertEqual(seeded.state, 'active')
+        # No debe duplicar si se vuelve a llamar (idempotencia del hook).
+        post_init_hook(self.env)
+        self.assertEqual(self.env['erpec.payroll.policy'].search_count([
+            ('company_id', '=', self.env.company.id), ('year', '=', SEED_YEAR)]), 1)

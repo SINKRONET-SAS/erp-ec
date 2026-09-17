@@ -104,7 +104,13 @@ class Policy(models.Model):
     synthetic = fields.Boolean('Empleados y operaciones de demostración', default=True)
     state = fields.Selection([('draft','En revisión'), ('active','Versión activa')], default='draft', readonly=True, string='Estado')
     mapping_ids = fields.One2many('erpec.payroll.mapping','policy_id','Mapeo contable')
-    journal_id = fields.Many2one('account.journal','Diario de nómina',required=True)
+    # No required=True aquí a propósito: la siembra automática de parámetros nacionales
+    # (hooks.post_init_hook) crea la versión antes de que exista necesariamente un diario
+    # de nómina, para no depender del orden de carga del plan de cuentas de la empresa (ver
+    # hooks.py). action_activate() ya exige un diario válido de la misma empresa antes de
+    # activar, así que la falta de diario en un borrador recién sembrado no permite calcular
+    # nómina real -- solo evita repetir la captura de los parámetros legales en cada cliente.
+    journal_id = fields.Many2one('account.journal','Diario de nómina')
     _sql_constraints = [('version_unique','unique(company_id,name)','La versión ya existe en esta empresa.')]
 
     def action_activate(self):

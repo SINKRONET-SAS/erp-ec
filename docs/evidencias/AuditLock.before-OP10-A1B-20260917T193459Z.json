@@ -4,23 +4,23 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T19:34:59.917Z",
+  "updatedAt": "2026-09-17T18:14:18.399Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "addons/erpec_payroll/__init__.py",
-    "addons/erpec_payroll/__manifest__.py",
-    "addons/erpec_payroll/hooks.py",
+    "addons/erpec_payroll/ir.model.access.csv",
     "addons/erpec_payroll/models.py",
+    "addons/erpec_payroll/tests/__init__.py",
     "addons/erpec_payroll/tests/test_legal_parameters.py",
+    "addons/erpec_payroll/views.xml",
     "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
-    "docs/evidencias/AuditLock.before-OP10-A1B-20260917T193459Z.json",
-    "docs/evidencias/ERPEC26-OP10-A1B-SIEMBRA-AUTOMATICA-20260917.json"
+    "docs/evidencias/AuditLock.before-OP10-A1-20260917T181418Z.json",
+    "docs/evidencias/ERPEC26-OP10-A1-PARAMETROS-LEGALES-20260917.json"
   ],
   "validationChecks": [
-    "OP10-A1b: patron de nuevo_nomina (legalParameterService.js, fila global tenant_id IS NULL) investigado y adaptado correctamente al modelo de base-por-cliente de este proyecto via post_init_hook, no copiado literalmente",
-    "Tres bugs reales encontrados y corregidos durante pruebas de instalacion desde cero (-i real, no solo -u): violacion de llave foranea por diario provisional, campo account.account.company_id inexistente en esta version de Odoo, y chart_template no confiable como senal -- solucion final elimina la dependencia de diario/plan de cuentas del hook por completo",
-    "33/33 pruebas del modulo (30 previas + 3 nuevas), 0 fallos/errores, en base aislada instalada desde cero",
-    "Reinstalado en demo con respaldo previo; formulario compila; sin registros de negocio creados"
+    "OP10-A1: diagnostico original corregido explicitamente con el titular antes de escribir codigo -- erpec.payroll.policy ya tenia versionado/inmutabilidad/gate de produccion; la brecha real era solo edicion como JSON crudo",
+    "15 campos tipados + nuevo modelo erpec.payroll.tax.bracket, con sincronizacion bidireccional automatica hacia/desde el parameters JSON existente -- engine.calculate()/validate_parameters()/action_activate()/demo_parameters.py sin ningun cambio",
+    "32/32 pruebas del modulo (26 previas sin modificar + 6 nuevas), 0 fallos/errores, en base aislada y nueva",
+    "Reinstalado en demo con respaldo previo; formulario real confirmado con los campos nuevos en el arch, sin registros de negocio creados"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -72,19 +72,19 @@
     "OP10-B3: reportes de cumplimiento de visitas (aun sin implementar)"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "745ff9415e25e56d59f209ddc2ee82599c205382678b89fcda9517be9ccddf9f",
-    "addons/erpec_payroll/__init__.py": "22216f1e00f07c5024f06790cbc2b221ca6e5827fd2489d4929bfe335fb657f0",
-    "addons/erpec_payroll/__manifest__.py": "a609ead1cc35b70e004eca3c96bd39e73d7946554a7d3c624cb426f6ec4f3d3f",
-    "addons/erpec_payroll/hooks.py": "1ee57f0cbf1955c6072226eb647806463b18ce20a7f358246367fa00e69e81c8",
-    "addons/erpec_payroll/models.py": "55b9f40a7b4aeea706bdf40d200f137e3440fe9d3591ee32f4a88334613086f6",
-    "addons/erpec_payroll/tests/test_legal_parameters.py": "f938f5a6ee70676cc8c1a19f16cab5e5d3b263ab740e9b2e80e830523e2c3a73",
-    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "8e186f772600d2ee33a1de78ddc7c60411bdfac484ffd51f65ac458a88366192",
-    "docs/evidencias/AuditLock.before-OP10-A1B-20260917T193459Z.json": "0e398574e77b244a40c5b219a401f51889750846fb9d9536a5daaa3978f1c146",
-    "docs/evidencias/ERPEC26-OP10-A1B-SIEMBRA-AUTOMATICA-20260917.json": "8f6c3f54088d945ea6a144f4c4bec1f04b46b38af18928af4b99758863d33791"
+    ".github/CODEX_CONTEXT.md": "376f489c2cd41b7bb8ddd1d278058ddbfde9be364bd1d7f3dcc91de5c918546d",
+    "addons/erpec_payroll/ir.model.access.csv": "3df5ef995d1e6413fcb7edb591032f054ea48f3b1b678733b1aa93cd650567cd",
+    "addons/erpec_payroll/models.py": "091b5e4403f0c70a25c0fd43cc98a01b28d61e8b02408f9d1103eab39ed2da04",
+    "addons/erpec_payroll/tests/__init__.py": "387b82fbf55a5c22d3b9ac7c80500587b5a2e85518f3410df19a4aca12412dfb",
+    "addons/erpec_payroll/tests/test_legal_parameters.py": "a951ec21c5a975d599fc25a4abaf02aee7ec631d07b9ce858ec7040f24bf6cd5",
+    "addons/erpec_payroll/views.xml": "8390ca40fc29cf293b1ea42fda1e3030e76f001f3dbc8d4e0fe277fe778e2ffe",
+    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "61e4453f5181353a7a9cc229244cee63439aa1ac19919b71759be859a755c1d1",
+    "docs/evidencias/AuditLock.before-OP10-A1-20260917T181418Z.json": "13eff54ea05b5c61637ab0923304edf206728bb13a47b9f698e15ec647659eab",
+    "docs/evidencias/ERPEC26-OP10-A1-PARAMETROS-LEGALES-20260917.json": "2b35c78434786f33a7beb5b83d6772100d26835adea41b38b302ec2a7c65238d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-A1B-20260917T193459Z.json",
-  "previousAuditLockHash": "0e398574e77b244a40c5b219a401f51889750846fb9d9536a5daaa3978f1c146",
-  "signature": "1c825e85146cb8ceaf26a84ce7fd78bf9c3c4c39ee847346597853c8b1a5ef98",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-A1-20260917T181418Z.json",
+  "previousAuditLockHash": "13eff54ea05b5c61637ab0923304edf206728bb13a47b9f698e15ec647659eab",
+  "signature": "b3a57911f7c858918b00e8428d2d879be9a14a4671c34579a706a62d9f87581d",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

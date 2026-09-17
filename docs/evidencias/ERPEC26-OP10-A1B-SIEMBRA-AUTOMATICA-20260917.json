@@ -1,0 +1,67 @@
+{
+  "recordedAt": "2026-09-17T19:35:00.000Z",
+  "scope": "OP10-A1b: siembra automatica de la version de parametros legales del anio vigente al instalar erpec_payroll, para no reconfigurar desde cero en cada cliente nuevo (modelo un-tenant-una-base de OP08).",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "authorization": "Titular confirmo el fix de la caida del menu (cache del navegador) y pidio explicitamente revisar en nuevo_nomina el script/procedimiento de carga de parametros legales, senalando que no es eficiente reconfigurar desde cero en cada cliente nuevo.",
+  "referenceResearch": {
+    "project": "C:\\proyectos web\\nuevo_nomina",
+    "file": "backend/src/services/legalParameterService.js",
+    "codeChanges": "Ninguno; solo lectura",
+    "pattern": "SQL con (tenant_id = $2 OR tenant_id IS NULL) ORDER BY CASE WHEN tenant_id=$2 THEN 0 ELSE 1 END ... LIMIT 1: prioriza el override del cliente y cae automaticamente al valor global si no existe uno propio. Un cliente nuevo hereda los parametros nacionales sin ninguna configuracion; solo se crea una fila propia si necesita desviarse.",
+    "whyNotDirectlyApplicable": "nuevo_nomina es una sola base de datos compartida con columna tenant_id (multi-tenencia por fila); este proyecto usa una base de datos separada por cliente (modelo OP08), por lo que no existe una 'fila global visible entre bases' -- el equivalente correcto es sembrar en el momento de instalar el modulo en cada base, no en tiempo de lectura"
+  },
+  "implementation": {
+    "newFile": "addons/erpec_payroll/hooks.py (post_init_hook)",
+    "manifestChange": "version 18.0.1.1.0 -> 18.0.1.2.0; agrega 'post_init_hook': 'post_init_hook'",
+    "seedSource": "parameters_ec2026.PARAMS (fuente oficial verificada, SOURCES citadas) -- nunca demo_parameters.PARAMS (explicitamente sintetico) ni otro anio sin tabla verificada",
+    "seedYear": 2026,
+    "modelChange": "erpec.payroll.policy.journal_id ya no es required=True (antes si); action_activate() ya exigia un diario valido de la misma empresa y sigue haciendolo, ahora es la unica puerta que lo requiere"
+  },
+  "bugsFoundAndFixedDuringTesting": [
+    {
+      "bug": "El hook original creaba/reutilizaba un diario de nomina al sembrar. En una instalacion real (-i erpec_payroll con toda su cadena de dependencias en un solo lote), un modulo posterior del mismo lote (l10n_ec_stock, al cargar el plan de cuentas) intento reemplazar ese diario provisional y la base de datos lo rechazo.",
+      "evidence": "psycopg2.errors.ForeignKeyViolation: update or delete on table account_journal violates foreign key constraint erpec_payroll_policy_journal_id_fkey -- reproducido con exit code distinto de 0 en una corrida real de la bateria de pruebas, no solo en teoria",
+      "fix": "Primer intento: detectar si ya existe un diario 'general' antes de crear uno. Insuficiente: reusar el diario provisional existente (id=1) tiene el mismo problema."
+    },
+    {
+      "bug": "Intento de deteccion 'account.account.company_id' fallo: ese campo no existe en esta version de Odoo (es company_ids, de muchos a muchos).",
+      "evidence": "ValueError: Invalid field account.account.company_id in leaf ('company_id', '=', 1) -- fallo real al cargar el registro de modulos durante la instalacion",
+      "fix": "Corregido a company_ids, pero la señal seguia sin ser confiable (ver siguiente bug)."
+    },
+    {
+      "bug": "Intento de deteccion via company.chart_template tampoco fue confiable: Odoo aplica un plan de cuentas generico por defecto incluso sin l10n_ec instalado, por lo que chart_template ya esta establecido antes de que el plan especifico de Ecuador se aplique/reemplace journals.",
+      "evidence": "Prueba fallida real: AssertionError comprobando que el hook no sembraba sin plan de cuentas -- si sembro, porque chart_template ya estaba establecido",
+      "fix": "Solucion final: eliminar por completo la dependencia de diario/plan de cuentas del hook. Los parametros legales no necesitan un diario para existir; se quito required=True de journal_id, y action_activate() (que ya lo exigia) sigue siendo la unica puerta que lo requiere antes de calcular nomina real."
+    }
+  ],
+  "tests": {
+    "newTests": 3,
+    "totalModuleTests": 33,
+    "failed": 0,
+    "errors": 0,
+    "coverage": ["el hook siembra la version nacional sin depender de diario ni plan de cuentas", "journal_id queda vacio tras sembrar (no se inventa ni se busca)", "action_activate() sigue bloqueado sin diario asignado, y funciona una vez asignado", "idempotencia: llamar el hook dos veces no duplica la version sembrada"],
+    "environment": "Base PostgreSQL aislada y nueva (template0) con -i erpec_payroll (instalacion real desde cero, no -u), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\payroll-legal-params-install-20260917-143239",
+    "note": "La demo ya tenia erpec_payroll instalado antes de este incremento, por lo que post_init_hook no se re-disparo alli (solo corre en instalacion fresca, no en actualizacion) -- la verificacion real del hook se hizo en la base aislada con -i real",
+    "formCompiles": true,
+    "businessRecordsCreated": false
+  },
+  "checks": [
+    "Patron de nuevo_nomina investigado y adaptado correctamente al modelo de base-por-cliente de este proyecto (no una copia literal, que no habria aplicado)",
+    "Tres bugs reales encontrados y corregidos durante pruebas reales de instalacion desde cero, no solo revisados en teoria",
+    "33/33 pruebas del modulo, 0 fallos/errores, en base aislada y nueva instalada desde cero",
+    "Reinstalado en demo con respaldo previo; formulario compila; sin registros de negocio creados"
+  ],
+  "pending": [
+    "OP10-B1/B2: modelo y registro de control de visitas de vendedores",
+    "OP10-A2/A3/A4: reportes de nomina, envio automatico de roles, carga de saldos iniciales",
+    "OP10-B3: reportes de cumplimiento de visitas",
+    "Agregar erpec_payroll al conjunto de modulos que instala scripts/provision-worker.py para clientes nuevos -- hoy ese script solo instala base,l10n_ec,erpec_base (pendiente ya documentado en OP07, no ampliado en este incremento)"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}
