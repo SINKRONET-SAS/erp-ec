@@ -113,6 +113,20 @@ class Policy(models.Model):
     journal_id = fields.Many2one('account.journal','Diario de nómina')
     _sql_constraints = [('version_unique','unique(company_id,name)','La versión ya existe en esta empresa.')]
 
+    def action_reload_from_json(self):
+        """Rellena los campos tipados a partir del `parameters` ya guardado. Necesario para
+        versiones creadas antes de que existieran los campos tipados (una actualización de
+        módulo agrega columnas nuevas con su valor por defecto en cero; no reescribe registros
+        existentes) -- bug real encontrado por el titular en una versión activa del 11-09-2026
+        que mostraba ceros en "Parámetros legales" pese a tener un JSON correcto. Funciona
+        también sobre una versión ya activa (usa el token interno dentro de
+        _apply_parameters_json), porque no cambia ningún valor: solo hace visibles como campos
+        los mismos datos que ya estaban en el JSON."""
+        self.check_access('write')
+        for policy in self:
+            policy._apply_parameters_json(policy.parameters)
+        return True
+
     def action_activate(self):
         self.ensure_one(); manager(self.env);self.check_access('write')
         self.env.cr.execute('UPDATE erpec_payroll_policy SET write_date=NOW() WHERE id=%s',[self.id]);self.invalidate_recordset()

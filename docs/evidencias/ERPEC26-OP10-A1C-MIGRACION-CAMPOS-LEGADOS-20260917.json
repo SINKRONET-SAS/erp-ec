@@ -1,0 +1,48 @@
+{
+  "recordedAt": "2026-09-17T20:40:00.000Z",
+  "scope": "OP10-A1c: correccion de un bug real reportado por el titular con captura de pantalla -- una version activa creada antes de los campos tipados los mostraba en cero pese a tener un JSON correcto.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "userReport": {
+    "evidence": "Dos capturas de pantalla del titular: pestana 'Parametros legales' de la version 'Ecuador 2026 - privado general v1' (activa, empresa 'Comercial Andina DEMO') mostrando todos los campos en 0,00 y la tabla de tramos de renta vacia; pestana 'Parametros aplicados' de la MISMA version mostrando los valores reales correctos (SBU USD 482.00, IESS 9.45%/11.15%, tabla de renta completa)",
+    "userQuote": "no veo botones de carga de los parametros legales"
+  },
+  "rootCause": "El registro se creo el 11-09-2026, antes del incremento OP10-A1 (17-09-2026) que agrego los campos tipados. Actualizar el modulo agrega columnas nuevas via ALTER TABLE con su valor por defecto (cero); no reescribe registros ya guardados. La sincronizacion Policy._apply_parameters_json() solo se dispara desde dentro de create()/write(), nunca corrio retroactivamente sobre datos preexistentes -- brecha real de migracion que no se habia cubierto en A1/A1b.",
+  "fix": {
+    "mechanism1": "Boton 'Recargar campos legales desde JSON' (action_reload_from_json) en el formulario -- autoservicio, funciona incluso sobre una version ya activa sin desactivarla primero (usa el token interno dentro de _apply_parameters_json)",
+    "mechanism2": "Migracion real (migrations/18.0.1.3.0/post-migrate.py), version del modulo subida de 18.0.1.2.0 a 18.0.1.3.0 para dispararla en la proxima actualizacion de cualquier base -- corrige automaticamente toda version cuyo minimum_salary siga en cero pero ya tenga un parameters JSON valido, sin depender de que alguien note el problema"
+  },
+  "tests": {
+    "newTests": 4,
+    "totalModuleTests": 36,
+    "failed": 0,
+    "errors": 0,
+    "coverage": ["el boton corrige una version 'legada' simulada (campos en cero, JSON correcto)", "el boton funciona sobre una version ya activada, no solo en borrador", "el script de migracion (importado y ejecutado directamente en la prueba) corrige el mismo caso automaticamente"],
+    "bugFoundWhileWritingTests": "El primer intento de simular una version legada uso SQL directo (UPDATE ... SET minimum_salary=0) seguido de invalidate_recordset(); la asercion seguia leyendo el valor viejo (480.0 != 0). Corregido usando policy.with_context(_erpec_payroll_token=_INTERNAL).write({...}) -- el camino normal del ORM, que no se desincroniza de la cache del recordset como el SQL crudo mezclado con invalidate_recordset() sí lo hizo en la practica.",
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "backup": "ver resultado en .cache/windows/payroll-legal-params-install-result.json (backup mas reciente en .cache/windows/backups/payroll-legal-params-install-*)",
+    "realFixVerified": {
+      "method": "Lectura real por XML-RPC del registro exacto de la captura del titular tras reinstalar (id=1, 'Ecuador 2026 - privado general v1')",
+      "before": "minimum_salary=0, personal_rate=0, employer_rate=0 (segun la captura del titular)",
+      "after": "minimum_salary=482.0, personal_rate=0.0945, employer_rate=0.1115 -- coincide con 'Parametros aplicados'"
+    },
+    "businessRecordsCreated": false
+  },
+  "checks": [
+    "Bug real reportado por el titular con evidencia visual (dos capturas), no solo hipotetico",
+    "Causa raiz identificada correctamente: migracion de datos existentes, no un fallo del mecanismo de sincronizacion hacia adelante (que ya funcionaba bien para registros nuevos)",
+    "Dos mecanismos de correccion, no solo uno: boton de autoservicio + migracion automatica",
+    "36/36 pruebas del modulo, 0 fallos/errores",
+    "Corregido en la demo y verificado por API contra el registro exacto de la captura del titular"
+  ],
+  "pending": [
+    "OP10-B1/B2: modelo y registro de control de visitas de vendedores",
+    "OP10-A2/A3/A4: reportes de nomina, envio automatico de roles, carga de saldos iniciales",
+    "OP10-B3: reportes de cumplimiento de visitas"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

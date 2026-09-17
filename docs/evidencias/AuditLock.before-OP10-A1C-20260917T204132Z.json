@@ -4,23 +4,15 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T20:41:32.044Z",
+  "updatedAt": "2026-09-17T20:25:47.598Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "addons/erpec_payroll/__manifest__.py",
-    "addons/erpec_payroll/migrations/18.0.1.3.0/post-migrate.py",
-    "addons/erpec_payroll/models.py",
-    "addons/erpec_payroll/tests/test_legal_parameters.py",
-    "addons/erpec_payroll/views.xml",
-    "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
-    "docs/evidencias/AuditLock.before-OP10-A1C-20260917T204132Z.json",
-    "docs/evidencias/ERPEC26-OP10-A1C-MIGRACION-CAMPOS-LEGADOS-20260917.json"
+    "docs/evidencias/AuditLock.before-WKHTMLTOPDF-FIX-20260917T202547Z.json"
   ],
   "validationChecks": [
-    "OP10-A1c: bug real reportado por el titular con dos capturas de pantalla -- version activa creada antes de OP10-A1 mostraba campos tipados en cero pese a JSON correcto; causa raiz correctamente identificada (falta de migracion retroactiva, no un fallo del mecanismo hacia adelante)",
-    "Dos mecanismos de correccion: boton de autoservicio (funciona sobre version activa) + migracion automatica real (migrations/18.0.1.3.0/post-migrate.py)",
-    "36/36 pruebas del modulo (33 previas + 4 nuevas), 0 fallos/errores; bug real encontrado y corregido al escribir la prueba (SQL directo + invalidate_recordset no reflejaba el cambio, corregido con write() y el token interno)",
-    "Reinstalado en demo; confirmado por API que el registro exacto de la captura del titular ya muestra los valores reales correctos"
+    "wkhtmltopdf instalado (release oficial 0.12.6-1 msvc2015-win64, Qt parcheado) tras reporte real del titular; verificado con peticion HTTP real (GET /report/pdf/sale.report_saleorder/2 -> 200, PDF valido de 19556 bytes) contra la demo reiniciada",
+    "No es una regresion de este proyecto: dependencia del sistema que nunca se instalo en esta maquina; no afecta el RIDE nativo de erpec_fiscal_sri (usa reportlab, no wkhtmltopdf)",
+    "Cambio de entorno, no de codigo del repositorio: unico archivo tocado es CODEX_CONTEXT.md, para continuidad entre sesiones"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -72,19 +64,12 @@
     "OP10-B3: reportes de cumplimiento de visitas (aun sin implementar)"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "9d721e93c44568ecc497e04ab7cdd7bcaa09f5f95981de9ee8c0c42a664720f5",
-    "addons/erpec_payroll/__manifest__.py": "e59948a58e26596b87b9012a3f4cc3371265c4cbbcb31e8907ca1a4c22df5bc6",
-    "addons/erpec_payroll/migrations/18.0.1.3.0/post-migrate.py": "616bcc776f866bb3b8c9c50c89db082083fe87daf7325fdf4a3b646bab475959",
-    "addons/erpec_payroll/models.py": "4df8ff527978e865cbbe4b5ffcd43ca7abdccc4175ac923e350e56653607231a",
-    "addons/erpec_payroll/tests/test_legal_parameters.py": "38870b2990092bf7466ec6b558eebd3ed53b98a57253faf36b665de08802de09",
-    "addons/erpec_payroll/views.xml": "ca89899c3da6760d78bfe48d675be64b13e5894af31a30b42a58aa9504810383",
-    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "fb638e24447029d2338be5c9a139bff4ecf639050251d8e4cabee205f9e1abb3",
-    "docs/evidencias/AuditLock.before-OP10-A1C-20260917T204132Z.json": "032572c0e4509c747ce397602cc086aa1d648a6359fea5f5986c2e0f0d522413",
-    "docs/evidencias/ERPEC26-OP10-A1C-MIGRACION-CAMPOS-LEGADOS-20260917.json": "612f019ef0a71e1e3734098b7e0af17ce64e02d6420369feb2d8381ce625f761"
+    ".github/CODEX_CONTEXT.md": "e0e365a259c4caf57f271d47a4f91e0f2b5e9ed73646c2d9dd75dc1b225aa709",
+    "docs/evidencias/AuditLock.before-WKHTMLTOPDF-FIX-20260917T202547Z.json": "ebafd2e27539f9e841a2e430bc917daedde268911125cffa2ebb54d67a3fccc5"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-A1C-20260917T204132Z.json",
-  "previousAuditLockHash": "032572c0e4509c747ce397602cc086aa1d648a6359fea5f5986c2e0f0d522413",
-  "signature": "99d1c3d3007c6ef61eb77268f41fc079d53df3787e5e391bc8d4ea0bd9a22bcc",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-WKHTMLTOPDF-FIX-20260917T202547Z.json",
+  "previousAuditLockHash": "ebafd2e27539f9e841a2e430bc917daedde268911125cffa2ebb54d67a3fccc5",
+  "signature": "d070cd0254708b901d355d731f97b333f9c51687f452b9cf474b6a1a96359764",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

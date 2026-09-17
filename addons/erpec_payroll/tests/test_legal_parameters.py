@@ -115,3 +115,49 @@ class LegalParameterCase(TransactionCase):
         post_init_hook(self.env)
         self.assertEqual(self.env['erpec.payroll.policy'].search_count([
             ('company_id', '=', self.env.company.id), ('year', '=', SEED_YEAR)]), 1)
+
+    def _simulate_legacy_policy_created_before_typed_fields(self):
+        """Una actualización de módulo agrega columnas nuevas con su valor por defecto (cero)
+        sin reescribir registros ya guardados -- así queda una versión creada antes de que
+        existieran los campos tipados: parameters con datos reales, campos tipados en cero."""
+        from ..models import _INTERNAL, STRUCTURED_PARAMETER_FIELDS
+        policy = self.env['erpec.payroll.policy'].create(self._base_values(parameters=json.dumps(PARAMS)))
+        # write() con el token interno: evita _sync_parameters_json() (que si corriera,
+        # reconstruiría `parameters` desde estos ceros y arruinaría la simulación), pero sigue
+        # siendo el camino normal del ORM -- a diferencia de SQL crudo, no se desincroniza de
+        # la caché del recordset.
+        policy.with_context(_erpec_payroll_token=_INTERNAL).write({key: 0 for key in STRUCTURED_PARAMETER_FIELDS})
+        policy.tax_bracket_ids.with_context(_erpec_payroll_token=_INTERNAL).unlink()
+        self.assertEqual(policy.minimum_salary, 0)
+        self.assertFalse(policy.tax_bracket_ids)
+        return policy
+
+    def test_action_reload_from_json_fixes_legacy_zeroed_policy(self):
+        policy = self._simulate_legacy_policy_created_before_typed_fields()
+        policy.action_reload_from_json()
+        self.assertEqual(policy.minimum_salary, PARAMS['minimum_salary'])
+        self.assertEqual(len(policy.tax_bracket_ids), len(PARAMS['tax_brackets']))
+
+    def test_action_reload_from_json_works_on_active_policy(self):
+        """El bug real reportado por el titular ocurrió sobre una versión ya activa; el botón
+        debe poder corregirla sin necesidad de desactivarla primero."""
+        policy = self._simulate_legacy_policy_created_before_typed_fields()
+        policy.action_activate()
+        self.assertEqual(policy.state, 'active')
+        policy.action_reload_from_json()
+        self.assertEqual(policy.minimum_salary, PARAMS['minimum_salary'])
+        self.assertEqual(len(policy.tax_bracket_ids), len(PARAMS['tax_brackets']))
+
+    def test_migration_script_fixes_legacy_policies_automatically(self):
+        import importlib.util
+        from pathlib import Path
+        policy = self._simulate_legacy_policy_created_before_typed_fields()
+        spec = importlib.util.spec_from_file_location(
+            'post_migrate_1_3_0',
+            Path(__file__).resolve().parents[1] / 'migrations' / '18.0.1.3.0' / 'post-migrate.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.migrate(self.env.cr, '18.0.1.3.0')
+        policy.invalidate_recordset()
+        self.assertEqual(policy.minimum_salary, PARAMS['minimum_salary'])
+        self.assertEqual(len(policy.tax_bracket_ids), len(PARAMS['tax_brackets']))
