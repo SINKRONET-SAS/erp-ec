@@ -1,0 +1,57 @@
+<odoo>
+<record id="site_list" model="ir.ui.view"><field name="name">erpec.route.site.list</field><field name="model">erpec.route.site</field><field name="arch" type="xml"><list><field name="name"/><field name="partner_id"/><field name="latitude"/><field name="longitude"/><field name="radius_meters"/><field name="min_accuracy_meters"/></list></field></record>
+<record id="site_form" model="ir.ui.view"><field name="name">erpec.route.site.form</field><field name="model">erpec.route.site</field><field name="arch" type="xml"><form><sheet><group><field name="name"/><field name="partner_id"/><field name="company_id"/></group>
+<group string="Geocerca"><field name="latitude"/><field name="longitude"/><field name="radius_meters"/><field name="min_accuracy_meters"/></group>
+</sheet></form></field></record>
+<record id="site_action" model="ir.actions.act_window"><field name="name">Sitios de visita</field><field name="res_model">erpec.route.site</field><field name="view_mode">list,form</field></record>
+
+<record id="visit_wizard_form" model="ir.ui.view"><field name="name">erpec.route.visit.wizard.form</field><field name="model">erpec.route.visit.wizard</field><field name="arch" type="xml"><form><group><field name="stop_id" invisible="1"/><field name="mark_type" invisible="1"/><field name="latitude"/><field name="longitude"/><field name="accuracy_meters"/></group>
+<footer><button name="action_confirm" type="object" string="Registrar" class="oe_highlight"/><button special="cancel" string="Cancelar"/></footer></form></field></record>
+<record id="visit_wizard_checkin_action" model="ir.actions.act_window"><field name="name">Check-in</field><field name="res_model">erpec.route.visit.wizard</field><field name="view_mode">form</field><field name="target">new</field></record>
+<record id="visit_wizard_checkout_action" model="ir.actions.act_window"><field name="name">Check-out</field><field name="res_model">erpec.route.visit.wizard</field><field name="view_mode">form</field><field name="target">new</field></record>
+
+<record id="omit_wizard_form" model="ir.ui.view"><field name="name">erpec.route.omit.wizard.form</field><field name="model">erpec.route.omit.wizard</field><field name="arch" type="xml"><form><group><field name="stop_id" invisible="1"/><field name="reason"/></group>
+<footer><button name="action_confirm" type="object" string="Omitir parada" class="oe_highlight"/><button special="cancel" string="Cancelar"/></footer></form></field></record>
+<record id="omit_wizard_action" model="ir.actions.act_window"><field name="name">Omitir parada</field><field name="res_model">erpec.route.omit.wizard</field><field name="view_mode">form</field><field name="target">new</field></record>
+
+<record id="unplanned_wizard_form" model="ir.ui.view"><field name="name">erpec.route.unplanned.wizard.form</field><field name="model">erpec.route.unplanned.wizard</field><field name="arch" type="xml"><form><group><field name="route_day_id" invisible="1"/><field name="site_id"/><field name="reason"/></group>
+<footer><button name="action_confirm" type="object" string="Agregar parada" class="oe_highlight"/><button special="cancel" string="Cancelar"/></footer></form></field></record>
+<record id="unplanned_wizard_action" model="ir.actions.act_window"><field name="name">Agregar parada no planificada</field><field name="res_model">erpec.route.unplanned.wizard</field><field name="view_mode">form</field><field name="target">new</field></record>
+
+<record id="day_list" model="ir.ui.view"><field name="name">erpec.route.day.list</field><field name="model">erpec.route.day</field><field name="arch" type="xml"><list decoration-muted="state == 'cancelled'"><field name="date"/><field name="employee_id"/><field name="state"/><field name="planned_stop_count"/><field name="completed_stop_count"/><field name="completion_rate" widget="percentage"/><field name="within_geofence_rate" widget="percentage"/></list></field></record>
+<record id="day_form" model="ir.ui.view"><field name="name">erpec.route.day.form</field><field name="model">erpec.route.day</field><field name="arch" type="xml"><form><header>
+<button name="action_start" type="object" string="Iniciar" class="oe_highlight" invisible="state != 'planned'"/>
+<button name="action_complete" type="object" string="Cerrar día" class="oe_highlight" invisible="state != 'in_progress'"/>
+<button name="action_cancel" type="object" string="Cancelar" invisible="state in ('completed','cancelled')"/>
+<button name="%(unplanned_wizard_action)d" type="action" string="Agregar parada no planificada" context="{'default_route_day_id': id}" invisible="state not in ('planned','in_progress') or not allow_unplanned"/>
+<field name="state" widget="statusbar"/></header>
+<sheet><group><group><field name="employee_id"/><field name="company_id"/><field name="date"/></group>
+<group><field name="allow_unplanned"/><field name="planned_stop_count"/><field name="completed_stop_count"/><field name="completion_rate" widget="percentage"/><field name="within_geofence_rate" widget="percentage"/></group></group>
+<field name="stop_ids" readonly="state in ('completed','cancelled')"><list editable="bottom" decoration-muted="state == 'omitted'" decoration-success="state == 'completed'">
+<field name="sequence" widget="handle"/><field name="site_id"/><field name="planned"/><field name="state"/>
+<button name="%(visit_wizard_checkin_action)d" type="action" string="Check-in" context="{'default_stop_id': id, 'default_mark_type': 'checkin'}" invisible="state != 'pending'"/>
+<button name="%(visit_wizard_checkout_action)d" type="action" string="Check-out" context="{'default_stop_id': id, 'default_mark_type': 'checkout'}" invisible="state != 'started'"/>
+<button name="%(omit_wizard_action)d" type="action" string="Omitir" context="{'default_stop_id': id}" invisible="state != 'pending'"/>
+</list></field>
+</sheet><chatter/></form></field></record>
+<record id="day_action" model="ir.actions.act_window"><field name="name">Días de ruta</field><field name="res_model">erpec.route.day</field><field name="view_mode">list,form</field></record>
+
+<record id="mark_list" model="ir.ui.view"><field name="name">erpec.route.visit.mark.list</field><field name="model">erpec.route.visit.mark</field><field name="arch" type="xml"><list decoration-danger="not within_geofence" decoration-warning="low_accuracy" create="false" edit="false"><field name="timestamp"/><field name="stop_id"/><field name="mark_type"/><field name="distance_meters"/><field name="within_geofence"/><field name="low_accuracy"/></list></field></record>
+<record id="mark_action" model="ir.actions.act_window"><field name="name">Marcas de visita</field><field name="res_model">erpec.route.visit.mark</field><field name="view_mode">list</field></record>
+
+<record id="exception_list" model="ir.ui.view"><field name="name">erpec.route.exception.list</field><field name="model">erpec.route.exception</field><field name="arch" type="xml"><list decoration-warning="state == 'pending'" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'"><field name="create_date"/><field name="exception_type"/><field name="stop_id"/><field name="state"/><field name="reason"/></list></field></record>
+<record id="exception_form" model="ir.ui.view"><field name="name">erpec.route.exception.form</field><field name="model">erpec.route.exception</field><field name="arch" type="xml"><form><header>
+<button name="action_approve" type="object" string="Aprobar" class="oe_highlight" invisible="state != 'pending'"/>
+<button name="action_reject" type="object" string="Rechazar" invisible="state != 'pending'"/>
+<field name="state" widget="statusbar"/></header>
+<sheet><group><field name="exception_type"/><field name="stop_id"/><field name="mark_id"/><field name="reason"/></group>
+<group string="Revisión" invisible="state == 'pending'"><field name="resolution"/><field name="reviewed_by"/><field name="reviewed_at"/></group>
+</sheet></form></field></record>
+<record id="exception_action" model="ir.actions.act_window"><field name="name">Excepciones de visitas</field><field name="res_model">erpec.route.exception</field><field name="view_mode">list,form</field></record>
+
+<menuitem id="routes_root" name="Visitas" parent="erpec_base.suite_root" sequence="17" groups="group_route_manager,group_route_rep"/>
+<menuitem id="day_menu" name="Días de ruta" parent="routes_root" action="day_action" sequence="10"/>
+<menuitem id="site_menu" name="Sitios de visita" parent="routes_root" action="site_action" sequence="20" groups="group_route_manager"/>
+<menuitem id="exception_menu" name="Excepciones" parent="routes_root" action="exception_action" sequence="30" groups="group_route_manager"/>
+<menuitem id="mark_menu" name="Marcas de visita" parent="routes_root" action="mark_action" sequence="40" groups="group_route_manager"/>
+</odoo>

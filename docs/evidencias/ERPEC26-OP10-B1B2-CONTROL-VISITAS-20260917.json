@@ -1,0 +1,57 @@
+{
+  "recordedAt": "2026-09-17T23:05:00.000Z",
+  "scope": "OP10-B1/B2: nuevo addon erpec_field_routes -- modelo de datos y registro de check-in/check-out de visitas de vendedores por zona (geocerca), inspirado en sinkroniq-mobile y nuevo_nomina.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "newAddon": "erpec_field_routes",
+  "newModels": ["erpec.route.site", "erpec.route.day", "erpec.route.stop", "erpec.route.visit.mark", "erpec.route.exception", "erpec.route.visit.wizard", "erpec.route.omit.wizard", "erpec.route.unplanned.wizard"],
+  "designSource": "Patron RouteSite/RouteDay/RouteStop/RouteVisitMark/RouteException confirmado de forma independiente en sinkroniq-mobile (backend/prisma/schema.prisma) y en nuevo_nomina (routeVisitService.js) -- solo lectura, sin modificar ninguna referencia, sin copiar codigo ni datos.",
+  "adaptations": [
+    "hr.employee/res.partner en vez de tablas propias de vendedor/cliente",
+    "Sin app movil nativa en este alcance -- tres wizards (check-in/check-out, omitir, agregar no planificada) para capturar latitud/longitud/precision manualmente desde un navegador de escritorio",
+    "Distancia Haversine calculada en Python puro (sin dependencia nueva)",
+    "Marca fuera de geocerca o con precision GPS baja se guarda igual (no bloquea) y genera una excepcion revisable -- mismo comportamiento soft-fail que la referencia",
+    "Aislamiento por empresa (ir.rule por company_id) y por vendedor (ir.rule: un vendedor solo ve sus propios dias/paradas/marcas via employee_id.user_id)"
+  ],
+  "bugsFoundAndFixedDuringTesting": [
+    {"bug": "Tres formularios de wizard (visit/omit/unplanned) con <form> sin cerrar", "evidence": "lxml.etree.XMLSyntaxError real al instalar: 'Opening and ending tag mismatch: form line 39 and field'", "fix": "Agregado </form> antes de </field></record> en los tres"},
+    {"bug": "__manifest__.py declaraba depends: ['hr','base'] pero el menu usa erpec_base.suite_root", "evidence": "ValueError real: 'External ID not found in the system: erpec_base.suite_root'", "fix": "Cambiado a depends: ['hr','erpec_base']"},
+    {"bug": "day_form referenciaba %(unplanned_wizard_action)d antes de que ese registro existiera en el mismo archivo XML (Odoo carga en orden de aparicion)", "evidence": "ValueError real: 'External ID not found in the system: erpec_field_routes.unplanned_wizard_action'", "fix": "Reordenado views.xml: wizards definidos antes de day_form"},
+    {"bug": "action_checkin/action_checkout/action_add_unplanned_stop devolvian un recordset; action_start/action_complete/action_cancel/action_omit/action_approve/action_reject no devolvian nada", "evidence": "Encontrado en un ensayo real por XML-RPC (no en las pruebas internas de Odoo, que no pasan por el serializador XML-RPC): TypeError real 'cannot marshal <class odoo.api.erpec.route.visit.mark> objects' y luego 'cannot marshal None unless allow_none is enabled'", "fix": "Los metodos que creaban registros ahora devuelven su id (entero, serializable); los que solo cambian estado devuelven True explicito -- misma convencion ya usada en el resto del proyecto (p. ej. erpec.payroll.policy.action_activate)"}
+  ],
+  "tests": {
+    "totalTests": 19,
+    "failed": 0,
+    "errors": 0,
+    "coverage": ["formula de Haversine contra una distancia conocida", "validacion de coordenadas y geocerca positiva", "unicidad de dia por empleado/fecha", "visita completa dentro de geocerca sin excepcion", "check-in fuera de geocerca: soft-fail con excepcion geofence_violation", "check-in con precision GPS baja: excepcion low_accuracy", "check-out antes de check-in bloqueado", "doble check-in bloqueado", "omision requiere motivo y genera excepcion", "parada no planificada requiere motivo y bandera allow_unplanned", "cierre de dia bloqueado con paradas planificadas pendientes", "inmutabilidad de marcas de visita (write/unlink/create directo bloqueados)", "excepciones no se crean a mano", "flujo de aprobar/rechazar excepcion", "estado de parada inmutable fuera de las acciones", "wizards invocan las acciones subyacentes correctamente", "aislamiento por empresa y por vendedor (ir.rule + AccessError)"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "note": "El admin de la demo no recibe automaticamente ningun grupo de negocio nuevo (mismo patron que otros grupos erpec_*); se le asigno explicitamente group_route_manager como parte del script de instalacion, igual que se haria manualmente desde Ajustes en un despliegue real",
+    "viewsCompiled": ["erpec.route.site", "erpec.route.day"],
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "XML-RPC real contra la demo ya corriendo (no simulado): crea un sitio, un dia de ruta con dos paradas, registra una visita dentro de geocerca y otra fuera, cierra el dia",
+    "results": {
+      "stopWithinGeofence": "completed, sin excepcion",
+      "stopOutsideGeofence": {"distance_meters": 2001.5086796020557, "within_geofence": false, "exceptionAutoCreated": {"type": "geofence_violation", "reason": "Marca a 2002 m del sitio (radio permitido 150 m)", "state": "pending"}},
+      "dayClosed": {"state": "completed", "completion_rate": 100.0, "within_geofence_rate": 50.0}
+    },
+    "conclusion": "Confirma la logica de negocio completa (geocerca, soft-fail, excepcion automatica, metricas de cumplimiento) funcionando de punta a punta contra una instancia Odoo real, no solo en pruebas aisladas"
+  },
+  "demoResidualArtifacts": {
+    "created": ["hr.employee sintetico", "erpec.route.site sintetico", "erpec.route.day/stop/visit.mark/exception sinteticos del ensayo"],
+    "removable": false,
+    "reason": "erpec.route.visit.mark y erpec.route.exception tienen unlink() bloqueado (conservacion de auditoria); el ondelete='cascade' hacia ellos desde stop/day tambien bloquea borrar sus padres. Documentados aqui como sinteticos, sin efecto de negocio real."
+  },
+  "pending": [
+    "OP10-A2/A3/A4: reportes de nomina, envio automatico de roles, carga de saldos iniciales",
+    "OP10-B3: reportes de cumplimiento de visitas (completado/omitido/no planificado por vendedor/zona/dia, exportable)",
+    "erpec_field_routes no forma parte del conjunto de modulos que instala scripts/provision-worker.py para clientes nuevos -- mismo pendiente ya documentado para erpec_payroll en OP10-A1b/OP07"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

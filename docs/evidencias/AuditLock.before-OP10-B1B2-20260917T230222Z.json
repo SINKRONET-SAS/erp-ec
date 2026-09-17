@@ -4,27 +4,16 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T23:02:22.193Z",
+  "updatedAt": "2026-09-17T21:00:53.699Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "addons/erpec_field_routes/__init__.py",
-    "addons/erpec_field_routes/__manifest__.py",
-    "addons/erpec_field_routes/ir.model.access.csv",
-    "addons/erpec_field_routes/models.py",
-    "addons/erpec_field_routes/security.xml",
-    "addons/erpec_field_routes/tests/__init__.py",
-    "addons/erpec_field_routes/tests/test_routes.py",
-    "addons/erpec_field_routes/views.xml",
     "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
-    "docs/evidencias/AuditLock.before-OP10-B1B2-20260917T230222Z.json",
-    "docs/evidencias/ERPEC26-OP10-B1B2-CONTROL-VISITAS-20260917.json"
+    "docs/evidencias/AuditLock.before-NAVEGACION-HALLAZGO-20260917T210053Z.json"
   ],
   "validationChecks": [
-    "OP10-B1/B2: nuevo addon erpec_field_routes, patron RouteSite/RouteDay/RouteStop/RouteVisitMark/RouteException confirmado de forma independiente en sinkroniq-mobile y nuevo_nomina, adaptado sin copiar codigo",
-    "Cuatro bugs reales encontrados y corregidos durante instalacion real desde cero y ensayo por XML-RPC (no solo pruebas internas de Odoo): XML de wizards sin cerrar, dependencia erpec_base faltante, orden de definicion de acciones referenciadas, y metodos no seguros para XML-RPC/JSON-RPC (recordset o None no serializables)",
-    "19/19 pruebas nuevas, 0 fallos/errores, en base aislada instalada desde cero",
-    "Reinstalado en demo con respaldo previo (grupo de negocio asignado explicitamente al admin, mismo patron que otros modulos erpec_*)",
-    "Ensayo real por XML-RPC contra la demo: geocerca, soft-fail, excepcion automatica y metricas de cumplimiento confirmados de punta a punta contra una instancia real"
+    "Investigado con evidencia real (codigo fuente de erpec_workspace/static/src/product_shell.js + comparacion XML-RPC de las 16 apps nativas contra el arbol completo de erpec_base.suite_root): la doble navegacion es intencional, no un bug de datos",
+    "Fleet y Project confirmados como sin uso real por ningun modulo erpec_* (grep sin coincidencias) -- descartados como brecha",
+    "Empleados, Contactos y contabilidad estandar confirmados como brechas reales de cobertura en Areas"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -74,27 +63,16 @@
     "OP10-B1/B2: modelo y registro de control de visitas de vendedores (aun sin implementar)",
     "OP10-A2/A3/A4: reportes de nomina, envio automatico de roles, carga de saldos iniciales (aun sin implementar)",
     "OP10-B3: reportes de cumplimiento de visitas (aun sin implementar)",
-    "Doble navegacion Areas/selector nativo: agregar entradas para Empleados, Contactos y contabilidad estandar a Areas (brecha real confirmada); Fleet/Project descartados (sin uso real). Decision del titular: documentado, no implementado en este incremento.",
-    "OP10-B3: reportes de cumplimiento de visitas (completado/omitido/no planificado por vendedor/zona/dia, exportable) -- aun sin implementar",
-    "erpec_field_routes no forma parte del conjunto de modulos que instala scripts/provision-worker.py para clientes nuevos -- mismo pendiente ya documentado para erpec_payroll (OP10-A1b) y en OP07"
+    "Doble navegacion Areas/selector nativo: agregar entradas para Empleados, Contactos y contabilidad estandar a Areas (brecha real confirmada); Fleet/Project descartados (sin uso real). Decision del titular: documentado, no implementado en este incremento."
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "1999a1c5c4b436985f4ec47001a164a73e6e91388b426caa554e28719fb64582",
-    "addons/erpec_field_routes/__init__.py": "5fd10918e1361ad65b4b41bcd8fb525e659267f47c8c4334ae52530e58908e9e",
-    "addons/erpec_field_routes/__manifest__.py": "2eb0400040e1995485c52bef14b03500337bef875576fc1003f3d084d35914c9",
-    "addons/erpec_field_routes/ir.model.access.csv": "1926cbb7d56cb573d7ca05f7d69cd0d255c9a1eeadd414ba9695f99679abc66e",
-    "addons/erpec_field_routes/models.py": "1b0362d62c2c19a91ac267a5ebd73acc8899176d75acbcca9d390b5261743b97",
-    "addons/erpec_field_routes/security.xml": "2df259381f79d809108e53724ee53c450fbc95b58bdf68bcc5bab5553813b144",
-    "addons/erpec_field_routes/tests/__init__.py": "53a5bed90822822095a9e7dc156f131dd1a21cc58372924564321f3a41824fb1",
-    "addons/erpec_field_routes/tests/test_routes.py": "3f597d5e3efc2c419e6abbd80095482d1887394cb5100ef684fb2030705810ad",
-    "addons/erpec_field_routes/views.xml": "97ab98a8ec406a1d32533d0cd939d73bf1397333cfb4760385eb544b6ec4e2eb",
-    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "165362bcce4cb3a198745fc86384e93cc3d64fdec51c647187c3a713742d166c",
-    "docs/evidencias/AuditLock.before-OP10-B1B2-20260917T230222Z.json": "dc8ee6d32e00c3056b3dbf5c10b4dcc60c43942dc935fbb9084604eb229eb3f1",
-    "docs/evidencias/ERPEC26-OP10-B1B2-CONTROL-VISITAS-20260917.json": "a03e2677a4470c16824a9553470b1c2c6fff456427385011abb755285ff08dfe"
+    ".github/CODEX_CONTEXT.md": "c6e6310dd252686795a41922fa50cfef4c0531263325130766a5b41417a60a5f",
+    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "1e838765cf0ac9366f41e10e5a23ebd50bc8f9ee17730be639244daba2a4da8f",
+    "docs/evidencias/AuditLock.before-NAVEGACION-HALLAZGO-20260917T210053Z.json": "e432d751550cc026cb23bd2f7df296cde33ab066a4bb5aeef6929ef90c9b0d24"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-B1B2-20260917T230222Z.json",
-  "previousAuditLockHash": "dc8ee6d32e00c3056b3dbf5c10b4dcc60c43942dc935fbb9084604eb229eb3f1",
-  "signature": "35aa07a70b982548176cdc09478c0aa44c399e79f5ab60b7efe69fa2f8467e96",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-NAVEGACION-HALLAZGO-20260917T210053Z.json",
+  "previousAuditLockHash": "e432d751550cc026cb23bd2f7df296cde33ab066a4bb5aeef6929ef90c9b0d24",
+  "signature": "f0c22802829d423f4c59099408bfaa7bd0b32b59e48f2f48b081b2837f4dccc3",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

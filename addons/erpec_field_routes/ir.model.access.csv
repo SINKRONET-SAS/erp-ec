@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_route_site_manager,Responsable sitio,model_erpec_route_site,group_route_manager,1,1,1,1
+access_route_site_rep,Vendedor lee sitio,model_erpec_route_site,group_route_rep,1,0,0,0
+access_route_day_manager,Responsable dia,model_erpec_route_day,group_route_manager,1,1,1,1
+access_route_day_rep,Vendedor gestiona su dia,model_erpec_route_day,group_route_rep,1,1,1,0
+access_route_stop_manager,Responsable parada,model_erpec_route_stop,group_route_manager,1,1,1,1
+access_route_stop_rep,Vendedor gestiona su parada,model_erpec_route_stop,group_route_rep,1,1,1,0
+access_route_mark_manager,Responsable marca,model_erpec_route_visit_mark,group_route_manager,1,1,1,0
+access_route_mark_rep,Vendedor registra su marca,model_erpec_route_visit_mark,group_route_rep,1,0,1,0
+access_route_exception_manager,Responsable excepcion,model_erpec_route_exception,group_route_manager,1,1,1,0
+access_route_exception_rep,Vendedor ve su excepcion,model_erpec_route_exception,group_route_rep,1,0,1,0
+access_route_visit_wizard_manager,Responsable asistente visita,model_erpec_route_visit_wizard,group_route_manager,1,1,1,1
+access_route_visit_wizard_rep,Vendedor asistente visita,model_erpec_route_visit_wizard,group_route_rep,1,1,1,1
+access_route_omit_wizard_manager,Responsable asistente omision,model_erpec_route_omit_wizard,group_route_manager,1,1,1,1
+access_route_omit_wizard_rep,Vendedor asistente omision,model_erpec_route_omit_wizard,group_route_rep,1,1,1,1
+access_route_unplanned_wizard_manager,Responsable asistente no planificada,model_erpec_route_unplanned_wizard,group_route_manager,1,1,1,1
+access_route_unplanned_wizard_rep,Vendedor asistente no planificada,model_erpec_route_unplanned_wizard,group_route_rep,1,1,1,1
