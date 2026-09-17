@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-09-17T18:20:00.000Z",
+  "scope": "OP10-A1: campos tipados para erpec.payroll.policy, reemplazando la edicion manual del JSON de parameters, con sincronizacion bidireccional hacia el motor de calculo existente.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "diagnosisCorrection": {
+    "originalAssumption": "Los parametros legales viven en un diccionario Python fijo (parameters_ec2026.PARAMS), sin versionar ni editar desde la aplicacion",
+    "actualState": "erpec.payroll.policy YA tenia versionado real por empresa/anio, estado draft/activa, inmutabilidad una vez activa, una sola version activa por empresa/anio (constraint + busqueda), source_reference obligatorio, y un flag synthetic que bloquea action_activate() en produccion -- equivalente al gate assertLegalParametersReadyForProduction() de nuevo_nomina. parameters_ec2026.PARAMS es solo el valor de referencia usado por demo_parameters.py y las pruebas, no la unica fuente en tiempo de ejecucion.",
+    "realGap": "Los parametros se editaban como un bloque de texto JSON crudo (fields.Text), sin campos tipados individuales -- brecha de usabilidad, no de gobierno/versionado.",
+    "correctedWithUser": true,
+    "userDecision": "Reducir A1 a solo campos tipados, conservando todo el versionado/inmutabilidad/gate ya existente"
+  },
+  "implementation": {
+    "fileModified": "addons/erpec_payroll/models.py (clase Policy) + nueva clase TaxBracket",
+    "newFields": ["minimum_salary","monthly_hours","personal_rate","employer_rate","employer_other_rate","reserve_rate","reserve_months","thirteenth_rate","fourteenth_rate","vacation_rate","expense_limit","rebate_rate","overtime_50","overtime_100","night_rate","tax_bracket_ids"],
+    "newModel": "erpec.payroll.tax.bracket (policy_id, sequence, income_from, income_to, open_ended, base_tax, rate) -- inmutable cuando la politica esta activa, mismo patron _check_edit ya usado en Mapping",
+    "syncMechanism": "_sync_parameters_json() (campos tipados -> parameters JSON) y _apply_parameters_json() (parameters JSON -> campos tipados), disparadas desde create()/write() de Policy segun cual direccion recibio el cambio; TaxBracket.create()/write()/unlink() tambien disparan _sync_parameters_json() del padre para robustez",
+    "backwardCompatibility": "parameters deja de ser required=True pero sigue siendo el formato que consume engine.calculate()/validate_parameters()/action_activate() sin ningun cambio; demo_parameters.py y las pruebas existentes (que crean Policy solo con 'parameters': json.dumps(PARAMS)) siguen funcionando sin modificarse -- la poblacion de campos tipados desde el JSON es automatica",
+    "viewsUpdated": "addons/erpec_payroll/views.xml: nueva pagina 'Parametros legales' con los campos tipados y la lista editable de tramos de renta (accesible a group_payroll_manager, sin requerir base.group_system); la pagina JSON cruda se mantiene aparte, restringida a base.group_system, como vista de respaldo/depuracion"
+  },
+  "tests": {
+    "newTests": 6,
+    "totalModuleTests": 32,
+    "failed": 0,
+    "errors": 0,
+    "coverage": ["crear desde campos tipados deriva JSON valido", "crear desde JSON puebla los campos tipados (compatibilidad con demo_parameters.py)", "editar un campo tipado actualiza el JSON y el motor de calculo sigue funcionando", "editar una linea de tramo de renta actualiza el JSON", "una version activa es inmutable para campos tipados y lineas de renta", "campos tipados incompletos fallan la validacion al activar"],
+    "regressionCheck": "26/26 pruebas previas del modulo (test_payroll.py, test_annex_rdep.py) siguen en verde sin modificarlas",
+    "environment": "Base PostgreSQL aislada y nueva (template0), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\payroll-legal-params-install-20260917-131210",
+    "formCompiles": true,
+    "newFieldsConfirmedInArch": true,
+    "businessRecordsCreated": false
+  },
+  "checks": [
+    "Diagnostico original corregido explicitamente con el titular antes de escribir codigo",
+    "32/32 pruebas del modulo (26 previas + 6 nuevas), 0 fallos/errores, en base aislada y nueva",
+    "Reinstalado en demo con respaldo previo; formulario real confirmado con los campos nuevos",
+    "Ningun cambio en engine.py, parameters_ec2026.py, demo_parameters.py, ni en las pruebas preexistentes"
+  ],
+  "pending": [
+    "OP10-B1/B2: modelo y registro de control de visitas de vendedores",
+    "OP10-A2/A3/A4: reportes de nomina, envio automatico de roles, carga de saldos iniciales",
+    "OP10-B3: reportes de cumplimiento de visitas",
+    "Validacion por parametro individual (oficial/pendiente) al estilo legal_parameter_versions de nuevo_nomina -- evaluado y descartado para este incremento por decision expresa del titular (el flag synthetic ya cumple un rol equivalente a nivel de politica completa)"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

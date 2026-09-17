@@ -8,6 +8,14 @@ from .engine import calculate, validate_parameters
 
 _INTERNAL = object()
 CONCEPTS = [('gross','Ingresos brutos'), ('net','Neto por pagar'), ('personal_iess','IESS personal'), ('tax','Renta por pagar'), ('advances','Anticipos'), ('loans','Préstamos'), ('other_deductions','Otros descuentos'), ('employer_iess','IESS patronal'), ('employer_other','Contribución IECE/SECAP'), ('thirteenth','Décimo tercero acumulado'), ('fourteenth','Décimo cuarto acumulado'), ('vacation','Vacaciones'), ('reserve_iess','Fondo de reserva IESS')]
+# Campos tipados de erpec.payroll.policy que reemplazan la edición manual del JSON de
+# `parameters` (adaptado del patrón de nuevo_nomina: legal_parameter_versions con columnas
+# propias en vez de un blob de texto). `parameters` se conserva sin cambios como formato de
+# intercambio para engine.calculate()/validate_parameters() y para compatibilidad con
+# demo_parameters.py y las pruebas existentes -- ver Policy._apply_parameters_json/_sync_parameters_json.
+STRUCTURED_PARAMETER_FIELDS = ['minimum_salary', 'monthly_hours', 'personal_rate', 'employer_rate',
+    'employer_other_rate', 'reserve_rate', 'reserve_months', 'thirteenth_rate', 'fourteenth_rate',
+    'vacation_rate', 'expense_limit', 'rebate_rate', 'overtime_50', 'overtime_100', 'night_rate']
 
 
 def manager(env):
@@ -24,8 +32,64 @@ class Policy(models.Model):
     year = fields.Integer('Año', required=True)
     authority = fields.Selection([('native','ERP EC nativo'), ('sknomina','SKNOMINA externo')], required=True, default='native', string='Autoridad del cálculo')
     authorization = fields.Text('Decisión y alcance de migración', required=True)
-    parameters = fields.Text('Configuración técnica revisada', required=True)
+    parameters = fields.Text('Configuración técnica revisada')
     parameter_summary = fields.Text('Valores aplicados',compute='_compute_parameter_summary')
+
+    minimum_salary = fields.Float('Salario básico unificado (SBU)')
+    monthly_hours = fields.Float('Divisor salarial (horas/mes)')
+    personal_rate = fields.Float('Aporte IESS personal')
+    employer_rate = fields.Float('Aporte IESS patronal')
+    employer_other_rate = fields.Float('Contribución IECE/SECAP')
+    reserve_rate = fields.Float('Fondo de reserva (tasa)')
+    reserve_months = fields.Integer('Meses de espera del fondo de reserva')
+    thirteenth_rate = fields.Float('Décimo tercero (fracción anual)')
+    fourteenth_rate = fields.Float('Décimo cuarto (fracción anual)')
+    vacation_rate = fields.Float('Vacaciones (fracción anual)')
+    expense_limit = fields.Float('Límite de gastos personales sin cargas (USD)')
+    rebate_rate = fields.Float('Rebaja tercera edad/discapacidad')
+    overtime_50 = fields.Float('Recargo hora suplementaria (50%)')
+    overtime_100 = fields.Float('Recargo hora extraordinaria (100%)')
+    night_rate = fields.Float('Recargo nocturno')
+    tax_bracket_ids = fields.One2many('erpec.payroll.tax.bracket', 'policy_id', 'Tabla de impuesto a la renta')
+
+    def _build_parameters_dict(self):
+        self.ensure_one()
+        brackets = [{'from': bracket.income_from, 'to': (None if bracket.open_ended else bracket.income_to),
+                      'base': bracket.base_tax, 'rate': bracket.rate}
+                    for bracket in self.tax_bracket_ids.sorted('sequence')]
+        values = {key: self[key] for key in STRUCTURED_PARAMETER_FIELDS}
+        values['tax_brackets'] = brackets
+        return values
+
+    def _sync_parameters_json(self):
+        """Recalcula `parameters` (el JSON que consume engine.calculate()) a partir de los
+        campos tipados. Se llama después de escribir cualquier campo tipado o la tabla de
+        impuesto, nunca desde el propio write() de `parameters` (evita recursión)."""
+        for policy in self:
+            policy.with_context(_erpec_payroll_token=_INTERNAL).write(
+                {'parameters': json.dumps(policy._build_parameters_dict(), sort_keys=True)})
+
+    def _apply_parameters_json(self, json_text):
+        """Dirección inversa: si `parameters` se escribe directamente (compatibilidad con
+        demo_parameters.py y pruebas existentes que crean la versión solo con el JSON), puebla
+        los campos tipados a partir de él para que el formulario los muestre correctamente."""
+        for policy in self:
+            try:
+                params = json.loads(json_text or '{}')
+            except (ValueError, TypeError):
+                continue
+            if not isinstance(params, dict):
+                continue
+            values = {key: params[key] for key in STRUCTURED_PARAMETER_FIELDS if key in params}
+            if 'tax_brackets' in params:
+                policy.tax_bracket_ids.with_context(_erpec_payroll_token=_INTERNAL).unlink()
+                values['tax_bracket_ids'] = [(0, 0, {
+                    'sequence': index, 'income_from': bracket.get('from', 0),
+                    'income_to': bracket.get('to') or 0, 'open_ended': bracket.get('to') is None,
+                    'base_tax': bracket.get('base', 0), 'rate': bracket.get('rate', 0),
+                }) for index, bracket in enumerate(params.get('tax_brackets', []))]
+            if values:
+                policy.with_context(_erpec_payroll_token=_INTERNAL).write(values)
 
     @api.depends('parameters')
     def _compute_parameter_summary(self):
@@ -67,13 +131,71 @@ class Policy(models.Model):
     def write(self, values):
         if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and (any(policy.state == 'active' for policy in self) or 'state' in values):
             raise ValidationError('La versión activa es inmutable; prepara una nueva versión para la migración.')
-        return super().write(values)
+        has_structured = bool(set(values) & (set(STRUCTURED_PARAMETER_FIELDS) | {'tax_bracket_ids'}))
+        has_json = 'parameters' in values
+        result = super().write(values)
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            if has_structured:
+                self._sync_parameters_json()
+            elif has_json:
+                self._apply_parameters_json(values['parameters'])
+        return result
 
     @api.model_create_multi
     def create(self, values_list):
         if any(values.get('state','draft') != 'draft' for values in values_list):
             raise ValidationError('Activa los parámetros desde su acción de revisión.')
-        return super().create(values_list)
+        records = super().create(values_list)
+        for record, values in zip(records, values_list):
+            has_structured = bool(set(values) & (set(STRUCTURED_PARAMETER_FIELDS) | {'tax_bracket_ids'}))
+            has_json = 'parameters' in values
+            if has_structured:
+                record._sync_parameters_json()
+            elif has_json:
+                record._apply_parameters_json(values['parameters'])
+        return records
+
+
+class TaxBracket(models.Model):
+    _name = 'erpec.payroll.tax.bracket'
+    _description = 'Tramo de la tabla de impuesto a la renta de una versión de nómina'
+    _order = 'policy_id, sequence'
+    policy_id = fields.Many2one('erpec.payroll.policy', required=True, ondelete='cascade')
+    sequence = fields.Integer('Orden', required=True, default=0)
+    income_from = fields.Float('Desde (base anual)', required=True)
+    income_to = fields.Float('Hasta (base anual)')
+    open_ended = fields.Boolean('Último tramo (sin límite superior)')
+    base_tax = fields.Float('Impuesto de la fracción básica', required=True)
+    rate = fields.Float('Porcentaje sobre el exceso', required=True)
+
+    def _check_edit(self):
+        if any(bracket.policy_id.state != 'draft' for bracket in self):
+            raise ValidationError('La tabla de renta de una versión activa no puede modificarse.')
+
+    @api.model_create_multi
+    def create(self, values_list):
+        records = super().create(values_list)
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            records._check_edit()
+            records.policy_id._sync_parameters_json()
+        return records
+
+    def write(self, values):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            self._check_edit()
+        result = super().write(values)
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            self.policy_id._sync_parameters_json()
+        return result
+
+    def unlink(self):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            self._check_edit()
+        policies = self.policy_id
+        result = super().unlink()
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            policies._sync_parameters_json()
+        return result
 
 
 class Mapping(models.Model):
