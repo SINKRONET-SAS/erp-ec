@@ -1,0 +1,81 @@
+{
+  "recordedAt": "2026-09-16T21:15:00.000Z",
+  "scope": "Primer incremento de OP09: facturacion electronica nativa con firma XAdES real y transmision SOAP directa al SRI (ambiente PRUEBAS), como segunda autoridad de emision independiente del conector externo erpec_fiscal_connector.",
+  "planDocument": "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+  "prompt": ".github/prompts/ERPEC26-OP09-FACTURACION-NATIVA-SRI.md",
+  "authorization": "Titular pidio una segunda pasada para que facturacion electronica y nomina queden funcionales segun la legislacion ecuatoriana, tomando como referencia sinkroniq-mobile y nuevo_nomina; eligio explicitamente construir transmision SOAP nativa al SRI en vez de solo conectar la firma existente, para no duplicar costo de dos servicios en Render.",
+  "referenceResearch": {
+    "sinkroniqMobile": "Backend real del Facturador: firma XAdES-BES hecha a mano (node-forge+xml-crypto), secuencial atomico via INSERT...ON CONFLICT, transmision SOAP real de dos fases contra celcer.sri.gob.ec/cel.sri.gob.ec, RIDE con PDFKit. Patrones adoptados: verificacion server-side, ambiente como bandera con guarda de auto-consistencia.",
+    "nuevoNomina": "RDEP con campos de utilidades/salario digno/otros ingresos/deducciones desglosadas hardcodeados en 0.00; tope de gastos personales plano (no escalado por cargas familiares); sin referencia a NAC-COM-26-006. Nuestro RDEP ya esta por delante en ambos puntos -- no se porto nada de nomina en este incremento.",
+    "codeChanges": "Ninguno en sinkroniq-mobile ni nuevo_nomina; solo lectura."
+  },
+  "preExistingOrphanCode": {
+    "xadesPy": "addons/erpec_fiscal_native/xades.py ya existia: firma XAdES-BES real y correcta (valida RSA>=2048, vigencia, RUC, uso de clave). Sin pruebas propias, sin conectar a ningun flujo. Se le agregaron 11 pruebas nuevas con certificado sintetico autofirmado.",
+    "enginePy": "addons/erpec_fiscal_native/engine.py ya calcula clave de acceso de 49 digitos con modulo 11 real -- confirmado exacto contra la Ficha Tecnica 2.34 oficial."
+  },
+  "fichaTecnica234Verification": {
+    "method": "Agente de investigacion en segundo plano; PDF oficial descargado y leido de verdad (no resumen secundario) desde sri.gob.ec, extraido con pdftotext",
+    "recordedAt": "2026-09-16T20:00:00.000Z",
+    "claveDeAcceso": "CONFIRMADO fuente primaria: Tabla 1, composicion y orden de 49 digitos exacto contra lo ya implementado en engine.py",
+    "estructuraMensajesSoap": "CONFIRMADO fuente primaria: campos identificador/mensaje/informacionAdicional/tipo (ERROR/ADVERTENCIA), Seccion 11. Coincide con sri_client.py y con la respuesta real del SRI obtenida en el rehearsal (codigo 39).",
+    "codigoDeBarrasRide": "CONFIRMADO fuente primaria: OPCIONAL, no obligatorio (se corrige la suposicion inicial de que era requerido). Se mantiene en el generador como mejora legitima.",
+    "marcaDeAguaAmbientePruebas": "CONFIRMADO fuente primaria: no existe ese requisito en el texto de la ficha. El mecanismo real es la advertencia codigo 60 en la respuesta SOAP.",
+    "layoutCompletoRide": "NO VERIFICADO: el layout del RIDE en la ficha 2.34 es una imagen incrustada, no texto extraible. No se declara conformidad visual completa."
+  },
+  "implementation": {
+    "newAddon": "erpec_fiscal_sri",
+    "newModels": ["erpec.fiscal.certificate", "erpec.fiscal.emission"],
+    "newFiles": ["sri_client.py (SOAP real via zeep contra celcer.sri.gob.ec/cel.sri.gob.ec, produccion deshabilitada en codigo)", "ride.py (RIDE via reportlab)"],
+    "filesNotModified": "erpec_fiscal_connector/* y erpec_fiscal_native/models.py|__manifest__.py|views.xml no se tocaron (en edicion por sesion concurrente durante este incremento); solo se agrego addons/erpec_fiscal_native/tests/test_xades.py (archivo nuevo) y una linea en tests/__init__.py.",
+    "intentionalDuplication": "Move._gather_native_data() en erpec_fiscal_sri/models.py duplica una porcion pequena de la validacion de lineas de action_native_preview (erpec_fiscal_native/models.py), porque ese archivo estaba en edicion concurrente. Documentado en el docstring del modulo; consolidar cuando el archivo se libere."
+  },
+  "tests": {
+    "xadesExitCode": 0,
+    "xadesTotalTests": 11,
+    "fiscalSriExitCode": 0,
+    "fiscalSriTotalTests": 21,
+    "failed": 0,
+    "errors": 0,
+    "environment": "Bases de datos PostgreSQL aisladas y nuevas (template0), roles dedicados no superusuario eliminados al finalizar. Llamadas SOAP mockeadas en toda la bateria automatica (patron ya establecido: Provider._request mockeado en erpec_payphone)."
+  },
+  "bugsFoundAndFixedDuringTesting": [
+    "ride.py usaba renderPDF.draw() (para objetos Drawing) sobre un Flowable Code128, que no tiene renderScale -- corregido a barcode.drawOn(canvas, x, y), la API correcta de reportlab para codigos de barras.",
+    "erpec.fiscal.emission.state tenia un parametro tracking=False invalido (el modelo no hereda mail.thread) -- eliminado.",
+    "Prueba propia de configuracion de empresa no fijaba country_id=Ecuador antes de postear la factura, causando el mismo rechazo de pais/moneda que actualmente falla tambien en el test_native.py de la sesion concurrente (confirmado ejecutando ese archivo de forma aislada: falla igual, no es un bug introducido por este incremento) -- corregido en mi propia prueba fijando country_id y disparando _onchange_country_id().",
+    "l10n_latam_document_number es compute+inverse pero el inverse solo actua si l10n_latam_document_type_id esta fijado (ausente en las pruebas sinteticas de este proyecto) -- se cambio a fijar move.name directamente antes de postear, que si toma efecto."
+  ],
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\fiscal-sri-install-20260916-210040",
+    "note": "Se actualizo unicamente xades.py dentro de la copia instalada de erpec_fiscal_native (archivo no tocado por la sesion concurrente, la demo no lo tenia); no se toco models.py/__manifest__.py/views.xml/tests de ese modulo en la demo.",
+    "viewsCompiled": ["erpec.fiscal.certificate", "erpec.fiscal.emission"],
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "recordedAt": "2026-09-16T21:00:00.000Z",
+    "method": "Script standalone (fuera de Odoo, importando xades.py/engine.py/sri_client.py directamente) que genero una clave de acceso real, la firmo con un certificado sintetico autofirmado (no emitido por una entidad certificadora acreditada), y llamo de verdad a celcer.sri.gob.ec.",
+    "recepcion": "RECIBIDA (el SRI acepto la validacion estructural del documento)",
+    "autorizacion": "NO AUTORIZADO, codigo 39: 'FIRMA INVALIDA' - 'La validacion de la cadena de confianza ha fallado: No existen un certificado root registrado para la entidad certificadora'",
+    "interpretation": "Confirma que generar, firmar, transmitir y consultar funcionan correctamente de punta a punta contra la infraestructura real del SRI. El unico motivo del rechazo es la falta de un certificado emitido por una entidad certificadora acreditada por el SRI -- exactamente el limite ya documentado, no un fallo del codigo.",
+    "realCertificateUsed": false,
+    "realAuthorizationObtained": false
+  },
+  "checks": [
+    "32/32 pruebas unitarias aprobadas en bases aisladas y nuevas",
+    "Clave de acceso y estructura de mensajes SOAP verificadas contra la Ficha Tecnica 2.34 oficial (fuente primaria, PDF leido)",
+    "Instalado en la demo con respaldo previo; ambas vistas compilan; sin registros de negocio creados",
+    "Ensayo real (no mockeado) contra el SRI: RECIBIDA en recepcion, rechazo exacto y esperado en autorizacion (codigo 39, certificado no confiable) -- confirma el canal completo, no solo la conectividad",
+    "Ningun archivo en conflicto con la sesion concurrente modificado (erpec_fiscal_connector intacto; erpec_fiscal_native solo gano una prueba nueva)"
+  ],
+  "pending": [
+    "Certificado de firma electronica real emitido por una entidad certificadora acreditada por el SRI -- sin el no se puede obtener una autorizacion real",
+    "Activar ambiente de produccion (cel.sri.gob.ec) -- deliberadamente deshabilitado en el codigo",
+    "Guarda reciproca en erpec_fiscal_connector (bloquear el conector externo si ya existe una emision nativa) -- pendiente de que la sesion concurrente libere ese archivo",
+    "Consolidar _gather_native_data() con action_native_preview cuando erpec_fiscal_native/models.py este libre",
+    "Conformidad visual completa del RIDE contra la Ficha Tecnica 2.34 (layout en imagen, no verificado campo por campo)"
+  ],
+  "externalEmissionPerformed": true,
+  "externalEmissionDetail": "Un documento sintetico (no una operacion comercial real) se transmitio de verdad al ambiente de PRUEBAS del SRI y fue rechazado por certificado no confiable; no se obtuvo ninguna autorizacion, no se emitio ningun comprobante valido, no hay efecto tributario.",
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false
+}
