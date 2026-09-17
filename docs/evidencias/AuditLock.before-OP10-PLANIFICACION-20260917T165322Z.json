@@ -4,18 +4,24 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T16:53:22.397Z",
+  "updatedAt": "2026-09-17T13:26:57.418Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
-    "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
-    "docs/evidencias/AuditLock.before-OP10-PLANIFICACION-20260917T165322Z.json",
-    "docs/evidencias/ERPEC26-OP10-PLANIFICACION-20260917.json"
+    "addons/erpec_fiscal_sri/models.py",
+    "addons/erpec_fiscal_sri/security/ir.model.access.csv",
+    "addons/erpec_fiscal_sri/tests/__init__.py",
+    "addons/erpec_fiscal_sri/tests/test_certificate.py",
+    "addons/erpec_fiscal_sri/views.xml",
+    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+    "docs/evidencias/AuditLock.before-AUTOSERVICIO-P12-20260917T132657Z.json",
+    "docs/evidencias/ERPEC26-OP09-AUTOSERVICIO-P12-20260917.json"
   ],
   "validationChecks": [
-    "Estado actual de erpec_payroll verificado directamente en este repositorio antes de planificar (beneficios/impuesto a la renta ya calculados; sin reportes, sin envio de roles, sin saldos iniciales, parametros en un diccionario fijo)",
-    "Investigacion de nuevo_nomina y sinkroniq-mobile (dos agentes en segundo plano, solo lectura, sin modificar ninguna referencia): patrones de parametros legales versionados y saldos iniciales (nuevo_nomina), y control de visitas con geocerca (sinkroniq-mobile, confirmado tambien de forma independiente en nuevo_nomina)",
-    "Orden de fases y alcance explicito acordados con el titular antes de escribir codigo"
+    "Autoservicio adaptado de sinkroniq-mobile (certificateLifecycleService.js/certificadoController.js, solo lectura, sin copiar codigo): permiso ampliado de erpec.fiscal.certificate a account.group_account_user, vista previa sin persistir, catalogo de CA reconocidas, limite de tamano, limite de intentos, prueba de firma real",
+    "9 pruebas nuevas (33 en total en erpec_fiscal_sri, 0 fallos/errores) en base aislada y nueva",
+    "Reinstalado en demo con respaldo previo tras reiniciar el proceso caido junto con el cluster de PostgreSQL",
+    "Ensayo real por XML-RPC contra la demo ya corriendo: un usuario con unicamente account.group_account_user (sin base.group_system) creo, verifico y probo la firma de su propio certificado sin privilegios de administrador -- confirma el autoservicio contra una instancia real, no solo en pruebas aisladas",
+    "Artefactos sinteticos residuales en la demo (empresa, usuario, certificado) documentados explicitamente como no eliminables por diseno (perm_unlink=0)"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -61,22 +67,22 @@
     "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento",
     "OP09: activar ambiente de produccion sigue deliberadamente deshabilitado y es una decision separada -- requiere el certificado real de la empresa emisora en produccion, no de un colaborador de pruebas",
     "OP09: certificado sin cifrado adicional en reposo (mismo nivel que PayPhone, documentado, no resuelto)",
-    "OP09: catalogo de CAs confiables es una lista local (TRUSTED_CA_PATTERNS), no una verificacion de cadena de confianza real contra el repositorio oficial del SRI",
-    "OP10-A1: parametrizacion versionada de beneficios legales (aun sin implementar)",
-    "OP10-B1/B2: modelo y registro de control de visitas de vendedores (aun sin implementar)",
-    "OP10-A2/A3/A4: reportes de nomina, envio automatico de roles, carga de saldos iniciales (aun sin implementar)",
-    "OP10-B3: reportes de cumplimiento de visitas (aun sin implementar)"
+    "OP09: catalogo de CAs confiables es una lista local (TRUSTED_CA_PATTERNS), no una verificacion de cadena de confianza real contra el repositorio oficial del SRI"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "6679daca714c4f50bdd8dc96c71dc8c26aef9a3f6f783d47000f946ffeaa7aa8",
-    ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md": "adfb88d3bb85751ca40b20ea6b31ecf34a645cb61d82ba768d514b52264cc056",
-    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "b849f8752171944d7887a7b8ac9dbd3900c1c0ed0e608af5ffd00647372009c7",
-    "docs/evidencias/AuditLock.before-OP10-PLANIFICACION-20260917T165322Z.json": "807313c1040105302deb54681312754d1996afa98113d1dd63530246c9d1de94",
-    "docs/evidencias/ERPEC26-OP10-PLANIFICACION-20260917.json": "44d0371d39bce49a4b82273cb855ca08d4cbc6310c92d41c71960298816d2312"
+    ".github/CODEX_CONTEXT.md": "93ffdc2881dcb378736b99b9de7ecc4f7fc37d3e0947d674eaca005b0536c227",
+    "addons/erpec_fiscal_sri/models.py": "75e027f23043d4fd62b2d270b0405015830af49244f9ea6af1997735298c0a13",
+    "addons/erpec_fiscal_sri/security/ir.model.access.csv": "b3b0f36fbe4f88840413320e30080fcc8155524aa9ea838cef7ccb65d788c6b1",
+    "addons/erpec_fiscal_sri/tests/__init__.py": "988774c7748dc26aec393400cf0a0f6e164251410b3ef4eb4dd78b9c30e9e6c3",
+    "addons/erpec_fiscal_sri/tests/test_certificate.py": "7ac3603a31d105e776c9a78023bd6ddedcec9e6aa8940544cd25623c75bc76c7",
+    "addons/erpec_fiscal_sri/views.xml": "34b32b173bfd793e61805d22a4e3112c99f504f0847ef16868295c5df3ee1450",
+    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "95b0c0a60d37ad1ac7a42c530c88fe50017e942cd334e3c32333a8ac77b5e463",
+    "docs/evidencias/AuditLock.before-AUTOSERVICIO-P12-20260917T132657Z.json": "d77d98217ffa77eeb2f97391b30ac6a126f52e975c91610c2892b0189acffb43",
+    "docs/evidencias/ERPEC26-OP09-AUTOSERVICIO-P12-20260917.json": "25fba31502323648dc9e1eebd51bed8acf6c2021663eddcd14f0e95a3fe91b49"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-PLANIFICACION-20260917T165322Z.json",
-  "previousAuditLockHash": "807313c1040105302deb54681312754d1996afa98113d1dd63530246c9d1de94",
-  "signature": "ea20e15752fa9a0e58b645344899a09fe59998cbd6fe045dade41f317e944113",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-AUTOSERVICIO-P12-20260917T132657Z.json",
+  "previousAuditLockHash": "d77d98217ffa77eeb2f97391b30ac6a126f52e975c91610c2892b0189acffb43",
+  "signature": "31ef699014a8c036b57abedaa30238121177c455800d5797081f73c867a9e906",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-09-17T14:00:00.000Z",
+  "scope": "Planificacion de ERPEC26-OP10: segunda pasada de nomina (envio de roles, parametrizacion de beneficios legales, impuesto a la renta, saldos iniciales, reportes) y control de visitas/asistencia de vendedores por zona (funcionalidad nueva).",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "authorization": "Titular pidio la segunda pasada de nomina y la funcionalidad nueva de control de visitas, tomando como referencia nuevo_nomina y sinkroniq-mobile. Aclaro explicitamente que 'integracion' significa referencia y portacion de diseno, no conectar los sistemas en vivo. Confirmo el orden de fases: A1 -> B1-B2 -> A2-A4 -> B3.",
+  "currentStateVerification": {
+    "method": "Grep/Glob directo sobre addons/erpec_payroll en este repositorio (no investigacion externa)",
+    "findings": [
+      "Beneficios legales (decimo tercero/cuarto, vacaciones, fondo de reserva) e impuesto a la renta mensual YA se calculan (engine.py, parameters_ec2026.py con SOURCES oficiales citadas)",
+      "Sin reportes: __manifest__.py no declara ningun archivo de reporte (solo security.xml, ir.model.access.csv, views.xml)",
+      "Sin envio de roles: models.py solo hereda mail.thread/mail.activity.mixin para chatter interno, sin plantilla de correo ni generacion de PDF",
+      "Sin carga de saldos iniciales: ningun mecanismo encontrado",
+      "Parametros legales en un diccionario Python fijo (PARAMS) por año, no en un registro Odoo editable"
+    ]
+  },
+  "referenceResearch": {
+    "nuevoNomina": {
+      "project": "C:\\proyectos web\\nuevo_nomina",
+      "codeChanges": "Ninguno; solo lectura",
+      "findings": {
+        "envioRoles": "PDF (payrollRolePdfService) + email (communicationService, con auditoria y bloqueo de envios falsos en produccion) disparado al cerrar nomina, no por cron independiente",
+        "beneficiosLegales": "Patron fuerte a adoptar: legal_parameter_versions (pais/año/parametro/vigencia, validation_status oficial/pendiente, fuente/URL trazable, override por cliente, gate assertLegalParametersReadyForProduction() que bloquea produccion)",
+        "impuestoRenta": "Integrado en el calculo mensual con tablas versionadas; limite de gastos personales es un numero plano sin escalar por cargas familiares/Galapagos (nuestro RDEP ya esta por delante ahi)",
+        "saldosIniciales": "Patron fuerte a adoptar: initialBalanceService, flujo CSV/XLSX -> validacion dry-run fila por fila -> commit -> revert, idempotente por hash de origen, auditado",
+        "reportes": "Catalogo declarativo amplio (payroll-report-catalog.json): resumen, detalle tabular, ficha de beneficios por empleado, puente contable, conciliacion bancaria, exportables PDF/XLSX/CSV",
+        "controlVisitas": "Existe una implementacion propia (routeVisitService.js, geocerca Haversine, excepciones revisables, reportes de cumplimiento) -- confirma que el patron es generico y reproducible, no exclusivo de sinkroniq-mobile"
+      }
+    },
+    "sinkroniqMobile": {
+      "project": "C:\\proyectos web\\sinkroniq-mobile",
+      "codeChanges": "Ninguno; solo lectura",
+      "findings": {
+        "controlVisitas": "Patron fuerte a adoptar: RouteSite (zona/cliente con lat/lng, radio de geocerca, precision GPS minima), RouteDay (dia planificado del vendedor), RouteStop (parada planificada u ocasional, secuenciada), RouteVisitMark (marca checkin/checkout con GPS, distancia Haversine, withinGeofence), RouteException (violacion de geocerca u otra excepcion, revisable). Marcas fuera de geocerca se guardan igual pero quedan para revision (no se bloquean de forma dura). Metricas: tasa de cumplimiento, tasa dentro de geocerca, excepciones pendientes. Reportes CSV/XLSX/PDF.",
+        "proformas": "Flujo lineal borrador->enviada->aprobada->convertida, conceptualmente compatible con sale.order->account.move de Odoo (sin facturacion parcial ni multiples facturas por proforma) -- contexto de por que el titular ve viable una integracion conceptual mas amplia; no es parte del alcance de OP10"
+      }
+    }
+  },
+  "phaseOrder": ["A1", "B1", "B2", "A2", "A3", "A4", "B3"],
+  "explicitlyOutOfScope": [
+    "Conectar el ERP a nuevo_nomina/sinkroniq-mobile como sistemas vivos (API, sincronizacion)",
+    "Construir app movil nativa -- el control de visitas se opera desde la interfaz web de Odoo en este alcance",
+    "Activar envio real de correo en produccion sin credenciales SMTP provistas por el titular",
+    "Migrar el esquema de base de datos exacto de ninguna de las dos referencias -- se disenan modelos Odoo propios inspirados en la misma logica"
+  ],
+  "codeWrittenInThisIncrement": false,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}
