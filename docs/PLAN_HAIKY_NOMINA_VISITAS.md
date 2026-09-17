@@ -40,6 +40,10 @@ Corregido con dos mecanismos, no solo uno: (1) botón **"Recargar campos legales
 6. **A4 — Carga de saldos iniciales.** Patrón dry-run → commit → revert, idempotente por hash de origen, para altas de empresa/empleado a mitad de año (vacaciones acumuladas, décimos, fondo de reserva, préstamos/anticipos pendientes).
 7. **B3 — Reportes de control de visitas.** Cumplimiento por vendedor/zona/día, tasa dentro de geocerca, excepciones pendientes — exportable, inspirado en los reportes de ruta de la referencia.
 
+## Hallazgo documentado, fuera de este plan (17-09-2026)
+
+El titular observó que el menú "Áreas" (propio, `erpec_workspace`) y el selector nativo de apps de Odoo coexisten sin coordinarse — dos puertas de navegación distintas hacia las mismas pantallas. Verificado: no es un bug, es intencional (ningún módulo oculta al otro). Brecha de cobertura real (comparado vía XML-RPC contra las 16 apps nativas instaladas): `Fleet` y `Project` no tienen entrada en Áreas pero tampoco los usa ningún módulo `erpec_*` (instalados de forma incidental); las brechas con uso genuino son **Empleados**, **Contactos** y **contabilidad estándar** (asientos/libro mayor/balance). Decisión del titular: documentar y no implementar ahora, continuar con B1-B2. Detalle: `.github/CODEX_CONTEXT.md` (sección "Hallazgo documentado — doble navegación").
+
 ## Verificación y cierre
 
 Cada fase: pruebas en base aislada y nueva, instalación en demo con respaldo previo, evidencia en `docs/evidencias/`, cierre de `AuditLock.json`, commit `phase: ERPEC26-OP10 task: <fase>` y push. No se cierra este plan por una fase — cada incremento documenta explícitamente lo que queda pendiente de las fases siguientes.
