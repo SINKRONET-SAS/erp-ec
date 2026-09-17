@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-09-17T12:20:00.000Z",
+  "scope": "Primera autorizacion real (no simulada) obtenida de punta a punta en este proyecto: emision nativa firmada con un certificado de firma electronica genuino y transmitida al ambiente PRUEBAS del SRI.",
+  "planDocument": "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
+  "authorization": "Titular indico que ya habia colocado un certificado real en .cache/private/fiscal-pruebas/ (fuera de git) y pidio verificarlo, aclarando que implicaba probar la emision en el ambiente de pruebas del SRI. Confirmo explicitamente que la identidad del certificado (Betty Rosmery Guaman Correa) es de un founder/colaborador de confianza del proyecto, autorizado para este uso.",
+  "certificate": {
+    "location": ".cache/private/fiscal-pruebas/ (fuera de git, cubierto por .gitignore; nunca se commiteo ni se commiteara)",
+    "issuingCA": "SECURITY DATA S.A. 2 (AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA) -- entidad certificadora acreditada en Ecuador",
+    "subject": "C=EC,O=SECURITY DATA S.A. 2,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,2.5.4.5=1709053506-050325070249,CN=BETTY ROSMERY GUAMAN CORREA",
+    "identityNote": "Founder/colaborador de confianza del proyecto, segun confirmacion explicita del titular",
+    "validFrom": "2025-03-05T11:52:55+00:00",
+    "validUntil": "2028-03-04T11:52:55+00:00",
+    "p12FileSha256": "fefee5326d76ab564d05305d763351e2e003019974bc5e1409abd69e93c93e15",
+    "passwordStored": "Nunca leido en voz alta ni registrado en evidencia o repositorio; permanece solo en .cache/private/fiscal-pruebas/clave.txt (fuera de git)"
+  },
+  "localVerification": {
+    "method": "xades.credentials(p12, password, ruc) -- la misma funcion que usa erpec.fiscal.certificate.action_verify()",
+    "result": "OK: certificado abre con la contrasena, clave RSA >= 2048 bits, vigente por fechas, identificador del emisor coincide (caso persona natural: RUC termina en 001 y los primeros 10 digitos coinciden con la identidad del certificado), uso de clave de firma declarado correctamente",
+    "signatureSelfCheck": "xades.verify(xml_firmado, certificado) tambien aprobo sobre el XML recien generado en esta sesion"
+  },
+  "realTransmission": {
+    "method": "Script standalone fuera de Odoo, mismo patron que los ensayos previos de OP09 (importa engine.py/xades.py/sri_client.py directamente), esta vez con el certificado real en vez de uno sintetico autofirmado",
+    "issuerData": {
+      "ruc": "1709053506001",
+      "direccionMatriz": "Los Cardenales Sn y Azulejos",
+      "establecimiento": "001",
+      "puntoEmision": "205"
+    },
+    "buyerData": "Sintetico (cedula que no pasa el digito verificador), a proposito para no usar el RUC de ningun tercero real como comprador en este ensayo",
+    "accessKey": "1709202601170905350600110012050000010011928374610",
+    "recepcion": "RECIBIDA",
+    "autorizacion": "AUTORIZADO",
+    "authorizationNumber": "1709202601170905350600110012050000010011928374610",
+    "authorizationDate": "2026-09-17T07:13:54-05:00",
+    "warnings": [
+      {"identificador": "62", "mensaje": "IDENTIFICACION DEL RECEPTOR MAL CONFORMADA", "informacionAdicional": "El numero de cedula 1793235327 no cumple con el digito verificador", "tipo": "ADVERTENCIA"}
+    ],
+    "warningInterpretation": "Advertencia no bloqueante por el comprador sintetico deliberadamente invalido; el SRI autorizo el comprobante de todas formas -- confirma que el motor de validacion distingue correctamente advertencias de errores bloqueantes (catalogo ya confirmado contra la Ficha Tecnica 2.34 en el primer incremento de OP09)"
+  },
+  "significance": "Primera vez en este proyecto que se obtiene una autorizacion real (no un rechazo esperado) del SRI de punta a punta: generar clave de acceso -> firmar XAdES real -> transmitir SOAP real -> recibir autorizacion real con numero y fecha genuinos. Ambiente PRUEBAS unicamente -- sin efecto tributario, no se declaro como comprobante valido ante ningun tercero.",
+  "pendingStatusChange": {
+    "resolved": "Certificado de firma electronica real -- ya no bloquea el canal tecnico; se demostro con un certificado genuino de una entidad certificadora acreditada",
+    "newPending": "Definir el esquema de carga del certificado .p12 para clientes en produccion (hoy solo un administrador con base.group_system puede cargarlo via el formulario interno; falta un flujo de autoservicio coherente con el modelo multi-tenant de OP08)",
+    "stillPending": ["Activar ambiente de produccion (cel.sri.gob.ec), deliberadamente deshabilitado en el codigo -- requiere el RUC/certificado real de la empresa emisora en produccion, no de un colaborador de pruebas", "Guarda reciproca en erpec_fiscal_connector", "Consolidar _gather_native_data() con action_native_preview"]
+  },
+  "externalEmissionPerformed": true,
+  "externalEmissionDetail": "Un documento de prueba (comprador sintetico, sin efecto comercial real) se transmitio y fue autorizado de verdad en el ambiente de PRUEBAS del SRI, usando un certificado de firma electronica genuino perteneciente a un colaborador de confianza del proyecto. No es un comprobante tributario valido (ambiente PRUEBAS), no se declaro a ningun tercero, no genero efecto fiscal.",
+  "realMoneyMoved": false,
+  "sourceRepositoriesModified": false,
+  "codeChanged": false
+}

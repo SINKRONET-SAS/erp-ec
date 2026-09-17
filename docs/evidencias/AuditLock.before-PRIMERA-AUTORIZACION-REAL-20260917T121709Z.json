@@ -4,18 +4,17 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-17T12:17:09.914Z",
+  "updatedAt": "2026-09-17T12:06:13.058Z",
   "filesModified": [
-    ".github/CODEX_CONTEXT.md",
     "docs/PLAN_HAIKY_FACTURACION_NATIVA.md",
-    "docs/evidencias/AuditLock.before-PRIMERA-AUTORIZACION-REAL-20260917T121709Z.json",
-    "docs/evidencias/ERPEC26-OP09-PRIMERA-AUTORIZACION-REAL-20260917.json"
+    "docs/evidencias/AuditLock.before-RECONFIRMACION-FIRMA-20260917T120613Z.json",
+    "docs/evidencias/ERPEC26-OP09-RECONFIRMACION-FIRMA-20260917.json"
   ],
   "validationChecks": [
-    "Titular confirmo explicitamente que la identidad del certificado real (Betty Rosmery Guaman Correa) es de un founder/colaborador de confianza del proyecto, autorizado para este uso",
-    "Verificacion local del certificado real con xades.credentials() (mismo chequeo que action_verify()) y xades.verify() sobre la firma generada: ambas aprobadas",
-    "PRIMERA AUTORIZACION REAL (no simulada) de punta a punta en este proyecto: RECIBIDA en recepcion y AUTORIZADO en autorizacion contra celcer.sri.gob.ec, con numero y fecha de autorizacion reales, en ambiente PRUEBAS, sin usar el RUC de ningun tercero real como comprador",
-    "Clave y contenido del .p12 nunca registrados en el repositorio ni en la evidencia; solo metadatos publicos del certificado (sujeto, emisor, vigencia, huella del archivo)"
+    "Reconfirmacion pedida explicitamente por el titular tras el commit y push de CF01, con el requisito adicional de verificar la emision en el ambiente de pruebas del SRI, no solo revisar documentacion",
+    "Cluster de PostgreSQL dedicado del proyecto encontrado caido y reiniciado antes de verificar",
+    "11/11 pruebas de xades.py y 24/24 de erpec_fiscal_sri reconfirmadas en bases aisladas nuevas contra el HEAD actual, sin regresion tras CF01",
+    "Ensayo real (no mockeado) nuevo contra celcer.sri.gob.ec con una clave de acceso distinta a la del primer ensayo: mismo resultado (RECIBIDA / NO AUTORIZADO codigo 39, certificado no confiable) -- confirma el canal sin regresion, sin fabricar una autorizacion que no ocurrio"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -58,19 +57,16 @@
     "OP09: conformidad visual completa del RIDE contra la Ficha Tecnica 2.34 (layout en imagen, no verificado campo por campo)",
     "OP09: RIDE sin logo ni QR; sin secciones de reembolso/nota de credito/guia de remision (fuera de alcance de engine.py); layout no pixel-perfect contra la imagen oficial",
     "CF01: el RUC del proveedor del sistema todavia no se transporta realmente en el XML/contrato, solo se avisa como pendiente en fiscal_scope/ec_native_notice",
-    "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento",
-    "OP09: definir el esquema de carga del certificado .p12 para clientes en produccion (hoy solo un administrador con base.group_system puede cargarlo via el formulario interno; falta autoservicio coherente con el modelo multi-tenant de OP08)",
-    "OP09: activar ambiente de produccion sigue deliberadamente deshabilitado y es una decision separada -- requiere el certificado real de la empresa emisora en produccion, no de un colaborador de pruebas"
+    "CF01: evaluar si la Resolucion NAC-DGERCGC26-00000027 aplica de forma distinta a la via nativa (erpec_fiscal_sri, OP09), que no delega en un proveedor externo -- no evaluado en este complemento"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "d2e4b05e8065c7daf9613b2d9c9a2500e507611a181fb9f23f3559878adbb1fd",
-    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "9162e9efe63af49d48f92867a99fea52031200ab962e2663134a9cdc3cc241be",
-    "docs/evidencias/AuditLock.before-PRIMERA-AUTORIZACION-REAL-20260917T121709Z.json": "9f3215ee05e89393984672ebe72998f48bcd1f42d7174e45c4642fe58aebf019",
-    "docs/evidencias/ERPEC26-OP09-PRIMERA-AUTORIZACION-REAL-20260917.json": "eec3c7a805cfdb431b1659e965e9a580ccea90006114aa16abd74f47ea8cd547"
+    "docs/PLAN_HAIKY_FACTURACION_NATIVA.md": "b2d3cae6794e4fac794bbb1aa07147d639e2aec39eb9c5c19102a0b04868f7f4",
+    "docs/evidencias/AuditLock.before-RECONFIRMACION-FIRMA-20260917T120613Z.json": "e647c39273dc666fa29b61f649329225ef73b1888a4493e5c191b6bc77c9b53a",
+    "docs/evidencias/ERPEC26-OP09-RECONFIRMACION-FIRMA-20260917.json": "9894ebe708f4dffe6eedbae7e87689d7b734ca0fe39c0fd81efecfb5da8efcf8"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-PRIMERA-AUTORIZACION-REAL-20260917T121709Z.json",
-  "previousAuditLockHash": "9f3215ee05e89393984672ebe72998f48bcd1f42d7174e45c4642fe58aebf019",
-  "signature": "bb8c976dc6902e0e61558cea574ad9aa1d334f0b896d38883f482aef8afbdc38",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-RECONFIRMACION-FIRMA-20260917T120613Z.json",
+  "previousAuditLockHash": "e647c39273dc666fa29b61f649329225ef73b1888a4493e5c191b6bc77c9b53a",
+  "signature": "23cd8033f3ad75eaa755de3a526f47354cd8378516d4da8398d7df795bde1585",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
