@@ -20,21 +20,23 @@ def modulo11(digits):
     return 0 if digit==11 else 1 if digit==10 else digit
 
 
-def access_key(day,ruc,number,numeric,doc_type='01'):
+def access_key(day,ruc,number,numeric,doc_type='01',ambiente='1'):
     if not re.fullmatch(r'[0-9]{13}',ruc or ''):
         raise ValueError('Completa el RUC real del emisor (13 dígitos); no se inventa en la demo.')
     if not re.fullmatch(r'[0-9]{3}-[0-9]{3}-[0-9]{9}',number or '') or any(int(x)==0 for x in number.split('-')):
         raise ValueError('Revisa establecimiento, punto y secuencial del documento contabilizado.')
     if not re.fullmatch(r'[0-9]{8}',numeric):
         raise ValueError('El código numérico requiere ocho dígitos.')
+    if ambiente not in ('1','2'):
+        raise ValueError('El ambiente SRI debe ser 1 (pruebas) o 2 (producción).')
     if not re.fullmatch(r'[0-9]{2}',doc_type or ''):
         raise ValueError('El código del tipo de comprobante requiere dos dígitos.')
-    base=date.fromisoformat(str(day)).strftime('%d%m%Y')+doc_type+ruc+'1'+number.replace('-','')+numeric+'1'
+    base=date.fromisoformat(str(day)).strftime('%d%m%Y')+doc_type+ruc+ambiente+number.replace('-','')+numeric+'1'
     return base+str(modulo11(base))
 
 
 def generate(data):
-    key=access_key(data['date'],data['issuer_vat'],data['number'],data['numeric'])
+    key=access_key(data['date'],data['issuer_vat'],data['number'],data['numeric'],ambiente=data.get('ambiente','1'))
     if data['buyer_type'] not in ('04','05') or not re.fullmatch(r'[0-9]{13}' if data['buyer_type']=='04' else r'[0-9]{10}',data['buyer_vat'] or ''):
         raise ValueError('Este incremento requiere comprador identificado con RUC o cédula.')
     if data['payment'] not in ('01','15','16','17','18','19','20','21'):
@@ -46,7 +48,7 @@ def generate(data):
         node=etree.SubElement(parent,name);node.text=str(value);return node
     tributary=etree.SubElement(root,'infoTributaria')
     establishment,point,sequence=data['number'].split('-')
-    for name,value in [('ambiente','1'),('tipoEmision','1'),('razonSocial',data['issuer_name']),('ruc',data['issuer_vat']),('claveAcceso',key),('codDoc','01'),('estab',establishment),('ptoEmi',point),('secuencial',sequence),('dirMatriz',data['issuer_address'])]:add(tributary,name,value)
+    for name,value in [('ambiente',data.get('ambiente','1')),('tipoEmision','1'),('razonSocial',data['issuer_name']),('ruc',data['issuer_vat']),('claveAcceso',key),('codDoc','01'),('estab',establishment),('ptoEmi',point),('secuencial',sequence),('dirMatriz',data['issuer_address'])]:add(tributary,name,value)
     lines=[];groups={};discount_total=Decimal(0);base_total=Decimal(0);tax_total=Decimal(0)
     for item in data['items']:
         qty=Decimal(str(item['quantity']));unit=Decimal(str(item['unit']));discount=Decimal(str(item['discount']))

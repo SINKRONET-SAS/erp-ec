@@ -475,3 +475,122 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     page.showPage()
     page.save()
     return buffer.getvalue()
+
+
+def _drawing_helpers(page):
+    def box(x, y_top, w, h, fill=None):
+        page.setStrokeColor(BORDER_COLOR)
+        page.setLineWidth(0.6)
+        if fill is not None:
+            page.setFillColor(fill)
+            page.rect(x, y_top - h, w, h, stroke=1, fill=1)
+            page.setFillColor(colors.black)
+        else:
+            page.rect(x, y_top - h, w, h, stroke=1, fill=0)
+
+    def text_at(x, y_top, value, size=8, bold=False, color=colors.black, align='left', w=None):
+        page.setFillColor(color)
+        page.setFont('Helvetica-Bold' if bold else 'Helvetica', size)
+        if align == 'right' and w is not None:
+            page.drawRightString(x + w, y_top, value)
+        elif align == 'center' and w:
+            page.drawCentredString(x + w / 2, y_top, value)
+        else:
+            page.drawString(x, y_top, value)
+        page.setFillColor(colors.black)
+
+    return box, text_at
+
+
+def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
+    """RIDE del comprobante de retención (codDoc 07, versión 2.0.0). Layout propio en el mismo
+    estilo que las notas; no contrastado pixel a pixel contra un RIDE oficial de retención."""
+    root = etree.fromstring(comprobante_xml)
+    info = root.find('infoTributaria')
+    detail = root.find('infoCompRetencion')
+    buffer = io.BytesIO()
+    page = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    margin = 15 * mm
+    left, right = margin, width - margin
+    content_width = right - left
+    box, text_at = _drawing_helpers(page)
+
+    y_top = height - margin
+    box(left, y_top, 78 * mm, 30 * mm)
+    ey = y_top - 5 * mm
+    text_at(left + 3 * mm, ey, _text(info, 'razonSocial'), size=11, bold=True, color=HEADER_COLOR)
+    ey -= 5 * mm
+    text_at(left + 3 * mm, ey, 'RUC: ' + _text(info, 'ruc'), size=8)
+    ey -= 4.5 * mm
+    text_at(left + 3 * mm, ey, 'Dirección: ' + (_text(detail, 'dirEstablecimiento') or _text(info, 'dirMatriz')), size=8)
+    ey -= 4.5 * mm
+    if _text(detail, 'obligadoContabilidad'):
+        text_at(left + 3 * mm, ey, 'Obligado a llevar contabilidad: ' + _text(detail, 'obligadoContabilidad'), size=8)
+    rx = left + 80 * mm
+    rw = right - rx
+    box(rx, y_top, rw, 12 * mm)
+    text_at(rx, y_top - 6 * mm, 'COMPROBANTE DE RETENCIÓN', size=11, bold=True, color=HEADER_COLOR, align='center', w=rw)
+    text_at(rx, y_top - 10.5 * mm, 'No. %s-%s-%s' % (_text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
+            size=9, bold=True, align='center', w=rw)
+    auth_top = y_top - 12 * mm
+    box(rx, auth_top, rw, 30 * mm, fill=PANEL_FILL)
+    ry = auth_top - 4 * mm
+    text_at(rx + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
+    ry -= 3.5 * mm
+    text_at(rx + 2 * mm, ry, numero_autorizacion or 'PENDIENTE', size=7)
+    ry -= 4 * mm
+    text_at(rx + 2 * mm, ry, 'FECHA Y HORA DE AUTORIZACIÓN: ' + (fecha_autorizacion or 'PENDIENTE'), size=7)
+    ry -= 4 * mm
+    ambiente = _text(info, 'ambiente')
+    text_at(rx + 2 * mm, ry, 'AMBIENTE: ' + AMBIENTE_LABEL.get(ambiente, ambiente or '—'), size=7, bold=True)
+    ry -= 4 * mm
+    text_at(rx + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
+    ry -= 8 * mm
+    clave = _text(info, 'claveAcceso')
+    if clave:
+        code128.Code128(clave, barHeight=8 * mm, barWidth=0.3).drawOn(page, rx + 2 * mm, ry)
+        text_at(rx + 2 * mm, ry - 4 * mm, clave, size=6)
+
+    y = auth_top - 30 * mm - 4 * mm
+    doc = root.find('docsSustento/docSustento')
+    box(left, y, content_width, 22 * mm, fill=PANEL_FILL)
+    cy = y - 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Sujeto retenido: ' + _text(detail, 'razonSocialSujetoRetenido'), size=9, bold=True)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'identificacionSujetoRetenido'), size=8)
+    text_at(left + content_width / 2, cy, 'Fecha de emisión: ' + _text(detail, 'fechaEmision'), size=8)
+    cy -= 4.5 * mm
+    num = _text(doc, 'numDocSustento')
+    num = '%s-%s-%s' % (num[:3], num[3:6], num[6:]) if len(num) == 15 else num
+    text_at(left + 3 * mm, cy, 'Comprobante de venta: %s (código %s) del %s' % (
+        num, _text(doc, 'codDocSustento'), _text(doc, 'fechaEmisionDocSustento')), size=8)
+    text_at(left + content_width / 2, cy, 'Período fiscal: ' + _text(detail, 'periodoFiscal'), size=8)
+    y -= 22 * mm + 3 * mm
+
+    columns = [('Impuesto', 0, 30 * mm, 'left'), ('Código', 30 * mm, 25 * mm, 'left'),
+               ('Base imponible', 55 * mm, 40 * mm, 'right'), ('% Retención', 95 * mm, 30 * mm, 'right'),
+               ('Valor retenido', 125 * mm, content_width - 125 * mm, 'right')]
+    page.setFillColor(HEADER_COLOR)
+    page.rect(left, y - 6 * mm, content_width, 6 * mm, stroke=0, fill=1)
+    for label, dx, w, align in columns:
+        text_at(left + dx + 1 * mm, y - 4.3 * mm, label, size=7.5, bold=True, color=colors.white,
+                align=align, w=(w - 2 * mm) if align == 'right' else None)
+    y -= 6 * mm
+    total = 0.0
+    for item in doc.findall('retenciones/retencion'):
+        kind = {'1': 'RENTA', '2': 'IVA', '6': 'ISD'}.get(_text(item, 'codigo'), _text(item, 'codigo'))
+        values = [kind, _text(item, 'codigoRetencion'), _text(item, 'baseImponible'), _text(item, 'porcentajeRetener'), _text(item, 'valorRetenido')]
+        total += float(_text(item, 'valorRetenido') or 0)
+        for (label, dx, w, align), value in zip(columns, values):
+            text_at(left + dx + 1 * mm, y - 3.8 * mm, value, size=7.5, align=align, w=(w - 2 * mm) if align == 'right' else None)
+        page.setStrokeColor(colors.HexColor('#E5E7EB'))
+        page.setLineWidth(0.3)
+        page.line(left, y - 5.5 * mm, right, y - 5.5 * mm)
+        y -= 5.5 * mm
+    y -= 5 * mm
+    text_at(right - 60 * mm, y, 'TOTAL RETENIDO:', size=10, bold=True)
+    text_at(right, y, '%.2f' % total, size=10, bold=True, align='right', w=0)
+    page.showPage()
+    page.save()
+    return buffer.getvalue()

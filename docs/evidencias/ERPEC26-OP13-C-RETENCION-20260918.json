@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-09-18T22:40:00.000Z",
+  "scope": "OP13-C: comprobante de retencion electronico firmado y transmitido al SRI (PRUEBAS); ambiente por diario y consecutivos separados por ambiente.",
+  "planDocument": "docs/PLAN_HAIKY_COMPROBANTES_FIRMADOS.md",
+  "userInstructions": [
+    "debe verificarse tambien el lado de los comprobantes comerciales que se emiten desde las compras, particularmente, retenciones en la fuente",
+    "los consecutivos deben ser distintos los de pruebas y los de produccion"
+  ],
+  "findings": [
+    "erpec.withholding era solo contable, sin XML/firma/SRI",
+    "xades.sign() rechazaba comprobanteRetencion (catalogo de raices)",
+    "SRI: tipoSujetoRetenido solo con identificacion del exterior",
+    "SRI: cada codigo de concepto tiene tarifa oficial (312=2.00%)"
+  ],
+  "tests": {
+    "total": 83,
+    "failed": 0,
+    "errors": 0
+  },
+  "installation": {
+    "demo": "actualizados native/sri e instalado erpec_fiscal_withholding_sri; respaldo .cache/windows/backups/retencion-install-20260918-173358"
+  },
+  "realRehearsal": {
+    "environment": "celcer.sri.gob.ec PRUEBAS",
+    "retencion": "codDoc 07; primer intento NO AUTORIZADO por dos reglas de negocio del SRI; corregido y AUTORIZADO; RIDE generado"
+  },
+  "pending": [
+    "configuracion de ambiente y puntos de emision por el cliente (OP13-D)",
+    "catalogo completo de tarifas de renta",
+    "liquidacion de compra 03",
+    "guia de remision",
+    "produccion bloqueada"
+  ],
+  "realMoneyMoved": false
+}

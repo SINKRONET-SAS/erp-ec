@@ -74,7 +74,7 @@ def credentials(p12,password,issuer_ruc,now=None):
 # Comprobantes electrónicos SRI admitidos: cada uno comparte el mismo bloque infoTributaria
 # (ambiente/ruc/claveAcceso/codDoc/...), por eso sign()/verify() son agnósticos al tipo de
 # documento y solo validan la etiqueta raíz contra este catálogo -- ver xsd/*.xsd de cada uno.
-COMPROBANTE_TAGS = {'factura', 'notaCredito', 'notaDebito', 'guiaRemision'}
+COMPROBANTE_TAGS = {'factura', 'notaCredito', 'notaDebito', 'guiaRemision', 'comprobanteRetencion'}
 
 
 def sign(xml,p12,password,issuer_ruc,now=None):

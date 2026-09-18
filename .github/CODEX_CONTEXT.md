@@ -407,3 +407,10 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 
 - `erpec_fiscal_native/notadebito_engine.py` (XSD oficial NotaDebito_V1.0.0, codDoc 05); `erpec_fiscal_sri` reconoce `out_invoice` con `debit_origin_id` y tipo documental 05; RIDE compartido con la nota de crédito.
 - 72/72 pruebas, demo actualizada con respaldo, ensayo REAL: factura y nota de débito autorizadas por celcer.sri.gob.ec (PRUEBAS). Pendiente: guía de remisión (OP13-C), RIDE sin validación visual oficial.
+
+## OP13-C — Retención electrónica firmada y consecutivos por ambiente — 18-09-2026
+
+- Verificado el lado de compras: `erpec.withholding` era solo contable. Nuevo `erpec_fiscal_withholding_sri` + `retencion_engine.py` (XSD 2.0.0) firman y transmiten la retención a proveedores; `erpec.fiscal.emission` acepta fuentes distintas de factura.
+- El SRI rechazó el primer intento real por dos reglas que el XSD no valida (tipoSujetoRetenido solo con ID exterior; tarifa oficial por código de concepto). Corregido y AUTORIZADO en celcer (PRUEBAS). Catálogo completo de tarifas de renta: pendiente.
+- Consecutivos separados por ambiente: `account.journal.ec_sri_ambiente` y secuencia de retenciones por empresa+ambiente; producción bloqueada. 83/83 pruebas, demo actualizada con respaldo.
+- Pendiente inmediato (pedido del titular): ambiente y establecimientos/puntos de emisión configurables por el cliente (OP13-D); luego guía de remisión.

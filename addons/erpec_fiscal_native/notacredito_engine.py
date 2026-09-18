@@ -21,7 +21,7 @@ def generate(data):
     modifica, ej. '01' factura), modified_number (est-ptoemi-secuencial de ese documento),
     modified_date (fecha de emisión de ese documento), reason (motivo de la nota de crédito).
     El esquema de notaCredito no tiene bloque de pagos (a diferencia de factura)."""
-    key=access_key(data['date'],data['issuer_vat'],data['number'],data['numeric'],doc_type=DOC_TYPE)
+    key=access_key(data['date'],data['issuer_vat'],data['number'],data['numeric'],doc_type=DOC_TYPE,ambiente=data.get('ambiente','1'))
     if data['buyer_type'] not in ('04','05') or not re.fullmatch(r'[0-9]{13}' if data['buyer_type']=='04' else r'[0-9]{10}',data['buyer_vat'] or ''):
         raise ValueError('Este incremento requiere comprador identificado con RUC o cédula.')
     if not re.fullmatch(r'[0-9]{2}',data.get('modified_type') or ''):
@@ -37,7 +37,7 @@ def generate(data):
         node=etree.SubElement(parent,name);node.text=str(value);return node
     tributary=etree.SubElement(root,'infoTributaria')
     establishment,point,sequence=data['number'].split('-')
-    for name,value in [('ambiente','1'),('tipoEmision','1'),('razonSocial',data['issuer_name']),('ruc',data['issuer_vat']),('claveAcceso',key),('codDoc',DOC_TYPE),('estab',establishment),('ptoEmi',point),('secuencial',sequence),('dirMatriz',data['issuer_address'])]:add(tributary,name,value)
+    for name,value in [('ambiente',data.get('ambiente','1')),('tipoEmision','1'),('razonSocial',data['issuer_name']),('ruc',data['issuer_vat']),('claveAcceso',key),('codDoc',DOC_TYPE),('estab',establishment),('ptoEmi',point),('secuencial',sequence),('dirMatriz',data['issuer_address'])]:add(tributary,name,value)
     lines=[];groups={};base_total=Decimal(0);tax_total=Decimal(0)
     for item in data['items']:
         qty=Decimal(str(item['quantity']));unit=Decimal(str(item['unit']));discount=Decimal(str(item['discount']))

@@ -53,6 +53,16 @@ SIGNATURE_PROBE_XML = (
 )
 
 
+class Journal(models.Model):
+    _inherit = 'account.journal'
+
+    ec_sri_ambiente = fields.Selection(
+        [('1', 'Pruebas'), ('2', 'Producción')], string='Ambiente SRI', default='1', required=True,
+        help='El SRI lleva secuenciales independientes por ambiente: los comprobantes de pruebas y de producción '
+             'no pueden compartir numeración. Usa diarios distintos (cada uno con su propio consecutivo) para cada ambiente. '
+             'La emisión en producción aún no está habilitada.')
+
+
 class Certificate(models.Model):
     _name = 'erpec.fiscal.certificate'
     _description = 'Certificado de firma electrónica (SRI)'
@@ -189,8 +199,8 @@ class Emission(models.Model):
     _order = 'id desc'
     _check_company_auto = True
 
-    move_id = fields.Many2one('account.move', string='Comprobante', required=True, check_company=True, ondelete='restrict')
-    company_id = fields.Many2one(related='move_id.company_id', store=True, index=True)
+    move_id = fields.Many2one('account.move', string='Comprobante', check_company=True, ondelete='restrict')
+    company_id = fields.Many2one('res.company', compute='_compute_company_id', store=True, index=True)
     ambiente = fields.Selection([('1', 'Pruebas'), ('2', 'Producción')], default='1', required=True, readonly=True)
     access_key = fields.Char('Clave de acceso', readonly=True)
     xml_unsigned = fields.Binary('XML sin firmar', readonly=True, attachment=False)
@@ -213,6 +223,21 @@ class Emission(models.Model):
     next_attempt = fields.Datetime('Próximo intento', readonly=True)
     message = fields.Text('Estado y siguiente acción', readonly=True, default='Solicitud preparada. Procesar la cola para firmar y transmitir.')
     _sql_constraints = [('one_invoice', 'unique(move_id)', 'El comprobante ya tiene una emisión nativa.')]
+
+    @api.depends('move_id.company_id')
+    def _compute_company_id(self):
+        for emission in self:
+            emission.company_id = emission.move_id.company_id
+
+    def _has_source(self):
+        # Otros módulos (p. ej. retenciones) amplían la fuente del comprobante sobreescribiendo este método.
+        return bool(self.move_id)
+
+    @api.constrains('move_id')
+    def _check_source(self):
+        for emission in self:
+            if not emission._has_source():
+                raise ValidationError('La emisión requiere un documento de origen.')
 
     @api.model_create_multi
     def create(self, values_list):
@@ -288,7 +313,7 @@ class Emission(models.Model):
         # El tipo de comprobante (codDoc) va en la clave de acceso (posiciones 9-10, índice
         # 8:10) -- fuente única de verdad, no se guarda por separado ni se infiere del move_id.
         doc_type = self.access_key[8:10]
-        builder = {'04': ride_module.build_ride_notacredito, '05': ride_module.build_ride_notadebito}.get(doc_type, ride_module.build_ride)
+        builder = {'04': ride_module.build_ride_notacredito, '05': ride_module.build_ride_notadebito, '07': ride_module.build_ride_retencion}.get(doc_type, ride_module.build_ride)
         ride_pdf = builder(autorizacion['comprobante'], autorizacion['numero'], autorizacion['fecha'])
         self._save(state='authorized', xml_authorized=base64.b64encode(autorizacion['comprobante']), ride_pdf=base64.b64encode(ride_pdf),
                     authorization_number=autorizacion['numero'], authorization_date=autorizacion['fecha'],
@@ -322,7 +347,8 @@ class Move(models.Model):
         return {'date': str(self.invoice_date), 'number': self.l10n_latam_document_number, 'issuer_vat': company.vat,
                 'issuer_name': company.name, 'issuer_address': company.street, 'buyer_type': identification,
                 'buyer_vat': partner.vat, 'buyer_name': partner.name, 'buyer_address': partner.street,
-                'accounting': company.ec_native_accounting, 'total': self.amount_total, 'items': items}
+                'accounting': company.ec_native_accounting, 'total': self.amount_total, 'items': items,
+                'ambiente': self.journal_id.ec_sri_ambiente or '1'}
 
     def _gather_native_data(self):
         data = self._gather_native_common()
@@ -372,6 +398,8 @@ class Move(models.Model):
         certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
+        if (self.journal_id.ec_sri_ambiente or '1') != '1':
+            raise ValidationError('El diario está configurado para producción, ambiente aún no habilitado; usa un diario de pruebas.')
         is_credit_note = self.move_type == 'out_refund'
         is_debit_note = self.move_type == 'out_invoice' and bool(self.debit_origin_id)
         if is_credit_note:
@@ -393,7 +421,7 @@ class Move(models.Model):
         except ValueError as error:
             raise ValidationError('No se pudo firmar: ' + str(error)) from error
         emission = self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_INTERNAL).create({
-            'move_id': self.id, 'access_key': access_key,
+            'move_id': self.id, 'access_key': access_key, 'ambiente': data['ambiente'],
             'xml_unsigned': base64.b64encode(xml_unsigned), 'xml_signed': base64.b64encode(xml_signed),
             'state': 'signed', 'message': 'Firmada. Procesar la cola para transmitir al SRI.',
         })

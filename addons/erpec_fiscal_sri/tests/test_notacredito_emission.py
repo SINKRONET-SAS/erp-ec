@@ -134,3 +134,11 @@ class NotaCreditoEmissionCase(TransactionCase):
             emission.action_process()
         self.assertEqual(emission.state, 'authorized')
         self.assertTrue(base64.b64decode(emission.ride_pdf).startswith(b'%PDF'))
+
+    def test_journal_environment_drives_key_and_blocks_production(self):
+        emission = self.env['erpec.fiscal.emission'].browse(self.invoice.action_native_emit()['res_id'])
+        self.assertEqual(emission.ambiente, '1')
+        self.assertEqual(emission.access_key[23], '1')
+        self.journal.ec_sri_ambiente = '2'
+        with self.assertRaisesRegex(ValidationError, 'producción'):
+            self.credit_note.action_native_emit()
