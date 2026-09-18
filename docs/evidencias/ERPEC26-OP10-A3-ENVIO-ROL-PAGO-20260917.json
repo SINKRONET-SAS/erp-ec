@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-09-18T00:15:00.000Z",
+  "scope": "OP10-A3: envio automatico del rol de pago por correo en erpec_payroll, disparado al aprobar el cierre del periodo (accion_close), con el PDF del reporte de A2 adjunto.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "newFiles": ["addons/erpec_payroll/mail_templates.xml", "addons/erpec_payroll/tests/test_payslip_email.py"],
+  "modelChanges": [
+    "erpec.payroll.line gano payslip_mail_id (Many2one mail.mail), payslip_sent_date (Datetime), payslip_send_error (Text), el metodo _send_payslip() y la accion action_resend_payslip()",
+    "erpec.payroll.period.action_close() ahora llama line._send_payslip() para cada linea despues de aprobar el cierre"
+  ],
+  "designSource": "mail.template estandar de Odoo con report_template_ids (mismo mecanismo que usan los templates nativos de venta/factura, ver sale/data/mail_template_data.xml y account/data/mail_template_data.xml) -- no se copia codigo de nuevo_nomina/sinkroniq-mobile para esta parte, el mecanismo de encolado de correo es nativo de Odoo.",
+  "designDecisions": [
+    "Disparo en action_close() (evento de cierre aprobado), no un cron independiente -- decision ya tomada explicitamente en el plan antes de este incremento",
+    "template.send_mail(line.id, force_send=False) -- solo encola un mail.mail; el modulo nunca llama .send() en ningun punto, por diseno, para respetar el limite explicito 'No se activa envio real de correo en produccion sin credenciales SMTP provistas por el titular'",
+    "Un empleado sin work_email o un fallo de plantilla/render no bloquea el envio a los demas empleados del mismo cierre -- capturado con 'except Exception # noqa: BLE001', mismo patron ya usado en erpec_fiscal_sri/sri_client.py para operaciones externas de red",
+    "Boton manual 'Reenviar rol de pago' (action_resend_payslip) para autoservicio, mismo patron que otras acciones de recarga/reintento ya existentes en el modulo (action_reload_from_json)"
+  ],
+  "bugsFoundAndFixedDuringTesting": [
+    {"bug": "La prueba inicial esperaba que el adjunto del correo terminara en .pdf dentro del arnes de pruebas aislado", "evidence": "AssertionError real: 'False is not true' -- el adjunto se llamaba '....html', no '....pdf'", "fix": "Confirmado el mismo mecanismo ya documentado en OP10-A2: mail_template.py._generate_template_attachments llama a ir.actions.report._render_qweb_pdf, que cae a HTML a proposito bajo --test-tags (arnes sin --http). La prueba se ajusto para aceptar '.html'/'.pdf' con contenido real; la generacion de PDF real del adjunto se verifico aparte, contra la demo con HTTP activo."}
+  ],
+  "tests": {
+    "totalTests": 46,
+    "failed": 0,
+    "errors": 0,
+    "newInThisIncrement": 5,
+    "coverage": ["cierre encola correo con adjunto (html/pdf segun entorno) cuando el empleado tiene work_email", "el correo encolado nunca queda en estado 'sent' sin SMTP real", "empleado sin work_email no genera mail.mail y registra el motivo en payslip_send_error", "un empleado sin correo no bloquea el envio a otro empleado del mismo cierre", "action_resend_payslip funciona de forma independiente"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "moduleVersion": "18.0.1.5.0",
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "XML-RPC real contra la demo ya reinstalada (HTTP activo, no simulado): crea empresa/politica/mapeo/empleado con work_email/periodo sinteticos, activa la politica, calcula y cierra el periodo (dispara el envio automaticamente), lee el mail.mail y su adjunto resultantes",
+    "results": {
+      "mail_state": "outgoing",
+      "mail_email_to": "ensayo.a3@ejemplo-sinkronet.test",
+      "attachment": {"name": "Rol de pago - Ensayo Correo A3.pdf", "mimetype": "application/pdf", "file_size": 20952},
+      "attachmentIsRealPdf": true,
+      "mailWasNotSent": true
+    },
+    "conclusion": "Confirma de punta a punta, contra una instancia Odoo real con HTTP activo: el PDF adjunto es real (no HTML de respaldo), el correo se encola correctamente dirigido al empleado, y nunca se transmite de verdad sin credenciales SMTP reales"
+  },
+  "pending": [
+    "OP10-A4: carga de saldos iniciales (dry-run -> commit -> revert, idempotente por hash de origen)",
+    "OP10-B3: reportes de cumplimiento de visitas",
+    "Activar el envio real de correo cuando el titular provea credenciales SMTP -- deliberadamente fuera de alcance de este incremento",
+    "scripts/provision-worker.py todavia no instala erpec_payroll ni erpec_field_routes para clientes nuevos -- pendiente ya documentado en OP07/OP10-A1b/OP10-B1B2"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

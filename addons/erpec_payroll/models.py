@@ -327,6 +327,8 @@ class Period(models.Model):
         if self.state!='calculated' or any(not line.approved for line in self.line_ids):
             raise ValidationError('Calcula y aprueba las novedades de todos los empleados antes del cierre.')
         self._update({'state':'closed'})
+        for line in self.line_ids:
+            line._send_payslip()
         return True
 
     def action_post(self):
@@ -457,7 +459,37 @@ class Line(models.Model):
     approved=fields.Boolean('Novedades aprobadas')
     result=fields.Text('Desglose calculado',readonly=True)
     input_hash=fields.Char('Huella de cálculo',readonly=True)
+    payslip_mail_id=fields.Many2one('mail.mail','Correo del rol de pago',readonly=True,copy=False)
+    payslip_sent_date=fields.Datetime('Rol de pago enviado el',readonly=True,copy=False)
+    payslip_send_error=fields.Text('Error de envío del rol de pago',readonly=True,copy=False)
     _sql_constraints=[('employee_once','unique(period_id,employee_id)','El empleado ya pertenece a este período.')]
+
+    def _send_payslip(self):
+        """Encola (no envía de inmediato) el correo del rol de pago con el PDF adjunto vía la
+        plantilla `erpec_payroll.payslip_email_template` (report_template_ids la adjunta sola).
+        `force_send=False` dispara únicamente la cola de correo estándar de Odoo -- sin un
+        servidor SMTP saliente real configurado por el titular, el correo queda en 'outgoing' y
+        nunca se transmite; no se llama `.send()` de forma explícita en ningún punto de este
+        módulo. Un empleado sin correo de trabajo, o un fallo de plantilla, no bloquea el envío
+        de los demás -- se registra el motivo en `payslip_send_error` para revisión manual."""
+        self.ensure_one()
+        template=self.env.ref('erpec_payroll.payslip_email_template',raise_if_not_found=False)
+        if not template:
+            return
+        if not self.employee_id.work_email:
+            self.with_context(_erpec_payroll_token=_INTERNAL).write({'payslip_send_error':'El empleado no tiene correo electrónico de trabajo configurado.'})
+            return
+        try:
+            mail_id=template.send_mail(self.id,force_send=False)
+        except Exception as error:  # noqa: BLE001 - el render/envio de correo puede fallar de muchas formas; no debe bloquear el cierre de los demas empleados
+            self.with_context(_erpec_payroll_token=_INTERNAL).write({'payslip_send_error':str(error)})
+            return
+        self.with_context(_erpec_payroll_token=_INTERNAL).write({'payslip_mail_id':mail_id,'payslip_sent_date':fields.Datetime.now(),'payslip_send_error':False})
+
+    def action_resend_payslip(self):
+        self.ensure_one();self.check_access('write')
+        self._send_payslip()
+        return True
 
     def _check_edit(self):
         for period in self.period_id.sorted('id'):

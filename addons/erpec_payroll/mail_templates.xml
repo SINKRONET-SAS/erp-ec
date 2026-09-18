@@ -1,0 +1,19 @@
+<odoo>
+<data noupdate="1">
+<record id="payslip_email_template" model="mail.template">
+  <field name="name">Nómina: rol de pago</field>
+  <field name="model_id" ref="model_erpec_payroll_line"/>
+  <field name="subject">Rol de pago {{ '%02d/%s' % (object.period_id.month, object.period_id.year) }} — {{ object.employee_id.name }}</field>
+  <field name="email_to">{{ object.employee_id.work_email }}</field>
+  <field name="report_template_ids" eval="[(4, ref('erpec_payroll.report_payslip'))]"/>
+  <field name="auto_delete" eval="False"/>
+  <field name="body_html" type="html">
+    <div>
+      <p>Hola <t t-out="object.employee_id.name"/>,</p>
+      <p>Adjuntamos tu rol de pago del período <t t-out="'%02d/%s' % (object.period_id.month, object.period_id.year)"/>.</p>
+      <p class="text-muted">Documento interno de vista previa; no sustituye la equivalencia integral pendiente ni constituye un rol de pago oficial homologado.</p>
+    </div>
+  </field>
+</record>
+</data>
+</odoo>
