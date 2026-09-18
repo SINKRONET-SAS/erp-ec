@@ -409,13 +409,34 @@ class Line(models.Model):
     net=fields.Float('Neto a recibir',compute='_compute_totals')
     deductions=fields.Float('Descuentos',compute='_compute_totals')
     cost=fields.Float('Costo de empresa',compute='_compute_totals')
+    # Prefijo result_ para no chocar con los campos de novedades del mismo nombre (p. ej.
+    # `advances`/`loans`/`other_deductions` ya existen como entrada; su valor en el resultado es
+    # idéntico, así que el reporte de rol de pago (A2) los lee directamente de esos campos).
+    result_salary=fields.Float(compute='_compute_totals')
+    result_overtime=fields.Float(compute='_compute_totals')
+    result_personal_iess=fields.Float(compute='_compute_totals')
+    result_tax=fields.Float(compute='_compute_totals')
+    result_thirteenth=fields.Float(compute='_compute_totals')
+    result_fourteenth=fields.Float(compute='_compute_totals')
+    result_vacation=fields.Float(compute='_compute_totals')
+    result_reserve_iess=fields.Float(compute='_compute_totals')
+    result_employer_iess=fields.Float(compute='_compute_totals')
+    result_employer_other=fields.Float(compute='_compute_totals')
+
+    _RESULT_FIELD_MAP = {
+        'gross': 'gross', 'net': 'net', 'deductions': 'deductions', 'cost': 'cost',
+        'salary': 'result_salary', 'overtime': 'result_overtime', 'personal_iess': 'result_personal_iess',
+        'tax': 'result_tax', 'thirteenth': 'result_thirteenth', 'fourteenth': 'result_fourteenth',
+        'vacation': 'result_vacation', 'reserve_iess': 'result_reserve_iess',
+        'employer_iess': 'result_employer_iess', 'employer_other': 'result_employer_other',
+    }
 
     @api.depends('result')
     def _compute_totals(self):
         for line in self:
             result=json.loads(line.result or '{}')
-            for key in ('gross','net','deductions','cost'):
-                line[key]=result.get(key,0)
+            for result_key,field_name in line._RESULT_FIELD_MAP.items():
+                line[field_name]=result.get(result_key,0)
 
     @api.constrains('period_id','employee_id','partner_id','analytic_id')
     def _check_company_links(self):

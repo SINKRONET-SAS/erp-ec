@@ -1,0 +1,156 @@
+<odoo>
+<template id="report_payslip_document">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="line">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Rol de pago</h2>
+        <div class="row mb-3">
+          <div class="col-6">
+            <strong>Empleado:</strong> <span t-esc="line.employee_id.name"/><br/>
+            <strong>Período:</strong> <span t-esc="'%02d/%s' % (line.period_id.month, line.period_id.year)"/><br/>
+          </div>
+          <div class="col-6">
+            <strong>Empresa:</strong> <span t-esc="line.company_id.name"/><br/>
+            <strong>Referencia del cierre:</strong> <span t-esc="line.period_id.name"/><br/>
+          </div>
+        </div>
+        <table class="table table-sm">
+          <thead><tr><th>Ingresos</th><th class="text-end">Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Salario base</td><td class="text-end" t-esc="'%.2f' % line.result_salary"/></tr>
+            <tr><td>Horas extra/suplementarias</td><td class="text-end" t-esc="'%.2f' % line.result_overtime"/></tr>
+            <tr><td>Ingresos brutos</td><td class="text-end" t-esc="'%.2f' % line.gross"/></tr>
+          </tbody>
+          <thead><tr><th>Descuentos</th><th class="text-end">Valor</th></tr></thead>
+          <tbody>
+            <tr><td>IESS personal</td><td class="text-end" t-esc="'%.2f' % line.result_personal_iess"/></tr>
+            <tr><td>Retención de renta</td><td class="text-end" t-esc="'%.2f' % line.result_tax"/></tr>
+            <tr><td>Anticipos</td><td class="text-end" t-esc="'%.2f' % line.advances"/></tr>
+            <tr><td>Préstamos</td><td class="text-end" t-esc="'%.2f' % line.loans"/></tr>
+            <tr><td>Otros descuentos</td><td class="text-end" t-esc="'%.2f' % line.other_deductions"/></tr>
+            <tr><td>Total descuentos</td><td class="text-end" t-esc="'%.2f' % line.deductions"/></tr>
+          </tbody>
+          <thead><tr><th>Neto a recibir</th><th class="text-end" t-esc="'%.2f' % line.net"/></tr></thead>
+          <thead><tr><th>Beneficios de este período</th><th class="text-end">Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Décimo tercero</td><td class="text-end" t-esc="'%.2f' % line.result_thirteenth"/></tr>
+            <tr><td>Décimo cuarto</td><td class="text-end" t-esc="'%.2f' % line.result_fourteenth"/></tr>
+            <tr><td>Vacaciones</td><td class="text-end" t-esc="'%.2f' % line.result_vacation"/></tr>
+            <tr><td>Fondo de reserva</td><td class="text-end" t-esc="'%.2f' % line.result_reserve_iess"/></tr>
+            <tr><td>Aporte patronal IESS</td><td class="text-end" t-esc="'%.2f' % line.result_employer_iess"/></tr>
+            <tr><td>Contribución IECE/SECAP</td><td class="text-end" t-esc="'%.2f' % line.result_employer_other"/></tr>
+            <tr><td><strong>Costo total de empresa</strong></td><td class="text-end"><strong t-esc="'%.2f' % line.cost"/></td></tr>
+          </tbody>
+        </table>
+        <p class="text-muted">Documento interno de vista previa; no sustituye la equivalencia integral pendiente ni constituye un rol de pago oficial homologado.</p>
+      </div>
+    </t>
+    </t>
+  </t>
+</template>
+<record id="report_payslip" model="ir.actions.report">
+  <field name="name">Rol de pago</field>
+  <field name="model">erpec.payroll.line</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="report_name">erpec_payroll.report_payslip_document</field>
+  <field name="print_report_name">'Rol de pago - %s' % (object.employee_id.name)</field>
+  <field name="binding_model_id" ref="model_erpec_payroll_line"/>
+  <field name="binding_type">report</field>
+</record>
+
+<template id="report_period_summary_document">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="period">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Resumen de nómina</h2>
+        <div class="row mb-3">
+          <div class="col-6"><strong>Empresa:</strong> <span t-esc="period.company_id.name"/></div>
+          <div class="col-6"><strong>Período:</strong> <span t-esc="'%02d/%s' % (period.month, period.year)"/></div>
+        </div>
+        <table class="table table-sm">
+          <thead><tr><th>Empleado</th><th class="text-end">Ingresos</th><th class="text-end">Descuentos</th><th class="text-end">Neto</th><th class="text-end">Costo</th></tr></thead>
+          <tbody>
+            <tr t-foreach="period.line_ids" t-as="line">
+              <td t-esc="line.employee_id.name"/>
+              <td class="text-end" t-esc="'%.2f' % line.gross"/>
+              <td class="text-end" t-esc="'%.2f' % line.deductions"/>
+              <td class="text-end" t-esc="'%.2f' % line.net"/>
+              <td class="text-end" t-esc="'%.2f' % line.cost"/>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Total</th>
+              <th class="text-end" t-esc="'%.2f' % sum(period.line_ids.mapped('gross'))"/>
+              <th class="text-end" t-esc="'%.2f' % sum(period.line_ids.mapped('deductions'))"/>
+              <th class="text-end" t-esc="'%.2f' % sum(period.line_ids.mapped('net'))"/>
+              <th class="text-end" t-esc="'%.2f' % sum(period.line_ids.mapped('cost'))"/>
+            </tr>
+          </tfoot>
+        </table>
+        <p class="text-muted">Documento interno de vista previa; no sustituye la equivalencia integral pendiente ni constituye un reporte oficial homologado.</p>
+      </div>
+    </t>
+    </t>
+  </t>
+</template>
+<record id="report_period_summary" model="ir.actions.report">
+  <field name="name">Resumen de nómina</field>
+  <field name="model">erpec.payroll.period</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="report_name">erpec_payroll.report_period_summary_document</field>
+  <field name="print_report_name">'Resumen de nomina - %s' % (object.name)</field>
+  <field name="binding_model_id" ref="model_erpec_payroll_period"/>
+  <field name="binding_type">report</field>
+</record>
+
+<template id="report_benefit_summary_document">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="summary">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Ficha de beneficios acumulados</h2>
+        <div class="row mb-3">
+          <div class="col-6"><strong>Empresa:</strong> <span t-esc="summary.company_id.name"/></div>
+          <div class="col-6"><strong>Año:</strong> <span t-esc="summary.year"/></div>
+        </div>
+        <table class="table table-sm">
+          <thead><tr><th>Empleado</th><th class="text-end">Meses</th><th class="text-end">Décimo 3°</th><th class="text-end">Décimo 4°</th><th class="text-end">Vacaciones</th><th class="text-end">F. reserva</th><th class="text-end">Costo</th></tr></thead>
+          <tbody>
+            <tr t-foreach="summary.line_ids" t-as="line">
+              <td t-esc="line.employee_id.name"/>
+              <td class="text-end" t-esc="line.months"/>
+              <td class="text-end" t-esc="'%.2f' % line.thirteenth"/>
+              <td class="text-end" t-esc="'%.2f' % line.fourteenth"/>
+              <td class="text-end" t-esc="'%.2f' % line.vacation"/>
+              <td class="text-end" t-esc="'%.2f' % line.reserve_iess"/>
+              <td class="text-end" t-esc="'%.2f' % line.cost"/>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-muted">Suma de los períodos contabilizados ('posted') del año indicado; no incluye períodos en borrador ni revertidos. Documento interno de vista previa.</p>
+      </div>
+    </t>
+    </t>
+  </t>
+</template>
+<record id="report_benefit_summary" model="ir.actions.report">
+  <field name="name">Ficha de beneficios acumulados</field>
+  <field name="model">erpec.payroll.benefit.summary</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="report_name">erpec_payroll.report_benefit_summary_document</field>
+  <field name="print_report_name">'Beneficios acumulados - %s' % (object.year)</field>
+  <field name="binding_model_id" ref="model_erpec_payroll_benefit_summary"/>
+  <field name="binding_type">report</field>
+</record>
+
+<record id="benefit_summary_list" model="ir.ui.view"><field name="name">erpec.payroll.benefit.summary.list</field><field name="model">erpec.payroll.benefit.summary</field><field name="arch" type="xml"><list><field name="name"/><field name="company_id"/><field name="year"/></list></field></record>
+<record id="benefit_summary_form" model="ir.ui.view"><field name="name">erpec.payroll.benefit.summary.form</field><field name="model">erpec.payroll.benefit.summary</field><field name="arch" type="xml"><form><header><button name="action_build" type="object" string="Agregar períodos contabilizados" class="oe_highlight"/></header>
+<sheet><group><field name="company_id"/><field name="year"/></group>
+<field name="line_ids" readonly="1"><list><field name="employee_id"/><field name="months"/><field name="thirteenth"/><field name="fourteenth"/><field name="vacation"/><field name="reserve_iess"/><field name="cost"/></list></field>
+</sheet></form></field></record>
+<record id="benefit_summary_action" model="ir.actions.act_window"><field name="name">Beneficios acumulados</field><field name="res_model">erpec.payroll.benefit.summary</field><field name="view_mode">list,form</field></record>
+<menuitem id="benefit_summary_menu" name="Beneficios acumulados" parent="payroll_menu" action="benefit_summary_action" sequence="40"/>
+</odoo>

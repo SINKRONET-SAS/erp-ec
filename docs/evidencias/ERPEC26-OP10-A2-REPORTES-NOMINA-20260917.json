@@ -1,0 +1,55 @@
+{
+  "recordedAt": "2026-09-17T23:55:00.000Z",
+  "scope": "OP10-A2: reportes de nomina en erpec_payroll -- rol de pago (por linea), resumen de nomina (por periodo) y ficha de beneficios acumulados por empleado (por empresa/ano).",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "newFiles": ["addons/erpec_payroll/reports.py", "addons/erpec_payroll/reports.xml", "addons/erpec_payroll/tests/test_reports.py"],
+  "newModels": ["erpec.payroll.benefit.summary", "erpec.payroll.benefit.summary.line"],
+  "modelChanges": [
+    "erpec.payroll.line gano 10 campos calculados (result_salary, result_overtime, result_personal_iess, result_tax, result_thirteenth, result_fourteenth, result_vacation, result_reserve_iess, result_employer_iess, result_employer_other) via _RESULT_FIELD_MAP, para que las plantillas QWeb lean campos tipados en vez de parsear el JSON 'result' dentro de la plantilla"
+  ],
+  "designSource": "erpec.payroll.benefit.summary.action_build() replica exactamente el patron ya existente de annex_rdep.py (Rdep.action_build()): agrega solo periodos 'posted' de un ano/empresa, idempotente (reconstruir no duplica lineas).",
+  "bugsFoundAndFixedDuringTesting": [
+    {"bug": "Plantilla del rol de pago: <strong t-esc=\"'%.2f' % line.cost\"/> autocerrado seguido de un </strong> suelto", "evidence": "lxml.etree.XMLSyntaxError real: 'Opening and ending tag mismatch: strong line 42 and td'", "fix": "Eliminada la etiqueta de cierre redundante; XML revalidado con etree.parse() antes de reintentar"},
+    {"bug": "Las tres plantillas QWeb llamaban a web.external_layout directamente como raiz, sin el web.html_container que provee el <main> que _prepare_html busca con root.xpath('//main')[0]", "evidence": "IndexError real: 'list index out of range' en odoo/addons/base/models/ir_actions_report.py:397, reproducido en los tres reportes al forzar render con force_report_rendering=True", "fix": "Reestructuradas las tres plantillas para igualar el patron real de Odoo (sale.report_saleorder_document + _raw): t-call=\"web.html_container\" por fuera, t-foreach de documentos, t-call=\"web.external_layout\" por documento dentro del bucle"},
+    {"bug": "Forzar PDF real (force_report_rendering=True) dentro del arnes de pruebas aislado (--no-http) colgaba el proceso indefinidamente hasta el timeout externo de 900s", "evidence": "Log de Odoo: 'Generating PDF on Windows platform require DPI >= 96' seguido 8s despues de 'Request timed out: TimeoutError' y luego silencio total; confirmado en el propio codigo de Odoo (ir_actions_report.py, comentario real: 'Passing the cookie to wkhtmltopdf in order to resolve internal links') que wkhtmltopdf resuelve activos/enlaces internos con una peticion HTTP de vuelta al servidor Odoo -- imposible sin --http", "fix": "Decision explicita: las pruebas aisladas ya no fuerzan PDF (revertido force_report_rendering), verifican que el HTML renderiza con el contenido correcto -- es el fallback intencional que el propio codigo de Odoo documenta para '--test-tags' ('In case of test environment without enough workers to perform calls to wkhtmltopdf, fallback to render_html'). La generacion de PDF real se verifica aparte, en el ensayo contra la demo (HTTP activo)."},
+    {"bug": "Investigacion descartada: se sospecho inicialmente que era un problema de propagacion de PATH (wkhtmltopdf) al subproceso de pruebas aislado", "evidence": "Verificado explicitamente con os.environ.copy() + print(shutil-equivalente) antes de subprocess.run: el PATH SI llegaba correctamente al subproceso y el binario existia -- el fallo persistio identico, descartando esa hipotesis y llevando al diagnostico correcto (arriba)", "fix": "No aplica -- diagnostico corregido antes de escribir una solucion equivocada"}
+  ],
+  "tests": {
+    "totalTests": 41,
+    "failed": 0,
+    "errors": 0,
+    "newInThisIncrement": 5,
+    "coverage": ["rol de pago renderiza HTML con el contenido esperado (empleado, titulo)", "resumen de periodo renderiza HTML con el contenido esperado", "ficha de beneficios exige periodos posted antes de construirse", "ficha de beneficios agrega los periodos posted del ano y coincide con el JSON result de la linea", "reconstruir la ficha de beneficios no duplica lineas"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "moduleVersion": "18.0.1.4.0",
+    "viewFormCompiled": "erpec.payroll.benefit.summary",
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "XML-RPC + HTTP real contra la demo ya reinstalada y reiniciada (no simulado): crea empresa/politica/mapeo/empleado/periodo sinteticos, activa la politica, calcula-cierra-contabiliza el periodo, construye la ficha de beneficios, y descarga los tres PDFs por GET /report/pdf/<report>/<ids> con sesion autenticada",
+    "results": {
+      "payslip": {"status": 200, "startsWithPdf": true, "length": 21010},
+      "period_summary": {"status": 200, "startsWithPdf": true, "length": 18931},
+      "benefit_summary": {"status": 200, "startsWithPdf": true, "length": 19878}
+    },
+    "conclusion": "Confirma que wkhtmltopdf genera PDF real de punta a punta contra una instancia Odoo con HTTP activo, distinto del arnes de pruebas aislado (--no-http) donde eso es estructuralmente imposible"
+  },
+  "demoResidualArtifacts": {
+    "created": ["cuentas/diarios/empleados/socios sinteticos de varios intentos de ensayo corregidos en el camino (errores de empresa/company_id detectados y corregidos antes del ensayo final exitoso)", "una version de politica (id 2, 'A2-REHEARSAL', anio 2099) que quedo activa sin diario ni cuentas tras eliminar sus cuentas/diario asociados tal cual permite el diseno de solo-anexar (erpec.payroll.policy no permite unlink)"],
+    "removable": false,
+    "reason": "erpec.payroll.policy no tiene permiso de unlink por diseno (perm_unlink=0 en ir.model.access.csv, versionado de solo-anexar); los registros sinteticos estan claramente rotulados 'ensayo'/'A2-REHEARSAL' y no tienen efecto de negocio real."
+  },
+  "pending": [
+    "OP10-A3: envio automatico del rol de pago (plantilla de correo + adjunto PDF, disparado al cerrar el periodo)",
+    "OP10-A4: carga de saldos iniciales (dry-run -> commit -> revert, idempotente por hash de origen)",
+    "OP10-B3: reportes de cumplimiento de visitas",
+    "scripts/provision-worker.py todavia no instala erpec_payroll ni erpec_field_routes para clientes nuevos -- pendiente ya documentado en OP07/OP10-A1b/OP10-B1B2"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}
