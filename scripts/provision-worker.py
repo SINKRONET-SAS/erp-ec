@@ -113,8 +113,12 @@ def operate(job):
         # abrir bases con ESE db_user/db_password de proceso.
         db_args = ['--db_host', '127.0.0.1', '--db_port', '55487', '--db_user', tenants['db_user'],
                     '--db_password', tenants['db_password'], '--addons-path', addons_path]
+        # erpec_payroll siembra sola la versión NACIONAL-2026 al instalarse (post_init_hook,
+        # ver hooks.py) sin depender de ningún diario ni del plan de cuentas -- seguro instalarlo
+        # aquí, antes de que el bloque de abajo cargue el plan EC y renombre la empresa.
         subprocess.run([str(PYTHON), str(SOURCE/'odoo-bin'), '-d', name, *db_args,
-                         '-i', 'base,l10n_ec,erpec_base', '--stop-after-init', '--no-http'],
+                         '-i', 'base,l10n_ec,erpec_base,erpec_payroll,erpec_field_routes',
+                         '--stop-after-init', '--no-http'],
                         check=True, timeout=600)
         code = ("import json\nfrom pathlib import Path\n"
                 "p=json.loads(Path(" + repr(str(secretfile)) + ").read_text())\n"

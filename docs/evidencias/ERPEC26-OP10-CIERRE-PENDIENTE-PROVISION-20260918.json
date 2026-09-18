@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-09-18T02:55:00.000Z",
+  "scope": "Cierre del pendiente transversal documentado desde OP07/OP10-A1b/OP10-B1B2: scripts/provision-worker.py no instalaba erpec_payroll ni erpec_field_routes para clientes nuevos.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "change": "scripts/provision-worker.py linea ~117: la instalacion de un solo uso para cada cliente nuevo ahora incluye 'erpec_payroll,erpec_field_routes' ademas de 'base,l10n_ec,erpec_base'.",
+  "designNote": "Seguro instalarlos ANTES de que el bloque siguiente cargue el plan de cuentas EC y renombre la empresa: erpec_payroll.post_init_hook no depende de ningun diario ni de que el plan de cuentas ya este cargado (decision ya tomada y verificada en OP10-A1b, ver hooks.py) -- solo itera las empresas que existan en ese momento y siembra NACIONAL-2026 en cada una, sin fallar si la empresa se renombra despues.",
+  "notInScope": "No se diferencia el conjunto de modulos instalado segun el tipo de plan del cliente (pendiente distinto y mas amplio, ya documentado aparte en AuditLock.json: 'OP07: diferenciar el conjunto de modulos instalados por aprovisionamiento segun el tipo de plan') -- este cambio instala ambos modulos para TODO cliente nuevo, sin excepcion.",
+  "realRehearsal": {
+    "method": "Aprovisionamiento real de punta a punta contra el operador sintetico 'a' (erpec_a, puerto 8169) y el servidor compartido de clientes (puerto 8200), no simulado: se creo una suscripcion/empresa/plan nuevos, se activo, se solicito el aprovisionamiento (accion_provision), y se corrio scripts/provision-worker.py --operator a repetidamente hasta procesar la cola (varios trabajos de ensayos previos ya encolados se procesaron primero, uno por invocacion, sin --watch).",
+    "steps": [
+      "Se inicio scripts/windows-local.py start (postgres + operadores a/b) y scripts/shared-tenant-server.py start (puerto 8200), ninguno de los dos estaba corriendo al empezar",
+      "Se creo una empresa 'ERP EC ensayo nomina-visitas <sufijo>' con un plan y suscripcion sinteticos sin cobro, y se solicito su aprovisionamiento",
+      "provision-worker.py creo una base de datos nueva desde cero (erp_06ad579aa89544548ef5ab386994b288) e instalo base,l10n_ec,erpec_base,erpec_payroll,erpec_field_routes en una sola llamada -i",
+      "Verificado por XML-RPC contra la instancia real recien creada (con el grupo de responsable de nomina concedido explicitamente al admin, mismo patron ya usado en los instaladores de demo)"
+    ],
+    "results": {
+      "installedModules": ["erpec_field_routes", "erpec_payroll"],
+      "seededPolicies": [
+        {"company": "EC Company", "name": "NACIONAL-2026", "state": "draft", "minimum_salary": 482.0},
+        {"company": "My Company (Chicago)", "name": "NACIONAL-2026", "state": "draft", "minimum_salary": 482.0},
+        {"company": "ERP EC ensayo nomina-visitas <sufijo>", "name": "NACIONAL-2026", "state": "draft", "minimum_salary": 482.0}
+      ],
+      "fieldRoutesModelPresent": true,
+      "healthCheckPassed": true
+    },
+    "conclusion": "Confirma de punta a punta, contra un aprovisionamiento real (no una base preexistente reutilizada): un cliente nuevo recibe automaticamente erpec_payroll y erpec_field_routes, con la version NACIONAL-2026 de parametros legales ya sembrada en estado borrador para revision -- sin necesidad de configuracion manual adicional. El hook sembro correctamente las TRES empresas presentes en la base en ese momento (dos de plantilla base de Odoo mas la propia del cliente), confirmando que no depende de un orden especifico de carga."
+  },
+  "pending": [
+    "OP07: diferenciar el conjunto de modulos instalados por aprovisionamiento segun el tipo de plan del cliente -- pendiente distinto y mas amplio, no resuelto por este cambio (aqui se instala el mismo conjunto para todo cliente nuevo)"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

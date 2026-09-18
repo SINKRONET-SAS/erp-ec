@@ -75,8 +75,9 @@ customer = worker.rpc(resumed['endpoint'],'erp_'+job['name'],instance_private['a
 assert customer('res.partner','read',[[partner],['name']])[0]['name'] == marker
 # Aislamiento de módulos: el cliente comparte el mismo servidor y addons_path del operador,
 # pero solo tiene instalados los módulos que el trabajador le instaló a él (base/l10n_ec/
-# erpec_base) -- erpec_suite/erpec_provision quedan disponibles en el código pero nunca
-# activados en su base, que es la frontera real de aislamiento en un servidor compartido.
+# erpec_base/erpec_payroll/erpec_field_routes) -- erpec_suite/erpec_provision quedan
+# disponibles en el código pero nunca activados en su base, que es la frontera real de
+# aislamiento en un servidor compartido.
 assert customer('ir.module.module','search_count',[[('name','in',['erpec_suite','erpec_provision']),('state','=','installed')]]) == 0
 # El rol compartido erp_tenants posee todas las bases de clientes (Odoo abre cada base con un
 # único db_user/db_password de proceso); el aislamiento entre operador y clientes ya no viene

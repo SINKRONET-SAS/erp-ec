@@ -57,7 +57,9 @@ Cuatro bugs reales encontrados y corregidos durante la instalación y el ensayo 
 
    8 pruebas nuevas (27 en total, 0 fallos/errores). Reinstalado en demo con respaldo previo. **Ensayo real contra la demo** (HTTP activo, no simulado): un vendedor con una zona al 50% de cumplimiento (1 excepción pendiente) y otra al 100% de cumplimiento pero 0% dentro de geocerca (2 excepciones pendientes); PDF real descargado (200, `%PDF`, 20.388 bytes). Detalle: `docs/evidencias/ERPEC26-OP10-B3-REPORTES-VISITAS-20260917.json`.
 
-**Con B3 se cierra el plan OP10** (nómina A1/A1b/A1c/A2/A3/A4 + visitas B1/B2/B3). Pendiente transversal fuera de alcance de este plan: `scripts/provision-worker.py` todavía no instala `erpec_payroll` ni `erpec_field_routes` para clientes nuevos.
+**Con B3 se cierra el plan OP10** (nómina A1/A1b/A1c/A2/A3/A4 + visitas B1/B2/B3).
+
+**Cierre del pendiente transversal (18-09-2026)**: `scripts/provision-worker.py` ahora instala `erpec_payroll,erpec_field_routes` para todo cliente nuevo, junto con `base,l10n_ec,erpec_base`. Verificado con un aprovisionamiento real de punta a punta (no una base reutilizada): módulos instalados, `NACIONAL-2026` sembrado solo en estado borrador. No queda ningún pendiente de OP10 sin cerrar. Detalle: `docs/evidencias/ERPEC26-OP10-CIERRE-PENDIENTE-PROVISION-20260918.json`.
 
 ## Hallazgo documentado, fuera de este plan (17-09-2026)
 
