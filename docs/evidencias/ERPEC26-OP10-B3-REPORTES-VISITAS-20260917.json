@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-09-18T00:45:00.000Z",
+  "scope": "OP10-B3 (cierra OP10): reportes de cumplimiento de visitas en erpec_field_routes -- agregacion por vendedor/zona en un rango de fechas, exportable e imprimible en PDF.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "newFiles": ["addons/erpec_field_routes/reports.py", "addons/erpec_field_routes/reports.xml", "addons/erpec_field_routes/tests/test_compliance_report.py"],
+  "newModels": ["erpec.route.compliance.report", "erpec.route.compliance.report.line"],
+  "designSource": "Mismo patron de agregacion idempotente ya establecido en erpec_payroll.reports.BenefitSummary (OP10-A2): action_build() reconstruye sin duplicar lineas. No se porta codigo nuevo de sinkroniq-mobile/nuevo_nomina para este reporte -- es una agregacion sobre los modelos ya existentes de B1/B2.",
+  "designDecisions": [
+    "Agrupa por (employee_id, site_id) -- vendedor y zona -- dentro de un rango de fechas; excluye dias cancelados",
+    "Por linea: paradas planificadas/completadas/omitidas/no planificadas, tasa de cumplimiento, marcas totales/dentro de geocerca y su tasa, y excepciones pendientes",
+    "Exportable con la exportacion nativa de listas de Odoo (vista lista independiente de erpec.route.compliance.report.line, agrupable por vendedor/zona) -- no se construyo un exportador CSV/XLSX a medida, la funcionalidad nativa ya lo cubre",
+    "Reporte QWeb-PDF adicional para impresion, con el envoltorio web.html_container correcto desde el inicio (aprendido del bug real de OP10-A2, no se repitio)"
+  ],
+  "bugsFoundAndFixedDuringTesting": [
+    {"bug": "En la plantilla QWeb, t-esc=\"'%.1f%%' % linea.completion_rate\" (dos signos de porcentaje, el segundo escapado para Python) producia ValueError: incomplete format real", "evidence": "Traceback real: odoo.addons.base.models.ir_qweb.QWebException -> ValueError: incomplete format, Node: <td ... t-esc=\"'%.1f%' % line.completion_rate\"/> -- Odoo colapsa %% a un solo % dentro del atributo t-esc antes de evaluar la expresion Python, dejando un formato incompleto", "fix": "Movido el signo de porcentaje a texto literal FUERA de la expresion: <t t-esc=\"'%.1f' % valor\"/>%"},
+    {"bug": "action_build() buscaba las excepciones pendientes de cada parada solo por stop_id", "evidence": "Prueba real con datos reales: una visita fuera de geocerca (checkin y checkout ambos generan su propia excepcion geofence_violation) reporto pending_exceptions=1 en vez de 3 (2 geofence_violation + 1 omitted_visit de otra parada) -- inspeccionando erpec_field_routes/models.py se confirmo que RouteVisitMark.create() crea la excepcion con mark_id (NO stop_id), a diferencia de action_omit()/action_add_unplanned_stop() que si usan stop_id directamente", "fix": "La busqueda de excepciones pendientes ahora usa '|', ('stop_id','in',...), ('mark_id.stop_id','in',...) para cubrir ambos casos"}
+  ],
+  "bugsFoundDuringRehearsalEnvironmentOnly": [
+    {"bug": "Al reinstalar el modulo en la demo, el proceso se reinicio sin la ruta de wkhtmltopdf en el PATH (se olvido anteponer el export correspondiente en ese comando puntual)", "evidence": "Primer intento del ensayo: HTTP 400, log real 'No se ha podido encontrar Wkhtmltopdf en el sistema. El PDF no se puede crear.' -- mismo mecanismo de deteccion-al-importar ya documentado al instalar wkhtmltopdf en el entorno", "fix": "Reiniciado el proceso de la demo con el PATH correcto; no requirio ningun cambio de codigo, era un descuido operativo puntual de este ensayo"}
+  ],
+  "tests": {
+    "totalTests": 27,
+    "failed": 0,
+    "errors": 0,
+    "newInThisIncrement": 8,
+    "coverage": ["exige dias en el rango de fechas antes de construir", "agrega correctamente por vendedor y sitio (planificadas/completadas/omitidas/cumplimiento/marcas/excepciones pendientes)", "cuenta paradas no planificadas y su excepcion", "separa lineas quando el mismo vendedor visita dos zonas distintas", "excluye dias cancelados", "reconstruir no duplica lineas", "fecha inicial posterior a la final es rechazada", "el reporte renderiza HTML con contenido real dentro del arnes aislado (fallback intencional de Odoo bajo --test-tags, PDF real verificado aparte)"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "moduleVersion": "18.0.1.1.0",
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "XML-RPC + HTTP real contra la demo ya reinstalada (no simulado): crea empleado/dos zonas/un dia de ruta con una visita completada dentro de geocerca, una completada fuera de geocerca y una omitida; construye el reporte y descarga el PDF con sesion autenticada",
+    "results": {
+      "zonaCercana": {"planned_stops": 2, "completed_stops": 1, "omitted_stops": 1, "completion_rate": 50.0, "within_geofence_rate": 100.0, "pending_exceptions": 1},
+      "zonaLejana": {"planned_stops": 1, "completed_stops": 1, "omitted_stops": 0, "completion_rate": 100.0, "within_geofence_rate": 0.0, "pending_exceptions": 2},
+      "pdf": {"status": 200, "startsWithPdf": true, "length": 20388}
+    },
+    "conclusion": "Confirma de punta a punta, contra una instancia Odoo real: la agregacion por vendedor/zona es correcta incluyendo el caso de excepciones geofence_violation (el bug real corregido), y el PDF es real (no HTML de respaldo)"
+  },
+  "pending": [
+    "scripts/provision-worker.py todavia no instala erpec_payroll ni erpec_field_routes para clientes nuevos -- pendiente transversal ya documentado en OP07/OP10-A1b/OP10-B1B2, fuera de alcance de este incremento y de todo el plan OP10"
+  ],
+  "planClosed": true,
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

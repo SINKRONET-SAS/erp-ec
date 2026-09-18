@@ -1,1 +1,1 @@
-{'name': 'ERP EC — Control de visitas de vendedores', 'version': '18.0.1.0.0', 'license': 'Other proprietary', 'author': 'SINKRONET S.A.S.', 'depends': ['hr', 'erpec_base'], 'data': ['security.xml', 'ir.model.access.csv', 'views.xml'], 'installable': True}
+{'name': 'ERP EC — Control de visitas de vendedores', 'version': '18.0.1.1.0', 'license': 'Other proprietary', 'author': 'SINKRONET S.A.S.', 'depends': ['hr', 'erpec_base'], 'data': ['security.xml', 'ir.model.access.csv', 'views.xml', 'reports.xml'], 'installable': True}

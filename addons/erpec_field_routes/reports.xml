@@ -1,0 +1,47 @@
+<odoo>
+<template id="report_compliance_document">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="report">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Cumplimiento de visitas</h2>
+        <div class="row mb-3">
+          <div class="col-6"><strong>Empresa:</strong> <span t-esc="report.company_id.name"/></div>
+          <div class="col-6"><strong>Período:</strong> <span t-esc="report.date_from"/> a <span t-esc="report.date_to"/></div>
+        </div>
+        <table class="table table-sm">
+          <thead><tr>
+            <th>Vendedor</th><th>Zona/sitio</th><th class="text-end">Planificadas</th><th class="text-end">Completadas</th>
+            <th class="text-end">Omitidas</th><th class="text-end">No planif.</th><th class="text-end">Cumplimiento</th>
+            <th class="text-end">Dentro de geocerca</th><th class="text-end">Excepciones pend.</th>
+          </tr></thead>
+          <tbody>
+            <tr t-foreach="report.line_ids" t-as="line">
+              <td t-esc="line.employee_id.name"/>
+              <td t-esc="line.site_id.name"/>
+              <td class="text-end" t-esc="line.planned_stops"/>
+              <td class="text-end" t-esc="line.completed_stops"/>
+              <td class="text-end" t-esc="line.omitted_stops"/>
+              <td class="text-end" t-esc="line.unplanned_stops"/>
+              <td class="text-end"><t t-esc="'%.1f' % line.completion_rate"/>%</td>
+              <td class="text-end"><t t-esc="'%.1f' % line.within_geofence_rate"/>%</td>
+              <td class="text-end" t-esc="line.pending_exceptions"/>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-muted">Documento interno de vista previa. No incluye días cancelados; las excepciones pendientes requieren revisión.</p>
+      </div>
+    </t>
+    </t>
+  </t>
+</template>
+<record id="report_compliance" model="ir.actions.report">
+  <field name="name">Cumplimiento de visitas</field>
+  <field name="model">erpec.route.compliance.report</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="report_name">erpec_field_routes.report_compliance_document</field>
+  <field name="print_report_name">'Cumplimiento de visitas - %s' % (object.name)</field>
+  <field name="binding_model_id" ref="model_erpec_route_compliance_report"/>
+  <field name="binding_type">report</field>
+</record>
+</odoo>

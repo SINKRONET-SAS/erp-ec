@@ -15,4 +15,7 @@
 
 <record id="exception_manager_rule" model="ir.rule"><field name="name">Excepción — responsable ve todas en su empresa</field><field name="model_id" ref="model_erpec_route_exception"/><field name="domain_force">[('company_id','in',company_ids)]</field><field name="groups" eval="[(4, ref('group_route_manager'))]"/></record>
 <record id="exception_rep_rule" model="ir.rule"><field name="name">Excepción — vendedor ve solo las suyas</field><field name="model_id" ref="model_erpec_route_exception"/><field name="domain_force">['|',('stop_id.route_day_id.employee_id.user_id','=',user.id),('mark_id.stop_id.route_day_id.employee_id.user_id','=',user.id)]</field><field name="groups" eval="[(4, ref('group_route_rep'))]"/></record>
+
+<record id="compliance_report_rule" model="ir.rule"><field name="name">Reporte de cumplimiento por empresa</field><field name="model_id" ref="model_erpec_route_compliance_report"/><field name="domain_force">[('company_id','in',company_ids)]</field><field name="groups" eval="[(4, ref('group_route_manager'))]"/></record>
+<record id="compliance_report_line_rule" model="ir.rule"><field name="name">Línea de cumplimiento por empresa</field><field name="model_id" ref="model_erpec_route_compliance_report_line"/><field name="domain_force">[('report_id.company_id','in',company_ids)]</field><field name="groups" eval="[(4, ref('group_route_manager'))]"/></record>
 </odoo>

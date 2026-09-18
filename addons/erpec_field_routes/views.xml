@@ -49,9 +49,26 @@
 </sheet></form></field></record>
 <record id="exception_action" model="ir.actions.act_window"><field name="name">Excepciones de visitas</field><field name="res_model">erpec.route.exception</field><field name="view_mode">list,form</field></record>
 
+<record id="compliance_report_list" model="ir.ui.view"><field name="name">erpec.route.compliance.report.list</field><field name="model">erpec.route.compliance.report</field><field name="arch" type="xml"><list><field name="name"/><field name="date_from"/><field name="date_to"/></list></field></record>
+<record id="compliance_report_form" model="ir.ui.view"><field name="name">erpec.route.compliance.report.form</field><field name="model">erpec.route.compliance.report</field><field name="arch" type="xml"><form><header><button name="action_build" type="object" string="Generar/actualizar" class="oe_highlight"/></header>
+<sheet><group><field name="company_id"/><field name="date_from"/><field name="date_to"/></group>
+<field name="line_ids" readonly="1"><list><field name="employee_id"/><field name="site_id"/><field name="planned_stops"/><field name="completed_stops"/><field name="omitted_stops"/><field name="unplanned_stops"/><field name="completion_rate" widget="percentage"/><field name="within_geofence_rate" widget="percentage"/><field name="pending_exceptions"/></list></field>
+</sheet></form></field></record>
+<record id="compliance_report_action" model="ir.actions.act_window"><field name="name">Reportes de cumplimiento</field><field name="res_model">erpec.route.compliance.report</field><field name="view_mode">list,form</field></record>
+
+<record id="compliance_report_line_list" model="ir.ui.view"><field name="name">erpec.route.compliance.report.line.list</field><field name="model">erpec.route.compliance.report.line</field><field name="arch" type="xml"><list create="false" edit="false"><field name="date_from"/><field name="date_to"/><field name="employee_id"/><field name="site_id"/><field name="planned_stops"/><field name="completed_stops"/><field name="omitted_stops"/><field name="unplanned_stops"/><field name="completion_rate" widget="percentage"/><field name="marks_total"/><field name="marks_within_geofence"/><field name="within_geofence_rate" widget="percentage"/><field name="pending_exceptions"/></list></field></record>
+<record id="compliance_report_line_action" model="ir.actions.act_window"><field name="name">Cumplimiento por vendedor/zona (exportable)</field><field name="res_model">erpec.route.compliance.report.line</field><field name="view_mode">list</field><field name="context">{'search_default_group_employee': 1}</field></record>
+<record id="compliance_report_line_search" model="ir.ui.view"><field name="name">erpec.route.compliance.report.line.search</field><field name="model">erpec.route.compliance.report.line</field><field name="arch" type="xml"><search>
+<field name="employee_id"/><field name="site_id"/>
+<filter name="group_employee" string="Vendedor" context="{'group_by': 'employee_id'}"/>
+<filter name="group_site" string="Zona/sitio" context="{'group_by': 'site_id'}"/>
+</search></field></record>
+
 <menuitem id="routes_root" name="Visitas" parent="erpec_base.suite_root" sequence="17" groups="group_route_manager,group_route_rep"/>
 <menuitem id="day_menu" name="Días de ruta" parent="routes_root" action="day_action" sequence="10"/>
 <menuitem id="site_menu" name="Sitios de visita" parent="routes_root" action="site_action" sequence="20" groups="group_route_manager"/>
 <menuitem id="exception_menu" name="Excepciones" parent="routes_root" action="exception_action" sequence="30" groups="group_route_manager"/>
 <menuitem id="mark_menu" name="Marcas de visita" parent="routes_root" action="mark_action" sequence="40" groups="group_route_manager"/>
+<menuitem id="compliance_report_menu" name="Reportes de cumplimiento" parent="routes_root" action="compliance_report_action" sequence="50" groups="group_route_manager"/>
+<menuitem id="compliance_report_line_menu" name="Cumplimiento por vendedor/zona" parent="routes_root" action="compliance_report_line_action" sequence="60" groups="group_route_manager"/>
 </odoo>
