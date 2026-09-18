@@ -4,3 +4,4 @@ from . import test_legal_parameters
 from . import test_reports
 from . import test_payslip_email
 from . import test_opening_balance
+from . import test_mail_server_env

@@ -8,10 +8,23 @@ esa base, no duplicar el trabajo de captura manual en cada cliente nuevo.
 Solo se siembra con parameters_ec2026.PARAMS (fuente oficial verificada, ver SOURCES) y solo
 para el año 2026 exacto -- nunca con demo_parameters.PARAMS (explícitamente sintético) ni para
 otro año sin una tabla verificada, para no presentar un valor no verificado como si fuera un
-parámetro legal real."""
+parámetro legal real.
+
+Este módulo también configura el servidor SMTP saliente (para que el envío del rol de pago de
+A3 deje de quedar solo encolado) reutilizando el MISMO patrón y los MISMOS nombres de variable
+de entorno que ya usa sinkroniq-mobile en producción (EMAIL_HOST/EMAIL_PORT/EMAIL_USER/
+EMAIL_PASS/EMAIL_FROM/EMAIL_SECURE, ver sinkroniq-mobile/backend/src/services/
+mailTransportConfig.js) -- el titular puede reutilizar exactamente las mismas credenciales/
+convención ya usadas allí en Render, sin inventar un esquema nuevo. Sin esas variables
+presentes en el entorno del proceso (el caso normal en una máquina de desarrollo o en una
+instancia recién aprovisionada sin secretos configurados en la plataforma de despliegue), no
+se toca nada -- el correo sigue solo encolándose, nunca se envía de verdad."""
+import os
+
 from .parameters_ec2026 import PARAMS, SOURCES
 
 SEED_YEAR = 2026
+MAIL_SERVER_NAME = 'SINKRONET (EMAIL_* del entorno)'
 
 
 def _bracket_commands(brackets):
@@ -50,3 +63,37 @@ def post_init_hook(env):
                 'integral y revisión laboral (docs/PLAN_HAIKY_ERPEC26.md).' % SEED_YEAR),
             'source_reference': 'Fuentes oficiales verificadas (parameters_ec2026.SOURCES):\n' + source_lines,
         })
+    configure_mail_server_from_env(env)
+
+
+def configure_mail_server_from_env(env):
+    """Crea o actualiza el servidor SMTP saliente (ir.mail_server) a partir de EMAIL_HOST/
+    EMAIL_PORT/EMAIL_USER/EMAIL_PASS/EMAIL_FROM/EMAIL_SECURE del entorno del proceso. Idempotente
+    (busca por nombre fijo y actualiza en vez de duplicar). No registra la contraseña en ningún
+    log. `from_filter` se deja vacío a propósito: un servidor sin from_filter queda disponible
+    como respaldo universal para cualquier dirección de origen (ver ir_mail_server.py, selección
+    de servidor), sin depender de que el correo del remitente coincida exactamente con
+    EMAIL_FROM."""
+    host = os.environ.get('EMAIL_HOST', '').strip()
+    user = os.environ.get('EMAIL_USER', '').strip()
+    password = os.environ.get('EMAIL_PASS', '').strip()
+    if not host or not user or not password:
+        return
+    try:
+        port = int(os.environ.get('EMAIL_PORT', '587') or '587')
+    except ValueError:
+        port = 587
+    sender = os.environ.get('EMAIL_FROM', '').strip() or user
+    secure = os.environ.get('EMAIL_SECURE', 'false').strip().lower() in ('true', '1', 'yes', 'si', 'on')
+    values = {
+        'name': MAIL_SERVER_NAME, 'smtp_host': host, 'smtp_port': port,
+        'smtp_encryption': 'ssl' if secure else 'starttls', 'smtp_authentication': 'login',
+        'smtp_user': user, 'smtp_pass': password, 'sequence': 1,
+    }
+    mail_server = env['ir.mail_server'].sudo()
+    existing = mail_server.search([('name', '=', MAIL_SERVER_NAME)], limit=1)
+    if existing:
+        existing.write(values)
+    else:
+        mail_server.create(values)
+    env['ir.config_parameter'].sudo().set_param('mail.default.from', sender)

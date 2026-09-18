@@ -1,5 +1,16 @@
 <odoo>
-  <template id="product_login_layout" inherit_id="web.login_layout" priority="90">
+  <!-- priority="10": debe aplicarse ANTES que website.login_layout (prioridad 20, en
+  website/views/website_templates.xml), que reemplaza por completo el nodo t raíz de
+  web.login_layout con su propia estructura (website.layout + oe_website_login_container).
+  Con una prioridad mayor a la de website, estos xpaths (no_header, o_database_list,
+  card-body, target=_blank) ya no existen cuando se intentan aplicar: error real
+  reproducido: 'Element cannot be located in parent view' al instalar cualquier módulo con
+  website ya instalado en la misma base (bloqueaba TODA instalación futura de módulos,
+  no solo la del sitio web). Con prioridad 10 la personalización se aplica sobre la
+  estructura original antes de que website la reemplace; cuando website está instalado,
+  website.login_layout gana como es esperado (su propia página de acceso), y esta
+  personalización deja de tener efecto visual pero ya no rompe la instalación de módulos. -->
+  <template id="product_login_layout" inherit_id="web.login_layout" priority="10">
     <xpath expr="//t[@t-set='no_header']" position="before"><t t-set="title">ERP EC · Acceso</t></xpath>
     <xpath expr="//div[contains(@t-attf-class, 'o_database_list')]" position="attributes"><attribute name="t-attf-class">card border-0 mx-auto erpec_login_card {{login_card_classes}} o_database_list</attribute><attribute name="style">max-width: 440px;</attribute></xpath>
     <xpath expr="//div[hasclass('card-body')]/div[1]" position="replace"><div class="erpec_login_identity"><p class="erpec_login_publisher">SINKRONET</p><h1>ERP EC</h1><p>Un espacio para coordinar tu empresa.</p></div></xpath>

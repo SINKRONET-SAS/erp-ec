@@ -4,23 +4,20 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-18T14:16:53.277Z",
+  "updatedAt": "2026-09-18T02:51:03.969Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "addons/erpec_payroll/hooks.py",
-    "addons/erpec_payroll/tests/__init__.py",
-    "addons/erpec_payroll/tests/test_mail_server_env.py",
-    "addons/erpec_workspace/login_views.xml",
-    "docs/evidencias/AuditLock.before-LOGIN-SMTP-ENV-20260918T141653Z.json",
-    "docs/evidencias/ERPEC26-LOGIN-LAYOUT-Y-SMTP-ENV-20260918.json"
+    "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+    "docs/evidencias/AuditLock.before-OP10-PROVISION-PENDING-20260918T025103Z.json",
+    "docs/evidencias/ERPEC26-OP10-CIERRE-PENDIENTE-PROVISION-20260918.json",
+    "scripts/provision-worker.py",
+    "scripts/verify-provision.py"
   ],
   "validationChecks": [
-    "Bug real corregido: erpec_workspace/login_views.xml (product_login_layout) chocaba con website.login_layout (prioridad 20 vs 90), bloqueando la instalacion de CUALQUIER modulo mientras website estuviera presente en la base -- prioridad bajada a 10",
-    "Ensayo real en base aislada: -i erpec_workspace + -i website en la misma base ya no produce el ParseError real (antes si, reproducido primero)",
-    "Reparado el residuo real que la instalacion interrumpida ya habia dejado en la demo (mass_mailing con 681 ir.model.data comprometidos pero module state=uninstalled, rompia con 500 cualquier pagina) -- completada la instalacion de website,mass_mailing con confirmacion explicita del titular entre dos opciones",
-    "erpec_payroll.hooks.configure_mail_server_from_env(): servidor SMTP saliente configurable por EMAIL_HOST/EMAIL_PORT/EMAIL_USER/EMAIL_PASS/EMAIL_FROM/EMAIL_SECURE, mismos nombres que sinkroniq-mobile (investigado en su codigo real, no copiado) -- inactivo sin esas variables, idempotente con ellas",
-    "5/5 pruebas nuevas (59 en total en erpec_payroll), 0 fallos/errores, en base aislada instalada desde cero",
-    "Reinstalado en demo con respaldo previo; confirmado que sin variables EMAIL_* en este entorno no se crea ningun servidor SMTP (0)"
+    "Cierre de pendiente transversal: scripts/provision-worker.py instala ahora erpec_payroll,erpec_field_routes (ademas de base,l10n_ec,erpec_base) para todo cliente nuevo, en una sola llamada -i, antes de que se cargue el plan de cuentas EC",
+    "Seguro por diseno ya verificado en OP10-A1b: erpec_payroll.post_init_hook no depende de ningun diario ni del plan de cuentas cargado",
+    "Ensayo real de punta a punta (no una base reutilizada): operador sintetico a + servidor compartido levantados, suscripcion/empresa/plan nuevos, aprovisionamiento real, cola de trabajos procesada; confirmado por XML-RPC contra la instancia nueva que ambos modulos quedan instalados y NACIONAL-2026 sembrado (borrador, salario minimo 482.0) en las tres empresas presentes al momento del hook",
+    "No resuelve (fuera de alcance): diferenciar el conjunto de modulos por tipo de plan -- pendiente distinto, documentado aparte"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -68,22 +65,19 @@
     "OP09: certificado sin cifrado adicional en reposo (mismo nivel que PayPhone, documentado, no resuelto)",
     "OP09: catalogo de CAs confiables es una lista local (TRUSTED_CA_PATTERNS), no una verificacion de cadena de confianza real contra el repositorio oficial del SRI",
     "Doble navegacion Areas/selector nativo: agregar entradas para Empleados, Contactos y contabilidad estandar a Areas (brecha real confirmada); Fleet/Project descartados (sin uso real). Decision del titular: documentado, no implementado en este incremento.",
-    "Activar el envio real de correo del rol de pago cuando el titular provea credenciales SMTP -- deliberadamente fuera de alcance de OP10-A3",
-    "La pagina de acceso de la demo ya no muestra la marca ERP EC personalizada mientras website siga instalado ahi (aceptado explicitamente por el titular)",
-    "Credenciales SMTP reales (EMAIL_HOST/EMAIL_USER/EMAIL_PASS) para el envio real del rol de pago las debe proveer el titular en la plataforma de despliegue -- mismo limite ya aceptado para PayPhone y el certificado de produccion del SRI"
+    "Activar el envio real de correo del rol de pago cuando el titular provea credenciales SMTP -- deliberadamente fuera de alcance de OP10-A3"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "30bbfaa4b819f41d7869ddae0051a6b7b55a7e4eb09c57ba3b340968eebf4ca4",
-    "addons/erpec_payroll/hooks.py": "6ca8af367c5d2d20ea9e13aff7f36d903a9d8d373f38c51341f08f78ae72e19f",
-    "addons/erpec_payroll/tests/__init__.py": "e1db7a7d927bcf407e568a900dccc5832d321b0ebd08fd6ab1d1150cc871116d",
-    "addons/erpec_payroll/tests/test_mail_server_env.py": "c26b0c26257812f768914d19b402ce7a006af4a391df22ef929fb370cf85a587",
-    "addons/erpec_workspace/login_views.xml": "9b09bd4598f2e67af90897ba96326028ec2f1ef85d730cf959fb7ecea3b3c663",
-    "docs/evidencias/AuditLock.before-LOGIN-SMTP-ENV-20260918T141653Z.json": "c55f0cdd8e389824fea6b965813c2d7597d7911cb9758547dfbbd1816899e563",
-    "docs/evidencias/ERPEC26-LOGIN-LAYOUT-Y-SMTP-ENV-20260918.json": "61784802e71bc28a2e6f92e02682099cecaf7e40ec69aa8593e2bd0662ba118c"
+    ".github/CODEX_CONTEXT.md": "32cbf5cf6970736a9b466d2d2a05263b21a79bc5c7bd3de68114936b45ec2d8d",
+    "docs/PLAN_HAIKY_NOMINA_VISITAS.md": "308dd82197046db66df5979d954622277d979a16dfd92a8e2eda9e2102c08101",
+    "docs/evidencias/AuditLock.before-OP10-PROVISION-PENDING-20260918T025103Z.json": "462e09f351995d2f191ab389a04df7df0f86e33cd3aed04b41913d8eebe18f2c",
+    "docs/evidencias/ERPEC26-OP10-CIERRE-PENDIENTE-PROVISION-20260918.json": "23b3ae4fb4b59b082f2b6cf56959e24fc5fc4fd160dd9d2e339706f996a1c816",
+    "scripts/provision-worker.py": "2e682e94a87c8df23b18d598ef8c32c8193138cc1a4d90230388a64a52a52222",
+    "scripts/verify-provision.py": "dc5fb5c57fa125d0237c38914802f07d7417dbd7eac2b169e591c37d1fb841b5"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-LOGIN-SMTP-ENV-20260918T141653Z.json",
-  "previousAuditLockHash": "c55f0cdd8e389824fea6b965813c2d7597d7911cb9758547dfbbd1816899e563",
-  "signature": "64152ef4142df09a52858431b7a0933f5c6f3f15baed61c2c170ad904cc57aac",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP10-PROVISION-PENDING-20260918T025103Z.json",
+  "previousAuditLockHash": "462e09f351995d2f191ab389a04df7df0f86e33cd3aed04b41913d8eebe18f2c",
+  "signature": "fcbb6b04f7035505a1e9bd3862b309221966000b2a727a1ca3d48de5eae5413f",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

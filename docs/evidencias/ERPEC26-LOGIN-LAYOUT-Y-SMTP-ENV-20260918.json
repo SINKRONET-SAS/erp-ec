@@ -1,0 +1,48 @@
+{
+  "recordedAt": "2026-09-18T14:20:00.000Z",
+  "scope": "Dos correcciones no planificadas surgidas durante la sesion: (1) bug real reportado con captura de pantalla -- choque de prioridad entre erpec_workspace/login_views.xml y website.login_layout, que bloqueaba CUALQUIER instalacion de modulo mientras website estuviera presente; (2) a pedido explicito del titular, servidor SMTP saliente configurable por variables de entorno en erpec_payroll, emulando el patron real de sinkroniq-mobile.",
+  "trigger": "El titular compartio una captura de pantalla de un error real de Odoo ('Vaya! ... model ir.module.module') al intentar activar un modulo desde Aplicaciones en la demo. Investigado el log real de la demo antes de proponer cualquier cambio.",
+  "part1_loginLayoutBug": {
+    "rootCause": "odoo.tools.convert.ParseError: Element '<xpath expr=\"//t[@t-set=\\'no_header\\']\">' cannot be located in parent view -- website.login_layout (prioridad 20) reemplaza por completo el nodo <t> raiz de web.login_layout; erpec_workspace.product_login_layout (prioridad 90, mayor = se aplica DESPUES) intentaba modificar elementos que website ya habia destruido.",
+    "impact": "Bloqueaba la instalacion de CUALQUIER modulo mientras website estuviera presente en la base, no solo la del sitio web, porque el rebuild completo del registro (update_module=True) revalida todas las vistas heredadas.",
+    "fix": "Prioridad de product_login_layout bajada de 90 a 10 (se aplica ANTES que website, sobre la estructura original intacta). Con website instalado, website.login_layout sigue ganando como es esperado; la marca ERP EC del login deja de tener efecto visual ahi, pero ya no rompe ninguna instalacion.",
+    "bugFoundDuringOwnFix": "El primer intento de escribir el comentario explicativo en el XML uso '--' (doble guion) dentro de un comentario XML, invalido segun la especificacion XML -- lxml.etree.XMLSyntaxError real: 'Comment must not contain --'. Corregido antes de continuar.",
+    "realRehearsal": {
+      "method": "Base aislada y nueva: -i erpec_workspace (exitoso) seguido de -i website en la MISMA base (reproduce exactamente el rebuild completo que un clic en Activar dispara). Antes del fix esto fallaba con el ParseError real; despues del fix, ambos pasos terminan con EXIT CODE 0.",
+      "conclusion": "Confirma de punta a punta que el fix resuelve el bug real sin necesitar instalar website en la demo para probarlo."
+    },
+    "demoRepair": {
+      "residueFound": "La instalacion interrumpida que el titular disparo ya habia dejado un residuo real antes de mi intervencion: mass_mailing con 681 registros de ir.model.data comprometidos (incluidos varios ir.asset que registran archivos SCSS en el paquete web.assets_frontend) pero el modulo marcado state='uninstalled' -- esto rompia con HTTP 500 CUALQUIER pagina de la demo (incluido GET /web/login) por un ir.asset apuntando a un modulo no instalado. website no tenia residuo (su carga nunca llego a comprometer nada antes de fallar).",
+      "decisionPoint": "Con el bug ya corregido, se pregunto explicitamente al titular si completar la instalacion de website+mass_mailing (repara la demo pero cambia el login a la version generica de website) o desinstalarlos y volver al estado previo (login con marca ERP EC intacto). El titular eligio completarla.",
+      "action": "Instalado website,mass_mailing en la demo (con respaldo previo por separado del respaldo de erpec_payroll/erpec_workspace).",
+      "verification": {"orphanedModuleDataAfter": 0, "loginPageHttpStatusAfter": 200},
+      "acceptedTradeoff": "La pagina de acceso de la demo ya no muestra la marca 'ERP EC' personalizada (usa el login generico de website/Odoo) mientras website siga instalado ahi -- aceptado explicitamente por el titular."
+    }
+  },
+  "part2_smtpFromEnv": {
+    "userInstruction": "revisar sinkroniq-mobile y emular (verbatim), en respuesta a que A3 (envio del rol de pago) solo encolaba el correo sin enviarlo de verdad por falta de credenciales SMTP.",
+    "researchFindings": [
+      "sinkroniq-mobile/backend/src/services/mailTransportConfig.js: construye la configuracion de nodemailer a partir de EMAIL_HOST/EMAIL_PORT/EMAIL_USER/EMAIL_PASS/EMAIL_FROM/EMAIL_SECURE (con alias legado MAIL_*)",
+      "sinkroniq-mobile/backend/src/services/mailService.js: transporter = nodemailer.createTransport(...), con verify() al arrancar; isMailConfigured()/getMailStatusForDiagnostics() exponen el estado sin filtrar la contrasena",
+      "sinkroniq-mobile/backend/src/services/proformaEmailService.js: patron de cola propia (comprobanteDocumentDispatch), worker con polling de 15s (startProformaEmailWorker/drainProformaEmails), reintentos con backoff exponencial (MAIL_MAX_ATTEMPTS/MAIL_RETRY_BASE_MS), clasificacion de bounces permanentes/transitorios",
+      "render.yaml: en produccion EMAIL_HOST/EMAIL_PORT/EMAIL_SECURE tienen valores por defecto (smtp.gmail.com:587, STARTTLS) pero EMAIL_FROM/EMAIL_USER/EMAIL_PASS son 'sync: false' -- secretos reales cargados MANUALMENTE en el panel de Render, nunca committeados al repositorio. Confirma que el diseno original de A3 (encolar sin credenciales, nunca hardcodear secretos) ya seguia el mismo principio de fondo que sinkroniq-mobile."
+    ],
+    "adaptation": "No se porta codigo ni se construye una cola propia (Odoo ya tiene una: ir.mail_server + el cron nativo ir_cron_mail_scheduler_action, equivalente al worker de sinkroniq). Se agrega configure_mail_server_from_env(env) en addons/erpec_payroll/hooks.py, llamada desde post_init_hook: crea/actualiza (idempotente) un ir.mail_server real a partir de las MISMAS variables de entorno y los mismos nombres que sinkroniq-mobile, para que el titular reutilice exactamente la misma convencion/credenciales ya usadas alli en Render. Sin esas variables presentes, no hace nada -- mismo comportamiento que antes (solo encolado).",
+    "mapping": {"EMAIL_SECURE=true": "smtp_encryption='ssl'", "EMAIL_SECURE=false (default)": "smtp_encryption='starttls'", "from_filter": "se deja vacio a proposito -- confirmado en ir_mail_server.py que un servidor sin from_filter queda disponible como respaldo universal para cualquier direccion de origen"},
+    "tests": {
+      "totalTests": 59,
+      "failed": 0,
+      "errors": 0,
+      "newInThisIncrement": 5,
+      "coverage": ["sin variables de entorno no crea nada", "con variables parciales (falta EMAIL_PASS) tampoco crea nada", "crea correctamente con starttls por defecto", "EMAIL_SECURE=true mapea a ssl", "es idempotente: una segunda llamada con otros valores actualiza el mismo registro en vez de duplicar"]
+    },
+    "installation": {"target": "demo (erpec_demo)", "businessRecordsCreated": false},
+    "realRehearsal": {
+      "method": "Verificado por XML-RPC contra la demo ya reinstalada: sin variables EMAIL_* configuradas en este entorno de desarrollo, ir.mail_server con el nombre fijo NO existe (count=0) -- confirma que el mecanismo permanece inactivo por defecto, exactamente como en sinkroniq-mobile antes de que el titular cargue secretos reales en el panel de despliegue."
+    },
+    "pending": ["Las credenciales reales (EMAIL_HOST/EMAIL_USER/EMAIL_PASS) las debe proveer el titular en la plataforma de despliegue -- no se prueba un envio SMTP real de punta a punta en este incremento por no existir credenciales reales disponibles, mismo limite ya aceptado para PayPhone y el certificado de produccion del SRI"]
+  },
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}
