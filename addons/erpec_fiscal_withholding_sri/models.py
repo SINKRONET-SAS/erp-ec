@@ -59,18 +59,28 @@ class Withholding(models.Model):
     def _sri_ambiente(self):
         return self.journal_id.ec_sri_ambiente or '1'
 
+    def _sri_numbers(self):
+        """Establecimiento y punto de emisión: los del punto SRI del diario de retenciones si existe,
+        si no los predeterminados de la empresa."""
+        point = self.journal_id.ec_point_id
+        company = self.company_id
+        if point:
+            return point.establishment, point.emission
+        return company.ec_withholding_entity or '001', company.ec_withholding_emission or '001'
+
     def _next_sri_number(self):
         # Un consecutivo por empresa Y por ambiente: pruebas y producción nunca comparten numeración.
         self.ensure_one()
         company = self.company_id
-        code = '%s.%s' % (SEQUENCE_CODE, self._sri_ambiente())
+        entity, emission = self._sri_numbers()
+        code = '%s.%s.%s.%s' % (SEQUENCE_CODE, self._sri_ambiente(), entity, emission)
         sequence = self.env['ir.sequence'].sudo().search([('code', '=', code), ('company_id', '=', company.id)], limit=1)
         if not sequence:
             sequence = self.env['ir.sequence'].sudo().create({
-                'name': 'Retenciones electrónicas SRI (%s)' % ('pruebas' if self._sri_ambiente() == '1' else 'producción'),
+                'name': 'Retenciones SRI %s-%s (%s)' % (entity, emission, 'pruebas' if self._sri_ambiente() == '1' else 'producción'),
                 'code': code, 'company_id': company.id,
                 'padding': 9, 'number_next': 1, 'implementation': 'no_gap'})
-        return '%s-%s-%s' % (company.ec_withholding_entity or '001', company.ec_withholding_emission or '001', sequence.next_by_id())
+        return '%s-%s-%s' % (entity, emission, sequence.next_by_id())
 
     def _identification_code(self, partner):
         kinds = {self.env.ref('l10n_ec.ec_ruc'): '04', self.env.ref('l10n_ec.ec_dni'): '05', self.env.ref('l10n_ec.ec_passport'): '06'}
@@ -110,7 +120,8 @@ class Withholding(models.Model):
             'untaxed': invoice.amount_untaxed, 'total': invoice.amount_total, 'payment': self.sri_payment_code, 'taxes': taxes}
         natural = subject_type == '05' or (subject_type == '04' and (partner.vat or '')[2:3] in '012345')
         return {
-            'date': str(self.date), 'ambiente': self._sri_ambiente(), 'issuer_vat': company.vat, 'issuer_name': company.name, 'issuer_address': company.street,
+            'date': str(self.date), 'ambiente': self._sri_ambiente(),
+            'establishment_address': self.journal_id.ec_point_id.establishment_address or False, 'issuer_vat': company.vat, 'issuer_name': company.name, 'issuer_address': company.street,
             'accounting': company.ec_native_accounting, 'agent_resolution': company.ec_agent_resolution or False,
             'subject_type': subject_type, 'subject_vat': partner.vat, 'subject_name': partner.name,
             'subject_kind': '01' if natural else '02', 'related_party': self.sri_related_party, 'support': support,
@@ -125,8 +136,7 @@ class Withholding(models.Model):
         certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
-        if self._sri_ambiente() != '1':
-            raise ValidationError('El diario de retenciones está configurado para producción, ambiente aún no habilitado; usa un diario de pruebas.')
+        self.journal_id._sri_check_ambiente()
         data = self._gather_sri_data()
         number = self.sri_number or self._next_sri_number()
         data['number'] = number

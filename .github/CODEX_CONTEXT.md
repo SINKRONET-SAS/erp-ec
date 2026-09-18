@@ -414,3 +414,9 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - El SRI rechazó el primer intento real por dos reglas que el XSD no valida (tipoSujetoRetenido solo con ID exterior; tarifa oficial por código de concepto). Corregido y AUTORIZADO en celcer (PRUEBAS). Catálogo completo de tarifas de renta: pendiente.
 - Consecutivos separados por ambiente: `account.journal.ec_sri_ambiente` y secuencia de retenciones por empresa+ambiente; producción bloqueada. 83/83 pruebas, demo actualizada con respaldo.
 - Pendiente inmediato (pedido del titular): ambiente y establecimientos/puntos de emisión configurables por el cliente (OP13-D); luego guía de remisión.
+
+## OP13-D — Establecimientos, puntos de emisión y ambiente configurable por el cliente — 18-09-2026
+
+- Nuevo `erpec.fiscal.point` (Fiscal > Establecimientos y puntos de emisión): establecimiento (local/sucursal) y punto de emisión (caja) visibles, con dirección de establecimiento y ambiente vigente. Cada punto mantiene un diario de ventas por ambiente, así los consecutivos de pruebas y producción son independientes.
+- Producción la habilita un responsable contable (certificado verificado y reconocido, confirmación explícita, auditado); el ambiente no se escribe directamente. Endpoint de producción disponible en `sri_client` pero sin prueba real contra producción.
+- 90/90 pruebas; demo actualizada con respaldo y ensayada por RPC. Pendiente: migrar diarios previos, punto por caja/usuario, guía de remisión, catálogo de tarifas de renta.

@@ -1,7 +1,7 @@
 """Cliente SOAP real contra los servicios web del SRI (Recepción y Autorización de
-comprobantes electrónicos). Solo ambiente PRUEBAS está alcanzable en este incremento; el
-ambiente de producción queda en el código pero deshabilitado (ver AMBIENTES) hasta una
-activación explícita separada, igual que el patrón `test_acknowledged` de erpec_payphone.
+comprobantes electrónicos). Ambos ambientes tienen endpoint; quién puede usar producción lo decide
+la capa Odoo (erpec.fiscal.point: certificado verificado + habilitación explícita del cliente), no
+este cliente. La transmisión real a producción NO se ha probado en este proyecto (solo PRUEBAS).
 
 Fuente de los WSDL: los mismos endpoints documentados y usados de verdad por el proyecto de
 referencia sinkroniq-mobile (backend/src/config/sriConfig.js), confirmados alcanzables desde
@@ -24,7 +24,7 @@ AMBIENTES = {
         'label': 'Producción',
         'recepcion': 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl',
         'autorizacion': 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl',
-        'enabled': False,  # Deliberadamente deshabilitado en este incremento; ver docs/PLAN_HAIKY_FACTURACION_NATIVA.md.
+        'enabled': True,  # La emisión en producción solo es alcanzable desde un punto de emisión habilitado explícitamente (erpec.fiscal.point).
     },
 }
 

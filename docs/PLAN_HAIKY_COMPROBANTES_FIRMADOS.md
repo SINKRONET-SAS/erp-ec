@@ -35,8 +35,17 @@ Fecha: 18-09-2026. Instrucción del titular: "Debe cumplirse la legislación de 
 - Consecutivos separados por ambiente: el SRI numera pruebas y producción de forma independiente. `account.journal.ec_sri_ambiente` alimenta clave de acceso y XML; las retenciones usan una secuencia por empresa y ambiente. Producción sigue bloqueada.
 - Pruebas: 83/83. Ensayo real: retención AUTORIZADA por celcer.sri.gob.ec (PRUEBAS).
 
+## OP13-D (ejecutado): establecimientos, puntos de emisión y ambiente configurables por el cliente
+- Pedido del titular: el cliente debe poder configurar pruebas/producción; el establecimiento (local o sucursal) y el punto de emisión (caja) no eran visibles. Existían solo como campos técnicos del diario (`l10n_ec_entity`/`l10n_ec_emission`).
+- Nuevo modelo `erpec.fiscal.point` (menú Fiscal > Establecimientos y puntos de emisión): códigos de 3 dígitos, nombre, dirección del establecimiento (sale como `dirEstablecimiento`), ambiente vigente.
+- Consecutivos independientes por ambiente: cada punto mantiene un diario de ventas por ambiente (FP### pruebas, FR### producción). Cambiar de ambiente activa/crea el diario del otro ambiente; nunca se reutiliza numeración. Se valida que el número del comprobante corresponda al establecimiento y punto del diario.
+- Habilitar producción exige rol de responsable contable, certificado verificado y de entidad reconocida, y confirmación explícita; queda registrado quién y cuándo. El ambiente no se escribe directamente. El diario del ambiente equivocado no emite.
+- `sri_client`: el endpoint de producción (cel.sri.gob.ec, WSDL alcanzable) queda disponible, pero SOLO se usa desde un punto habilitado. La transmisión real a producción NO se ha probado (solo pruebas); un primer envío real a producción debe hacerse con una factura de bajo riesgo y supervisión del responsable.
+- Retenciones: usan el punto del diario de retenciones (establecimiento/punto/dirección) y una secuencia por empresa, punto y ambiente.
+- Pruebas: 90/90. Ensayo real en la demo por RPC: punto creado con su diario de pruebas; producción rechazada sin certificado; escritura directa del ambiente rechazada.
+
 ## Pendiente explícito
-- Configuración por el cliente de ambiente y de establecimientos/puntos de emisión (solicitado; OP13-D).
+- Asignar el punto de emisión a los diarios ya existentes (migración de diarios previos) y selección de punto por usuario/caja.
 - Catálogo completo de conceptos y tarifas de retención de renta; liquidación de compra (03).
 - OP13-C guía de remisión.
 - Producción SRI sigue bloqueada (ver OP11-B3); RIDE de nota de crédito sin validación visual oficial.

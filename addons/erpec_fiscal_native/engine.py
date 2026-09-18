@@ -65,7 +65,7 @@ def generate(data):
     if not lines or base_total+tax_total<=0 or base_total+tax_total!=money(data['total']):
         raise ValueError('El total del XML no coincide con la factura positiva.')
     info=etree.SubElement(root,'infoFactura')
-    for name,value in [('fechaEmision',date.fromisoformat(str(data['date'])).strftime('%d/%m/%Y')),('dirEstablecimiento',data['issuer_address']),('obligadoContabilidad',data['accounting']),('tipoIdentificacionComprador',data['buyer_type']),('razonSocialComprador',data['buyer_name']),('identificacionComprador',data['buyer_vat']),('direccionComprador',data['buyer_address']),('totalSinImpuestos',f'{base_total:.2f}'),('totalDescuento',f'{discount_total:.2f}')]:add(info,name,value)
+    for name,value in [('fechaEmision',date.fromisoformat(str(data['date'])).strftime('%d/%m/%Y')),('dirEstablecimiento',data.get('establishment_address') or data['issuer_address']),('obligadoContabilidad',data['accounting']),('tipoIdentificacionComprador',data['buyer_type']),('razonSocialComprador',data['buyer_name']),('identificacionComprador',data['buyer_vat']),('direccionComprador',data['buyer_address']),('totalSinImpuestos',f'{base_total:.2f}'),('totalDescuento',f'{discount_total:.2f}')]:add(info,name,value)
     totals=etree.SubElement(info,'totalConImpuestos')
     for code,(base,tax) in groups.items():
         node=etree.SubElement(totals,'totalImpuesto')

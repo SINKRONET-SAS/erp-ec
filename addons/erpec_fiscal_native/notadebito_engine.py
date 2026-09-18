@@ -47,7 +47,7 @@ def generate(data):
     if not reasons or base_total+tax_total!=money(data['total']):
         raise ValueError('El total del XML no coincide con la nota de débito positiva.')
     info=etree.SubElement(root,'infoNotaDebito')
-    for name,value in [('fechaEmision',date.fromisoformat(str(data['date'])).strftime('%d/%m/%Y')),('dirEstablecimiento',data['issuer_address']),('tipoIdentificacionComprador',data['buyer_type']),('razonSocialComprador',data['buyer_name']),('identificacionComprador',data['buyer_vat'])]:add(info,name,value)
+    for name,value in [('fechaEmision',date.fromisoformat(str(data['date'])).strftime('%d/%m/%Y')),('dirEstablecimiento',data.get('establishment_address') or data['issuer_address']),('tipoIdentificacionComprador',data['buyer_type']),('razonSocialComprador',data['buyer_name']),('identificacionComprador',data['buyer_vat'])]:add(info,name,value)
     if data.get('accounting'):add(info,'obligadoContabilidad',data['accounting'])
     add(info,'codDocModificado',data['modified_type']);add(info,'numDocModificado',data['modified_number'])
     add(info,'fechaEmisionDocSustento',date.fromisoformat(str(data['modified_date'])).strftime('%d/%m/%Y'))

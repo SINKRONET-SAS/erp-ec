@@ -53,7 +53,7 @@ def generate(data):
     if data.get('agent_resolution'):items.append(('agenteRetencion',data['agent_resolution']))
     for name,value in items:add(tributary,name,value)
     info=etree.SubElement(root,'infoCompRetencion')
-    items=[('fechaEmision',_fmt(data['date'])),('dirEstablecimiento',data['issuer_address'])]
+    items=[('fechaEmision',_fmt(data['date'])),('dirEstablecimiento',data.get('establishment_address') or data['issuer_address'])]
     for name,value in items:add(info,name,value)
     if data.get('accounting'):add(info,'obligadoContabilidad',data['accounting'])
     add(info,'tipoIdentificacionSujetoRetenido',data['subject_type'])

@@ -1,0 +1,30 @@
+{
+  "recordedAt": "2026-09-18T23:00:00.000Z",
+  "scope": "OP13-D: establecimientos y puntos de emision SRI, ambiente pruebas/produccion configurable por el cliente y consecutivos separados por ambiente.",
+  "userInstructions": [
+    "Es necesario que el Cliente pueda configurar su ambiente de pruebas o produccion para facturacion electronica, tomar en cuenta la legislacion del Ecuador, tambien existe el concepto de establecimiento y punto de emision que no vi en el sistema",
+    "los consecutivos deben ser distintos los de pruebas y los de produccion"
+  ],
+  "tests": {
+    "total": 90,
+    "failed": 0,
+    "errors": 0
+  },
+  "installation": {
+    "demo": "actualizados native/sri/withholding; respaldo .cache/windows/backups/puntos-install-20260918-174547"
+  },
+  "realRehearsal": {
+    "environment": "demo por XML-RPC",
+    "result": "punto 001-001 creado con diario FP001 de pruebas; produccion rechazada sin certificado reconocido; escritura directa de ambiente rechazada; menu visible",
+    "productionTransmission": "NO probada contra el SRI de produccion"
+  },
+  "pending": [
+    "migrar diarios existentes a puntos",
+    "punto por usuario/caja",
+    "primer envio real a produccion supervisado",
+    "guia de remision",
+    "catalogo de tarifas de renta",
+    "liquidacion de compra"
+  ],
+  "realMoneyMoved": false
+}

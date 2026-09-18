@@ -59,8 +59,125 @@ class Journal(models.Model):
     ec_sri_ambiente = fields.Selection(
         [('1', 'Pruebas'), ('2', 'Producción')], string='Ambiente SRI', default='1', required=True,
         help='El SRI lleva secuenciales independientes por ambiente: los comprobantes de pruebas y de producción '
-             'no pueden compartir numeración. Usa diarios distintos (cada uno con su propio consecutivo) para cada ambiente. '
-             'La emisión en producción aún no está habilitada.')
+             'no pueden compartir numeración. Cada ambiente usa su propio diario (y por tanto su propio consecutivo).')
+    ec_point_id = fields.Many2one('erpec.fiscal.point', string='Punto de emisión SRI', check_company=True, ondelete='restrict',
+                                  help='Establecimiento y punto de emisión al que pertenece este diario.')
+
+    @api.constrains('ec_point_id', 'l10n_ec_entity', 'l10n_ec_emission')
+    def _check_point_numbers(self):
+        for journal in self.filtered('ec_point_id'):
+            point = journal.ec_point_id
+            if journal.type == 'sale' and (journal.l10n_ec_entity, journal.l10n_ec_emission) != (point.establishment, point.emission):
+                raise ValidationError('El establecimiento y el punto de emisión del diario deben coincidir con los del punto de emisión SRI.')
+
+    def _sri_check_ambiente(self):
+        """Ambiente en el que puede emitir este diario, o error. Producción solo desde un punto de
+        emisión habilitado explícitamente; el ambiente del diario debe coincidir con el del punto."""
+        self.ensure_one()
+        ambiente = self.ec_sri_ambiente or '1'
+        point = self.ec_point_id
+        if point and point.ambiente != ambiente:
+            raise ValidationError('Este diario es de %s pero el punto de emisión %s-%s está en %s; usa el diario de %s.' % (
+                AMBIENTE_NAMES[ambiente], point.establishment, point.emission, AMBIENTE_NAMES[point.ambiente], AMBIENTE_NAMES[point.ambiente]))
+        if ambiente == '2' and not (point and point.production_acknowledged):
+            raise ValidationError('La emisión en producción requiere un punto de emisión habilitado para producción '
+                                  '(Facturación electrónica > Establecimientos y puntos de emisión).')
+        return ambiente
+
+
+AMBIENTE_NAMES = {'1': 'pruebas', '2': 'producción'}
+_POINT_INTERNAL = object()
+
+
+class EmissionPoint(models.Model):
+    _name = 'erpec.fiscal.point'
+    _description = 'Establecimiento y punto de emisión (SRI)'
+    _check_company_auto = True
+    _order = 'company_id, establishment, emission'
+
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    establishment = fields.Char('Establecimiento', size=3, required=True, help='Código de 3 dígitos del establecimiento (local o sucursal) registrado en el RUC.')
+    establishment_name = fields.Char('Nombre del establecimiento', required=True)
+    establishment_address = fields.Char('Dirección del establecimiento', required=True, help='Se imprime como dirEstablecimiento en los comprobantes.')
+    emission = fields.Char('Punto de emisión', size=3, required=True, help='Código de 3 dígitos de la caja o punto de venta dentro del establecimiento.')
+    name = fields.Char('Nombre del punto de emisión', required=True, help='Por ejemplo: Caja 1.')
+    ambiente = fields.Selection([('1', 'Pruebas'), ('2', 'Producción')], default='1', required=True, readonly=True,
+                                string='Ambiente vigente', help='Se cambia con los botones de habilitación, no se edita directamente.')
+    production_acknowledged = fields.Boolean('Producción habilitada por el responsable', readonly=True, copy=False)
+    production_by = fields.Many2one('res.users', readonly=True, copy=False, string='Habilitado por')
+    production_at = fields.Datetime(readonly=True, copy=False, string='Habilitado el')
+    active = fields.Boolean(default=True)
+    journal_ids = fields.One2many('account.journal', 'ec_point_id', string='Diarios (un consecutivo por ambiente)')
+    notice = fields.Text(readonly=True, copy=False)
+    _sql_constraints = [('point_unique', 'unique(company_id,establishment,emission)', 'Ya existe este establecimiento y punto de emisión en la empresa.')]
+
+    @api.constrains('establishment', 'emission')
+    def _check_codes(self):
+        for point in self:
+            for value in (point.establishment, point.emission):
+                if not re.fullmatch(r'[0-9]{3}', value or '') or int(value) == 0:
+                    raise ValidationError('Establecimiento y punto de emisión requieren tres dígitos (001 a 999).')
+
+    def write(self, values):
+        if any(key in values for key in ('ambiente', 'production_acknowledged', 'production_by', 'production_at', 'company_id')) \
+                and self.env.context.get('_fiscal_point_internal') is not _POINT_INTERNAL:
+            raise ValidationError('El ambiente se cambia con las acciones de habilitación.')
+        return super().write(values)
+
+    def _internal_write(self, values):
+        return self.with_context(_fiscal_point_internal=_POINT_INTERNAL).write(values)
+
+    def _ensure_journal(self):
+        """Un diario de ventas por punto y ambiente: el consecutivo de pruebas nunca se reutiliza en producción."""
+        self.ensure_one()
+        Journal = self.env['account.journal'].with_context(active_test=False)
+        journal = Journal.search([('ec_point_id', '=', self.id), ('ec_sri_ambiente', '=', self.ambiente), ('type', '=', 'sale')], limit=1)
+        if journal:
+            if not journal.active:
+                journal.active = True
+            return journal
+        prefix = 'FP' if self.ambiente == '1' else 'FR'
+        number = 1
+        while Journal.search_count([('company_id', '=', self.company_id.id), ('code', '=', '%s%03d' % (prefix, number))]):
+            number += 1
+        return self.env['account.journal'].create({
+            'name': 'Facturación %s-%s %s (%s)' % (self.establishment, self.emission, self.name, AMBIENTE_NAMES[self.ambiente]),
+            'code': '%s%03d' % (prefix, number), 'type': 'sale', 'company_id': self.company_id.id,
+            'l10n_latam_use_documents': True, 'l10n_ec_entity': self.establishment, 'l10n_ec_emission': self.emission,
+            'ec_point_id': self.id, 'ec_sri_ambiente': self.ambiente})
+
+    @api.model_create_multi
+    def create(self, values_list):
+        points = super().create(values_list)
+        for point in points:
+            point._ensure_journal()
+        return points
+
+    def action_enable_production(self):
+        self.ensure_one()
+        if not self.env.user.has_group('account.group_account_manager'):
+            raise ValidationError('Solo un responsable contable puede habilitar producción.')
+        if self.ambiente == '2':
+            return True
+        certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
+        if not certificate or not certificate.verified or not certificate.issuer_trusted:
+            raise ValidationError('Producción requiere el certificado de firma verificado y emitido por una entidad certificadora reconocida.')
+        self._internal_write({'ambiente': '2', 'production_acknowledged': True, 'production_by': self.env.user.id,
+                              'production_at': fields.Datetime.now(),
+                              'notice': 'Producción habilitada: los comprobantes se numeran con el diario de producción y son documentos fiscales reales.'})
+        self._ensure_journal()
+        return True
+
+    def action_enable_testing(self):
+        self.ensure_one()
+        if not self.env.user.has_group('account.group_account_manager'):
+            raise ValidationError('Solo un responsable contable puede cambiar el ambiente.')
+        if self.ambiente == '1':
+            return True
+        self._internal_write({'ambiente': '1', 'production_acknowledged': False,
+                              'notice': 'Vuelto a pruebas: se usa el diario de pruebas con su propio consecutivo.'})
+        self._ensure_journal()
+        return True
 
 
 class Certificate(models.Model):
@@ -348,7 +465,8 @@ class Move(models.Model):
                 'issuer_name': company.name, 'issuer_address': company.street, 'buyer_type': identification,
                 'buyer_vat': partner.vat, 'buyer_name': partner.name, 'buyer_address': partner.street,
                 'accounting': company.ec_native_accounting, 'total': self.amount_total, 'items': items,
-                'ambiente': self.journal_id.ec_sri_ambiente or '1'}
+                'ambiente': self.journal_id.ec_sri_ambiente or '1',
+                'establishment_address': self.journal_id.ec_point_id.establishment_address or False}
 
     def _gather_native_data(self):
         data = self._gather_native_common()
@@ -398,8 +516,10 @@ class Move(models.Model):
         certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
-        if (self.journal_id.ec_sri_ambiente or '1') != '1':
-            raise ValidationError('El diario está configurado para producción, ambiente aún no habilitado; usa un diario de pruebas.')
+        self.journal_id._sri_check_ambiente()
+        point = self.journal_id.ec_point_id
+        if point and not (self.l10n_latam_document_number or '').startswith('%s-%s-' % (point.establishment, point.emission)):
+            raise ValidationError('El número del comprobante no corresponde al establecimiento y punto de emisión del diario (%s-%s).' % (point.establishment, point.emission))
         is_credit_note = self.move_type == 'out_refund'
         is_debit_note = self.move_type == 'out_invoice' and bool(self.debit_origin_id)
         if is_credit_note:

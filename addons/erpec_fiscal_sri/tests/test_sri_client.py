@@ -77,9 +77,16 @@ class TestSriClient(BaseCase):
         self.assertEqual(estado, 'NO AUTORIZADO')
         self.assertIsNone(autorizacion)
 
-    def test_ambiente_produccion_is_disabled(self):
-        with self.assertRaises(sri_client.SriError):
-            sri_client.enviar_recepcion(b'<factura/>', ambiente='2', client_factory=factory_for())
+    def test_ambiente_produccion_uses_production_endpoints(self):
+        urls = []
+
+        def factory(url, timeout=20):
+            urls.append(url)
+            return FakeClient(FakeService(SimpleNamespace(estado='RECIBIDA', comprobantes=None)))
+        sri_client.enviar_recepcion(b'<factura/>', ambiente='2', client_factory=factory)
+        sri_client.enviar_recepcion(b'<factura/>', ambiente='1', client_factory=factory)
+        self.assertIn('//cel.sri.gob.ec/', urls[0])
+        self.assertIn('//celcer.sri.gob.ec/', urls[1])
 
     def test_unknown_ambiente_is_rejected(self):
         with self.assertRaises(sri_client.SriError):
