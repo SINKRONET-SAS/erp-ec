@@ -97,3 +97,40 @@ class NotaCreditoEmissionCase(TransactionCase):
         self.assertNotEqual(invoice_emission, credit_emission)
         self.assertEqual(invoice_emission.access_key[8:10], '01')
         self.assertEqual(credit_emission.access_key[8:10], '04')
+
+    def _debit_note(self):
+        note = self.invoice.with_context(include_business_fields=True).copy(default={
+            'ref': 'Intereses de mora', 'date': '2026-09-18', 'invoice_date': '2026-09-18',
+            'debit_origin_id': self.invoice.id, 'invoice_payment_term_id': None,
+            'l10n_latam_document_type_id': self.env.ref('l10n_ec.ec_dt_05').id})
+        note.l10n_latam_document_number = '001-001-000000021'
+        note.action_post()
+        return note
+
+    def test_debit_note_is_signed_with_cod_doc_05(self):
+        emission = self.env['erpec.fiscal.emission'].browse(self._debit_note().action_native_emit()['res_id'])
+        self.assertEqual(emission.state, 'signed')
+        self.assertEqual(emission.access_key[8:10], '05')
+        xml_bytes = base64.b64decode(emission.xml_unsigned)
+        self.assertIn(b'<notaDebito', xml_bytes)
+        self.assertIn(b'<numDocModificado>001-001-000000005</numDocModificado>', xml_bytes)
+
+    def test_debit_note_full_flow_builds_debit_note_ride(self):
+        note = self._debit_note()
+        emission = self.env['erpec.fiscal.emission'].browse(note.action_native_emit()['res_id'])
+        with patch.object(sri_client, 'enviar_recepcion', return_value=('RECIBIDA', [])):
+            emission.action_process()
+        emission._save(next_attempt=False)
+        comprobante = ('<notaDebito id="comprobante" version="1.0.0"><infoTributaria><claveAcceso>' + emission.access_key +
+                       '</claveAcceso><estab>001</estab><ptoEmi>001</ptoEmi><secuencial>000000021</secuencial></infoTributaria>'
+                       '<infoNotaDebito><razonSocialComprador>Cliente</razonSocialComprador><identificacionComprador>1</identificacionComprador>'
+                       '<fechaEmision>18/09/2026</fechaEmision><codDocModificado>01</codDocModificado>'
+                       '<numDocModificado>001-001-000000005</numDocModificado><fechaEmisionDocSustento>01/09/2026</fechaEmisionDocSustento>'
+                       '<totalSinImpuestos>100.00</totalSinImpuestos><impuestos><impuesto><codigo>2</codigo><codigoPorcentaje>4</codigoPorcentaje>'
+                       '<valor>15.00</valor></impuesto></impuestos><valorTotal>115.00</valorTotal></infoNotaDebito>'
+                       '<motivos><motivo><razon>Intereses de mora</razon><valor>100.00</valor></motivo></motivos></notaDebito>')
+        answer = {'comprobante': comprobante.encode('utf-8'), 'numero': '1234567890', 'fecha': '2026-09-18T10:00:00-05:00'}
+        with patch.object(sri_client, 'consultar_autorizacion', return_value=('AUTORIZADO', answer, [])):
+            emission.action_process()
+        self.assertEqual(emission.state, 'authorized')
+        self.assertTrue(base64.b64decode(emission.ride_pdf).startswith(b'%PDF'))

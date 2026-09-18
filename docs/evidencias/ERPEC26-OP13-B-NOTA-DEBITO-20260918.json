@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-09-18T18:45:00.000Z",
+  "scope": "OP13-B: nota de debito electronica firmada XAdES y transmitida al SRI (PRUEBAS).",
+  "planDocument": "docs/PLAN_HAIKY_COMPROBANTES_FIRMADOS.md",
+  "tests": {
+    "modules": [
+      "erpec_fiscal_native",
+      "erpec_fiscal_sri"
+    ],
+    "total": 72,
+    "failed": 0,
+    "errors": 0,
+    "newTests": 7
+  },
+  "installation": {
+    "demo": "actualizados ambos modulos con respaldo .cache/windows/backups/notacredito-install-20260918-133918"
+  },
+  "realRehearsal": {
+    "environment": "celcer.sri.gob.ec PRUEBAS",
+    "factura": "AUTORIZADO",
+    "notaDebito": "codDoc 05, RECIBIDA y AUTORIZADO; RIDE generado",
+    "note": "Solo PRUEBAS; no es homologacion de produccion"
+  },
+  "pending": [
+    "OP13-C guia de remision",
+    "RIDE de nota de debito sin validacion visual oficial"
+  ],
+  "realMoneyMoved": false
+}

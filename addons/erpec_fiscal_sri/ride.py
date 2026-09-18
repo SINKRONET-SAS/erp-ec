@@ -280,7 +280,15 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
 
 
 def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
-    """RIDE de nota de crédito. Mismo estilo de dos columnas que build_ride() (factura), pero
+    return _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autorizacion, '04')
+
+
+def build_ride_notadebito(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
+    return _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autorizacion, '05')
+
+
+def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autorizacion, kind):
+    """RIDE de nota de crédito ('04') o nota de débito ('05'). Mismo estilo de dos columnas que build_ride() (factura), pero
     sin caja de comprador/pagos propios de factura -- infoNotaCredito no tiene esos bloques
     (confirmado contra NotaCredito_V1.1.0.xsd, fuente primaria). No se contrastó campo por
     campo contra una imagen oficial del RIDE de nota de crédito (a diferencia de la factura,
@@ -288,7 +296,8 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     QR, no pixel-perfect contra ningún ejemplo oficial de este documento en particular."""
     nota = etree.fromstring(comprobante_xml)
     info = nota.find('infoTributaria')
-    detail = nota.find('infoNotaCredito')
+    is_debit = kind == '05'
+    detail = nota.find('infoNotaDebito' if is_debit else 'infoNotaCredito')
 
     buffer = io.BytesIO()
     page = canvas.Canvas(buffer, pagesize=letter)
@@ -339,7 +348,7 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     right_box_x = left + 80 * mm
     right_box_w = right - right_box_x
     box(right_box_x, y_top, right_box_w, 12 * mm)
-    text_at(right_box_x, y_top - 6 * mm, 'NOTA DE CRÉDITO', size=12, bold=True, color=HEADER_COLOR,
+    text_at(right_box_x, y_top - 6 * mm, 'NOTA DE DÉBITO' if is_debit else 'NOTA DE CRÉDITO', size=12, bold=True, color=HEADER_COLOR,
             align='center', w=right_box_w)
     text_at(right_box_x, y_top - 10.5 * mm, 'No. %s-%s-%s' % (
         _text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
@@ -388,13 +397,19 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     y -= client_h + 3 * mm
 
     # ── Tabla de detalle ─────────────────────────────────────────────────────
-    columns = [
-        ('Descripción', 0, 100 * mm, 'left'),
-        ('Cant.', 100 * mm, 15 * mm, 'right'),
-        ('P.Unit', 115 * mm, 18 * mm, 'right'),
-        ('Desc.', 133 * mm, 14 * mm, 'right'),
-        ('Total', 147 * mm, content_width - 147 * mm, 'right'),
-    ]
+    if is_debit:
+        columns = [('Razón de la modificación', 0, 147 * mm, 'left'),
+                   ('Valor', 147 * mm, content_width - 147 * mm, 'right')]
+        detail_rows = nota.findall('motivos/motivo')
+    else:
+        columns = [
+            ('Descripción', 0, 100 * mm, 'left'),
+            ('Cant.', 100 * mm, 15 * mm, 'right'),
+            ('P.Unit', 115 * mm, 18 * mm, 'right'),
+            ('Desc.', 133 * mm, 14 * mm, 'right'),
+            ('Total', 147 * mm, content_width - 147 * mm, 'right'),
+        ]
+        detail_rows = nota.findall('detalles/detalle')
     header_h = 6 * mm
     page.setFillColor(HEADER_COLOR)
     page.rect(left, y - header_h, content_width, header_h, stroke=0, fill=1)
@@ -404,7 +419,7 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     y -= header_h
 
     row_h = 5.5 * mm
-    for item in nota.findall('detalles/detalle'):
+    for item in detail_rows:
         if y < margin + 40 * mm:
             page.showPage()
             y = height - margin
@@ -414,7 +429,7 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
                 text_at(left + dx + 1 * mm, y - 4.3 * mm, label, size=7.5, bold=True, color=colors.white,
                         align=align if align == 'right' else 'left', w=(w - 2 * mm) if align == 'right' else None)
             y -= header_h
-        values = [
+        values = [_text(item, 'razon')[:90], _text(item, 'valor')] if is_debit else [
             _text(item, 'descripcion')[:60],
             _text(item, 'cantidad'),
             _text(item, 'precioUnitario'),
@@ -437,7 +452,7 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     totals_w = 60 * mm
     totals_y = y
     subtotal_rows = [('SUBTOTAL SIN IMPUESTOS:', _text(detail, 'totalSinImpuestos'))]
-    for impuesto in detail.findall('totalConImpuestos/totalImpuesto'):
+    for impuesto in detail.findall('impuestos/impuesto' if is_debit else 'totalConImpuestos/totalImpuesto'):
         codigo = _text(impuesto, 'codigo')
         porcentaje = _text(impuesto, 'codigoPorcentaje')
         etiqueta = IMPUESTO_LABEL.get(codigo, 'Impuesto (código %s)' % codigo) if codigo else 'IVA'
@@ -451,11 +466,11 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     page.setLineWidth(0.6)
     page.line(totals_x, totals_y - 1 * mm, totals_x + totals_w, totals_y - 1 * mm)
     totals_y -= 5 * mm
-    text_at(totals_x, totals_y, 'VALOR MODIFICACIÓN:', size=10, bold=True)
-    text_at(totals_x + totals_w, totals_y, _text(detail, 'valorModificacion'), size=10, bold=True, align='right', w=0)
+    text_at(totals_x, totals_y, 'VALOR TOTAL:' if is_debit else 'VALOR MODIFICACIÓN:', size=10, bold=True)
+    text_at(totals_x + totals_w, totals_y, _text(detail, 'valorTotal' if is_debit else 'valorModificacion'), size=10, bold=True, align='right', w=0)
 
-    motivo_y = y
-    text_at(left, motivo_y, 'Motivo: ' + _text(detail, 'motivo')[:90], size=8)
+    if not is_debit:
+        text_at(left, y, 'Motivo: ' + _text(detail, 'motivo')[:90], size=8)
 
     page.showPage()
     page.save()

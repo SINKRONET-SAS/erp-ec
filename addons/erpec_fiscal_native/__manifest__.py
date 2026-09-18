@@ -1,1 +1,1 @@
-{'name':'ERP EC — Facturación local','version':'18.0.1.1.0','license':'Other proprietary','author':'SINKRONET S.A.S.','depends':['erpec_fiscal_connector'],'data':['security.xml','ir.model.access.csv','views.xml'],'application':True,'installable':True}
+{'name':'ERP EC — Facturación local','version':'18.0.1.2.0','license':'Other proprietary','author':'SINKRONET S.A.S.','depends':['erpec_fiscal_connector'],'data':['security.xml','ir.model.access.csv','views.xml'],'application':True,'installable':True}

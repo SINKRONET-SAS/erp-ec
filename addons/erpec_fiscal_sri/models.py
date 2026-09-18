@@ -19,7 +19,7 @@ from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.erpec_fiscal_native import xades
 from odoo.addons.erpec_fiscal_native.engine import generate
-from odoo.addons.erpec_fiscal_native import notacredito_engine
+from odoo.addons.erpec_fiscal_native import notacredito_engine, notadebito_engine
 
 from . import ride as ride_module
 from . import sri_client
@@ -288,7 +288,7 @@ class Emission(models.Model):
         # El tipo de comprobante (codDoc) va en la clave de acceso (posiciones 9-10, índice
         # 8:10) -- fuente única de verdad, no se guarda por separado ni se infiere del move_id.
         doc_type = self.access_key[8:10]
-        builder = ride_module.build_ride_notacredito if doc_type == '04' else ride_module.build_ride
+        builder = {'04': ride_module.build_ride_notacredito, '05': ride_module.build_ride_notadebito}.get(doc_type, ride_module.build_ride)
         ride_pdf = builder(autorizacion['comprobante'], autorizacion['numero'], autorizacion['fecha'])
         self._save(state='authorized', xml_authorized=base64.b64encode(autorizacion['comprobante']), ride_pdf=base64.b64encode(ride_pdf),
                     authorization_number=autorizacion['numero'], authorization_date=autorizacion['fecha'],
@@ -343,11 +343,27 @@ class Move(models.Model):
         data['reason'] = (self.ref or self.narration or 'Nota de crédito').strip()[:300]
         return data
 
+    def _gather_native_debit_note_data(self):
+        self.ensure_one()
+        original = self.debit_origin_id
+        if not original or original.move_type != 'out_invoice':
+            raise ValidationError('La nota de débito debe generarse desde "Añadir nota de débito" sobre la factura que modifica.')
+        if not original.l10n_latam_document_number or original.l10n_latam_document_type_id.code != '01':
+            raise ValidationError('La factura modificada debe tener secuencial asignado y ser de tipo Factura (código 01).')
+        if self.l10n_latam_document_type_id.code != '05':
+            raise ValidationError('La nota de débito debe tener el tipo documental Nota de débito (código 05).')
+        data = self._gather_native_common()
+        data['modified_type'] = '01'
+        data['modified_number'] = original.l10n_latam_document_number
+        data['modified_date'] = str(original.invoice_date)
+        data['payment'] = self.ec_fiscal_payment_code
+        return data
+
     def action_native_emit(self):
         self.ensure_one()
         self.check_access('write')
         if self.state != 'posted' or self.move_type not in NATIVE_MOVE_TYPES or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
-            raise ValidationError('Se requiere una factura o nota de crédito de venta contabilizada en USD de una empresa de Ecuador.')
+            raise ValidationError('Se requiere una factura, nota de crédito o nota de débito de venta contabilizada en USD de una empresa de Ecuador.')
         if self.ec_fiscal_job_ids:
             raise ValidationError('Este comprobante ya está asignado al Facturador externo; conserva su autoridad y trazabilidad.')
         if self.ec_fiscal_emission_ids:
@@ -357,11 +373,17 @@ class Move(models.Model):
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
         is_credit_note = self.move_type == 'out_refund'
-        data = self._gather_native_credit_note_data() if is_credit_note else self._gather_native_data()
+        is_debit_note = self.move_type == 'out_invoice' and bool(self.debit_origin_id)
+        if is_credit_note:
+            data, engine_module = self._gather_native_credit_note_data(), notacredito_engine
+        elif is_debit_note:
+            data, engine_module = self._gather_native_debit_note_data(), notadebito_engine
+        else:
+            data, engine_module = self._gather_native_data(), None
         numeric_code = str(secrets.randbelow(10**8)).zfill(8)
         data['numeric'] = numeric_code
         try:
-            access_key, xml_unsigned = (notacredito_engine.generate(data) if is_credit_note else generate(data))
+            access_key, xml_unsigned = (engine_module.generate(data) if engine_module else generate(data))
         except ValueError as error:
             raise ValidationError(str(error)) from error
         p12_bytes = base64.b64decode(certificate.sudo().p12_file or b'')

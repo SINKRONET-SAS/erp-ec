@@ -402,3 +402,8 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Bug real: `xades.sign()` tenía la raíz `factura` fija; ahora `COMPROBANTE_TAGS`. También se corrigieron fixtures de `test_native.py` que fallaban en base aislada.
 - 65/65 pruebas, demo actualizada con respaldo, y ensayo REAL: factura y nota de crédito autorizadas por celcer.sri.gob.ec (PRUEBAS) con el certificado real de pruebas del titular.
 - Pendiente: nota de débito (XSD ya descargado), guía de remisión (modelo nuevo sobre stock.picking), RIDE sin validación visual oficial, vista unificada de documentos de venta. Plan: docs/PLAN_HAIKY_COMPROBANTES_FIRMADOS.md.
+
+## OP13-B — Nota de débito electrónica firmada y transmitida al SRI — 18-09-2026
+
+- `erpec_fiscal_native/notadebito_engine.py` (XSD oficial NotaDebito_V1.0.0, codDoc 05); `erpec_fiscal_sri` reconoce `out_invoice` con `debit_origin_id` y tipo documental 05; RIDE compartido con la nota de crédito.
+- 72/72 pruebas, demo actualizada con respaldo, ensayo REAL: factura y nota de débito autorizadas por celcer.sri.gob.ec (PRUEBAS). Pendiente: guía de remisión (OP13-C), RIDE sin validación visual oficial.
