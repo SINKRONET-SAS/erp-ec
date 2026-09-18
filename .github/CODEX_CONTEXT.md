@@ -420,3 +420,8 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Nuevo `erpec.fiscal.point` (Fiscal > Establecimientos y puntos de emisión): establecimiento (local/sucursal) y punto de emisión (caja) visibles, con dirección de establecimiento y ambiente vigente. Cada punto mantiene un diario de ventas por ambiente, así los consecutivos de pruebas y producción son independientes.
 - Producción la habilita un responsable contable (certificado verificado y reconocido, confirmación explícita, auditado); el ambiente no se escribe directamente. Endpoint de producción disponible en `sri_client` pero sin prueba real contra producción.
 - 90/90 pruebas; demo actualizada con respaldo y ensayada por RPC. Pendiente: migrar diarios previos, punto por caja/usuario, guía de remisión, catálogo de tarifas de renta.
+
+## OP13-E — Guía de remisión electrónica firmada y transmitida al SRI — 18-09-2026
+
+- Nuevo `erpec_fiscal_guide_sri` (`erpec.fiscal.guide`, botón en traslados de inventario, `guiaremision_engine.py` XSD 1.1.0, RIDE, emisión firmada, numeración por punto y ambiente). Con esto factura, nota de crédito, nota de débito, retención y guía de remisión se firman y transmiten.
+- 100/100 pruebas, demo actualizada con respaldo y guía AUTORIZADA en celcer (PRUEBAS). Pendiente: liquidación de compra (03), reembolsos, catálogo de tarifas de renta, migración de diarios a puntos, primer envío real a producción supervisado.

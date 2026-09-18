@@ -170,10 +170,12 @@ class Emission(models.Model):
     withholding_id = fields.Many2one('erpec.withholding', string='Retención', check_company=True, ondelete='restrict')
     _sql_constraints = [('one_withholding', 'unique(withholding_id)', 'La retención ya tiene una emisión nativa.')]
 
-    @api.depends('move_id.company_id', 'withholding_id.company_id')
+    @api.depends('withholding_id.company_id')
     def _compute_company_id(self):
+        super()._compute_company_id()
         for emission in self:
-            emission.company_id = emission.move_id.company_id or emission.withholding_id.company_id
+            if not emission.company_id and emission.withholding_id:
+                emission.company_id = emission.withholding_id.company_id
 
     def _has_source(self):
         return super()._has_source() or bool(self.withholding_id)

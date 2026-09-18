@@ -594,3 +594,98 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     page.showPage()
     page.save()
     return buffer.getvalue()
+
+
+def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
+    """RIDE de la guía de remisión (codDoc 06, versión 1.1.0): transportista, destinatario y bienes
+    (sin valores ni impuestos). Layout propio, no contrastado pixel a pixel contra un RIDE oficial."""
+    root = etree.fromstring(comprobante_xml)
+    info = root.find('infoTributaria')
+    detail = root.find('infoGuiaRemision')
+    recipient = root.find('destinatarios/destinatario')
+    buffer = io.BytesIO()
+    page = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    margin = 15 * mm
+    left, right = margin, width - margin
+    content_width = right - left
+    box, text_at = _drawing_helpers(page)
+
+    y_top = height - margin
+    box(left, y_top, 78 * mm, 30 * mm)
+    ey = y_top - 5 * mm
+    text_at(left + 3 * mm, ey, _text(info, 'razonSocial'), size=11, bold=True, color=HEADER_COLOR)
+    ey -= 5 * mm
+    text_at(left + 3 * mm, ey, 'RUC: ' + _text(info, 'ruc'), size=8)
+    ey -= 4.5 * mm
+    text_at(left + 3 * mm, ey, 'Dirección: ' + (_text(detail, 'dirEstablecimiento') or _text(info, 'dirMatriz'))[:48], size=8)
+    ey -= 4.5 * mm
+    if _text(detail, 'obligadoContabilidad'):
+        text_at(left + 3 * mm, ey, 'Obligado a llevar contabilidad: ' + _text(detail, 'obligadoContabilidad'), size=8)
+    rx = left + 80 * mm
+    rw = right - rx
+    box(rx, y_top, rw, 12 * mm)
+    text_at(rx, y_top - 6 * mm, 'GUÍA DE REMISIÓN', size=12, bold=True, color=HEADER_COLOR, align='center', w=rw)
+    text_at(rx, y_top - 10.5 * mm, 'No. %s-%s-%s' % (_text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
+            size=9, bold=True, align='center', w=rw)
+    auth_top = y_top - 12 * mm
+    box(rx, auth_top, rw, 30 * mm, fill=PANEL_FILL)
+    ry = auth_top - 4 * mm
+    text_at(rx + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
+    ry -= 3.5 * mm
+    text_at(rx + 2 * mm, ry, numero_autorizacion or 'PENDIENTE', size=7)
+    ry -= 4 * mm
+    text_at(rx + 2 * mm, ry, 'FECHA Y HORA DE AUTORIZACIÓN: ' + (fecha_autorizacion or 'PENDIENTE'), size=7)
+    ry -= 4 * mm
+    ambiente = _text(info, 'ambiente')
+    text_at(rx + 2 * mm, ry, 'AMBIENTE: ' + AMBIENTE_LABEL.get(ambiente, ambiente or '—'), size=7, bold=True)
+    ry -= 4 * mm
+    text_at(rx + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
+    ry -= 8 * mm
+    clave = _text(info, 'claveAcceso')
+    if clave:
+        code128.Code128(clave, barHeight=8 * mm, barWidth=0.3).drawOn(page, rx + 2 * mm, ry)
+        text_at(rx + 2 * mm, ry - 4 * mm, clave, size=6)
+
+    y = auth_top - 30 * mm - 4 * mm
+    box(left, y, content_width, 34 * mm, fill=PANEL_FILL)
+    cy = y - 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Transportista: ' + _text(detail, 'razonSocialTransportista'), size=9, bold=True)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'rucTransportista'), size=8)
+    text_at(left + content_width / 2, cy, 'Placa: ' + _text(detail, 'placa'), size=8)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Inicio del traslado: ' + _text(detail, 'fechaIniTransporte'), size=8)
+    text_at(left + content_width / 2, cy, 'Fin del traslado: ' + _text(detail, 'fechaFinTransporte'), size=8)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Punto de partida: ' + _text(detail, 'dirPartida')[:90], size=8)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Destinatario: ' + _text(recipient, 'razonSocialDestinatario') + ' (' + _text(recipient, 'identificacionDestinatario') + ')', size=8, bold=True)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Destino: ' + _text(recipient, 'dirDestinatario')[:70] + '   Motivo: ' + _text(recipient, 'motivoTraslado')[:40], size=8)
+    cy -= 4.5 * mm
+    if _text(recipient, 'numDocSustento'):
+        text_at(left + 3 * mm, cy, 'Comprobante de venta: %s (código %s) del %s' % (
+            _text(recipient, 'numDocSustento'), _text(recipient, 'codDocSustento'), _text(recipient, 'fechaEmisionDocSustento')), size=8)
+    y -= 34 * mm + 3 * mm
+
+    columns = [('Cantidad', 0, 30 * mm, 'right'), ('Código', 30 * mm, 35 * mm, 'left'), ('Descripción', 65 * mm, content_width - 65 * mm, 'left')]
+    page.setFillColor(HEADER_COLOR)
+    page.rect(left, y - 6 * mm, content_width, 6 * mm, stroke=0, fill=1)
+    for label, dx, w, align in columns:
+        text_at(left + dx + 1 * mm, y - 4.3 * mm, label, size=7.5, bold=True, color=colors.white, align=align, w=(w - 2 * mm) if align == 'right' else None)
+    y -= 6 * mm
+    for item in recipient.findall('detalles/detalle'):
+        if y < margin + 15 * mm:
+            page.showPage()
+            y = height - margin
+        values = [_text(item, 'cantidad'), _text(item, 'codigoInterno'), _text(item, 'descripcion')[:90]]
+        for (label, dx, w, align), value in zip(columns, values):
+            text_at(left + dx + 1 * mm, y - 3.8 * mm, value, size=7.5, align=align, w=(w - 2 * mm) if align == 'right' else None)
+        page.setStrokeColor(colors.HexColor('#E5E7EB'))
+        page.setLineWidth(0.3)
+        page.line(left, y - 5.5 * mm, right, y - 5.5 * mm)
+        y -= 5.5 * mm
+    page.showPage()
+    page.save()
+    return buffer.getvalue()

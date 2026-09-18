@@ -430,7 +430,8 @@ class Emission(models.Model):
         # El tipo de comprobante (codDoc) va en la clave de acceso (posiciones 9-10, índice
         # 8:10) -- fuente única de verdad, no se guarda por separado ni se infiere del move_id.
         doc_type = self.access_key[8:10]
-        builder = {'04': ride_module.build_ride_notacredito, '05': ride_module.build_ride_notadebito, '07': ride_module.build_ride_retencion}.get(doc_type, ride_module.build_ride)
+        builder = {'04': ride_module.build_ride_notacredito, '05': ride_module.build_ride_notadebito, '07': ride_module.build_ride_retencion,
+                    '06': ride_module.build_ride_guiaremision}.get(doc_type, ride_module.build_ride)
         ride_pdf = builder(autorizacion['comprobante'], autorizacion['numero'], autorizacion['fecha'])
         self._save(state='authorized', xml_authorized=base64.b64encode(autorizacion['comprobante']), ride_pdf=base64.b64encode(ride_pdf),
                     authorization_number=autorizacion['numero'], authorization_date=autorizacion['fecha'],

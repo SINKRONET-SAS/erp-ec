@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+guide_account,Guía de remisión SRI,model_erpec_fiscal_guide,account.group_account_user,1,1,1,1
+guide_stock,Guía de remisión SRI (inventario),model_erpec_fiscal_guide,stock.group_stock_user,1,1,1,0
+guide_line_account,Bienes de la guía de remisión,model_erpec_fiscal_guide_line,account.group_account_user,1,1,1,1
+guide_line_stock,Bienes de la guía (inventario),model_erpec_fiscal_guide_line,stock.group_stock_user,1,1,1,1

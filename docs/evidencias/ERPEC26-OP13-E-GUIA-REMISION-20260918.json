@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-09-18T23:20:00.000Z",
+  "scope": "OP13-E: guia de remision electronica firmada y transmitida al SRI (PRUEBAS).",
+  "planDocument": "docs/PLAN_HAIKY_COMPROBANTES_FIRMADOS.md",
+  "tests": {
+    "total": 100,
+    "failed": 0,
+    "errors": 0
+  },
+  "installation": {
+    "demo": "instalado erpec_fiscal_guide_sri y actualizados native/sri/withholding; respaldo .cache/windows/backups/guia-install-20260918-175502"
+  },
+  "realRehearsal": {
+    "environment": "celcer.sri.gob.ec PRUEBAS",
+    "guiaRemision": "codDoc 06, RECIBIDA y AUTORIZADO; RIDE generado",
+    "note": "Solo PRUEBAS"
+  },
+  "pending": [
+    "liquidacion de compra 03",
+    "comprobantes de reembolso",
+    "catalogo de tarifas de renta",
+    "migrar diarios a puntos",
+    "primer envio real a produccion supervisado",
+    "RIDE de notas/retencion/guia sin validacion visual oficial"
+  ],
+  "realMoneyMoved": false
+}

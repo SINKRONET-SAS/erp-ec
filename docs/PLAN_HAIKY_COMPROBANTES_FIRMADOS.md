@@ -14,7 +14,7 @@ Fecha: 18-09-2026. Instrucción del titular: "Debe cumplirse la legislación de 
 | Nota de crédito | 04 | NotaCredito_V1.1.0.xsd | **Hecho en OP13-A** |
 | Nota de débito | 05 | NotaDebito_V1.0.0.xsd | **Hecho en OP13-B** |
 | Comprobante de retención | 07 | ComprobanteRetencion_V2.0.0.xsd | **Hecho en OP13-C** |
-| Guía de remisión | 06 | GuiaRemision_V1.1.0.xsd (descargado) | Pendiente OP13-C (modelo nuevo sobre `stock.picking`, no `account.move`) |
+| Guía de remisión | 06 | GuiaRemision_V1.1.0.xsd | **Hecho en OP13-E** (modelo propio enlazable a `stock.picking`) |
 
 ## OP13-A (ejecutado)
 - `erpec_fiscal_native/notacredito_engine.py`: XML validado contra el XSD oficial; `engine.access_key()` gana parámetro `doc_type` (por defecto '01').
@@ -43,6 +43,12 @@ Fecha: 18-09-2026. Instrucción del titular: "Debe cumplirse la legislación de 
 - `sri_client`: el endpoint de producción (cel.sri.gob.ec, WSDL alcanzable) queda disponible, pero SOLO se usa desde un punto habilitado. La transmisión real a producción NO se ha probado (solo pruebas); un primer envío real a producción debe hacerse con una factura de bajo riesgo y supervisión del responsable.
 - Retenciones: usan el punto del diario de retenciones (establecimiento/punto/dirección) y una secuencia por empresa, punto y ambiente.
 - Pruebas: 90/90. Ensayo real en la demo por RPC: punto creado con su diario de pruebas; producción rechazada sin certificado; escritura directa del ambiente rechazada.
+
+## OP13-E (ejecutado): guía de remisión
+- Nuevo módulo `erpec_fiscal_guide_sri`: `erpec.fiscal.guide` (destinatario, transportista, placa, fechas de traslado, bienes, sustento con la factura), botón "Guía de remisión SRI" en el traslado de inventario que precarga los bienes, `guiaremision_engine.py` (XSD 1.1.0), RIDE y emisión firmada reutilizando `erpec.fiscal.emission`.
+- Numeración por punto de emisión y ambiente (secuencia propia). La guía debe emitirse antes de iniciar el traslado (validado). Una guía inmutable una vez firmada.
+- Con esto los cinco comprobantes de venta/compra (factura, nota de crédito, nota de débito, retención, guía de remisión) se firman y transmiten. Faltan liquidación de compra (03) y comprobantes de reembolso.
+- Pruebas: 100/100. Ensayo real: guía AUTORIZADA por celcer.sri.gob.ec (PRUEBAS) con el certificado real de pruebas.
 
 ## Pendiente explícito
 - Asignar el punto de emisión a los diarios ya existentes (migración de diarios previos) y selección de punto por usuario/caja.
