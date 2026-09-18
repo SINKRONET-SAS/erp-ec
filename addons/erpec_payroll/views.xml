@@ -15,13 +15,18 @@
 <field name="line_ids" readonly="state != 'draft'"><list><field name="employee_id"/><field name="wage"/><field name="approved"/><field name="gross"/><field name="deductions"/><field name="net"/><field name="cost"/></list>
 <form><sheet><group><field name="employee_id"/><field name="partner_id"/><field name="analytic_id"/><field name="start_date"/><field name="wage"/><field name="approved"/></group>
 <notebook><page string="Ingresos y tiempo"><group><field name="bonus"/><field name="commission"/><field name="non_taxable_income"/><field name="hours_50"/><field name="hours_100"/><field name="night_hours"/></group></page>
-<page string="Descuentos y beneficios"><group><field name="advances"/><field name="loans"/><field name="other_deductions"/><field name="personal_expenses"/><field name="monthly_thirteenth"/><field name="monthly_fourteenth"/><field name="reserve_paid"/></group></page>
+<page string="Descuentos y beneficios"><group><field name="advances" help="Anticipo manual de este período únicamente, además de cualquier cuota de anticipos/préstamos aprobados (ver pestaña Anticipos y préstamos)."/><field name="loans" help="Préstamo manual de este período únicamente, además de cualquier cuota de anticipos/préstamos aprobados (ver pestaña Anticipos y préstamos)."/><field name="other_deductions"/><field name="personal_expenses"/><field name="monthly_thirteenth"/><field name="monthly_fourteenth"/><field name="reserve_paid"/></group></page>
+<page string="Beneficios propios de la empresa"><div class="alert alert-info" role="status">Beneficios configurados por la empresa (no un parámetro legal nacional). Un beneficio "grava" se suma a bonus/commission; uno "no grava" se suma a ingreso no gravado. Ver Ajustes de nómina · Beneficios propios.</div>
+<field name="benefit_line_ids"><list editable="bottom"><field name="benefit_type_id"/><field name="amount"/><field name="note"/></list></field></page>
+<page string="Anticipos y préstamos"><div class="alert alert-info" role="status">Cuotas generadas automáticamente al calcular, desde los anticipos/préstamos aprobados del empleado (Ajustes de nómina · Anticipos y préstamos). Solo lectura: la cuota se recalcula cada vez que se calcula el período.</div>
+<field name="advance_deduction_ids" readonly="1"><list><field name="advance_id"/><field name="amount"/></list></field></page>
 <page string="Anexo RDEP" groups="erpec_payroll.group_payroll_manager"><div class="alert alert-info">Novedades anuales declaradas por el responsable de nómina para el anexo RDEP; no se calculan automáticamente. Ver docs/ALCANCE_ATS_RDEP.md.</div>
 <group string="Ingresos declarados"><field name="annual_profit_sharing"/><field name="decent_wage_compensation"/><field name="other_employer_taxable_income"/><field name="other_general_interest_income"/></group>
 <group string="Otros empleadores y contrato de ingreso neto"><field name="other_employer_iess"/><field name="other_employer_withheld_tax"/><field name="employer_assumed_tax"/></group>
 <group string="Gastos personales desglosados"><field name="expense_housing"/><field name="expense_health"/><field name="expense_education"/><field name="expense_art_culture"/><field name="expense_food"/><field name="expense_clothing"/><field name="expense_tourism"/></group>
 <p>Desde 2023 el SRI no aplica tope por categoría: hay un solo tope anual total según cargas familiares, multiplicado por 1.803 en Galápagos (Boletín NAC-COM-26-006). Educación y arte/cultura se reportan como una sola categoría al SRI.</p></page>
-<page string="Resultado"><group><field name="gross"/><field name="deductions"/><field name="net"/><field name="cost"/></group></page>
+<page string="Resultado"><group><field name="gross"/><field name="deductions"/><field name="net"/><field name="cost"/></group>
+<group string="Detalle de anticipos y préstamos aplicados"><field name="result_advances" readonly="1"/><field name="result_loans" readonly="1"/></group></page>
 <page string="Rol de pago por correo"><group><field name="payslip_mail_id"/><field name="payslip_sent_date"/><field name="payslip_send_error"/></group><button name="action_resend_payslip" type="object" string="Reenviar rol de pago"/></page></notebook></sheet></form></field>
 </sheet><chatter/></form></field></record>
 <record id="policy_form" model="ir.ui.view"><field name="name">erpec.payroll.policy.form</field><field name="model">erpec.payroll.policy</field><field name="arch" type="xml"><form><header><button name="action_activate" type="object" string="Activar versión de ensayo" invisible="state != 'draft'"/><button name="action_reload_from_json" type="object" string="Recargar campos legales desde JSON" confirm="Esto rellena los campos de 'Parámetros legales' a partir del JSON ya guardado en 'Configuración técnica'. Úsalo si esta versión se creó antes de que existieran esos campos, o si editaste el JSON manualmente."/><field name="state" widget="statusbar"/></header><sheet>
@@ -65,9 +70,34 @@
 <group><field name="preview_summary" readonly="1"/><field name="move_id" readonly="1"/><field name="reversal_id" readonly="1"/></group>
 </sheet><chatter/></form></field></record>
 <record id="opening_balance_action" model="ir.actions.act_window"><field name="name">Saldos iniciales</field><field name="res_model">erpec.payroll.opening.balance</field><field name="view_mode">list,form</field></record>
+
+<record id="benefit_type_list" model="ir.ui.view"><field name="name">erpec.payroll.benefit.type.list</field><field name="model">erpec.payroll.benefit.type</field><field name="arch" type="xml"><list><field name="name"/><field name="category"/><field name="taxable"/><field name="active"/></list></field></record>
+<record id="benefit_type_form" model="ir.ui.view"><field name="name">erpec.payroll.benefit.type.form</field><field name="model">erpec.payroll.benefit.type</field><field name="arch" type="xml"><form><sheet>
+<div class="alert alert-info" role="status">Beneficio propio de la empresa (no un parámetro legal nacional): cada empresa configura los suyos según lo que ofrezca a sus empleados. Se asigna por período y empleado desde la pestaña "Beneficios propios de la empresa" de cada línea de nómina.</div>
+<group><field name="name"/><field name="company_id"/><field name="category"/><field name="taxable"/><field name="active"/></group>
+<group><field name="note"/></group>
+</sheet></form></field></record>
+<record id="benefit_type_action" model="ir.actions.act_window"><field name="name">Beneficios propios</field><field name="res_model">erpec.payroll.benefit.type</field><field name="view_mode">list,form</field></record>
+
+<record id="advance_list" model="ir.ui.view"><field name="name">erpec.payroll.advance.list</field><field name="model">erpec.payroll.advance</field><field name="arch" type="xml"><list decoration-muted="state == 'cancelled'" decoration-success="settled"><field name="employee_id"/><field name="advance_type"/><field name="amount_total"/><field name="installment_amount"/><field name="balance"/><field name="state"/><field name="settled"/></list></field></record>
+<record id="advance_form" model="ir.ui.view"><field name="name">erpec.payroll.advance.form</field><field name="model">erpec.payroll.advance</field><field name="arch" type="xml"><form><header>
+<button name="action_approve" type="object" string="Aprobar" class="oe_highlight" invisible="state != 'draft'"/>
+<button name="action_cancel" type="object" string="Cancelar" invisible="state != 'draft'"/>
+<field name="state" widget="statusbar"/></header><sheet>
+<div class="alert alert-info" role="status" invisible="not settled">Saldado: el saldo pendiente llegó a cero, ya no se descuenta en próximos períodos.</div>
+<group readonly="state != 'draft'"><group><field name="employee_id"/><field name="company_id"/><field name="advance_type"/></group>
+<group><field name="amount_total"/><field name="installment_amount"/><field name="start_year"/><field name="start_month"/></group></group>
+<group readonly="state != 'draft'"><field name="reason"/></group>
+<group><field name="balance" readonly="1"/><field name="settled" readonly="1"/><field name="approved_by" readonly="1"/><field name="approved_at" readonly="1"/></group>
+<field name="deduction_ids" readonly="1"><list><field name="line_id"/><field name="amount"/></list></field>
+</sheet><chatter/></form></field></record>
+<record id="advance_action" model="ir.actions.act_window"><field name="name">Anticipos y préstamos</field><field name="res_model">erpec.payroll.advance</field><field name="view_mode">list,form</field></record>
+
 <menuitem id="payroll_menu" name="Nómina local" groups="group_payroll_manager" sequence="57"/>
 <menuitem id="period_menu" name="Períodos y novedades" parent="payroll_menu" action="period_action" sequence="10"/>
 <menuitem id="policy_menu" name="Versiones y autoridad" parent="payroll_menu" action="policy_action" sequence="20"/>
 <menuitem id="rdep_menu" name="Agregador RDEP" parent="payroll_menu" action="rdep_action" sequence="30"/>
 <menuitem id="opening_balance_menu" name="Saldos iniciales" parent="payroll_menu" action="opening_balance_action" sequence="15"/>
+<menuitem id="benefit_type_menu" name="Beneficios propios" parent="payroll_menu" action="benefit_type_action" sequence="25"/>
+<menuitem id="advance_menu" name="Anticipos y préstamos" parent="payroll_menu" action="advance_action" sequence="26"/>
 </odoo>

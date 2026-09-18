@@ -26,8 +26,8 @@
           <tbody>
             <tr><td>IESS personal</td><td class="text-end" t-esc="'%.2f' % line.result_personal_iess"/></tr>
             <tr><td>Retención de renta</td><td class="text-end" t-esc="'%.2f' % line.result_tax"/></tr>
-            <tr><td>Anticipos</td><td class="text-end" t-esc="'%.2f' % line.advances"/></tr>
-            <tr><td>Préstamos</td><td class="text-end" t-esc="'%.2f' % line.loans"/></tr>
+            <tr><td>Anticipos</td><td class="text-end" t-esc="'%.2f' % line.result_advances"/></tr>
+            <tr><td>Préstamos</td><td class="text-end" t-esc="'%.2f' % line.result_loans"/></tr>
             <tr><td>Otros descuentos</td><td class="text-end" t-esc="'%.2f' % line.other_deductions"/></tr>
             <tr><td>Total descuentos</td><td class="text-end" t-esc="'%.2f' % line.deductions"/></tr>
           </tbody>

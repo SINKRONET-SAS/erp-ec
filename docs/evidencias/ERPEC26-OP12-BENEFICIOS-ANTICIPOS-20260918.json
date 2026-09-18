@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-09-18T16:20:00.000Z",
+  "scope": "OP12: beneficios propios configurables por empresa (catalogo + asignacion por periodo) y libro de anticipos/prestamos con cuota fija, para erpec_payroll -- los parametros legales existentes (OP10-A1) son uniformes por ley y no permitian que cada cliente configure sus propios beneficios de nomina/contratacion.",
+  "planDocument": "docs/PLAN_HAIKY_BENEFICIOS_ANTICIPOS.md",
+  "prompt": ".github/prompts/ERPEC26-OP12-BENEFICIOS-ANTICIPOS.md",
+  "userInstruction": "verbatim: 'los diferentes clientes en su proceso de nomina y contratacion tienen diferentes beneficios, usar como referencia nuevo_nomina, ya que la parametrizacion no permite configurarlos segun la necesidad de cada cliente, y desplegar una nueva pasada para nomina. Igualmente para los antipos.'",
+  "referenceResearch": {
+    "project": "C:\\proyectos web\\nuevo_nomina (solo lectura, no modificado, no conectado como sistema vivo)",
+    "benefitsFinding": "NoveltyTypeConfig (tabla novelty_type_configs) es un catalogo por tenant con banderas affectsIess/affectsIncomeTax/affectsDecimos/affectsVacation INDEPENDIENTES -- mas fino de lo que erpec_payroll/engine.py puede honrar de verdad (el motor solo distingue dos baldes: bonus/commission gravan IESS+renta+decimos+vacaciones+reserva TODOS JUNTOS via `base`, o non_taxable_income no grava nada). Copiar esas 4 banderas independientes habria presentado una configuracion que el calculo no puede aplicar -- se adapto con una sola bandera honesta (taxable) en su lugar.",
+    "advancesFinding": "EmployeeBenefit (tabla beneficios_empleados) es el libro real de anticipos/prestamos: montoTotal, saldoPendiente, cuotaMensual (cuota fija), anioInicio/mesInicio, flujo de aprobacion (pendiente/aprobado/descontado/anulado). Se adapto de cerca. Sin tope legal de Ecuador encontrado en su codigo (busqueda explicita de constantes/comentarios sobre topes del Codigo del Trabajo, sin resultados) -- no se inventa un tope aqui tampoco.",
+    "legalVsClientLayering": "Confirmado el mismo patron ya usado en OP10-A1b/A1c: LegalParameter/LegalParameterVersion (capa nacional) vs. una capa de configuracion por tenant separada -- coherente con el diseno ya elegido para erpec.payroll.policy (nacional) vs. estos nuevos modelos (propios de cada empresa)."
+  },
+  "modelChanges": [
+    "erpec.payroll.benefit.type (nuevo): catalogo de beneficios por empresa -- name, company_id, category (informativo), taxable (unica bandera real, decide si el monto entra a bonus o a non_taxable_income), active, note",
+    "erpec.payroll.benefit.line (nuevo): asignacion de un beneficio a una linea de periodo -- line_id, benefit_type_id, amount (>0), note. Editable solo mientras el periodo esta en borrador",
+    "erpec.payroll.advance (nuevo): libro de anticipos/prestamos -- employee_id, company_id, advance_type (anticipo/prestamo), amount_total, installment_amount, start_year/start_month, state (draft/approved/cancelled), reason, balance (computado y almacenado = amount_total - suma de deducciones, NUNCA escrito a mano), settled (computado)",
+    "erpec.payroll.advance.deduction (nuevo): cuota real aplicada a una linea de periodo especifica -- advance_id, line_id, amount. Solo se crea/edita/elimina con el token interno, nunca a mano; unique(advance_id,line_id)",
+    "erpec.payroll.line gana result_advances/result_loans (mismo patron _RESULT_FIELD_MAP ya establecido), benefit_line_ids, advance_deduction_ids",
+    "erpec.payroll.line._inputs() extendido (no engine.py): suma benefit_line_ids por taxable a bonus/non_taxable_income, y _resolve_advance_entries()/_sync_advance_deductions() resuelven y persisten las cuotas de anticipos/prestamos aplicables, sumandolas a advances/loans -- todo ADITIVO sobre los campos manuales existentes, sin tocar la formula del motor"
+  ],
+  "bugsFoundAndFixedDuringDesign": [
+    {"bug": "El reporte de rol de pago (A2, reports.xml) leia line.advances/line.loans directamente -- con el libro de anticipos activo, esos campos solo reflejan la parte MANUAL, subestimando el descuento real ya incluido en deductions/net del calculo", "fix": "Agregados result_advances/result_loans (leidos del JSON result, que si refleja el total real usado por el motor) y actualizado reports.xml para usarlos en vez de los campos manuales crudos"}
+  ],
+  "bugsFoundAndFixedDuringTesting": [
+    {"bug": "Prueba propia: comparacion 'ledger vs manual' reutilizaba el MISMO empleado para el periodo con libro y el periodo de comparacion manual -- el anticipo (aprobado, con saldo restante) tambien aplicaba legitimamente al segundo periodo del mismo empleado (comportamiento CORRECTO, verificado aparte en test_multi_period_drawdown_until_settled), invalidando la comparacion (972 != 872, diferencia exacta de una cuota mas aplicada de lo esperado)", "fix": "La comparacion manual ahora usa un empleado SIN ningun anticipo, para un baseline realmente limpio"},
+    {"bug": "Al corregir el bug anterior, el nuevo periodo de comparacion colisiono con la restriccion unique(company_id,year,month,version) del modelo Period, por reutilizar el mismo mes que el periodo con libro", "fix": "Periodo de comparacion movido a un mes distinto"}
+  ],
+  "tests": {
+    "totalTests": 74,
+    "failed": 0,
+    "errors": 0,
+    "newInThisIncrement": 15,
+    "coverage": ["beneficio que grava produce el mismo resultado que escribir bonus a mano", "beneficio que no grava produce el mismo resultado que escribir non_taxable_income a mano", "monto de beneficio debe ser positivo", "linea de beneficio se bloquea al calcular, editable de nuevo tras reabrir", "nombre de tipo de beneficio unico por empresa", "aprobar un anticipo exige motivo no vacio", "cuota mensual debe ser positiva y no mayor al total", "una sola cuota por periodo coincide con escribir el anticipo a mano", "un prestamo se descuenta como loans, no como advances", "arrastre de saldo en varios periodos hasta saldarse (300->180->60->0, settled=True, luego ya no aplica)", "recalcular el mismo periodo no duplica la cuota", "un anticipo no aplica antes de su mes de inicio configurado", "un anticipo aprobado es inmutable y su libro de cuotas esta protegido contra edicion directa", "cancelar se bloquea si ya existen cuotas descontadas", "un anticipo en borrador si se puede cancelar"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "moduleVersion": "18.0.1.7.0",
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "XML-RPC real contra la demo ya reinstalada (no simulado): crea empresa/politica/mapeo/empleado/tipo de beneficio (bono que grava)/anticipo aprobado (300 total, cuota 120) reales, calcula dos periodos consecutivos",
+    "results": {
+      "period1": {"gross": 1380.0, "net": 1097.8, "cost": 1868.5, "resultAdvances": 120.0, "benefitLineCount": 1, "advanceDeductionCount": 1},
+      "advanceAfterPeriod1": {"balance": 180.0, "settled": false},
+      "period2ResultAdvances": 120.0,
+      "advanceAfterPeriod2": {"balance": 60.0, "settled": false}
+    },
+    "conclusion": "Confirma de punta a punta contra una instancia Odoo real: el beneficio configurable grava correctamente (gross = 1300 salario + 80 beneficio), y la cuota del anticipo se aplica sola en cada periodo consecutivo sin intervencion manual, con el saldo bajando correctamente (300 -> 180 -> 60)"
+  },
+  "pending": [
+    "Sin plantillas de beneficios recurrentes (se asigna por periodo, no se auto-aplica un beneficio cada mes)",
+    "Sin tope legal de anticipos configurable (ninguna fuente, ni nuevo_nomina ni ley citada, confirma uno)",
+    "action_correct() no revierte las cuotas de anticipo ya aplicadas en el periodo original -- correcto en la mayoria de casos (no se debe deshacer una cuota ya cobrada), pero un caso que SI requiera anularla necesitaria ajuste manual del libro"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}

@@ -313,6 +313,7 @@ class Period(models.Model):
             except (ValueError,TypeError,KeyError) as error:
                 raise ValidationError('Revisa las novedades del empleado: '+str(error)) from None
             line.with_context(_erpec_payroll_token=_INTERNAL).write({'result':json.dumps(result,sort_keys=True),'input_hash':hashlib.sha256((json.dumps(data,sort_keys=True)+policy.parameters).encode()).hexdigest()})
+            line._sync_advance_deductions()
         self._update({'state':'calculated','last_error':False})
         return True
 
@@ -425,6 +426,16 @@ class Line(models.Model):
     result_reserve_iess=fields.Float(compute='_compute_totals')
     result_employer_iess=fields.Float(compute='_compute_totals')
     result_employer_other=fields.Float(compute='_compute_totals')
+    # result_advances/result_loans: el total REAL descontado (lo escrito a mano en advances/loans
+    # más lo resuelto automáticamente desde el libro de anticipos y préstamos, ver
+    # _resolve_advance_entries) puede ser mayor que el campo advances/loans de la línea, que solo
+    # guarda la parte manual. El rol de pago (A2, reports.xml) debe mostrar este total, no el
+    # campo manual -- de lo contrario subestimaría el descuento real que ya afecta gross/net/cost.
+    result_advances=fields.Float(compute='_compute_totals')
+    result_loans=fields.Float(compute='_compute_totals')
+
+    benefit_line_ids=fields.One2many('erpec.payroll.benefit.line','line_id','Beneficios del período')
+    advance_deduction_ids=fields.One2many('erpec.payroll.advance.deduction','line_id','Cuotas de anticipos/préstamos aplicadas',readonly=True)
 
     _RESULT_FIELD_MAP = {
         'gross': 'gross', 'net': 'net', 'deductions': 'deductions', 'cost': 'cost',
@@ -432,6 +443,7 @@ class Line(models.Model):
         'tax': 'result_tax', 'thirteenth': 'result_thirteenth', 'fourteenth': 'result_fourteenth',
         'vacation': 'result_vacation', 'reserve_iess': 'result_reserve_iess',
         'employer_iess': 'result_employer_iess', 'employer_other': 'result_employer_other',
+        'advances': 'result_advances', 'loans': 'result_loans',
     }
 
     @api.depends('result')
@@ -455,7 +467,52 @@ class Line(models.Model):
     def _inputs(self):
         data=self._copy_inputs()
         data['start_date']=fields.Date.to_string(data['start_date'])
+        _entries,totals=self._resolve_advance_entries()
+        data['advances']=data.get('advances',0)+totals['advances']
+        data['loans']=data.get('loans',0)+totals['loans']
+        taxable=sum(self.benefit_line_ids.filtered(lambda item:item.benefit_type_id.taxable).mapped('amount'))
+        non_taxable=sum(self.benefit_line_ids.filtered(lambda item:not item.benefit_type_id.taxable).mapped('amount'))
+        data['bonus']=data.get('bonus',0)+taxable
+        data['non_taxable_income']=data.get('non_taxable_income',0)+non_taxable
         return data
+
+    def _resolve_advance_entries(self):
+        """Calcula cuánto de cada anticipo/préstamo APROBADO del empleado corresponde
+        descontar en este período (min(saldo, cuota mensual)), a partir de la fecha de inicio
+        configurada en cada uno. Función pura (no escribe nada): se usa tanto para alimentar
+        _inputs() como para persistir el detalle real en action_calculate() (ver
+        _sync_advance_deductions), siempre con el mismo resultado mientras no cambien los datos
+        en medio. Excluye la propia cuota que esta línea ya hubiera registrado antes, para que
+        recalcular un período no se autodescuente dos veces."""
+        self.ensure_one()
+        if not self.employee_id or not self.period_id:
+            return [],{'advances':0.0,'loans':0.0}
+        candidates=self.env['erpec.payroll.advance'].search([
+            ('employee_id','=',self.employee_id.id),('state','=','approved')])
+        period_key=(self.period_id.year,self.period_id.month)
+        entries=[]
+        totals={'advances':0.0,'loans':0.0}
+        for advance in candidates:
+            if (advance.start_year,advance.start_month)>period_key:
+                continue
+            already=advance.deduction_ids.filtered(lambda item,line=self:item.line_id.id==line.id)
+            balance_excluding_self=advance.balance+sum(already.mapped('amount'))
+            amount=min(balance_excluding_self,advance.installment_amount)
+            if amount<=0:
+                continue
+            entries.append((advance,amount))
+            totals['advances' if advance.advance_type=='anticipo' else 'loans']+=amount
+        return entries,totals
+
+    def _sync_advance_deductions(self):
+        self.ensure_one()
+        token={'_erpec_payroll_token':_INTERNAL}
+        self.env['erpec.payroll.advance.deduction'].with_context(**token).search(
+            [('line_id','=',self.id)]).unlink()
+        entries,_totals=self._resolve_advance_entries()
+        for advance,amount in entries:
+            self.env['erpec.payroll.advance.deduction'].with_context(**token).create(
+                {'advance_id':advance.id,'line_id':self.id,'amount':amount})
 
     approved=fields.Boolean('Novedades aprobadas')
     result=fields.Text('Desglose calculado',readonly=True)
@@ -686,3 +743,167 @@ class OpeningBalance(models.Model):
         reverse=self.move_id.with_context(_erpec_payroll_token=_INTERNAL)._reverse_moves([{'date':fields.Date.today(),'ref':'Reversión saldo inicial · '+self.employee_id.name}],cancel=True)
         self.with_context(_erpec_payroll_token=_INTERNAL).write({'reversal_id':reverse.id,'state':'reverted'})
         return True
+
+
+BENEFIT_CATEGORIES=[('bono','Bono'),('comision','Comisión'),('alimentacion','Alimentación'),
+    ('transporte','Transporte'),('vivienda','Vivienda'),('seguro','Seguro privado'),('otro','Otro')]
+
+
+class BenefitType(models.Model):
+    _name='erpec.payroll.benefit.type'
+    _description='Beneficio propio de nómina configurado por la empresa (no un parámetro legal)'
+    _check_company_auto=True
+    name=fields.Char('Nombre',required=True)
+    company_id=fields.Many2one('res.company','Empresa',required=True,default=lambda self:self.env.company)
+    category=fields.Selection(BENEFIT_CATEGORIES,'Categoría',required=True,default='otro')
+    # taxable determina el único efecto que el motor de cálculo (engine.py) puede aplicar de
+    # forma diferenciada hoy: si el beneficio entra a `base` (grava IESS, impuesto a la renta,
+    # décimos, vacaciones y fondo de reserva, igual que bonus/commission) o si solo entra a
+    # `gross` sin gravar nada (igual que non_taxable_income). El motor no distingue IESS de
+    # impuesto a la renta ni de décimos por separado -- no se ofrecen esas banderas por separado
+    # para no presentar una configuración que el cálculo no puede honrar de verdad.
+    taxable=fields.Boolean('Grava IESS, impuesto a la renta, décimos, vacaciones y reserva',default=True,
+        help='Activado: el beneficio se suma a la base gravable (igual que una bonificación). '
+             'Desactivado: se suma solo al ingreso bruto, sin gravar nada (igual que un ingreso no gravado).')
+    active=fields.Boolean('Activo',default=True)
+    note=fields.Text('Descripción y justificación')
+    _sql_constraints=[('name_unique','unique(company_id,name)','Ya existe un beneficio con ese nombre en esta empresa.')]
+
+
+class BenefitLine(models.Model):
+    _name='erpec.payroll.benefit.line'
+    _description='Beneficio asignado a un empleado en un período de nómina'
+    _check_company_auto=True
+    line_id=fields.Many2one('erpec.payroll.line','Línea de nómina',required=True,ondelete='cascade')
+    company_id=fields.Many2one(related='line_id.company_id',store=True)
+    benefit_type_id=fields.Many2one('erpec.payroll.benefit.type','Beneficio',required=True,check_company=True)
+    amount=fields.Float('Monto',required=True)
+    note=fields.Text('Nota')
+
+    @api.constrains('amount')
+    def _check_amount(self):
+        for line in self:
+            if line.amount<=0:
+                raise ValidationError('El monto del beneficio debe ser positivo.')
+
+    def _check_edit(self):
+        for benefit in self:
+            benefit.line_id.period_id._lock()
+        if any(benefit.line_id.period_id.state!='draft' for benefit in self):
+            raise ValidationError('Reabre el cálculo antes de cambiar los beneficios del período.')
+
+    @api.model_create_multi
+    def create(self,values_list):
+        records=super().create(values_list);records._check_edit();return records
+
+    def write(self,values):
+        self._check_edit();result=super().write(values);self._check_edit();return result
+
+    def unlink(self):
+        self._check_edit();return super().unlink()
+
+
+class Advance(models.Model):
+    _name='erpec.payroll.advance'
+    _description='Anticipo o préstamo de un empleado, con cuota fija hasta saldarse'
+    _inherit=['mail.thread']
+    _check_company_auto=True
+    employee_id=fields.Many2one('hr.employee','Empleado',required=True,check_company=True)
+    company_id=fields.Many2one('res.company','Empresa',required=True,default=lambda self:self.env.company)
+    advance_type=fields.Selection([('anticipo','Anticipo'),('prestamo','Préstamo')],'Tipo',required=True,default='anticipo')
+    amount_total=fields.Float('Monto total',required=True)
+    installment_amount=fields.Float('Cuota mensual',required=True)
+    # start_year/start_month: primer período de nómina en el que empieza a descontarse; no
+    # necesariamente el período en que se entregó el dinero (p. ej. un anticipo entregado a
+    # mitad de mes puede empezar a descontarse el mes siguiente).
+    start_year=fields.Integer('Año de inicio de descuento',required=True)
+    start_month=fields.Integer('Mes de inicio de descuento',required=True)
+    state=fields.Selection([('draft','Borrador'),('approved','Aprobado'),('cancelled','Cancelado')],
+        default='draft',required=True,readonly=True,string='Estado')
+    reason=fields.Text('Motivo',required=True)
+    approved_by=fields.Many2one('res.users','Aprobado por',readonly=True,copy=False)
+    approved_at=fields.Datetime('Aprobado el',readonly=True,copy=False)
+    deduction_ids=fields.One2many('erpec.payroll.advance.deduction','advance_id','Cuotas aplicadas',readonly=True)
+    balance=fields.Float('Saldo pendiente',compute='_compute_balance',store=True)
+    settled=fields.Boolean('Saldado',compute='_compute_balance',store=True)
+
+    @api.depends('amount_total','deduction_ids.amount')
+    def _compute_balance(self):
+        for advance in self:
+            advance.balance=advance.amount_total-sum(advance.deduction_ids.mapped('amount'))
+            advance.settled=advance.balance<=0
+
+    @api.constrains('amount_total','installment_amount')
+    def _check_amounts(self):
+        for advance in self:
+            if advance.amount_total<=0:
+                raise ValidationError('El monto total debe ser positivo.')
+            if not 0<advance.installment_amount<=advance.amount_total:
+                raise ValidationError('La cuota mensual debe ser positiva y no mayor al monto total.')
+
+    @api.constrains('start_month')
+    def _check_start_month(self):
+        for advance in self:
+            if not 1<=advance.start_month<=12:
+                raise ValidationError('El mes de inicio de descuento debe estar entre 1 y 12.')
+
+    def _lock(self):
+        self.ensure_one();manager(self.env);self.check_access('write')
+        self.env.cr.execute('UPDATE erpec_payroll_advance SET write_date=NOW() WHERE id=%s',[self.id]);self.invalidate_recordset()
+
+    def write(self,values):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            for advance in self.sorted('id'):
+                advance._lock()
+            if any(advance.state=='approved' for advance in self) and set(values)-{'reason'}:
+                raise ValidationError('Un anticipo/préstamo aprobado es inmutable; cancélalo y crea uno nuevo si hubo un error.')
+        return super().write(values)
+
+    def unlink(self):
+        if any(advance.state=='approved' for advance in self):
+            raise ValidationError('No se elimina un anticipo/préstamo aprobado; cancélalo en su lugar.')
+        return super().unlink()
+
+    def action_approve(self):
+        self.ensure_one();manager(self.env);self.check_access('write')
+        if self.state!='draft':
+            raise ValidationError('Solo se aprueba un anticipo/préstamo en borrador.')
+        if not self.reason.strip():
+            raise ValidationError('Registra el motivo antes de aprobar.')
+        self.with_context(_erpec_payroll_token=_INTERNAL).write(
+            {'state':'approved','approved_by':self.env.user.id,'approved_at':fields.Datetime.now()})
+        return True
+
+    def action_cancel(self):
+        self.ensure_one();manager(self.env);self.check_access('write')
+        if self.state=='cancelled':
+            return True
+        if self.deduction_ids:
+            raise ValidationError('Ya tiene cuotas descontadas; no se cancela un anticipo/préstamo en curso.')
+        self.with_context(_erpec_payroll_token=_INTERNAL).write({'state':'cancelled'})
+        return True
+
+
+class AdvanceDeduction(models.Model):
+    _name='erpec.payroll.advance.deduction'
+    _description='Cuota de un anticipo/préstamo aplicada a un período de nómina (solo generado por el cálculo)'
+    advance_id=fields.Many2one('erpec.payroll.advance','Anticipo/préstamo',required=True,ondelete='cascade')
+    line_id=fields.Many2one('erpec.payroll.line','Línea de nómina',required=True,ondelete='cascade')
+    amount=fields.Float('Monto',required=True)
+    _sql_constraints=[('line_once','unique(advance_id,line_id)','Este período ya tiene una cuota registrada para este anticipo/préstamo.')]
+
+    @api.model_create_multi
+    def create(self,values_list):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            raise ValidationError('Las cuotas se generan solo al calcular el período; no se crean a mano.')
+        return super().create(values_list)
+
+    def write(self,values):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            raise ValidationError('Las cuotas se generan solo al calcular el período; no se editan a mano.')
+        return super().write(values)
+
+    def unlink(self):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            raise ValidationError('Las cuotas se generan solo al calcular el período; no se eliminan a mano.')
+        return super().unlink()

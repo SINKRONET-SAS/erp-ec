@@ -5,3 +5,4 @@ from . import test_reports
 from . import test_payslip_email
 from . import test_opening_balance
 from . import test_mail_server_env
+from . import test_benefits_advances
