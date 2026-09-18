@@ -71,10 +71,16 @@ def credentials(p12,password,issuer_ruc,now=None):
         raise ValueError('El certificado no permite firma de documentos.')
     return key,cert,chain or []
 
+# Comprobantes electrónicos SRI admitidos: cada uno comparte el mismo bloque infoTributaria
+# (ambiente/ruc/claveAcceso/codDoc/...), por eso sign()/verify() son agnósticos al tipo de
+# documento y solo validan la etiqueta raíz contra este catálogo -- ver xsd/*.xsd de cada uno.
+COMPROBANTE_TAGS = {'factura', 'notaCredito', 'notaDebito', 'guiaRemision'}
+
+
 def sign(xml,p12,password,issuer_ruc,now=None):
     root=parse_xml(xml)
-    if root.tag!='factura' or root.get('id')!='comprobante' or root.findtext('infoTributaria/ruc')!=issuer_ruc:
-        raise ValueError('Se requiere una factura del emisor con id comprobante.')
+    if root.tag not in COMPROBANTE_TAGS or root.get('id')!='comprobante' or root.findtext('infoTributaria/ruc')!=issuer_ruc:
+        raise ValueError('Se requiere un comprobante del emisor con id comprobante.')
     if root.xpath('//ds:Signature',namespaces=NS):
         raise ValueError('El XML ya tiene una firma; no se vuelve a firmar.')
     key,cert,chain=credentials(p12,password,issuer_ruc,now)
@@ -129,7 +135,7 @@ def verify(xml,expected_certificate):
     root=parse_xml(xml)
     signatures=root.xpath('//ds:Signature',namespaces=NS)
     if len(signatures)!=1 or signatures[0].getparent()!=root:
-        raise ValueError('Se requiere una única firma al final de la factura.')
+        raise ValueError('Se requiere una única firma al final del comprobante.')
     signature=signatures[0]
     info=signature.find('ds:SignedInfo',NS)
     if info is None or info.find('ds:SignatureMethod',NS).get('Algorithm')!=RSA256 or info.find('ds:CanonicalizationMethod',NS).get('Algorithm')!=C14N:

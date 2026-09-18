@@ -10,12 +10,13 @@ class NativeCase(TransactionCase):
     def setUp(self):
         super().setUp()
         self.env.user.write({'groups_id':[(4,self.env.ref('account.group_account_user').id)]})
+        self.env.company.write({'country_id':self.env.ref('base.ec').id})
         self.env.company.with_context(no_vat_validation=True).write({'vat':'1790012345001','street':'Matriz de ensayo','ec_native_ordinary':True,'ec_native_accounting':'SI'})
         self.partner=self.env['res.partner'].with_context(no_vat_validation=True).create({'name':'Cliente & ensayo','vat':'1790012345001','street':'Dirección de ensayo','l10n_latam_identification_type_id':self.env.ref('l10n_ec.ec_ruc').id})
         group=self.env['account.tax.group'].create({'name':'IVA de ensayo','l10n_ec_type':'vat15'})
         self.tax=self.env['account.tax'].create({'name':'IVA 15 ensayo','amount_type':'percent','amount':15,'type_tax_use':'sale','tax_group_id':group.id})
         self.move=self.env['account.move'].create({'move_type':'out_invoice','partner_id':self.partner.id,'invoice_date':'2026-09-11','date':'2026-09-11','ec_fiscal_payment_code':'20','invoice_line_ids':[(0,0,{'name':'Servicio & ensayo','quantity':2,'price_unit':100,'discount':10,'tax_ids':[(6,0,self.tax.ids)]})]})
-        self.move.l10n_latam_document_number='001-001-000000333';self.move.action_post()
+        self.move.name='001-001-000000333';self.move.action_post()
 
     def preview(self):
         return self.env['erpec.fiscal.preview'].browse(self.move.action_native_preview()['res_id'])

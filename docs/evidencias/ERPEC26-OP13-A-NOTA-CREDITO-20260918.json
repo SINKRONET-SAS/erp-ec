@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-09-18T18:40:00.000Z",
+  "scope": "OP13-A: nota de credito electronica firmada XAdES y transmitida al SRI (PRUEBAS), reutilizando el motor nativo de OP09.",
+  "planDocument": "docs/PLAN_HAIKY_COMPROBANTES_FIRMADOS.md",
+  "userInstruction": "Debe cumplirse la legislacion de Ecuador, los documentos comerciales debe ser firmados",
+  "bugsFoundAndFixedDuringTesting": [
+    "xades.sign() rechazaba cualquier raiz distinta de factura (hallazgo real; una lectura previa lo habia dado por agnostico) -> COMPROBANTE_TAGS",
+    "copy() de la nota de credito heredaba el tipo documental de la factura y violaba _check_invoice_type_document_type -> se pasa en default_values",
+    "test_native.py: fixtures sin country_id EC y con numeracion por campo derivado fallaban en base aislada (preexistente, no causado por OP13)",
+    "test_notacredito_emission.py no estaba importado en tests/__init__.py y no corria"
+  ],
+  "tests": {
+    "modules": [
+      "erpec_fiscal_native",
+      "erpec_fiscal_sri"
+    ],
+    "total": 65,
+    "failed": 0,
+    "errors": 0,
+    "newTests": 10
+  },
+  "installation": {
+    "demo": "actualizados erpec_fiscal_native y erpec_fiscal_sri con respaldo previo en .cache/windows/backups/notacredito-install-20260918-132936"
+  },
+  "realRehearsal": {
+    "environment": "celcer.sri.gob.ec PRUEBAS",
+    "certificate": "certificado real de pruebas del titular en .cache/private/fiscal-pruebas (fuera de git)",
+    "factura": "RECIBIDA y AUTORIZADO",
+    "notaCredito": "codDoc 04, RECIBIDA y AUTORIZADO; RIDE generado como PDF",
+    "note": "Solo ambiente PRUEBAS; no es homologacion de produccion"
+  },
+  "pending": [
+    "OP13-B nota de debito",
+    "OP13-C guia de remision (modelo nuevo)",
+    "RIDE de nota de credito sin validacion visual oficial",
+    "vista unificada de documentos de la venta",
+    "produccion SRI bloqueada (OP11-B3)"
+  ],
+  "realMoneyMoved": false
+}

@@ -20,14 +20,16 @@ def modulo11(digits):
     return 0 if digit==11 else 1 if digit==10 else digit
 
 
-def access_key(day,ruc,number,numeric):
+def access_key(day,ruc,number,numeric,doc_type='01'):
     if not re.fullmatch(r'[0-9]{13}',ruc or ''):
         raise ValueError('Completa el RUC real del emisor (13 dígitos); no se inventa en la demo.')
     if not re.fullmatch(r'[0-9]{3}-[0-9]{3}-[0-9]{9}',number or '') or any(int(x)==0 for x in number.split('-')):
         raise ValueError('Revisa establecimiento, punto y secuencial del documento contabilizado.')
     if not re.fullmatch(r'[0-9]{8}',numeric):
         raise ValueError('El código numérico requiere ocho dígitos.')
-    base=date.fromisoformat(str(day)).strftime('%d%m%Y')+'01'+ruc+'1'+number.replace('-','')+numeric+'1'
+    if not re.fullmatch(r'[0-9]{2}',doc_type or ''):
+        raise ValueError('El código del tipo de comprobante requiere dos dígitos.')
+    base=date.fromisoformat(str(day)).strftime('%d%m%Y')+doc_type+ruc+'1'+number.replace('-','')+numeric+'1'
     return base+str(modulo11(base))
 
 

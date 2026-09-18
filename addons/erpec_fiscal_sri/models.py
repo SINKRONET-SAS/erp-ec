@@ -19,9 +19,12 @@ from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.erpec_fiscal_native import xades
 from odoo.addons.erpec_fiscal_native.engine import generate
+from odoo.addons.erpec_fiscal_native import notacredito_engine
 
 from . import ride as ride_module
 from . import sri_client
+
+NATIVE_MOVE_TYPES = ('out_invoice', 'out_refund')
 
 _INTERNAL = object()
 MAX_ATTEMPTS = 5
@@ -186,7 +189,7 @@ class Emission(models.Model):
     _order = 'id desc'
     _check_company_auto = True
 
-    move_id = fields.Many2one('account.move', string='Factura', required=True, check_company=True, ondelete='restrict')
+    move_id = fields.Many2one('account.move', string='Comprobante', required=True, check_company=True, ondelete='restrict')
     company_id = fields.Many2one(related='move_id.company_id', store=True, index=True)
     ambiente = fields.Selection([('1', 'Pruebas'), ('2', 'Producción')], default='1', required=True, readonly=True)
     access_key = fields.Char('Clave de acceso', readonly=True)
@@ -209,12 +212,12 @@ class Emission(models.Model):
     attempts = fields.Integer('Intentos', readonly=True)
     next_attempt = fields.Datetime('Próximo intento', readonly=True)
     message = fields.Text('Estado y siguiente acción', readonly=True, default='Solicitud preparada. Procesar la cola para firmar y transmitir.')
-    _sql_constraints = [('one_invoice', 'unique(move_id)', 'La factura ya tiene una emisión nativa.')]
+    _sql_constraints = [('one_invoice', 'unique(move_id)', 'El comprobante ya tiene una emisión nativa.')]
 
     @api.model_create_multi
     def create(self, values_list):
         if self.env.context.get('_fiscal_sri_internal') is not _INTERNAL:
-            raise ValidationError('Prepara la emisión desde la factura contabilizada.')
+            raise ValidationError('Prepara la emisión desde el comprobante contabilizado.')
         return super().create(values_list)
 
     def write(self, values):
@@ -282,7 +285,11 @@ class Emission(models.Model):
         if estado == 'NO AUTORIZADO':
             self._save(state='rejected', message='NO AUTORIZADO: ' + str(mensajes))
             return
-        ride_pdf = ride_module.build_ride(autorizacion['comprobante'], autorizacion['numero'], autorizacion['fecha'])
+        # El tipo de comprobante (codDoc) va en la clave de acceso (posiciones 9-10, índice
+        # 8:10) -- fuente única de verdad, no se guarda por separado ni se infiere del move_id.
+        doc_type = self.access_key[8:10]
+        builder = ride_module.build_ride_notacredito if doc_type == '04' else ride_module.build_ride
+        ride_pdf = builder(autorizacion['comprobante'], autorizacion['numero'], autorizacion['fecha'])
         self._save(state='authorized', xml_authorized=base64.b64encode(autorizacion['comprobante']), ride_pdf=base64.b64encode(ride_pdf),
                     authorization_number=autorizacion['numero'], authorization_date=autorizacion['fecha'],
                     message='Autorizada por el SRI.')
@@ -293,9 +300,11 @@ class Move(models.Model):
 
     ec_fiscal_emission_ids = fields.One2many('erpec.fiscal.emission', 'move_id', string='Emisiones nativas SRI', copy=False)
 
-    def _gather_native_data(self):
-        """Duplicado intencional de la validación/armado de datos de
-        erpec_fiscal_native.models.Move.action_native_preview — ver docstring del módulo."""
+    def _gather_native_common(self):
+        """Datos compartidos entre factura y nota de crédito: identificación del emisor/
+        comprador y líneas con impuesto. Duplicado intencional de la validación/armado de
+        datos de erpec_fiscal_native.models.Move.action_native_preview — ver docstring del
+        módulo."""
         self.ensure_one()
         company = self.company_id
         partner = self.partner_id.commercial_partner_id
@@ -313,27 +322,46 @@ class Move(models.Model):
         return {'date': str(self.invoice_date), 'number': self.l10n_latam_document_number, 'issuer_vat': company.vat,
                 'issuer_name': company.name, 'issuer_address': company.street, 'buyer_type': identification,
                 'buyer_vat': partner.vat, 'buyer_name': partner.name, 'buyer_address': partner.street,
-                'accounting': company.ec_native_accounting, 'payment': self.ec_fiscal_payment_code,
-                'total': self.amount_total, 'items': items}
+                'accounting': company.ec_native_accounting, 'total': self.amount_total, 'items': items}
+
+    def _gather_native_data(self):
+        data = self._gather_native_common()
+        data['payment'] = self.ec_fiscal_payment_code
+        return data
+
+    def _gather_native_credit_note_data(self):
+        self.ensure_one()
+        original = self.reversed_entry_id
+        if not original or original.move_type != 'out_invoice':
+            raise ValidationError('La nota de crédito debe generarse desde "Añadir nota de crédito" sobre la factura que modifica.')
+        if not original.l10n_latam_document_number or original.l10n_latam_document_type_id.code != '01':
+            raise ValidationError('La factura modificada debe tener secuencial asignado y ser de tipo Factura (código 01).')
+        data = self._gather_native_common()
+        data['modified_type'] = '01'
+        data['modified_number'] = original.l10n_latam_document_number
+        data['modified_date'] = str(original.invoice_date)
+        data['reason'] = (self.ref or self.narration or 'Nota de crédito').strip()[:300]
+        return data
 
     def action_native_emit(self):
         self.ensure_one()
         self.check_access('write')
-        if self.state != 'posted' or self.move_type != 'out_invoice' or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
-            raise ValidationError('Se requiere una factura de venta contabilizada en USD de una empresa de Ecuador.')
+        if self.state != 'posted' or self.move_type not in NATIVE_MOVE_TYPES or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
+            raise ValidationError('Se requiere una factura o nota de crédito de venta contabilizada en USD de una empresa de Ecuador.')
         if self.ec_fiscal_job_ids:
-            raise ValidationError('Esta factura ya está asignada al Facturador externo; conserva su autoridad y trazabilidad.')
+            raise ValidationError('Este comprobante ya está asignado al Facturador externo; conserva su autoridad y trazabilidad.')
         if self.ec_fiscal_emission_ids:
             return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission',
                     'res_id': self.ec_fiscal_emission_ids[0].id, 'view_mode': 'form'}
         certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
-        data = self._gather_native_data()
+        is_credit_note = self.move_type == 'out_refund'
+        data = self._gather_native_credit_note_data() if is_credit_note else self._gather_native_data()
         numeric_code = str(secrets.randbelow(10**8)).zfill(8)
         data['numeric'] = numeric_code
         try:
-            access_key, xml_unsigned = generate(data)
+            access_key, xml_unsigned = (notacredito_engine.generate(data) if is_credit_note else generate(data))
         except ValueError as error:
             raise ValidationError(str(error)) from error
         p12_bytes = base64.b64decode(certificate.sudo().p12_file or b'')
