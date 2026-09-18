@@ -5,3 +5,4 @@ from . import test_uiux
 from . import test_tax_plan
 
 from . import test_tax_configuration
+from . import test_ats_sustento

@@ -10,14 +10,23 @@ class TaxConfigurationCase(TransactionCase):
     def setUp(self):
         super().setUp()
         self.company = self.env.company
+        self.company.write({'country_id': self.env.ref('base.ec').id})
         self.reference = self.env['erpec.tax.reference'].create({
             'name': 'Referencia sintética, no normativa', 'family': 'ENSAYO',
             'code': 'TX-SP02', 'version': 'ensayo', 'source_url': 'https://www.sri.gob.ec/facturacion-electronica'})
         self.account = self.env['account.account'].create({'name': 'Cuenta caso ensayo', 'code': 'TXCASE01',
             'account_type': 'liability_current', 'company_ids': [Command.set(self.company.ids)]})
+        # Grupo IVA explícito (l10n_ec_type='vat15'): sin él, account.tax.create() sin
+        # tax_group_id asigna algún grupo por defecto del que no depende esta prueba pero del
+        # que sí depende _retention_bases() (erpec_workspace/tax_intersection.py) para calcular
+        # la base de la retención de IVA -- sin un grupo IVA real, esa base queda en cero.
+        self.vat_group = self.env['account.tax.group'].create({'name': 'IVA sintético ensayo',
+            'company_id': self.company.id, 'l10n_ec_type': 'vat15'})
         self.taxes = self.env['account.tax'].create([
-            {'name': 'Detalle sintético A', 'amount': 10, 'type_tax_use': 'purchase', 'erpec_reference_id': self.reference.id},
-            {'name': 'Detalle sintético B', 'amount': 2, 'type_tax_use': 'purchase', 'erpec_reference_id': self.reference.id}])
+            {'name': 'Detalle sintético A', 'amount': 10, 'type_tax_use': 'purchase',
+             'tax_group_id': self.vat_group.id, 'erpec_reference_id': self.reference.id},
+            {'name': 'Detalle sintético B', 'amount': 2, 'type_tax_use': 'purchase',
+             'tax_group_id': self.vat_group.id, 'erpec_reference_id': self.reference.id}])
         for tax in self.taxes:
             (tax.invoice_repartition_line_ids | tax.refund_repartition_line_ids).filtered(
                 lambda line: line.repartition_type == 'tax').account_id = self.account

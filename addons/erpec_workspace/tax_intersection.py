@@ -1,6 +1,9 @@
 """Aplicación nativa de la intersección de detalles entre planes de tercero y producto."""
 from odoo import api, fields, models
+from odoo.addons.erpec_fiscal_native.ats_catalog import SUPPORT_CODES
 from odoo.exceptions import ValidationError
+
+ATS_SUSTENTO_SELECTION = [(code, '%s — %s' % (code, data['name'])) for code, data in SUPPORT_CODES.items()]
 
 
 class Classification(models.Model):
@@ -24,6 +27,16 @@ class Case(models.Model):
     _inherit = 'erpec.tax.case'
     withholding_bases_confirmed = fields.Boolean('Bases y tarifas de retención revisadas',
         help='Confirma para este caso Renta sobre subtotal neto e IVA sobre IVA causado. Casos con otras bases requieren preparación manual.')
+    ats_sustento_code = fields.Selection(ATS_SUSTENTO_SELECTION, string='Sustento tributario ATS',
+        help='Código de sustento del comprobante (Catálogo ATS del SRI, Tabla 5) que corresponde a este caso. '
+             'Solo aplica a compras: el esquema del ATS (ats.xsd, detalleComprasType) exige codSustento únicamente '
+             'en el detalle de compras, no en el de ventas.')
+
+    @api.constrains('operation', 'ats_sustento_code')
+    def _check_ats_sustento_operation(self):
+        for case in self:
+            if case.ats_sustento_code and case.operation not in ('purchase', 'bill', 'import'):
+                raise ValidationError('El sustento tributario ATS solo aplica a casos de compras, factura de proveedor o importaciones.')
 
 
 class Policy(models.Model):
@@ -32,7 +45,7 @@ class Policy(models.Model):
     @api.model
     def _intersection(self, company, operation, partner, product):
         empty = self.env['account.tax']
-        result = dict(configured=False, taxes=empty, income=empty, vat=empty,
+        result = dict(configured=False, taxes=empty, income=empty, vat=empty, sustento_code=False,
                       bases_confirmed=False, message='Sin planes asignados: configuración nativa del artículo.')
         if not company or not partner or not product:
             return result
@@ -81,6 +94,14 @@ class Policy(models.Model):
         if common_retentions:
             result['message'] += (' Retenciones previstas separadas del impuesto facturado.' if result['bases_confirmed']
                                   else ' Retenciones pendientes: confirme bases y tarifas en los casos de ambos planes.')
+        if operation in ('purchase', 'bill', 'import'):
+            sustento_codes = set((left_cases | right_cases).mapped('ats_sustento_code')) - {False}
+            if len(sustento_codes) == 1:
+                result['sustento_code'] = next(iter(sustento_codes))
+            elif sustento_codes:
+                result['message'] += ' Sustento ATS ambiguo: los casos del tercero y del producto no coinciden en el mismo código.'
+            else:
+                result['message'] += ' Falta configurar el sustento tributario ATS en el caso aplicable.'
         return result
 
 
@@ -182,13 +203,24 @@ class InvoiceLine(models.Model):
     _inherit = 'account.move.line'
     erpec_tax_notice = fields.Text('Aplicación del plan', compute='_compute_erpec_selection')
     erpec_retention_ids = fields.Many2many('account.tax', string='Retenciones previstas', compute='_compute_erpec_selection')
+    erpec_ats_sustento_code = fields.Selection(ATS_SUSTENTO_SELECTION, string='Sustento ATS',
+        compute='_compute_erpec_selection', store=True, readonly=False,
+        help='Código de sustento tributario del Anexo Transaccional Simplificado, resuelto automáticamente desde '
+             'el caso aplicable del tercero y del producto. Vacío si no hay un caso configurado o si los planes '
+             'del tercero y del producto no coinciden en el mismo código; se completa manualmente en ese caso. '
+             'No aplica a ventas (el esquema oficial del ATS solo exige este dato en el detalle de compras).')
 
     @api.depends('product_id', 'move_id.partner_id', 'move_id.company_id')
     def _compute_erpec_selection(self):
         for line in self:
-            result = selection(line, 'sale' if line.move_id.is_sale_document() else 'bill')
+            is_sale = line.move_id.is_sale_document()
+            result = selection(line, 'sale' if is_sale else 'bill')
             line.erpec_tax_notice = result['message']
             line.erpec_retention_ids = result['income'] | result['vat']
+            if is_sale:
+                line.erpec_ats_sustento_code = False
+            elif result.get('sustento_code'):
+                line.erpec_ats_sustento_code = result['sustento_code']
 
     @api.depends('product_id', 'product_uom_id', 'move_id.partner_id', 'move_id.fiscal_position_id')
     def _compute_tax_ids(self):
