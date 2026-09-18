@@ -111,6 +111,7 @@ class Policy(models.Model):
     # activar, así que la falta de diario en un borrador recién sembrado no permite calcular
     # nómina real -- solo evita repetir la captura de los parámetros legales en cada cliente.
     journal_id = fields.Many2one('account.journal','Diario de nómina')
+    opening_balance_account_id = fields.Many2one('account.account','Contrapartida de saldos iniciales',help='Cuenta puente/suspenso contra la que se registran los saldos iniciales migrados (A4); no es una cuenta de gasto -- el gasto ya se reconoció en el sistema de origen.')
     _sql_constraints = [('version_unique','unique(company_id,name)','La versión ya existe en esta empresa.')]
 
     def action_reload_from_json(self):
@@ -522,21 +523,22 @@ class Line(models.Model):
 class PayrollMove(models.Model):
     _inherit='account.move'
     erpec_payroll_id=fields.Many2one('erpec.payroll.period','Cierre de nómina',readonly=True,copy=True,ondelete='restrict')
+    erpec_payroll_opening_balance_id=fields.Many2one('erpec.payroll.opening.balance','Carga de saldos iniciales',readonly=True,copy=True,ondelete='restrict')
 
     @api.model_create_multi
     def create(self,values_list):
-        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and any(values.get('erpec_payroll_id') for values in values_list):
-            raise ValidationError('Genera el asiento desde el cierre de nómina.')
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and any(set(values)&{'erpec_payroll_id','erpec_payroll_opening_balance_id'} for values in values_list):
+            raise ValidationError('Genera el asiento desde el cierre de nómina o la carga de saldos iniciales.')
         return super().create(values_list)
 
     def write(self,values):
-        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and ('erpec_payroll_id' in values or (self.erpec_payroll_id and set(values)&{'state','line_ids','date','journal_id','company_id'})):
-            raise ValidationError('Corrige la nómina desde su cierre para conservar la trazabilidad.')
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and (set(values)&{'erpec_payroll_id','erpec_payroll_opening_balance_id'} or ((self.erpec_payroll_id or self.erpec_payroll_opening_balance_id) and set(values)&{'state','line_ids','date','journal_id','company_id'})):
+            raise ValidationError('Corrige la nómina o el saldo inicial desde su propio origen para conservar la trazabilidad.')
         return super().write(values)
 
     def unlink(self):
-        if self.erpec_payroll_id:
-            raise ValidationError('Conserva los asientos vinculados al cierre de nómina.')
+        if self.erpec_payroll_id or self.erpec_payroll_opening_balance_id:
+            raise ValidationError('Conserva los asientos vinculados al cierre de nómina o al saldo inicial.')
         return super().unlink()
 
 
@@ -544,17 +546,143 @@ class PayrollMoveLine(models.Model):
     _inherit='account.move.line'
 
     def write(self,values):
-        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and self.move_id.erpec_payroll_id and set(values)&{'debit','credit','balance','amount_currency','currency_id','account_id','partner_id','analytic_distribution','move_id'}:
-            raise ValidationError('Corrige las partidas desde el cierre de nómina.')
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and (self.move_id.erpec_payroll_id or self.move_id.erpec_payroll_opening_balance_id) and set(values)&{'debit','credit','balance','amount_currency','currency_id','account_id','partner_id','analytic_distribution','move_id'}:
+            raise ValidationError('Corrige las partidas desde el cierre de nómina o el saldo inicial.')
         return super().write(values)
 
     @api.model_create_multi
     def create(self,values_list):
-        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and self.env['account.move'].browse([value['move_id'] for value in values_list if value.get('move_id')]).erpec_payroll_id:
-            raise ValidationError('No agregues partidas a un asiento de nómina cerrado.')
+        moves=self.env['account.move'].browse([value['move_id'] for value in values_list if value.get('move_id')])
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and (moves.erpec_payroll_id or moves.erpec_payroll_opening_balance_id):
+            raise ValidationError('No agregues partidas a un asiento de nómina o saldo inicial ya cerrado.')
         return super().create(values_list)
 
     def unlink(self):
-        if self.move_id.erpec_payroll_id:
-            raise ValidationError('Conserva las partidas del cierre de nómina.')
+        if self.move_id.erpec_payroll_id or self.move_id.erpec_payroll_opening_balance_id:
+            raise ValidationError('Conserva las partidas del cierre de nómina o del saldo inicial.')
         return super().unlink()
+
+
+class OpeningBalance(models.Model):
+    _name='erpec.payroll.opening.balance'
+    _description='Carga de saldos iniciales de nómina (migración desde otro sistema)'
+    _inherit=['mail.thread']
+    company_id=fields.Many2one('res.company','Empresa',required=True,default=lambda self:self.env.company)
+    policy_id=fields.Many2one('erpec.payroll.policy','Versión y autoridad',required=True)
+    employee_id=fields.Many2one('hr.employee','Empleado',required=True)
+    partner_id=fields.Many2one('res.partner','Tercero para préstamos/anticipos',required=True)
+    as_of_date=fields.Date('Fecha de corte',required=True)
+    thirteenth_accrued=fields.Float('Décimo tercero acumulado no pagado')
+    fourteenth_accrued=fields.Float('Décimo cuarto acumulado no pagado')
+    vacation_accrued=fields.Float('Vacaciones acumuladas (valor)')
+    reserve_accrued=fields.Float('Fondo de reserva acumulado no pagado')
+    loan_balance=fields.Float('Saldo de préstamos pendiente')
+    advance_balance=fields.Float('Saldo de anticipos pendiente')
+    source_reference=fields.Text('Origen de los datos',required=True,help='De dónde provienen estos valores: sistema anterior, libros manuales, planilla del contador, etc.')
+    source_hash=fields.Char('Huella del origen',readonly=True,copy=False)
+    state=fields.Selection([('draft','Borrador'),('dry_run','Previsualizado'),('committed','Cargado'),('reverted','Revertido')],default='draft',readonly=True,string='Estado')
+    preview_summary=fields.Text('Vista previa (dry-run)',readonly=True)
+    move_id=fields.Many2one('account.move','Asiento',readonly=True,copy=False)
+    reversal_id=fields.Many2one('account.move','Asiento inverso',readonly=True,copy=False)
+    _sql_constraints=[('employee_once_per_policy','unique(policy_id,employee_id)','Este empleado ya tiene una carga de saldos iniciales en esta versión.')]
+
+    def _lock(self):
+        self.ensure_one();manager(self.env);self.check_access('write')
+        self.env.cr.execute('UPDATE erpec_payroll_opening_balance SET write_date=NOW() WHERE id=%s',[self.id]);self.invalidate_recordset()
+
+    @api.constrains('company_id','policy_id','employee_id','partner_id')
+    def _check_company_links(self):
+        for record in self:
+            if record.policy_id.company_id!=record.company_id or record.employee_id.company_id!=record.company_id or (record.partner_id.company_id and record.partner_id.company_id!=record.company_id):
+                raise ValidationError('Empleado, tercero y versión deben pertenecer a la misma empresa.')
+
+    def write(self,values):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL:
+            for record in self.sorted('id'):
+                record._lock()
+            if any(record.state=='committed' for record in self):
+                raise ValidationError('Una carga ya contabilizada es inmutable; revierte antes de corregir sus valores.')
+        return super().write(values)
+
+    def unlink(self):
+        if any(record.state=='committed' for record in self):
+            raise ValidationError('No se elimina una carga ya contabilizada; revierte primero.')
+        return super().unlink()
+
+    def _amounts(self):
+        self.ensure_one()
+        return [('thirteenth',self.thirteenth_accrued,'benefit'),('fourteenth',self.fourteenth_accrued,'benefit'),
+                ('vacation',self.vacation_accrued,'benefit'),('reserve_iess',self.reserve_accrued,'benefit'),
+                ('loans',self.loan_balance,'receivable'),('advances',self.advance_balance,'receivable')]
+
+    def _compute_source_hash(self):
+        self.ensure_one()
+        payload=json.dumps({'employee_id':self.employee_id.id,'as_of_date':fields.Date.to_string(self.as_of_date),
+            'thirteenth_accrued':self.thirteenth_accrued,'fourteenth_accrued':self.fourteenth_accrued,
+            'vacation_accrued':self.vacation_accrued,'reserve_accrued':self.reserve_accrued,
+            'loan_balance':self.loan_balance,'advance_balance':self.advance_balance,
+            'source_reference':self.source_reference},sort_keys=True)
+        return hashlib.sha256(payload.encode()).hexdigest()
+
+    def _build_lines(self):
+        self.ensure_one()
+        policy=self.policy_id
+        if policy.state!='active':
+            raise ValidationError('La versión de parámetros debe estar activa.')
+        if not policy.opening_balance_account_id:
+            raise ValidationError('La versión no tiene configurada la cuenta de contrapartida de saldos iniciales.')
+        labels=dict(CONCEPTS)
+        lines=[]
+        for concept,amount,kind in self._amounts():
+            if not amount:
+                continue
+            mapping=policy.mapping_ids.filtered(lambda item,concept=concept:item.concept==concept)
+            if not mapping or not mapping.credit_id:
+                raise ValidationError('Falta el mapeo contable de '+labels.get(concept,concept)+' en la versión seleccionada.')
+            account=mapping.credit_id
+            if account.deprecated or self.company_id not in account.company_ids:
+                raise ValidationError('El mapeo usa una cuenta ajena o deshabilitada.')
+            name='Saldo inicial '+labels.get(concept,concept)+' · '+self.employee_id.name
+            if kind=='benefit':
+                lines.append({'name':name,'account_id':policy.opening_balance_account_id.id,'debit':amount,'credit':0,'partner_id':self.partner_id.id})
+                lines.append({'name':name,'account_id':account.id,'debit':0,'credit':amount,'partner_id':self.partner_id.id})
+            else:
+                lines.append({'name':name,'account_id':account.id,'debit':amount,'credit':0,'partner_id':self.partner_id.id})
+                lines.append({'name':name,'account_id':policy.opening_balance_account_id.id,'debit':0,'credit':amount,'partner_id':self.partner_id.id})
+        if not lines:
+            raise ValidationError('No hay ningún saldo distinto de cero para cargar.')
+        return lines
+
+    def action_dry_run(self):
+        self.ensure_one();self._lock()
+        if self.state=='committed':
+            raise ValidationError('Ya está contabilizada; revierte antes de previsualizar de nuevo.')
+        lines=self._build_lines()
+        summary='\n'.join('%s: %s %.2f'%(line['name'],'debe' if line['debit'] else 'haber',line['debit'] or line['credit']) for line in lines)
+        self.with_context(_erpec_payroll_token=_INTERNAL).write({'preview_summary':summary,'source_hash':self._compute_source_hash(),'state':'dry_run'})
+        return True
+
+    def action_commit(self):
+        self.ensure_one();self._lock()
+        if self.state!='dry_run':
+            raise ValidationError('Genera primero la vista previa (dry-run) antes de contabilizar.')
+        current_hash=self._compute_source_hash()
+        if current_hash!=self.source_hash:
+            raise ValidationError('Los datos cambiaron desde la vista previa; genera una nueva antes de contabilizar.')
+        if self.search_count([('id','!=',self.id),('company_id','=',self.company_id.id),('source_hash','=',current_hash),('state','=','committed')]):
+            raise ValidationError('Este origen ya se cargó antes; evita duplicar el saldo inicial.')
+        move_lines=[(0,0,line) for line in self._build_lines()]
+        move=self.env['account.move'].with_context(_erpec_payroll_token=_INTERNAL).create({'erpec_payroll_opening_balance_id':self.id,'move_type':'entry','company_id':self.company_id.id,'journal_id':self.policy_id.journal_id.id,'date':self.as_of_date,'ref':'Saldo inicial nómina · '+self.employee_id.name,'line_ids':move_lines})
+        move.action_post()
+        self.with_context(_erpec_payroll_token=_INTERNAL).write({'move_id':move.id,'state':'committed'})
+        return True
+
+    def action_revert(self):
+        self.ensure_one();self._lock()
+        if self.state!='committed':
+            raise ValidationError('Solo se revierte una carga ya contabilizada.')
+        if self.move_id.line_ids.filtered(lambda line:line.reconciled or line.matched_debit_ids or line.matched_credit_ids):
+            raise ValidationError('Revisa y revierte los pagos conciliados antes de corregir el saldo inicial.')
+        reverse=self.move_id.with_context(_erpec_payroll_token=_INTERNAL)._reverse_moves([{'date':fields.Date.today(),'ref':'Reversión saldo inicial · '+self.employee_id.name}],cancel=True)
+        self.with_context(_erpec_payroll_token=_INTERNAL).write({'reversal_id':reverse.id,'state':'reverted'})
+        return True

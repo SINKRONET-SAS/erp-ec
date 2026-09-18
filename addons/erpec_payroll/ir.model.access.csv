@@ -8,3 +8,4 @@ access_payroll_rdep,Responsable rdep,model_erpec_payroll_rdep,group_payroll_mana
 access_payroll_rdep_line,Responsable rdep line,model_erpec_payroll_rdep_line,group_payroll_manager,1,1,1,1
 access_payroll_benefit_summary,Responsable benefit summary,model_erpec_payroll_benefit_summary,group_payroll_manager,1,1,1,1
 access_payroll_benefit_summary_line,Responsable benefit summary line,model_erpec_payroll_benefit_summary_line,group_payroll_manager,1,1,1,1
+access_payroll_opening_balance,Responsable opening balance,model_erpec_payroll_opening_balance,group_payroll_manager,1,1,1,1

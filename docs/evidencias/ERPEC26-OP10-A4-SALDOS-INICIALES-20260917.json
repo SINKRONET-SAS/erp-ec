@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-09-18T00:30:00.000Z",
+  "scope": "OP10-A4: carga de saldos iniciales de nomina en erpec_payroll -- migracion de decimos/vacaciones/fondo de reserva acumulados y saldos de prestamos/anticipos pendientes de otro sistema, para altas de empresa/empleado a mitad de anio.",
+  "planDocument": "docs/PLAN_HAIKY_NOMINA_VISITAS.md",
+  "prompt": ".github/prompts/ERPEC26-OP10-NOMINA-VISITAS.md",
+  "newFiles": ["addons/erpec_payroll/tests/test_opening_balance.py"],
+  "newModels": ["erpec.payroll.opening.balance"],
+  "modelChanges": [
+    "erpec.payroll.policy gano opening_balance_account_id (Many2one account.account, contrapartida puente/suspenso)",
+    "account.move gano erpec_payroll_opening_balance_id, con la misma proteccion de trazabilidad ya existente para erpec_payroll_id (PayrollMove/PayrollMoveLine extendidos, no duplicados)"
+  ],
+  "designSource": "Patron dry-run -> commit -> revert, idempotente por hash de origen, inspirado en initialBalanceService.js de nuevo_nomina -- solo lectura de esa referencia, sin copiar codigo. El mecanismo de reversal (_reverse_moves) y el patron de asiento balanceado replican exactamente Period.action_post()/action_reverse() ya existentes en este mismo modulo.",
+  "designDecisions": [
+    "action_dry_run() calcula y muestra la vista previa sin crear ningun account.move -- permite revisar antes de contabilizar",
+    "El mismo mapeo contable de la version de politica (A2/Period.action_post) se reutiliza para decimos/vacaciones/fondo de reserva (pasivo) y prestamos/anticipos (cuenta por cobrar) -- no se pide configuracion contable nueva aparte de la cuenta puente",
+    "El asiento debita/acredita la cuenta puente opening_balance_account_id contra esas mismas cuentas -- nunca contra una cuenta de gasto, porque el gasto ya se reconocio en el sistema de origen y contabilizarlo de nuevo aqui lo duplicaria",
+    "Idempotencia por source_hash (SHA-256 sobre empleado/fecha de corte/los 6 montos/referencia de origen) verificada en action_commit(): bloquea el mismo origen si ya esta contabilizado bajo OTRA version de politica -- la restriccion SQL unique(policy_id,employee_id) protege el caso de dos registros para el mismo empleado en la MISMA version, pero no detecta el mismo origen migrado por error bajo dos versiones distintas; ambos mecanismos son complementarios, no redundantes",
+    "action_revert() reutiliza account.move._reverse_moves (mismo mecanismo ya usado en Period.action_reverse), y permite recargar el mismo registro (nuevo dry-run + commit) despues de revertir -- para corregir un error sin perder la trazabilidad del intento original"
+  ],
+  "bugsFoundAndFixedDuringTesting": [
+    {"bug": "Prueba de idempotencia inicial intentaba reasignar employee_id en un registro duplicado para forzar la misma huella, pero la restriccion SQL unique(policy_id,employee_id) bloqueaba ese write antes de llegar al caso real que se queria probar", "evidence": "Analisis de diseno antes de ejecutar: el escenario realista de duplicado (mismo origen cargado dos veces por error) ocurre entre DOS VERSIONES DE POLITICA distintas para el mismo empleado, no dentro de la misma version (eso ya lo bloquea la restriccion SQL)", "fix": "Prueba reescrita para crear una segunda version de politica completa y verificar que la huella de origen (no la restriccion SQL) bloquea el segundo commit"},
+    {"bug": "Prueba 'sin cuenta de contrapartida' intentaba desactivar opening_balance_account_id en una politica YA ACTIVA", "evidence": "ValidationError real: 'La version activa es inmutable; prepara una nueva version para la migracion' -- Policy.write() ya bloquea cualquier edicion sobre una version activa, por diseno de OP10-A1", "fix": "Prueba reescrita para crear una segunda politica sin esa cuenta desde su creacion (antes de activarla), en vez de editar la politica activa existente"}
+  ],
+  "tests": {
+    "totalTests": 54,
+    "failed": 0,
+    "errors": 0,
+    "newInThisIncrement": 8,
+    "coverage": ["dry-run calcula vista previa sin contabilizar", "commit exige dry-run previo", "commit contabiliza un asiento balanceado y bloquea la edicion del registro", "commit es idempotente por huella de origen entre dos versiones de politica distintas", "revert crea un asiento inverso real y permite recargar el mismo registro", "revert exige estado contabilizado", "dry-run falla sin cuenta de contrapartida configurada", "montos todos en cero son rechazados"],
+    "environment": "Base PostgreSQL aislada y nueva (template0), instalacion real desde cero (-i), rol dedicado no superusuario eliminado al finalizar"
+  },
+  "installation": {
+    "target": "demo (erpec_demo)",
+    "moduleVersion": "18.0.1.6.0",
+    "businessRecordsCreated": false
+  },
+  "realRehearsal": {
+    "method": "XML-RPC real contra la demo ya reinstalada (no simulado): crea empresa/politica/mapeo/empleado/carga de saldos iniciales sinteticos, ejecuta dry-run, commit, un segundo intento del mismo origen bajo otra version de politica (debe bloquearse), y revert",
+    "results": {
+      "afterDryRun": {"state": "dry_run", "hasPreview": true, "hasMove": false},
+      "afterCommit": {"state": "committed", "moveState": "posted", "balanced": true, "totalDebit": 895.75, "totalCredit": 895.75, "lineCount": 12},
+      "duplicateAcrossPolicyVersionsBlocked": true,
+      "afterRevert": {"state": "reverted", "reversalMoveState": "posted"}
+    },
+    "conclusion": "Confirma de punta a punta contra una instancia Odoo real: la vista previa no contabiliza nada, el commit genera un asiento real y balanceado, el mecanismo de idempotencia por huella de origen bloquea correctamente un duplicado entre versiones de politica, y el revert genera una reversion contable real"
+  },
+  "pending": [
+    "OP10-B3: reportes de cumplimiento de visitas",
+    "scripts/provision-worker.py todavia no instala erpec_payroll ni erpec_field_routes para clientes nuevos -- pendiente ya documentado en OP07/OP10-A1b/OP10-B1B2"
+  ],
+  "codeChanged": true,
+  "sourceRepositoriesModified": false,
+  "realMoneyMoved": false
+}
