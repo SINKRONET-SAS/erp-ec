@@ -460,3 +460,10 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 
 - El almacén de cifrado pasó al módulo compartido `erpec_secrets`; el token de PayPhone ya no se guarda en claro (mismo patrón que el certificado: campo de entrada vacío al leer, `token_encrypted`, `_bearer_token()`). Migración aplicada en `erpec_fundador` y `erpec_a`; 146/146 fiscales y 40/40 de PayPhone/autoservicio.
 - Las pruebas de alteración se hicieron deterministas (cambiar un carácter del medio). Pendiente: rotación de clave maestra y `ERPEC_SECRET_KEY` en el despliegue.
+
+## OP19 — Rotación de la clave maestra de secretos y limpieza de bases residuales — 19-09-2026
+
+- `erpec_secrets` 2.0: formato `v2:<id de clave>:<token>`, claves anteriores para descifrar durante la rotación, registro de campos cifrados por módulo y asistente (Ajustes > Técnico > Rotación de claves de secretos) más `scripts/rotate-secret-key.py`. El re-cifrado descifra todo antes de escribir (si algo falla no toca nada) y solo lo hace un administrador del sistema.
+- Rotada la clave real en `erpec_fundador` (certificado y token PayPhone, verificado con el servidor en marcha), `erpec_a` y `erpec_demo`; respaldos del archivo de clave en `.cache/windows/backups/claves-*`.
+- Eliminadas las 6 bases `erpec_pp_test_*` tras comprobar que no estaban en uso. 158/158 fiscales y 48/48 de PayPhone/autoservicio/almacén.
+- Pendiente: `ERPEC_SECRET_KEY` en el despliegue real; retirar claves anteriores; otras familias de bases residuales sin revisar.

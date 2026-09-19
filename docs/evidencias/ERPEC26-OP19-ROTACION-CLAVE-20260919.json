@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-09-19T19:30:00.000Z",
+  "scope": "OP19: rotacion de la clave maestra de secretos y eliminacion de bases residuales erpec_pp_test_*.",
+  "userInstruction": "Rotacion de clave: no esta implementada... Bases residuales: ... Subsanar",
+  "tests": {
+    "fiscal_secrets": "158/158",
+    "payphone_selfservice_suite_secrets": "48/48",
+    "newTests": 12
+  },
+  "rotation": {
+    "format": "v2:<id de clave>:<token>; v1 sigue legible",
+    "previousKeys": "ERPEC_SECRET_KEY_PREVIOUS, odoo.conf o erpec_secret.previous",
+    "wizard": "Ajustes > Tecnico > Rotacion de claves de secretos (solo administrador del sistema): inventario por clave y re-cifrado",
+    "safety": "descifra todo en memoria antes de escribir; si algo no descifra no se modifica nada",
+    "registry": "secret_store.register(modelo, campo, contexto) por modulo (certificado y token PayPhone registrados)",
+    "cli": "scripts/rotate-secret-key.py <instancia> [--estado]"
+  },
+  "applied": {
+    "erpec_fundador": "3 secretos v1 -> clave f3268041; servidor en marcha verifico certificado y prueba de firma",
+    "erpec_a": "1 secreto -> clave 8e01c83b",
+    "erpec_demo": "2 secretos -> clave 2092f62d",
+    "keyBackups": ".cache/windows/backups/claves-*",
+    "previousKeys": "conservadas en erpec_secret.previous hasta retirarlas; 0 secretos pendientes con la clave anterior"
+  },
+  "residualDatabases": {
+    "dropped": 6,
+    "names": "erpec_pp_test_* (094fa4543f, 5ef38f264e, 97959d4165, d059bf3c4e, d352146664, e107dc3b2d)",
+    "checks": "0 conexiones activas, ninguna configuracion las usaba, sin rol propio; instancias reales intactas",
+    "notReviewed": "ec_operational_*, ec_recovery_*, erp_*, ec_*_ etc."
+  },
+  "limits": [
+    "la rotacion no protege un respaldo ya filtrado",
+    "ERPEC_SECRET_KEY aun no definida en un despliegue real"
+  ],
+  "pending": [
+    "definir ERPEC_SECRET_KEY en el despliegue y respaldar claves aparte",
+    "retirar claves anteriores tras un periodo de confianza",
+    "revisar otras familias de bases de prueba residuales"
+  ],
+  "realMoneyMoved": false
+}

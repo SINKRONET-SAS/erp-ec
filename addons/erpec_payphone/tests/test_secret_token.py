@@ -25,7 +25,7 @@ class TestPayphoneSecretToken(TransactionCase):
 
     def test_database_never_holds_the_plaintext_token(self):
         encrypted, loaded = self._row()
-        self.assertTrue(encrypted.startswith('v1:'))
+        self.assertTrue(encrypted.startswith('v2:'))
         self.assertNotIn('SECRETO', encrypted)
         self.assertTrue(loaded)
         self.env.cr.execute("SELECT column_name FROM information_schema.columns WHERE table_name='erpec_payphone_provider' AND column_name='token'")
@@ -54,7 +54,7 @@ class TestPayphoneSecretToken(TransactionCase):
 
     def test_tampered_token_is_rejected(self):
         token, _loaded = self._row()
-        flipped = token[:40] + ('B' if token[40] != 'B' else 'C') + token[41:]
+        flipped = token[:50] + ('B' if token[50] != 'B' else 'C') + token[51:]
         self.env.cr.execute('UPDATE erpec_payphone_provider SET token_encrypted=%s WHERE id=%s', [flipped, self.provider.id])
         self.provider.invalidate_recordset()
         with self.assertRaisesRegex(ValidationError, 'descifrar'):

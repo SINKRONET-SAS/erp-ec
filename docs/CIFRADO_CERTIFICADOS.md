@@ -12,7 +12,7 @@ Antes el archivo `.p12` y su contraseña se guardaban en claro en PostgreSQL (so
 En este orden: variable de entorno `ERPEC_SECRET_KEY` (mínimo 32 caracteres) → opción `erpec_secret_key` de `odoo.conf` → archivo `erpec_secret.key` que se genera una sola vez en el directorio de datos (`data_dir`, fuera de la base y fuera del filestore de la base).
 - **En Render/producción usar `ERPEC_SECRET_KEY`** y guardarla en el gestor de secretos de la plataforma.
 - **Respaldar la clave aparte de los respaldos de la base.** Si se pierde, los certificados guardados no se recuperan y deben volver a cargarse (el sistema lo indica con un mensaje claro).
-- Cambiar la clave invalida los certificados cifrados con la anterior (no hay rotación automática todavía).
+- La clave se puede **rotar** sin volver a cargar nada (ver «Rotación de la clave» abajo).
 
 ## Migración de lo que estaba en claro
 `erpec_fiscal_sri` 18.0.1.5.0/18.0.1.5.1 cifra y borra el texto plano de las columnas antiguas. Aplicada en el Fundador y en la demo, con `VACUUM FULL` de la tabla para eliminar las versiones antiguas de la fila.
@@ -31,6 +31,24 @@ El token de la aplicación PayPhone se guardaba en claro en `erpec_payphone_prov
 - Script reutilizable: `encrypt-instance.py <carpeta>` (en el scratchpad de la sesión) hace respaldo, actualización y purga; el procedimiento equivale a `-i erpec_secrets -u <módulos con secretos>`.
 - Quedan bases de pruebas residuales del clúster local (`erpec_pp_test_*`) con tokens sintéticos en claro; no son instancias reales y conviene eliminarlas.
 
+## Rotación de la clave (19-09-2026)
+**Formato:** los secretos se guardan como `v2:<id de clave>:<token>`; el id (8 hex del SHA-256 de la clave) dice con qué clave se cifró sin descifrar. Los `v1:` antiguos se siguen leyendo.
+**Claves anteriores** (solo para descifrar mientras dura la rotación): `ERPEC_SECRET_KEY_PREVIOUS` (varias separadas por coma), opción `erpec_secret_key_previous` de `odoo.conf` o el archivo `erpec_secret.previous`.
+
+**Desde la pantalla** (administrador del sistema): Ajustes > Técnico > *Rotación de claves de secretos* muestra el origen y el id de la clave vigente y cuántos secretos hay por clave (nunca los secretos). Dos botones:
+- *Generar clave nueva y re-cifrar* (cuando la clave vive en el archivo `erpec_secret.key`): crea la clave nueva, guarda la anterior en `erpec_secret.previous` y re-cifra todo.
+- *Re-cifrar con la clave vigente*: cuando el operador ya definió la clave nueva por variable de entorno u `odoo.conf`.
+
+**Desde la línea de comandos:** `python scripts/rotate-secret-key.py <instancia>` (o `--estado` para solo informar).
+
+**Con clave en variable de entorno (Render):** (1) generar una clave nueva de 32+ caracteres; (2) `ERPEC_SECRET_KEY_PREVIOUS` = clave actual, `ERPEC_SECRET_KEY` = la nueva; (3) reiniciar; (4) *Re-cifrar con la clave vigente*; (5) comprobar que «pendientes con otra clave» es 0; (6) recién entonces retirar `ERPEC_SECRET_KEY_PREVIOUS`. Guardar la clave nueva en el gestor de secretos.
+
+**Garantías:** antes de escribir, el re-cifrado descifra todo en memoria; si algún secreto no se puede descifrar (falta una clave anterior) **no se modifica nada** y se informa cuáles. Solo un administrador del sistema puede rotar. Cada secreto nuevo que un módulo agregue debe registrarse con `secret_store.register(modelo, campo, contexto)` para entrar en la rotación.
+
+**Límite:** una rotación no protege un respaldo antiguo ya filtrado (sigue descifrable con la clave vieja); sirve para acotar el daño futuro y para sustituir una clave sospechosa. Tras rotar, respaldar el archivo de claves (`erpec_secret.key` y `erpec_secret.previous`) aparte de la base.
+
+## Bases residuales eliminadas
+Se borraron las 6 bases `erpec_pp_test_*` (tokens sintéticos en claro), tras comprobar que no tenían conexiones, ninguna configuración las usaba y no tenían rol propio. Las instancias reales (`erpec_fundador`, `erpec_a`, `erpec_b`, `erpec_demo`) no se tocaron. El clúster local conserva otras bases de prueba de otras familias (`ec_operational_*`, `ec_recovery_*`, `erp_*`, etc.) que no se revisaron ni borraron.
+
 ## Pendiente
-- Rotación de la clave maestra (hoy cambiar la clave invalida lo cifrado).
 - Definir `ERPEC_SECRET_KEY` en el despliegue real y respaldarla aparte.

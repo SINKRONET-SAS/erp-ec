@@ -1,0 +1,11 @@
+<odoo>
+<record id="secret_rotation_form" model="ir.ui.view"><field name="name">erpec.secret.rotation.form</field><field name="model">erpec.secret.rotation</field><field name="arch" type="xml"><form>
+<div class="alert alert-info" role="status">Los certificados y tokens se guardan cifrados con una clave maestra que vive en el servidor, no en la base de datos. Aquí puedes ver con qué clave está cifrado cada secreto y rotarla: se genera una clave nueva (o se usa la que definiste en la variable de entorno) y todo se re-cifra. La clave anterior se conserva solo para descifrar hasta que la retires.</div>
+<group><group><field name="key_source"/><field name="current_key_id"/><field name="previous_keys"/></group><group><field name="pending"/></group></group>
+<group string="Secretos guardados por clave"><field name="inventory" nolabel="1"/></group>
+<group invisible="not result"><field name="result"/></group>
+<footer><button name="action_generate_and_reencrypt" type="object" string="Generar clave nueva y re-cifrar" class="btn-primary" invisible="key_source != 'archivo erpec_secret.key'" confirm="Se generará una clave nueva y se re-cifrarán todos los secretos. Respalda el archivo de claves del servidor después de hacerlo."/><button name="action_reencrypt" type="object" string="Re-cifrar con la clave vigente" class="btn-secondary"/><button string="Cerrar" special="cancel"/></footer>
+</form></field></record>
+<record id="secret_rotation_action" model="ir.actions.act_window"><field name="name">Rotación de claves de secretos</field><field name="res_model">erpec.secret.rotation</field><field name="view_mode">form</field><field name="target">new</field></record>
+<menuitem id="secret_rotation_menu" name="Rotación de claves de secretos" parent="base.menu_custom" action="secret_rotation_action" sequence="90" groups="base.group_system"/>
+</odoo>

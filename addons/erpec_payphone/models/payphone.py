@@ -12,6 +12,8 @@ from odoo.exceptions import AccessError, ValidationError
 from odoo.addons.erpec_suite.models.commercial import administrator
 from odoo.addons.erpec_secrets import secret_store
 
+secret_store.register('erpec.payphone.provider', 'token_encrypted', lambda record: 'payphone:%d:token' % record.id)
+
 _logger = logging.getLogger(__name__)
 API_URL = 'https://pay.payphonetodoesposible.com/api/button/'
 RETURN_PATH = '/payment/payphone/return'

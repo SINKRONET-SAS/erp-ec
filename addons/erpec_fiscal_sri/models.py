@@ -24,6 +24,9 @@ from odoo.addons.erpec_fiscal_native import liquidacion_engine, notacredito_engi
 
 from . import ride as ride_module
 from . import secret_store
+
+secret_store.register('erpec.fiscal.certificate', 'p12_encrypted', lambda record: 'cert:%d:p12' % record.id)
+secret_store.register('erpec.fiscal.certificate', 'p12_password_encrypted', lambda record: 'cert:%d:password' % record.id)
 from . import sri_client
 
 NATIVE_MOVE_TYPES = ('out_invoice', 'out_refund')

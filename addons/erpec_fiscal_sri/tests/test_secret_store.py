@@ -36,7 +36,7 @@ class SecretStoreCase(TransactionCase):
 
     def test_database_never_holds_plaintext(self):
         encrypted, password_encrypted, loaded, fingerprint = self._row()
-        self.assertTrue(encrypted.startswith('v1:') and password_encrypted.startswith('v1:'))
+        self.assertTrue(encrypted.startswith('v2:') and password_encrypted.startswith('v2:'))
         for column in self._legacy_plaintext_columns():
             self.env.cr.execute('SELECT %s FROM erpec_fiscal_certificate WHERE id=%%s' % column, [self.certificate.id])
             self.assertIsNone(self.env.cr.fetchone()[0])
@@ -71,7 +71,7 @@ class SecretStoreCase(TransactionCase):
 
     def test_tampered_or_moved_ciphertext_is_rejected(self):
         token = self._row()[0]
-        flipped = token[:40] + ('B' if token[40] != 'B' else 'C') + token[41:]
+        flipped = token[:50] + ('B' if token[50] != 'B' else 'C') + token[51:]
         self.env.cr.execute('UPDATE erpec_fiscal_certificate SET p12_encrypted=%s WHERE id=%s', [flipped, self.certificate.id])
         self.certificate.invalidate_recordset()
         with self.assertRaisesRegex(ValidationError, 'descifrar'):
