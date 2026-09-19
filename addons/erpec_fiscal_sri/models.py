@@ -19,7 +19,7 @@ from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.erpec_fiscal_native import xades
 from odoo.addons.erpec_fiscal_native.engine import generate
-from odoo.addons.erpec_fiscal_native import notacredito_engine, notadebito_engine
+from odoo.addons.erpec_fiscal_native import liquidacion_engine, notacredito_engine, notadebito_engine
 
 from . import ride as ride_module
 from . import sri_client
@@ -123,6 +123,18 @@ class EmissionPoint(models.Model):
                 and self.env.context.get('_fiscal_point_internal') is not _POINT_INTERNAL:
             raise ValidationError('El ambiente se cambia con las acciones de habilitación.')
         return super().write(values)
+
+    def _next_sequence(self, kind):
+        """Siguiente secuencial (9 dígitos) del punto para un tipo de comprobante propio (p. ej. 'liquidation'),
+        en el ambiente vigente: pruebas y producción nunca comparten numeración."""
+        self.ensure_one()
+        code = 'erpec.fiscal.point.%s.%s.%s.%s' % (kind, self.ambiente, self.establishment, self.emission)
+        sequence = self.env['ir.sequence'].sudo().search([('code', '=', code), ('company_id', '=', self.company_id.id)], limit=1)
+        if not sequence:
+            sequence = self.env['ir.sequence'].sudo().create({
+                'name': '%s %s-%s (%s)' % (kind, self.establishment, self.emission, AMBIENTE_NAMES[self.ambiente]),
+                'code': code, 'company_id': self.company_id.id, 'padding': 9, 'number_next': 1, 'implementation': 'no_gap'})
+        return '%s-%s-%s' % (self.establishment, self.emission, sequence.next_by_id())
 
     def _internal_write(self, values):
         return self.with_context(_fiscal_point_internal=_POINT_INTERNAL).write(values)
@@ -431,19 +443,89 @@ class Emission(models.Model):
         # 8:10) -- fuente única de verdad, no se guarda por separado ni se infiere del move_id.
         doc_type = self.access_key[8:10]
         builder = {'04': ride_module.build_ride_notacredito, '05': ride_module.build_ride_notadebito, '07': ride_module.build_ride_retencion,
-                    '06': ride_module.build_ride_guiaremision}.get(doc_type, ride_module.build_ride)
+                    '06': ride_module.build_ride_guiaremision,
+                    '03': ride_module.build_ride_liquidacion}.get(doc_type, ride_module.build_ride)
         ride_pdf = builder(autorizacion['comprobante'], autorizacion['numero'], autorizacion['fecha'])
         self._save(state='authorized', xml_authorized=base64.b64encode(autorizacion['comprobante']), ride_pdf=base64.b64encode(ride_pdf),
                     authorization_number=autorizacion['numero'], authorization_date=autorizacion['fecha'],
                     message='Autorizada por el SRI.')
 
 
+class Reimbursement(models.Model):
+    _name = 'erpec.fiscal.reimbursement'
+    _description = 'Comprobante de sustento de reembolso (factura de reembolso)'
+    _check_company_auto = True
+    _order = 'id'
+
+    move_id = fields.Many2one('account.move', required=True, ondelete='cascade', check_company=True, domain=[('move_type', '=', 'out_invoice')])
+    company_id = fields.Many2one(related='move_id.company_id', store=True, index=True)
+    provider_type = fields.Selection([('04', 'RUC'), ('05', 'Cédula'), ('06', 'Pasaporte'), ('08', 'Identificación del exterior')],
+                                     string='Tipo de identificación del proveedor', required=True, default='04')
+    provider_vat = fields.Char('Identificación del proveedor', required=True)
+    provider_kind = fields.Selection([('01', 'Persona natural'), ('02', 'Sociedad')], string='Tipo de proveedor', required=True, default='02')
+    country_code = fields.Char('País de pago (código)', size=3, default='593', required=True)
+    doc_type = fields.Selection([('01', 'Factura'), ('02', 'Nota o boleta de venta'), ('03', 'Liquidación de compra'),
+                                 ('08', 'Boletos de espectáculos públicos'), ('09', 'Tiquetes de máquinas registradoras'), ('12', 'Documentos de instituciones financieras')],
+                                string='Tipo de comprobante', required=True, default='01')
+    doc_number = fields.Char('Número del comprobante (001-001-000000001)', required=True)
+    doc_date = fields.Date('Fecha de emisión', required=True)
+    authorization = fields.Char('Número de autorización (10 a 49 dígitos)', required=True)
+    base_amount = fields.Monetary('Base imponible', required=True, currency_field='currency_id')
+    tax_kind = fields.Selection([('vat15', 'IVA 15%'), ('zero', 'IVA 0%'), ('no_object', 'No objeto de IVA'), ('exempt', 'Exento de IVA')],
+                                string='Impuesto del comprobante', required=True, default='vat15')
+    tax_amount = fields.Monetary('IVA', compute='_compute_tax_amount', store=True, currency_field='currency_id')
+    currency_id = fields.Many2one(related='move_id.currency_id')
+
+    @api.depends('base_amount', 'tax_kind', 'currency_id')
+    def _compute_tax_amount(self):
+        for line in self:
+            line.tax_amount = line.currency_id.round(line.base_amount * 0.15) if line.tax_kind == 'vat15' and line.currency_id else 0.0
+
+    @api.constrains('base_amount', 'doc_number', 'authorization', 'provider_vat')
+    def _check_values(self):
+        for line in self:
+            if line.base_amount <= 0:
+                raise ValidationError('La base del comprobante de reembolso debe ser positiva.')
+            if not re.fullmatch(r'[0-9]{3}-[0-9]{3}-[0-9]{9}', line.doc_number or ''):
+                raise ValidationError('El número del comprobante requiere el formato 001-001-000000001.')
+            if not re.fullmatch(r'[0-9]{10,49}', line.authorization or ''):
+                raise ValidationError('La autorización del comprobante requiere de 10 a 49 dígitos.')
+
+    def _check_editable(self):
+        if any(move.ec_fiscal_emission_ids for move in self.mapped('move_id')):
+            raise ValidationError('La factura ya fue firmada; sus sustentos de reembolso no se modifican.')
+
+    @api.model_create_multi
+    def create(self, values_list):
+        records = super().create(values_list)
+        records._check_editable()
+        return records
+
+    def write(self, values):
+        self._check_editable()
+        return super().write(values)
+
+    def unlink(self):
+        self._check_editable()
+        return super().unlink()
+
+    def _engine_data(self):
+        self.ensure_one()
+        rate_code, rate = {'vat15': ('4', 15), 'zero': ('0', 0), 'no_object': ('6', 0), 'exempt': ('7', 0)}[self.tax_kind]
+        return {'provider_type': self.provider_type, 'provider_vat': self.provider_vat, 'provider_kind': self.provider_kind,
+                'country': self.country_code, 'doc_type': self.doc_type, 'doc_number': self.doc_number, 'doc_date': str(self.doc_date),
+                'authorization': self.authorization,
+                'taxes': [{'rate_code': rate_code, 'rate': rate, 'base': self.base_amount, 'amount': self.tax_amount}]}
+
+
 class Move(models.Model):
     _inherit = 'account.move'
 
+    ec_sri_reimbursement_ids = fields.One2many('erpec.fiscal.reimbursement', 'move_id', string='Sustentos de reembolso (SRI)', copy=False)
+
     ec_fiscal_emission_ids = fields.One2many('erpec.fiscal.emission', 'move_id', string='Emisiones nativas SRI', copy=False)
 
-    def _gather_native_common(self):
+    def _gather_native_common(self, allow_special_vat=False):
         """Datos compartidos entre factura y nota de crédito: identificación del emisor/
         comprador y líneas con impuesto. Duplicado intencional de la validación/armado de
         datos de erpec_fiscal_native.models.Move.action_native_preview — ver docstring del
@@ -452,16 +534,19 @@ class Move(models.Model):
         company = self.company_id
         partner = self.partner_id.commercial_partner_id
         identification = ('04' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_ruc')
-                          else '05' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_dni') else '')
+                          else '05' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_dni')
+                          else '06' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_passport') else '')
         items = []
         for line in self.invoice_line_ids.filtered(lambda row: row.display_type == 'product'):
             tax = line.tax_ids
+            special = {'not_charged_vat': 'no_object', 'exempt_vat': 'exempt'}.get(tax.tax_group_id.l10n_ec_type) if len(tax) == 1 else None
             if (len(tax) != 1 or tax.amount_type != 'percent' or tax.price_include or tax.include_base_amount
-                    or (tax.tax_group_id.l10n_ec_type, tax.amount) not in [('zero_vat', 0), ('vat15', 15)]):
-                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por línea, sin impuestos incluidos ni compuestos.')
+                    or not ((tax.tax_group_id.l10n_ec_type, tax.amount) in [('zero_vat', 0), ('vat15', 15)] or (allow_special_vat and special and tax.amount == 0))):
+                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por línea (y no objeto/exento solo en facturas), sin impuestos incluidos ni compuestos.')
             items.append({'code': line.product_id.default_code or str(line.id), 'description': line.name,
                           'quantity': line.quantity, 'unit': line.price_unit, 'discount': line.discount,
-                          'rate': tax.amount, 'subtotal': line.price_subtotal, 'tax': line.price_total - line.price_subtotal})
+                          'rate': special if (allow_special_vat and special) else tax.amount, 'subtotal': line.price_subtotal,
+                          'tax': line.price_total - line.price_subtotal})
         return {'date': str(self.invoice_date), 'number': self.l10n_latam_document_number, 'issuer_vat': company.vat,
                 'issuer_name': company.name, 'issuer_address': company.street, 'buyer_type': identification,
                 'buyer_vat': partner.vat, 'buyer_name': partner.name, 'buyer_address': partner.street,
@@ -470,8 +555,9 @@ class Move(models.Model):
                 'establishment_address': self.journal_id.ec_point_id.establishment_address or False}
 
     def _gather_native_data(self):
-        data = self._gather_native_common()
+        data = self._gather_native_common(allow_special_vat=True)
         data['payment'] = self.ec_fiscal_payment_code
+        data['reimbursements'] = [line._engine_data() for line in self.ec_sri_reimbursement_ids]
         return data
 
     def _gather_native_credit_note_data(self):
@@ -487,6 +573,62 @@ class Move(models.Model):
         data['modified_date'] = str(original.invoice_date)
         data['reason'] = (self.ref or self.narration or 'Nota de crédito').strip()[:300]
         return data
+
+    ec_is_liquidation = fields.Boolean(compute='_compute_ec_is_liquidation')
+
+    @api.depends('move_type', 'l10n_latam_document_type_id')
+    def _compute_ec_is_liquidation(self):
+        for move in self:
+            move.ec_is_liquidation = move.move_type == 'in_invoice' and move.l10n_latam_document_type_id.code == '03'
+
+    def _gather_native_liquidation_data(self):
+        self.ensure_one()
+        data = self._gather_native_common()
+        data['provider_type'] = data.pop('buyer_type')
+        data['provider_vat'] = data.pop('buyer_vat')
+        data['provider_name'] = data.pop('buyer_name')
+        data['provider_address'] = data.pop('buyer_address')
+        data['payment'] = self.ec_fiscal_payment_code
+        return data
+
+    def action_native_emit_liquidation(self):
+        """Liquidación de compra (codDoc 03): la emite el comprador a un proveedor que no factura. El número
+        sale del consecutivo del punto de emisión del diario (por ambiente) y se asigna antes de contabilizar."""
+        self.ensure_one()
+        self.check_access('write')
+        if not self.ec_is_liquidation or self.state == 'cancel' or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
+            raise ValidationError('Se requiere una factura de proveedor con tipo documental Liquidación de compra (03), en USD, de una empresa de Ecuador.')
+        if self.ec_fiscal_emission_ids:
+            return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission',
+                    'res_id': self.ec_fiscal_emission_ids[0].id, 'view_mode': 'form'}
+        certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
+        if not certificate or not certificate.verified:
+            raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
+        point = self.journal_id.ec_point_id
+        if not point:
+            raise ValidationError('Asigna un punto de emisión SRI al diario de compras que emite liquidaciones.')
+        self.journal_id._sri_check_ambiente()
+        if not self.l10n_latam_document_number:
+            if self.state != 'draft':
+                raise ValidationError('La liquidación contabilizada requiere su número; emítela desde el borrador para que se asigne el consecutivo.')
+            self.l10n_latam_document_number = point._next_sequence('liquidation')
+        elif not self.l10n_latam_document_number.startswith('%s-%s-' % (point.establishment, point.emission)):
+            raise ValidationError('El número no corresponde al establecimiento y punto de emisión del diario (%s-%s).' % (point.establishment, point.emission))
+        if self.state == 'draft':
+            self.action_post()
+        data = self._gather_native_liquidation_data()
+        data['numeric'] = str(secrets.randbelow(10**8)).zfill(8)
+        try:
+            access_key, xml_unsigned = liquidacion_engine.generate(data)
+            xml_signed = xades.sign(xml_unsigned, base64.b64decode(certificate.sudo().p12_file or b''),
+                                    (certificate.sudo().p12_password or '').encode('utf-8'), self.company_id.vat)
+        except ValueError as error:
+            raise ValidationError(str(error)) from error
+        emission = self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_INTERNAL).create({
+            'move_id': self.id, 'access_key': access_key, 'ambiente': data['ambiente'],
+            'xml_unsigned': base64.b64encode(xml_unsigned), 'xml_signed': base64.b64encode(xml_signed),
+            'state': 'signed', 'message': 'Firmada. Procesar la cola para transmitir al SRI.'})
+        return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission', 'res_id': emission.id, 'view_mode': 'form'}
 
     def _gather_native_debit_note_data(self):
         self.ensure_one()

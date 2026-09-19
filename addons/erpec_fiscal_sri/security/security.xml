@@ -2,4 +2,5 @@
 <record id="certificate_company_rule" model="ir.rule"><field name="name">Certificado fiscal por organización</field><field name="model_id" ref="model_erpec_fiscal_certificate"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="emission_company_rule" model="ir.rule"><field name="name">Emisión nativa por organización</field><field name="model_id" ref="model_erpec_fiscal_emission"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="point_company_rule" model="ir.rule"><field name="name">Punto de emisión por organización</field><field name="model_id" ref="model_erpec_fiscal_point"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="reimbursement_company_rule" model="ir.rule"><field name="name">Sustento de reembolso por organización</field><field name="model_id" ref="model_erpec_fiscal_reimbursement"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 </odoo>

@@ -44,7 +44,7 @@ class WithholdingSriCase(TransactionCase):
 
     def _retention(self, lines=None, reference='RET-1'):
         lines = lines or [
-            {'name': 'Renta 1%', 'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 1},
+            {'name': 'Renta 2%', 'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 2},
             {'name': 'IVA 30%', 'kind': 'vat', 'sri_code': '1', 'base': 15, 'rate': 30}]
         retention = self.env['erpec.withholding'].create({
             'invoice_id': self.bill.id, 'reference': reference, 'date': '2026-09-18', 'journal_id': self.journal.id,
@@ -68,11 +68,11 @@ class WithholdingSriCase(TransactionCase):
     def test_numbering_is_separate_per_environment(self):
         first = self._retention()
         first.action_sri_emit()
-        second = self._retention(reference='RET-2', lines=[{'name': 'Renta', 'kind': 'income', 'sri_code': '312', 'base': 50, 'rate': 1}])
+        second = self._retention(reference='RET-2', lines=[{'name': 'Renta', 'kind': 'income', 'sri_code': '312', 'base': 50, 'rate': 2}])
         second.action_sri_emit()
         self.assertEqual(second.sri_number, '001-001-000000002')
         self.journal.ec_sri_ambiente = '2'
-        production_number = self._retention(reference='RET-3', lines=[{'name': 'Renta', 'kind': 'income', 'sri_code': '312', 'base': 10, 'rate': 1}])._next_sri_number()
+        production_number = self._retention(reference='RET-3', lines=[{'name': 'Renta', 'kind': 'income', 'sri_code': '312', 'base': 10, 'rate': 2}])._next_sri_number()
         self.assertEqual(production_number, '001-001-000000001')
         self.journal.ec_sri_ambiente = '1'
         self.assertEqual(first._next_sri_number(), '001-001-000000003')

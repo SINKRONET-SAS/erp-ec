@@ -8,7 +8,7 @@ import secrets
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
-from odoo.addons.erpec_fiscal_native import retencion_engine, xades
+from odoo.addons.erpec_fiscal_native import retencion_engine, retention_catalog, xades
 from odoo.addons.erpec_fiscal_native.ats_catalog import SUPPORT_CODES
 from odoo.addons.erpec_fiscal_sri.models import _INTERNAL as _SRI_INTERNAL
 
@@ -161,7 +161,23 @@ class WithholdingLine(models.Model):
     _inherit = 'erpec.withholding.line'
 
     sri_code = fields.Char('Código SRI de retención', size=5,
-                           help='Renta: código del catálogo del SRI (p. ej. 312). IVA: 9=10%, 10=20%, 1=30%, 11=50%, 2=70%, 3=100%, 7=0% (Tabla 20 de la Ficha Técnica).')
+                           help='Renta: código del catálogo ATS vigente (p. ej. 312 = 2%). IVA: 9=10%, 10=20%, 1=30%, 11=50%, 2=70%, 3=100%, 7=0% (Tabla 20 de la Ficha Técnica).')
+    sri_code_label = fields.Char('Concepto del catálogo', compute='_compute_sri_code_label')
+
+    @api.depends('sri_code', 'kind')
+    def _compute_sri_code_label(self):
+        for line in self:
+            line.sri_code_label = retention_catalog.income_label(line.sri_code) if line.kind == 'income' else ''
+
+    @api.onchange('sri_code', 'kind')
+    def _onchange_sri_code(self):
+        # Sugerencia desde el catálogo vigente: si el código tiene una sola tarifa, se propone.
+        if self.kind == 'income' and self.sri_code:
+            rates = retention_catalog.income_rates(self.sri_code)
+            if len(rates) == 1:
+                self.rate = rates[0]
+            if not self.name or self.name == 'Concepto':
+                self.name = retention_catalog.income_label(self.sri_code) or self.name
 
 
 class Emission(models.Model):

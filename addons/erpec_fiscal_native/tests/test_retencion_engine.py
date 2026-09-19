@@ -15,7 +15,7 @@ class RetencionEngineCase(TransactionCase):
             'support': {'sustento_code': '01', 'doc_type': '01', 'doc_number': '001-002-000000123', 'doc_date': '2026-09-10',
                         'untaxed': 100, 'total': 115, 'payment': '20',
                         'taxes': [{'code': '2', 'percent_code': '4', 'base': 100, 'rate': 15, 'amount': 15}]},
-            'lines': [{'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 1.75, 'amount': 1.75},
+            'lines': [{'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 2, 'amount': 2.0},
                       {'kind': 'vat', 'sri_code': '2', 'base': 15, 'rate': 70, 'amount': 10.5}],
         }
         data.update(overrides)
@@ -39,9 +39,15 @@ class RetencionEngineCase(TransactionCase):
 
     def test_rejects_bad_amounts_and_missing_code(self):
         with self.assertRaises(ValueError):
-            retencion_engine.generate(self._data(lines=[{'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 1, 'amount': 5}]))
+            retencion_engine.generate(self._data(lines=[{'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 2, 'amount': 5}]))
         with self.assertRaises(ValueError):
-            retencion_engine.generate(self._data(lines=[{'kind': 'income', 'sri_code': '', 'base': 100, 'rate': 1, 'amount': 1}]))
+            retencion_engine.generate(self._data(lines=[{'kind': 'income', 'sri_code': '', 'base': 100, 'rate': 2, 'amount': 2}]))
+
+    def test_income_catalog_validates_code_and_rate(self):
+        with self.assertRaisesRegex(ValueError, 'catálogo'):
+            retencion_engine.generate(self._data(lines=[{'kind': 'income', 'sri_code': '999', 'base': 100, 'rate': 2, 'amount': 2}]))
+        with self.assertRaisesRegex(ValueError, 'no corresponde al código 312'):
+            retencion_engine.generate(self._data(lines=[{'kind': 'income', 'sri_code': '312', 'base': 100, 'rate': 1.75, 'amount': 1.75}]))
 
     def test_environment_changes_key_and_xml(self):
         key1, xml1 = retencion_engine.generate(self._data())

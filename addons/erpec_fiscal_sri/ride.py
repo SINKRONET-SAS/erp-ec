@@ -283,6 +283,10 @@ def build_ride_notacredito(comprobante_xml, numero_autorizacion='', fecha_autori
     return _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autorizacion, '04')
 
 
+def build_ride_liquidacion(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
+    return _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autorizacion, '03')
+
+
 def build_ride_notadebito(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
     return _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autorizacion, '05')
 
@@ -297,7 +301,8 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     nota = etree.fromstring(comprobante_xml)
     info = nota.find('infoTributaria')
     is_debit = kind == '05'
-    detail = nota.find('infoNotaDebito' if is_debit else 'infoNotaCredito')
+    is_liq = kind == '03'
+    detail = nota.find({'05': 'infoNotaDebito', '03': 'infoLiquidacionCompra'}.get(kind, 'infoNotaCredito'))
 
     buffer = io.BytesIO()
     page = canvas.Canvas(buffer, pagesize=letter)
@@ -307,26 +312,7 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     right = width - margin
     content_width = right - left
 
-    def box(x, y_top, w, h, fill=None):
-        page.setStrokeColor(BORDER_COLOR)
-        page.setLineWidth(0.6)
-        if fill is not None:
-            page.setFillColor(fill)
-            page.rect(x, y_top - h, w, h, stroke=1, fill=1)
-            page.setFillColor(colors.black)
-        else:
-            page.rect(x, y_top - h, w, h, stroke=1, fill=0)
-
-    def text_at(x, y_top, value, size=8, bold=False, color=colors.black, align='left', w=None):
-        page.setFillColor(color)
-        page.setFont('Helvetica-Bold' if bold else 'Helvetica', size)
-        if align == 'right' and w:
-            page.drawRightString(x + w, y_top, value)
-        elif align == 'center' and w:
-            page.drawCentredString(x + w / 2, y_top, value)
-        else:
-            page.drawString(x, y_top, value)
-        page.setFillColor(colors.black)
+    box, text_at = _drawing_helpers(page)
 
     # ── Recuadro emisor (izquierda) ────────────────────────────────────────
     y_top = height - margin
@@ -348,14 +334,14 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     right_box_x = left + 80 * mm
     right_box_w = right - right_box_x
     box(right_box_x, y_top, right_box_w, 12 * mm)
-    text_at(right_box_x, y_top - 6 * mm, 'NOTA DE DÉBITO' if is_debit else 'NOTA DE CRÉDITO', size=12, bold=True, color=HEADER_COLOR,
+    text_at(right_box_x, y_top - 6 * mm, {'05': 'NOTA DE DÉBITO', '03': 'LIQUIDACIÓN DE COMPRA'}.get(kind, 'NOTA DE CRÉDITO'), size=12, bold=True, color=HEADER_COLOR,
             align='center', w=right_box_w)
     text_at(right_box_x, y_top - 10.5 * mm, 'No. %s-%s-%s' % (
         _text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
         size=9, bold=True, align='center', w=right_box_w)
 
     auth_top = y_top - 12 * mm
-    auth_h = 30 * mm
+    auth_h = 35 * mm
     box(right_box_x, auth_top, right_box_w, auth_h, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
     text_at(right_box_x + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
@@ -371,7 +357,7 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
             size=7, bold=True, align='right', w=0)
     ry -= 4 * mm
     text_at(right_box_x + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
-    ry -= 8 * mm
+    ry -= 9.5 * mm
     clave_acceso = _text(info, 'claveAcceso')
     if clave_acceso:
         barcode = code128.Code128(clave_acceso, barHeight=8 * mm, barWidth=0.3)
@@ -385,15 +371,18 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     client_h = 20 * mm
     box(left, y, content_width, client_h, fill=PANEL_FILL)
     cy = y - 4.5 * mm
-    text_at(left + 3 * mm, cy, 'Comprador: ' + _text(detail, 'razonSocialComprador'), size=9, bold=True)
+    text_at(left + 3 * mm, cy, ('Proveedor: ' + _text(detail, 'razonSocialProveedor')) if is_liq else ('Comprador: ' + _text(detail, 'razonSocialComprador')), size=9, bold=True)
     cy -= 4.5 * mm
-    text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'identificacionComprador'), size=8)
+    text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'identificacionProveedor' if is_liq else 'identificacionComprador'), size=8)
     text_at(left + content_width / 2, cy, 'Fecha de emisión: ' + _text(detail, 'fechaEmision'), size=8)
     cy -= 4.5 * mm
-    text_at(left + 3 * mm, cy,
-            'Comprobante que modifica: %s-%s (%s)' % (
-                _text(detail, 'numDocModificado'), _text(detail, 'fechaEmisionDocSustento'),
-                _text(detail, 'codDocModificado')), size=8)
+    if is_liq:
+        text_at(left + 3 * mm, cy, 'Dirección: ' + _text(detail, 'direccionProveedor')[:90], size=8)
+    else:
+        text_at(left + 3 * mm, cy,
+                'Comprobante que modifica: %s del %s (código %s)' % (
+                    _text(detail, 'numDocModificado'), _text(detail, 'fechaEmisionDocSustento'),
+                    _text(detail, 'codDocModificado')), size=8)
     y -= client_h + 3 * mm
 
     # ── Tabla de detalle ─────────────────────────────────────────────────────
@@ -466,10 +455,10 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     page.setLineWidth(0.6)
     page.line(totals_x, totals_y - 1 * mm, totals_x + totals_w, totals_y - 1 * mm)
     totals_y -= 5 * mm
-    text_at(totals_x, totals_y, 'VALOR TOTAL:' if is_debit else 'VALOR MODIFICACIÓN:', size=10, bold=True)
-    text_at(totals_x + totals_w, totals_y, _text(detail, 'valorTotal' if is_debit else 'valorModificacion'), size=10, bold=True, align='right', w=0)
+    text_at(totals_x, totals_y, 'VALOR TOTAL:' if (is_debit or is_liq) else 'VALOR MODIFICACIÓN:', size=10, bold=True)
+    text_at(totals_x + totals_w, totals_y, _text(detail, 'valorTotal' if is_debit else 'importeTotal' if is_liq else 'valorModificacion'), size=10, bold=True, align='right', w=0)
 
-    if not is_debit:
+    if not is_debit and not is_liq:
         text_at(left, y, 'Motivo: ' + _text(detail, 'motivo')[:90], size=8)
 
     page.showPage()
@@ -534,7 +523,7 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     text_at(rx, y_top - 10.5 * mm, 'No. %s-%s-%s' % (_text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
             size=9, bold=True, align='center', w=rw)
     auth_top = y_top - 12 * mm
-    box(rx, auth_top, rw, 30 * mm, fill=PANEL_FILL)
+    box(rx, auth_top, rw, 35 * mm, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
     text_at(rx + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
     ry -= 3.5 * mm
@@ -546,15 +535,15 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     text_at(rx + 2 * mm, ry, 'AMBIENTE: ' + AMBIENTE_LABEL.get(ambiente, ambiente or '—'), size=7, bold=True)
     ry -= 4 * mm
     text_at(rx + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
-    ry -= 8 * mm
+    ry -= 9.5 * mm
     clave = _text(info, 'claveAcceso')
     if clave:
         code128.Code128(clave, barHeight=8 * mm, barWidth=0.3).drawOn(page, rx + 2 * mm, ry)
         text_at(rx + 2 * mm, ry - 4 * mm, clave, size=6)
 
-    y = auth_top - 30 * mm - 4 * mm
+    y = auth_top - 35 * mm - 4 * mm
     doc = root.find('docsSustento/docSustento')
-    box(left, y, content_width, 22 * mm, fill=PANEL_FILL)
+    box(left, y, content_width, 27 * mm, fill=PANEL_FILL)
     cy = y - 4.5 * mm
     text_at(left + 3 * mm, cy, 'Sujeto retenido: ' + _text(detail, 'razonSocialSujetoRetenido'), size=9, bold=True)
     cy -= 4.5 * mm
@@ -565,8 +554,9 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     num = '%s-%s-%s' % (num[:3], num[3:6], num[6:]) if len(num) == 15 else num
     text_at(left + 3 * mm, cy, 'Comprobante de venta: %s (código %s) del %s' % (
         num, _text(doc, 'codDocSustento'), _text(doc, 'fechaEmisionDocSustento')), size=8)
-    text_at(left + content_width / 2, cy, 'Período fiscal: ' + _text(detail, 'periodoFiscal'), size=8)
-    y -= 22 * mm + 3 * mm
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Período fiscal: ' + _text(detail, 'periodoFiscal'), size=8)
+    y -= 27 * mm + 3 * mm
 
     columns = [('Impuesto', 0, 30 * mm, 'left'), ('Código', 30 * mm, 25 * mm, 'left'),
                ('Base imponible', 55 * mm, 40 * mm, 'right'), ('% Retención', 95 * mm, 30 * mm, 'right'),
@@ -629,7 +619,7 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
     text_at(rx, y_top - 10.5 * mm, 'No. %s-%s-%s' % (_text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
             size=9, bold=True, align='center', w=rw)
     auth_top = y_top - 12 * mm
-    box(rx, auth_top, rw, 30 * mm, fill=PANEL_FILL)
+    box(rx, auth_top, rw, 35 * mm, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
     text_at(rx + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
     ry -= 3.5 * mm
@@ -641,13 +631,13 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
     text_at(rx + 2 * mm, ry, 'AMBIENTE: ' + AMBIENTE_LABEL.get(ambiente, ambiente or '—'), size=7, bold=True)
     ry -= 4 * mm
     text_at(rx + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
-    ry -= 8 * mm
+    ry -= 9.5 * mm
     clave = _text(info, 'claveAcceso')
     if clave:
         code128.Code128(clave, barHeight=8 * mm, barWidth=0.3).drawOn(page, rx + 2 * mm, ry)
         text_at(rx + 2 * mm, ry - 4 * mm, clave, size=6)
 
-    y = auth_top - 30 * mm - 4 * mm
+    y = auth_top - 35 * mm - 4 * mm
     box(left, y, content_width, 34 * mm, fill=PANEL_FILL)
     cy = y - 4.5 * mm
     text_at(left + 3 * mm, cy, 'Transportista: ' + _text(detail, 'razonSocialTransportista'), size=9, bold=True)

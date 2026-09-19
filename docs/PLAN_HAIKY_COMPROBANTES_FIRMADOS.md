@@ -50,7 +50,23 @@ Fecha: 18-09-2026. Instrucción del titular: "Debe cumplirse la legislación de 
 - Con esto los cinco comprobantes de venta/compra (factura, nota de crédito, nota de débito, retención, guía de remisión) se firman y transmiten. Faltan liquidación de compra (03) y comprobantes de reembolso.
 - Pruebas: 100/100. Ensayo real: guía AUTORIZADA por celcer.sri.gob.ec (PRUEBAS) con el certificado real de pruebas.
 
+## OP14 — Segunda pasada sobre pendientes (19-09-2026)
+Cubre los pendientes del cierre de OP13 con este resultado, sin ocultar lo no resuelto:
+
+| Pendiente | Resultado |
+|---|---|
+| Catálogo de tarifas de renta | **Hecho.** `retention_catalog.py` (48 conceptos vigentes, generado desde `l10n_ec` de Odoo, fuente secundaria; el SRI es la autoridad). El motor valida código y tarifa; la línea de retención sugiere tarifa y descripción. |
+| Liquidación de compra (03) | **Hecho.** `liquidacion_engine.py` (XSD 1.1.0), botón en factura de proveedor con tipo documental 03; el consecutivo sale del punto del diario de compras y del ambiente. **AUTORIZADA en celcer (PRUEBAS).** |
+| Reembolsos | **Implementado, NO verificado ante el SRI.** Bloque `reembolsos` (codDocReembolso 41) + IVA no objeto/exento en factura + modelo de sustentos. El XSD valida y el SRI responde RECIBIDA, pero la autorización queda en PENDIENTE (más de 45 min, dos ensayos, incluso con un sustento realmente autorizado). La misma factura con IVA no objeto y sin reembolsos se autoriza de inmediato, así que el bloqueo está en el bloque de reembolsos. Pendiente de aclarar con el SRI. |
+| RIDE sin revisión visual | **Revisados y corregidos** al renderizarlos: etiqueta pisada por el código de barras, alineación derecha rota en notas (EMISIÓN y totales salían de la página) y texto encimado en retención. Sigue sin contrastarse con un RIDE oficial de cada tipo (solo la factura lo fue). |
+| Migración de diarios a puntos y punto por usuario | **Detallada, NO ejecutada**, a pedido del titular: `docs/PLAN_MIGRACION_DIARIOS_PUNTOS_EMISION.md` (inventario real de la demo, cambios, verificación, reversión, decisiones). |
+| Primer envío real a producción | **No ejecutado (correcto).** Runbook supervisado en `docs/RUNBOOK_PRIMER_ENVIO_PRODUCCION_SRI.md`. |
+
+Pruebas: 116/116. Demo actualizada con respaldo.
+
 ## Pendiente explícito
+- Reembolsos: aclarar con el SRI por qué la autorización queda en PENDIENTE en pruebas.
+- Aprobación del titular para ejecutar la migración de diarios.
 - Asignar el punto de emisión a los diarios ya existentes (migración de diarios previos) y selección de punto por usuario/caja.
 - Catálogo completo de conceptos y tarifas de retención de renta; liquidación de compra (03).
 - OP13-C guía de remisión.

@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-09-19T01:15:00.000Z",
+  "scope": "OP14: segunda pasada sobre pendientes de OP13 (renta, liquidacion de compra, reembolsos, RIDE, migracion, produccion).",
+  "userInstructions": [
+    "Es necesario una segunda pasada para cubrir los pendientes",
+    "sobre la migracion de diarios a puntos, detallar previamente"
+  ],
+  "tests": {
+    "total": 116,
+    "failed": 0,
+    "errors": 0
+  },
+  "installation": {
+    "demo": "actualizados los cuatro modulos fiscales; respaldo .cache/windows/backups/segunda-pasada-install-20260918-195910"
+  },
+  "results": {
+    "catalogoRenta": "hecho (48 conceptos vigentes, fuente l10n_ec; validacion de codigo y tarifa)",
+    "liquidacionCompra": "hecho y AUTORIZADA en celcer PRUEBAS",
+    "reembolsos": "implementado; SRI recibe (RECIBIDA) pero la autorizacion queda PENDIENTE > 45 min en dos ensayos; la factura con IVA no objeto sin reembolsos se autoriza al instante; NO verificado",
+    "ride": "revisados visualmente y corregidos tres defectos; sin contraste con RIDE oficial",
+    "migracionDiarios": "detallada y NO ejecutada, pendiente de aprobacion",
+    "produccion": "runbook supervisado; ningun envio a produccion"
+  },
+  "bugsFound": [
+    "RIDE notas: alineacion derecha con w=0 sacaba EMISION y totales de la pagina",
+    "RIDE: etiqueta CLAVE DE ACCESO pisada por el codigo de barras",
+    "RIDE retencion: texto encimado",
+    "SRI: 312 vigente 2%, no 1.75%",
+    "duplicado INV/FP001 del punto 001-001 en la demo"
+  ],
+  "pending": [
+    "reembolsos: autorizacion PENDIENTE en SRI",
+    "aprobacion de migracion de diarios",
+    "primer envio real a produccion supervisado por el cliente",
+    "RIDE oficial por tipo"
+  ],
+  "realMoneyMoved": false
+}

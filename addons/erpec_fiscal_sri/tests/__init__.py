@@ -4,3 +4,5 @@ from . import test_emission
 from . import test_certificate
 from . import test_notacredito_emission
 from . import test_points
+from . import test_liquidacion
+from . import test_reembolso

@@ -425,3 +425,10 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 
 - Nuevo `erpec_fiscal_guide_sri` (`erpec.fiscal.guide`, botón en traslados de inventario, `guiaremision_engine.py` XSD 1.1.0, RIDE, emisión firmada, numeración por punto y ambiente). Con esto factura, nota de crédito, nota de débito, retención y guía de remisión se firman y transmiten.
 - 100/100 pruebas, demo actualizada con respaldo y guía AUTORIZADA en celcer (PRUEBAS). Pendiente: liquidación de compra (03), reembolsos, catálogo de tarifas de renta, migración de diarios a puntos, primer envío real a producción supervisado.
+
+## OP14 — Segunda pasada sobre los pendientes fiscales — 19-09-2026
+
+- Hecho: catálogo de renta validado en el motor de retención; liquidación de compra (03) firmada y AUTORIZADA en celcer (PRUEBAS); RIDE revisados visualmente con tres defectos corregidos; runbook de primer envío a producción (no ejecutado).
+- Implementado pero NO verificado: reembolsos (factura con bloque `reembolsos`, IVA no objeto/exento). El SRI recibe pero la autorización queda PENDIENTE; sin el bloque la factura se autoriza al instante.
+- Detallado y NO ejecutado por instrucción del titular: migración de diarios a puntos (`docs/PLAN_MIGRACION_DIARIOS_PUNTOS_EMISION.md`; la demo tiene `INV` y `FP001` duplicados para 001-001).
+- 116/116 pruebas, demo actualizada con respaldo.

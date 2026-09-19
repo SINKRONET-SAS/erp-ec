@@ -9,6 +9,7 @@ import re
 from lxml import etree
 
 from .engine import access_key, money
+from .retention_catalog import INCOME
 
 DOC_TYPE = '07'
 TAX_CODES = {'income': '1', 'vat': '2'}
@@ -82,6 +83,10 @@ def generate(data):
             raise ValueError('Los importes de la retención no coinciden con base y porcentaje; revisar antes de continuar.')
         code=(line.get('sri_code') or '').strip()
         if not re.fullmatch(r'[0-9A-Za-z]{1,5}',code):raise ValueError('Cada concepto requiere su código SRI de retención (hasta 5 caracteres).')
+        if kind=='income':
+            if code not in INCOME:raise ValueError('El código %s no está en el catálogo vigente de retención de renta.'%code)
+            if float(rate) not in INCOME[code]['rates']:
+                raise ValueError('La tarifa %s%% no corresponde al código %s; vigente: %s.'%(rate,code,', '.join('%s%%'%item for item in INCOME[code]['rates'])))
         if kind=='vat' and VAT_RETENTION_CODES.get(rate)!=code:
             raise ValueError('El código de retención de IVA no corresponde al porcentaje (Tabla 20 del SRI).')
         node=etree.SubElement(withheld,'retencion')
