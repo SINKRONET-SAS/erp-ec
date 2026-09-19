@@ -444,3 +444,7 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - `erpec_fundador` configurada con SINKRONET S.A.S., RUC 1793235327001, LOS CARDENALES SN Y AZULEJOS, régimen general (campo nuevo `ec_tax_regime`, RIMPE bloqueado), obligada a contabilidad; módulos fiscales instalados con respaldo. Detalle en `docs/ENTORNO_FUNDADOR.md`.
 - Hallazgo: el admin de una instancia nueva no tenía grupos contables y no veía los menús fiscales; corregido para el Fundador y en `scripts/provision-worker.py`.
 - Pendiente de datos del titular: perfil ordinario, establecimiento/punto registrados y certificado propio de SINKRONET.
+
+## OP16b — Fundador: perfil ordinario y punto 001-004 — 19-09-2026
+
+- Perfil ordinario confirmado por el titular; creados el establecimiento 001 (PRINCIPAL, dirección de la empresa) y el punto 004 (PRUEBAS) con su diario de pruebas `FP001`. Solo falta el certificado de firma propio de SINKRONET. Inicio de sesión web verificado en el Fundador y en la demo.

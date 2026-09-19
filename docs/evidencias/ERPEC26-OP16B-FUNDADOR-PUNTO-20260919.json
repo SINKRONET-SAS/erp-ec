@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-09-19T14:20:00.000Z",
+  "scope": "OP16b: perfil ordinario y establecimiento/punto 001-004 del Fundador.",
+  "userInstruction": "perfil ordinario, establecimiento y punto de emision 001-004",
+  "founder": {
+    "ordinaryProfile": "confirmado",
+    "point": "001-004 (nombres PRINCIPAL/PRUEBAS tomados del ejemplo; direccion de la empresa)",
+    "journal": "FP001 pruebas",
+    "audit": "solo señala el diario INV 001-001 por defecto, sin movimientos"
+  },
+  "webLogin": {
+    "founder": "OK",
+    "demo": "OK"
+  },
+  "pending": [
+    "certificado de firma propio de SINKRONET"
+  ],
+  "realMoneyMoved": false
+}

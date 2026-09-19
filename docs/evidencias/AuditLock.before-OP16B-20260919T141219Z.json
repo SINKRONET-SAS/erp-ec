@@ -4,16 +4,25 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-19T14:12:19.347Z",
+  "updatedAt": "2026-09-19T13:42:14.673Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
+    "addons/erpec_fiscal_guide_sri/models.py",
+    "addons/erpec_fiscal_native/models.py",
+    "addons/erpec_fiscal_native/views.xml",
+    "addons/erpec_fiscal_sri/models.py",
+    "addons/erpec_fiscal_sri/tests/test_establishment.py",
+    "addons/erpec_fiscal_withholding_sri/models.py",
     "docs/ENTORNO_FUNDADOR.md",
-    "docs/evidencias/AuditLock.before-OP16B-20260919T141219Z.json",
-    "docs/evidencias/ERPEC26-OP16B-FUNDADOR-PUNTO-20260919.json"
+    "docs/evidencias/AuditLock.before-OP16-20260919T134214Z.json",
+    "docs/evidencias/ERPEC26-OP16-ENTORNO-FUNDADOR-20260919.json",
+    "scripts/provision-worker.py"
   ],
   "validationChecks": [
-    "OP16B: perfil ordinario confirmado y punto 001-004 creado en el Fundador con diario de pruebas",
-    "OP16B: inicio de sesion web verificado en Fundador y demo"
+    "OP16: entorno del Fundador configurado (SINKRONET S.A.S., RUC 1793235327001, direccion, regimen general) con respaldo previo",
+    "OP16: campo ec_tax_regime con bloqueo de RIMPE en todas las vias de emision",
+    "OP16: administrador con grupos contables (Fundador y worker de aprovisionamiento)",
+    "133/133 pruebas; modulos fiscales instalados en el Fundador; demo actualizada con respaldo"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -93,18 +102,24 @@
     "OP15: puntos permitidos por usuario (solo hay punto predeterminado) y RIDE oficial por tipo",
     "OP16: confirmar perfil ordinario de SINKRONET (contribuyente especial/agente de retencion)",
     "OP16: establecimiento y punto de emision registrados de SINKRONET",
-    "OP16: certificado de firma propio de SINKRONET (el disponible es de otra identidad)",
-    "OP16B: certificado de firma propio de SINKRONET pendiente"
+    "OP16: certificado de firma propio de SINKRONET (el disponible es de otra identidad)"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "98233e0cfdde16d937410a4f9809b87873f4973f79a3d50368c9b7f52c9b4c39",
-    "docs/ENTORNO_FUNDADOR.md": "1940c0dd38cde2b926f584205877c6da36aa0e93ca0f8379bde405fb6667546b",
-    "docs/evidencias/AuditLock.before-OP16B-20260919T141219Z.json": "6efa2a2acbf6e7b36fa6ff2e53255a94a5334ff54580cc3c73628be039ed7eda",
-    "docs/evidencias/ERPEC26-OP16B-FUNDADOR-PUNTO-20260919.json": "fd89667fbdc9cad028ed8a29c84c19813a182db41aa54a84008fcc69129fa003"
+    ".github/CODEX_CONTEXT.md": "6e32bd8429862377f7acff5de7bdcbbd88743ab870f3d225885d2a6316361f76",
+    "addons/erpec_fiscal_guide_sri/models.py": "d46f1deefc90260d7f211cb6402cb4c6894c1935e5b19d507a8281656b6f3156",
+    "addons/erpec_fiscal_native/models.py": "4d896bf6637000c35c08a6e8b961e5d2aea40e669ac5680d95d24bbaf89c3b42",
+    "addons/erpec_fiscal_native/views.xml": "14ba04701c2f1cd835689057aa14b99ab1448b4fe37a123460ee33be9d3b1665",
+    "addons/erpec_fiscal_sri/models.py": "c944d33bfceb6e900d9f91550f7bb7b94f2715f3e7f75aefc3bc082da18ed746",
+    "addons/erpec_fiscal_sri/tests/test_establishment.py": "ae76db4ca787249aacacc125a237f42c9adaa5af928143439563bfa217c88ff9",
+    "addons/erpec_fiscal_withholding_sri/models.py": "8eacd0f1b1653a661416fb0e5d022389c84381ee4c57ff77534f8d4d850d54a7",
+    "docs/ENTORNO_FUNDADOR.md": "1cd081541b5f87c56ecae2adaf02c8e9b36985b1ab957cd418ed8102d354b1f3",
+    "docs/evidencias/AuditLock.before-OP16-20260919T134214Z.json": "7e5760875ca450fa32106b63b7fd7e9596e4ba2380c5189270b52f44c920b813",
+    "docs/evidencias/ERPEC26-OP16-ENTORNO-FUNDADOR-20260919.json": "12b9fa02ffb716e2a551c2fdaab03da5d1ad1560b8f832faea1f6c9531a2e3dc",
+    "scripts/provision-worker.py": "b06f64315a71f0586a297438feedff368c3b6b991c4cc412395b50b5348297e6"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP16B-20260919T141219Z.json",
-  "previousAuditLockHash": "6efa2a2acbf6e7b36fa6ff2e53255a94a5334ff54580cc3c73628be039ed7eda",
-  "signature": "f009c59492440239bacf7a53f327ba59859a71654e4a160d09f6027921150304",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP16-20260919T134214Z.json",
+  "previousAuditLockHash": "7e5760875ca450fa32106b63b7fd7e9596e4ba2380c5189270b52f44c920b813",
+  "signature": "02569725a470620fc8412df06e4e2a1018d7db3b14a559df236148a403e049fe",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
