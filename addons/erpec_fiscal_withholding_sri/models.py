@@ -144,8 +144,7 @@ class Withholding(models.Model):
         data['numeric'] = str(secrets.randbelow(10**8)).zfill(8)
         try:
             access_key, xml_unsigned = retencion_engine.generate(data)
-            xml_signed = xades.sign(xml_unsigned, base64.b64decode(certificate.sudo().p12_file or b''),
-                                    (certificate.sudo().p12_password or '').encode('utf-8'), self.company_id.vat)
+            xml_signed = xades.sign(xml_unsigned, *certificate._signing_material(), self.company_id.vat)
         except ValueError as error:
             raise ValidationError(str(error)) from error
         emission = self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_SRI_INTERNAL).create({

@@ -3,8 +3,9 @@
 <record id="certificate_form" model="ir.ui.view"><field name="name">erpec.fiscal.certificate.form</field><field name="model">erpec.fiscal.certificate</field><field name="arch" type="xml"><form>
 <header><button name="action_verify" type="object" string="Verificar certificado" class="oe_highlight"/><button name="action_test_signature" type="object" string="Probar firma" invisible="not verified"/></header>
 <sheet>
-<div class="alert alert-info" role="status">Certificado de firma electrónica para emisión nativa (firma XAdES + transmisión SOAP directa al SRI, ambiente PRUEBAS). Autoservicio: cada empresa carga y reemplaza su propio certificado. El archivo y la contraseña se guardan sin cifrado adicional en reposo, protegidos solo por permisos de la empresa — igual que la credencial de PayPhone.</div>
-<group><field name="company_id"/><field name="p12_file" filename="'certificado.p12'"/><field name="p12_password" password="True"/></group>
+<div class="alert alert-info" role="status">Certificado de firma electrónica para emisión nativa (firma XAdES + transmisión SOAP directa al SRI, ambiente PRUEBAS). Autoservicio: cada empresa carga y reemplaza su propio certificado. El archivo y su contraseña se guardan <b>cifrados</b> (AES + HMAC) con una clave que vive en el servidor y no en la base de datos: un respaldo de la base no expone el certificado, y una vez cargado no se puede volver a leer ni descargar desde aquí (para cambiarlo, súbelo de nuevo).</div>
+<group><field name="company_id"/><field name="p12_loaded"/><field name="p12_fingerprint"/></group>
+<group string="Cargar o reemplazar el certificado"><field name="p12_file" filename="'certificado.p12'"/><field name="p12_password" password="True"/></group>
 <group string="Estado"><field name="verified"/><field name="subject_summary"/><field name="issuer_summary"/><field name="issuer_trusted"/><field name="not_valid_before"/><field name="not_valid_after"/><field name="checked_at"/><field name="signature_tested"/><field name="signature_tested_at"/><field name="notice"/></group>
 </sheet></form></field></record>
 <record id="certificate_action" model="ir.actions.act_window"><field name="name">Certificado de firma (SRI)</field><field name="res_model">erpec.fiscal.certificate</field><field name="view_mode">list,form</field></record>

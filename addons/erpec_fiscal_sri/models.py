@@ -10,6 +10,7 @@ escribir este incremento, así que no se pudo extraer a una función compartida.
 incremento posterior cuando el archivo esté libre.
 """
 import base64
+import hashlib
 import re
 import secrets
 from datetime import timedelta
@@ -22,6 +23,7 @@ from odoo.addons.erpec_fiscal_native.engine import generate
 from odoo.addons.erpec_fiscal_native import liquidacion_engine, notacredito_engine, notadebito_engine
 
 from . import ride as ride_module
+from . import secret_store
 from . import sri_client
 
 NATIVE_MOVE_TYPES = ('out_invoice', 'out_refund')
@@ -399,8 +401,16 @@ class Certificate(models.Model):
     # PayPhone (sin cifrado adicional, solo permisos), pero ahora el grupo con acceso incluye al
     # cliente dueño de la empresa, no solo administración interna -- es el requisito explícito de
     # este incremento (autoservicio real para clientes, modelo multi-tenant de OP08).
-    p12_file = fields.Binary('Archivo .p12', groups='base.group_system,account.group_account_user', attachment=False)
-    p12_password = fields.Char('Contraseña del .p12', groups='base.group_system,account.group_account_user')
+    # El archivo y la contraseña NUNCA se guardan en claro: p12_file/p12_password son solo de entrada (se leen siempre
+    # vacíos) y su inverso los cifra (ver secret_store.py). Solo el servidor los descifra, al firmar.
+    p12_file = fields.Binary('Cargar o reemplazar archivo .p12', compute='_compute_secret_inputs', inverse='_inverse_p12_file',
+                             groups='base.group_system,account.group_account_user', attachment=False)
+    p12_password = fields.Char('Contraseña del .p12 (se guarda cifrada)', compute='_compute_secret_inputs', inverse='_inverse_p12_password',
+                               groups='base.group_system,account.group_account_user')
+    p12_encrypted = fields.Char('Archivo .p12 cifrado', groups='base.group_system', copy=False, readonly=True)
+    p12_password_encrypted = fields.Char('Contraseña cifrada', groups='base.group_system', copy=False, readonly=True)
+    p12_loaded = fields.Boolean('Certificado cargado (cifrado)', readonly=True, copy=False)
+    p12_fingerprint = fields.Char('Huella del archivo (SHA-256)', readonly=True, copy=False)
     verified = fields.Boolean('Verificado', readonly=True, copy=False)
     subject_summary = fields.Char('Titular (según certificado)', readonly=True, copy=False)
     issuer_summary = fields.Char('Entidad certificadora', readonly=True, copy=False)
@@ -415,11 +425,47 @@ class Certificate(models.Model):
     notice = fields.Text('Estado', readonly=True, default='Cargar el archivo .p12 y su contraseña, luego verificar.')
     _sql_constraints = [('one_company', 'unique(company_id)', 'Ya existe un certificado para esta empresa.')]
 
-    @api.constrains('p12_file')
-    def _check_p12_size(self):
+    def _compute_secret_inputs(self):
+        self.p12_file = False
+        self.p12_password = False
+
+    def _secret_context(self, name):
+        self.ensure_one()
+        return 'cert:%d:%s' % (self.id, name)
+
+    def _inverse_p12_file(self):
         for record in self:
-            if record.p12_file and len(base64.b64decode(record.p12_file)) > MAX_P12_BYTES:
+            if not record.p12_file:
+                continue
+            raw = base64.b64decode(record.p12_file)
+            if len(raw) > MAX_P12_BYTES:
                 raise ValidationError('El archivo .p12 supera el tamaño máximo permitido (%d KB).' % (MAX_P12_BYTES // 1024))
+            record.sudo().write({
+                'p12_encrypted': secret_store.encrypt(raw, record._secret_context('p12')),
+                'p12_loaded': True, 'p12_fingerprint': hashlib.sha256(raw).hexdigest(),
+                'verified': False, 'signature_tested': False, 'signature_tested_at': False,
+                'notice': 'Certificado cargado y cifrado. Verifícalo para usarlo.'})
+
+    def _inverse_p12_password(self):
+        for record in self:
+            if not record.p12_password:
+                continue
+            record.sudo().write({
+                'p12_password_encrypted': secret_store.encrypt(record.p12_password.encode('utf-8'), record._secret_context('password')),
+                'verified': False, 'signature_tested': False, 'signature_tested_at': False,
+                'notice': 'Contraseña guardada cifrada. Verifica el certificado para usarlo.'})
+
+    def _signing_material(self):
+        """(bytes del .p12, contraseña en bytes), descifrados solo en memoria y solo para firmar o verificar."""
+        self.ensure_one()
+        record = self.sudo()
+        if not record.p12_encrypted or not record.p12_password_encrypted:
+            raise ValidationError('Carga el archivo .p12 y su contraseña.')
+        try:
+            return (secret_store.decrypt(record.p12_encrypted, record._secret_context('p12')),
+                    secret_store.decrypt(record.p12_password_encrypted, record._secret_context('password')))
+        except secret_store.SecretError as error:
+            raise ValidationError(str(error)) from error
 
     @api.onchange('p12_file', 'p12_password')
     def _onchange_p12_preview(self):
@@ -463,8 +509,7 @@ class Certificate(models.Model):
         self.ensure_one()
         self.check_access('write')
         self._check_verify_rate()
-        p12_bytes = base64.b64decode(self.sudo().p12_file or b'')
-        password = (self.sudo().p12_password or '').encode('utf-8')
+        p12_bytes, password = self._signing_material()
         ruc = self.company_id.vat or ''
         try:
             _key, cert, _chain = xades.credentials(p12_bytes, password, ruc)
@@ -499,8 +544,7 @@ class Certificate(models.Model):
         self.check_access('write')
         if not self.verified:
             raise UserError('Verifica el certificado antes de probar la firma.')
-        p12_bytes = base64.b64decode(self.sudo().p12_file or b'')
-        password = (self.sudo().p12_password or '').encode('utf-8')
+        p12_bytes, password = self._signing_material()
         ruc = self.company_id.vat or ''
         probe_xml = SIGNATURE_PROBE_XML % {b'ruc': ruc.encode('utf-8')}
         try:
@@ -816,8 +860,7 @@ class Move(models.Model):
         data['numeric'] = str(secrets.randbelow(10**8)).zfill(8)
         try:
             access_key, xml_unsigned = liquidacion_engine.generate(data)
-            xml_signed = xades.sign(xml_unsigned, base64.b64decode(certificate.sudo().p12_file or b''),
-                                    (certificate.sudo().p12_password or '').encode('utf-8'), self.company_id.vat)
+            xml_signed = xades.sign(xml_unsigned, *certificate._signing_material(), self.company_id.vat)
         except ValueError as error:
             raise ValidationError(str(error)) from error
         emission = self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_INTERNAL).create({
@@ -874,8 +917,7 @@ class Move(models.Model):
             access_key, xml_unsigned = (engine_module.generate(data) if engine_module else generate(data))
         except ValueError as error:
             raise ValidationError(str(error)) from error
-        p12_bytes = base64.b64decode(certificate.sudo().p12_file or b'')
-        password = (certificate.sudo().p12_password or '').encode('utf-8')
+        p12_bytes, password = certificate._signing_material()
         try:
             xml_signed = xades.sign(xml_unsigned, p12_bytes, password, self.company_id.vat)
         except ValueError as error:

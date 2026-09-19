@@ -16,3 +16,6 @@ Instancia dedicada `erpec_fundador` (`.cache/windows/fundador`, http://127.0.0.1
 
 ## Pendiente
 1. Certificado de firma **de SINKRONET**: el disponible pertenece a otra identidad (RUC 1709053506001) y no puede firmar por el RUC 1793235327001. Se carga en Fiscal > Certificado de firma (SRI).
+
+## Certificado de firma cargado y verificado (19-09-2026)
+El titular cargó el certificado de persona jurídica de SINKRONET S.A.S. (RUC 1793235327001 en el certificado, representante legal Betty Rosmery Guamán Correa, entidad ANF Ecuador, vigente hasta 2029-03-10). Tras cifrarlo en reposo quedó **verificado, con CA reconocida y prueba de firma exitosa**. El punto pendiente 3 queda resuelto; ver `docs/CIFRADO_CERTIFICADOS.md`.

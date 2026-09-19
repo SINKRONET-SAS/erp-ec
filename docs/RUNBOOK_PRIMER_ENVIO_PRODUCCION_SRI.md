@@ -4,7 +4,8 @@
 
 ## Requisitos previos (todos)
 1. RUC, establecimiento y punto de emisión reales, y régimen/obligación contable verificados en la empresa; agente de retención configurado si aplica.
-2. Certificado de firma **de producción** (entidad reconocida) cargado, verificado y con "Firma de prueba" exitosa en Fiscal > Certificado de firma.
+2. Variable `ERPEC_SECRET_KEY` configurada en el servidor y respaldada por separado (ver `docs/CIFRADO_CERTIFICADOS.md`).
+3. Certificado de firma **de producción** (entidad reconocida) cargado, verificado y con "Firma de prueba" exitosa en Fiscal > Certificado de firma.
 3. Establecimiento y punto de emisión registrados en Fiscal > Establecimientos y puntos de emisión, con dirección real.
 4. Migración de diarios a puntos aplicada (ver `PLAN_MIGRACION_DIARIOS_PUNTOS_EMISION.md`) y último secuencial usado en producción conocido (para no repetir numeración).
 5. Los mismos tipos de comprobante ya autorizados en PRUEBAS con los datos reales de la empresa (mismo certificado, mismo RUC).

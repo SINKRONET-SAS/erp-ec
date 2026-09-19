@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-09-19T16:20:00.000Z",
+  "scope": "OP17: cifrado en reposo del certificado de firma y su contrasena; certificado del Fundador verificado.",
+  "userInstruction": "me parece una falla de diseño guardar sin cifrar, ayudame a resolver",
+  "tests": {
+    "total": 146,
+    "failed": 0,
+    "errors": 0
+  },
+  "design": {
+    "cipher": "Fernet (AES-CBC + HMAC-SHA256), clave por contexto via HKDF-SHA256",
+    "masterKey": "ERPEC_SECRET_KEY, odoo.conf erpec_secret_key o archivo erpec_secret.key en data_dir; nunca en la base",
+    "inputsFields": "p12_file/p12_password son solo de entrada y se leen vacios"
+  },
+  "migration": {
+    "applied": "Fundador y demo; texto plano borrado; VACUUM FULL de la tabla",
+    "defectFoundAndFixed": "la migracion 1.5.0 cifro el texto base64 en vez de los bytes del p12; detectado al verificar el certificado real; reparada con 1.5.1 y pruebas de ambas migraciones"
+  },
+  "founderCertificate": {
+    "verified": true,
+    "issuerTrusted": true,
+    "signatureTest": true,
+    "validUntil": "2029-03-10",
+    "note": "certificado de persona juridica de SINKRONET S.A.S."
+  },
+  "limits": [
+    "no protege contra acceso al servidor en ejecucion",
+    "respaldos anteriores al 19-09-2026 pueden contener el certificado en claro",
+    "PayPhone sin cifrar y no modificado",
+    "sin rotacion automatica de la clave maestra"
+  ],
+  "pending": [
+    "cifrar la credencial de PayPhone",
+    "rotacion de clave maestra",
+    "configurar ERPEC_SECRET_KEY en el despliegue"
+  ],
+  "realMoneyMoved": false
+}

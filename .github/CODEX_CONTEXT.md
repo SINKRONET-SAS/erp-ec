@@ -448,3 +448,10 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 ## OP16b — Fundador: perfil ordinario y punto 001-004 — 19-09-2026
 
 - Perfil ordinario confirmado por el titular; creados el establecimiento 001 (PRINCIPAL, dirección de la empresa) y el punto 004 (PRUEBAS) con su diario de pruebas `FP001`. Solo falta el certificado de firma propio de SINKRONET. Inicio de sesión web verificado en el Fundador y en la demo.
+
+## OP17 — Cifrado en reposo del certificado de firma — 19-09-2026
+
+- El `.p12` y su contraseña ya no se guardan en claro: se cifran (Fernet) con una clave fuera de la base (`ERPEC_SECRET_KEY`, `odoo.conf` o `erpec_secret.key` en `data_dir`); los campos de carga se leen siempre vacíos y solo el servidor descifra al firmar. Migración aplicada en Fundador y demo. Ver `docs/CIFRADO_CERTIFICADOS.md`.
+- Defecto propio corregido: la primera migración cifró el base64 en vez de los bytes del `.p12`; se detectó verificando el certificado real y se reparó (migración 1.5.1 con pruebas).
+- El certificado de SINKRONET quedó verificado (CA reconocida, prueba de firma OK, vigente hasta 2029-03-10). 146/146 pruebas.
+- Pendiente: PayPhone sigue sin cifrar; sin rotación de clave; definir `ERPEC_SECRET_KEY` en el despliegue.

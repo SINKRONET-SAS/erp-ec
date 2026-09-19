@@ -8,3 +8,4 @@ from . import test_liquidacion
 from . import test_reembolso
 from . import test_migration
 from . import test_establishment
+from . import test_secret_store
