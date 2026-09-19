@@ -22,8 +22,8 @@ class ReimbursementEngineCase(TransactionCase):
 
     def test_reimbursement_block_and_totals(self):
         _key, xml = engine.generate(self._data())
-        self.assertIn(b'<codDocReembolso>41</codDocReembolso>', xml)
-        self.assertIn(b'<totalComprobantesReembolso>150.00</totalComprobantesReembolso>', xml)
+        self.assertIn(b'<codDocReembolso>01</codDocReembolso>', xml)
+        self.assertIn(b'<totalComprobantesReembolso>1.00</totalComprobantesReembolso>', xml)
         self.assertIn(b'<totalImpuestoReembolso>19.57</totalImpuestoReembolso>', xml)
 
     def test_special_vat_codes(self):

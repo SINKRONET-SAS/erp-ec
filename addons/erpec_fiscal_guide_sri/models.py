@@ -21,7 +21,8 @@ class Guide(models.Model):
     _rec_name = 'sri_number'
 
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
-    point_id = fields.Many2one('erpec.fiscal.point', string='Punto de emisión', required=True, check_company=True, ondelete='restrict')
+    point_id = fields.Many2one('erpec.fiscal.point', string='Punto de emisión', required=True, check_company=True, ondelete='restrict',
+                               default=lambda self: self._default_point())
     ambiente = fields.Selection(related='point_id.ambiente', string='Ambiente')
     sri_number = fields.Char('Número SRI', readonly=True, copy=False)
     picking_id = fields.Many2one('stock.picking', string='Traslado de inventario', check_company=True, copy=False, ondelete='restrict')
@@ -42,6 +43,11 @@ class Guide(models.Model):
     line_ids = fields.One2many('erpec.fiscal.guide.line', 'guide_id', string='Bienes a trasladar', copy=True)
     emission_ids = fields.One2many('erpec.fiscal.emission', 'guide_id', string='Emisiones SRI', copy=False)
     state = fields.Selection([('draft', 'Borrador'), ('emitted', 'Firmada / emitida')], compute='_compute_state', store=True)
+
+    @api.model
+    def _default_point(self):
+        points = self.env['erpec.fiscal.point'].search([('company_id', '=', self.env.company.id)])
+        return self.env.user.ec_point_id if self.env.user.ec_point_id in points else (points if len(points) == 1 else points.browse())
 
     @api.depends('emission_ids')
     def _compute_state(self):
@@ -166,7 +172,7 @@ class Picking(models.Model):
             guide = self.ec_guide_ids[0]
         else:
             partner = self.partner_id
-            point = self.env['erpec.fiscal.point'].search([('company_id', '=', self.company_id.id)], limit=1)
+            point = self.env.user.ec_point_id if self.env.user.ec_point_id.company_id == self.company_id else self.env['erpec.fiscal.point'].search([('company_id', '=', self.company_id.id)]).sorted(lambda item: (not item.establishment_id.is_principal, item.establishment, item.emission))[:1]
             if not point:
                 raise ValidationError('Configura primero un establecimiento y punto de emisión (Fiscal > Establecimientos y puntos de emisión).')
             guide = self.env['erpec.fiscal.guide'].create({

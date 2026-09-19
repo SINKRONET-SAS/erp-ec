@@ -50,9 +50,9 @@ class EmissionPointCase(TransactionCase):
 
     def test_codes_are_validated_and_unique(self):
         with self.assertRaises(ValidationError):
-            self.point.copy({'establishment': '1', 'emission': '003'})
+            self.point.copy({'emission': '3'})
         with self.assertRaises(ValidationError):
-            self.point.copy({'establishment': '000', 'emission': '003'})
+            self.point.copy({'emission': '000'})
         with self.assertRaises(Exception):
             with self.cr.savepoint():
                 self.point.copy({})

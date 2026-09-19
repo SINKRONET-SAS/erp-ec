@@ -76,7 +76,11 @@ def generate(data):
         reimbursed_tax=sum((money(tax['amount']) for entry in reimbursements for tax in entry['taxes']),Decimal(0))
         if reimbursed_base<=0 or reimbursed_base+reimbursed_tax>base_total+tax_total:
             raise ValueError('Los sustentos de reembolso no pueden superar el total de la factura.')
-        add(info,'codDocReembolso','41');add(info,'totalComprobantesReembolso',f'{reimbursed_base+reimbursed_tax:.2f}')
+        # Igual que la implementación de referencia (sinkroniq-mobile): codDocReembolso es el código del comprobante
+        # de sustento (si todos comparten el mismo) y totalComprobantesReembolso es la CANTIDAD de comprobantes.
+        support_codes={entry.get('doc_type') or '01' for entry in reimbursements}
+        if len(support_codes)==1:add(info,'codDocReembolso',next(iter(support_codes)))
+        add(info,'totalComprobantesReembolso',f'{Decimal(len(reimbursements)):.2f}')
         add(info,'totalBaseImponibleReembolso',f'{reimbursed_base:.2f}');add(info,'totalImpuestoReembolso',f'{reimbursed_tax:.2f}')
     totals=etree.SubElement(info,'totalConImpuestos')
     for code,(base,tax) in groups.items():

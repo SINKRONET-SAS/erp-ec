@@ -1,4 +1,4 @@
-"""Factura de reembolso (codDocReembolso 41): sustentos de terceros dentro de la factura. Firma real con
+"""Factura de reembolso (bloque reembolsos): sustentos de terceros dentro de la factura. Firma real con
 certificado sintético; sin transmisión."""
 import base64
 
@@ -54,7 +54,7 @@ class ReimbursementCase(TransactionCase):
         emission = self.env['erpec.fiscal.emission'].browse(move.action_native_emit()['res_id'])
         self.assertEqual(emission.access_key[8:10], '01')
         xml = base64.b64decode(emission.xml_unsigned)
-        self.assertIn(b'<codDocReembolso>41</codDocReembolso>', xml)
+        self.assertIn(b'<codDocReembolso>01</codDocReembolso>', xml)
         self.assertIn(b'<reembolsoDetalle>', xml)
         self.assertIn(b'<codigoPorcentaje>6</codigoPorcentaje>', xml)
         with self.assertRaisesRegex(ValidationError, 'no se modifican'):

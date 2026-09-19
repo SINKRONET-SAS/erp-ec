@@ -57,16 +57,23 @@ Cubre los pendientes del cierre de OP13 con este resultado, sin ocultar lo no re
 |---|---|
 | Catálogo de tarifas de renta | **Hecho.** `retention_catalog.py` (48 conceptos vigentes, generado desde `l10n_ec` de Odoo, fuente secundaria; el SRI es la autoridad). El motor valida código y tarifa; la línea de retención sugiere tarifa y descripción. |
 | Liquidación de compra (03) | **Hecho.** `liquidacion_engine.py` (XSD 1.1.0), botón en factura de proveedor con tipo documental 03; el consecutivo sale del punto del diario de compras y del ambiente. **AUTORIZADA en celcer (PRUEBAS).** |
-| Reembolsos | **Implementado, NO verificado ante el SRI.** Bloque `reembolsos` (codDocReembolso 41) + IVA no objeto/exento en factura + modelo de sustentos. El XSD valida y el SRI responde RECIBIDA, pero la autorización queda en PENDIENTE (más de 45 min, dos ensayos, incluso con un sustento realmente autorizado). La misma factura con IVA no objeto y sin reembolsos se autoriza de inmediato, así que el bloqueo está en el bloque de reembolsos. Pendiente de aclarar con el SRI. |
+| Reembolsos | **Hecho y AUTORIZADO en celcer (PRUEBAS)** tras revisar `sinkroniq-mobile`: mi primera versión seguía la ficha técnica al pie de la letra (codDocReembolso 41 y totalComprobantesReembolso como importe) y el SRI dejaba la autorización en PENDIENTE; la implementación de referencia usa el código del comprobante de sustento en `codDocReembolso` y la CANTIDAD de comprobantes en `totalComprobantesReembolso`, y con eso se autoriza al instante. |
 | RIDE sin revisión visual | **Revisados y corregidos** al renderizarlos: etiqueta pisada por el código de barras, alineación derecha rota en notas (EMISIÓN y totales salían de la página) y texto encimado en retención. Sigue sin contrastarse con un RIDE oficial de cada tipo (solo la factura lo fue). |
-| Migración de diarios a puntos y punto por usuario | **Detallada, NO ejecutada**, a pedido del titular: `docs/PLAN_MIGRACION_DIARIOS_PUNTOS_EMISION.md` (inventario real de la demo, cambios, verificación, reversión, decisiones). |
+| Migración de diarios a puntos y punto por usuario | **Detallada y luego EJECUTADA** con la aprobación del titular (OP15): `docs/PLAN_MIGRACION_DIARIOS_PUNTOS_EMISION.md`. |
 | Primer envío real a producción | **No ejecutado (correcto).** Runbook supervisado en `docs/RUNBOOK_PRIMER_ENVIO_PRODUCCION_SRI.md`. |
 
 Pruebas: 116/116. Demo actualizada con respaldo.
 
+## OP15 — Migración ejecutada, establecimientos y reembolsos corregidos (19-09-2026)
+- Reembolsos corregidos con el criterio de `sinkroniq-mobile` y AUTORIZADOS por el SRI de pruebas (ver tabla OP14).
+- Establecimientos y puntos: modelo padre/hijo (`erpec.fiscal.establishment` + `erpec.fiscal.point`), establecimiento principal, protección de cambios y borrado, auditoría de integridad y migración de diarios ejecutada en la demo con los datos del titular.
+- Adopción automática: al crear un punto se adopta un diario de ventas existente con el mismo establecimiento/punto/ambiente en lugar de duplicarlo.
+- Diario de liquidaciones por punto y ambiente; punto predeterminado por usuario.
+- Bug real: el botón del diario de liquidaciones devolvía un recordset (no serializable en la interfaz web); corregido para devolver una acción.
+- Pruebas: 132/132.
+
 ## Pendiente explícito
-- Reembolsos: aclarar con el SRI por qué la autorización queda en PENDIENTE en pruebas.
-- Aprobación del titular para ejecutar la migración de diarios.
+- Empresa 2 de ensayo: su cliente debe registrar su establecimiento y dirección.
 - Asignar el punto de emisión a los diarios ya existentes (migración de diarios previos) y selección de punto por usuario/caja.
 - Catálogo completo de conceptos y tarifas de retención de renta; liquidación de compra (03).
 - OP13-C guía de remisión.

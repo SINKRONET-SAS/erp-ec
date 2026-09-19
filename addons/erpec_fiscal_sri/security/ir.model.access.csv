@@ -4,3 +4,4 @@ certificate_account,Autoservicio certificado fiscal,model_erpec_fiscal_certifica
 emission_account,Emisión nativa SRI,model_erpec_fiscal_emission,account.group_account_user,1,1,1,0
 point_account,Establecimientos y puntos de emisión SRI,model_erpec_fiscal_point,account.group_account_user,1,1,1,0
 reimbursement_account,Sustentos de reembolso SRI,model_erpec_fiscal_reimbursement,account.group_account_user,1,1,1,1
+establishment_account,Establecimientos SRI,model_erpec_fiscal_establishment,account.group_account_user,1,1,1,1

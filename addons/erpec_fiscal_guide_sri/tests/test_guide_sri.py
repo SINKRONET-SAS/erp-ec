@@ -97,3 +97,10 @@ class GuideSriCase(TransactionCase):
             emission.action_process()
         self.assertEqual(emission.state, 'authorized')
         self.assertTrue(base64.b64decode(emission.ride_pdf).startswith(b'%PDF'))
+
+    def test_default_point_uses_the_user_preference(self):
+        other = self.env['erpec.fiscal.point'].create({
+            'establishment': '001', 'establishment_name': 'Matriz', 'establishment_address': 'Otra', 'emission': '009', 'name': 'Otra caja'})
+        self.assertFalse(self.env['erpec.fiscal.guide']._default_point())
+        self.env.user.ec_point_id = other
+        self.assertEqual(self.env['erpec.fiscal.guide']._default_point(), other)

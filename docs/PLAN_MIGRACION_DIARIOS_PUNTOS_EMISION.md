@@ -1,6 +1,6 @@
 # Migración de diarios existentes a puntos de emisión SRI (propuesta para aprobación)
 
-Estado: **propuesta detallada, NO ejecutada.** Requiere la aprobación del titular antes de tocar datos.
+Estado: **EJECUTADA en la demo el 19-09-2026** con la aprobación del titular (ver sección 7).
 Fecha del análisis: 19-09-2026. Fuente: inventario de solo lectura de la demo (`erpec_demo`).
 
 ## 1. Situación real encontrada (demo)
@@ -57,3 +57,13 @@ Restaurar el respaldo (base + filestore) tomado justo antes; como no se modifica
 3. ¿Hay más establecimientos o cajas reales que deban crearse ahora?
 4. ¿Se habilita ya el punto por usuario (E) o se deja para después?
 5. Una empresa real que ya emita facturas en producción con numeración propia: se necesita el último secuencial usado por punto y comprobante para iniciar los consecutivos sin repetir. En la demo no aplica.
+
+## 7. Ejecución (19-09-2026) y decisiones del titular
+Decisiones: (1) proceder con la recomendación (conservar `INV`); (2) establecimiento PRINCIPAL, dirección LOS CARDENALES SN Y AZULEJOS, punto PRUEBAS; (3) el cliente crea los que necesite, con frontend; (4) punto por usuario: sí.
+
+Resultado en la demo (respaldos `.cache/windows/backups/migracion-install-*`):
+- Simulación previa idéntica a la propuesta; luego aplicada: `INV` (001-001, 4 movimientos) adoptado por el punto 001-001 "PRUEBAS"; `FP001` (vacío) archivado. Los 4 comprobantes conservan número y contenido.
+- Modelo normalizado tras revisar `sinkroniq-mobile` (Establishment padre + EmissionPoint hijo, principal, protección de borrado, auditoría): nuevo `erpec.fiscal.establishment` con la dirección registrada una sola vez; los puntos existentes se migraron a establecimientos con un script de migración de datos.
+- Diario de liquidaciones `LP001` creado y vinculado al punto; usuario `demo` con punto predeterminado 001-001.
+- Empresa 2 (autoservicio de ensayo): sin dirección, no se inventó nada; queda como hallazgo de la auditoría (`audit_integrity`) hasta que su cliente registre su establecimiento en pantalla.
+- Frontend para el cliente: Fiscal > Establecimientos y Fiscal > Establecimientos y puntos de emisión (crear y editar nombre, dirección y códigos; el establecimiento se puede crear desde el propio formulario del punto), botón "Importar desde diarios existentes", botón "Crear diario de liquidaciones de compra" y campo de punto predeterminado en las preferencias del usuario.

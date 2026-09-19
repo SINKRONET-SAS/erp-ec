@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-09-19T01:45:00.000Z",
+  "scope": "OP15: migracion de diarios a puntos ejecutada, establecimiento como entidad padre, punto por usuario, diario de liquidaciones y reembolsos corregidos segun sinkroniq-mobile.",
+  "userInstructions": [
+    "1. proceder con lo recomendado; 2. NOMBRE DEL ESTABLECIMIENTO: PRINCIPAL; DIRECCION: LOS CARDENALES SN Y AZULEJOS, NOMBRE DEL PUNTO: PRUEBAS (debe existir frontend); 3. EL CLIENTE debe poder crearlos; 4. SI. Tambien ejecutar lo relativo a la migracion de diarios",
+    "para los reembolso revisar lo implementado en sinkroniq-mobile",
+    "para lo de los establecimientos tambien revisar sinkroniq-mobile"
+  ],
+  "tests": {
+    "total": 132,
+    "failed": 0,
+    "errors": 0
+  },
+  "installation": {
+    "demo": "respaldos .cache/windows/backups/migracion-install-20260918-203139, -203454, -203903"
+  },
+  "migration": {
+    "dryRun": "identico a la propuesta",
+    "applied": "INV adoptado por el punto 001-001 PRUEBAS; FP001 archivado; 4 movimientos conservan numero; LP001 creado; usuario demo con punto 001-001",
+    "companyWithoutAddress": "empresa 2 queda como hallazgo de auditoria, sin datos inventados"
+  },
+  "reimbursements": {
+    "finding": "sinkroniq-mobile usa codDocReembolso = codigo del sustento y totalComprobantesReembolso = cantidad de comprobantes; la version basada en la ficha (41 e importe) quedaba PENDIENTE",
+    "result": "AUTORIZADO en celcer PRUEBAS con el criterio de referencia"
+  },
+  "referenceReview": "sinkroniq-mobile: Establishment padre + EmissionPoint hijo, isPrincipal, proteccion de borrado, auditoria de integridad, secuenciales por (codDoc, establecimiento, punto, ambiente)",
+  "bugsFound": [
+    "boton de diario de liquidaciones devolvia un recordset no serializable",
+    "totales de reembolso segun la ficha rechazados en la practica por el SRI",
+    "auditoria contaba diarios archivados"
+  ],
+  "pending": [
+    "empresa 2: registrar establecimiento y direccion",
+    "primer envio real a produccion supervisado por el cliente",
+    "RIDE oficial por tipo",
+    "asignacion de puntos permitidos por usuario (sinkroniq tiene staff->puntos; aqui solo el predeterminado)"
+  ],
+  "realMoneyMoved": false
+}

@@ -89,6 +89,55 @@ AMBIENTE_NAMES = {'1': 'pruebas', '2': 'producción'}
 _POINT_INTERNAL = object()
 
 
+class Establishment(models.Model):
+    """Establecimiento (local o sucursal registrado en el RUC). Modelo padre de los puntos de emisión (cajas):
+    la dirección se registra una sola vez y sale como dirEstablecimiento en los comprobantes. Diseño alineado con
+    Establishment/EmissionPoint de sinkroniq-mobile (principal, activo, protección de borrado)."""
+    _name = 'erpec.fiscal.establishment'
+    _description = 'Establecimiento (SRI)'
+    _check_company_auto = True
+    _order = 'company_id, code'
+
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    code = fields.Char('Código', size=3, required=True, help='Código de 3 dígitos del establecimiento registrado en el RUC (001 es normalmente la matriz).')
+    name = fields.Char('Nombre', required=True, help='Por ejemplo: PRINCIPAL o Sucursal Norte.')
+    address = fields.Char('Dirección', required=True, help='Se imprime como dirEstablecimiento en los comprobantes de sus puntos de emisión.')
+    is_principal = fields.Boolean('Establecimiento principal', help='Se propone por defecto cuando el usuario no tiene punto de emisión.')
+    active = fields.Boolean(default=True)
+    point_ids = fields.One2many('erpec.fiscal.point', 'establishment_id', string='Puntos de emisión')
+    _sql_constraints = [('code_unique', 'unique(company_id,code)', 'Ya existe un establecimiento con este código en la empresa.')]
+
+    @api.constrains('code')
+    def _check_code(self):
+        for record in self:
+            if not re.fullmatch(r'[0-9]{3}', record.code or '') or int(record.code) == 0:
+                raise ValidationError('El código del establecimiento requiere tres dígitos (001 a 999).')
+
+    def _unset_other_principals(self):
+        for record in self.filtered('is_principal'):
+            others = self.search([('company_id', '=', record.company_id.id), ('is_principal', '=', True), ('id', '!=', record.id)])
+            if others:
+                others.with_context(_fiscal_establishment_internal=True).write({'is_principal': False})
+
+    @api.model_create_multi
+    def create(self, values_list):
+        for values in values_list:
+            company = values.get('company_id') or self.env.company.id
+            if 'is_principal' not in values and not self.search_count([('company_id', '=', company)]):
+                values['is_principal'] = True
+        records = super().create(values_list)
+        records._unset_other_principals()
+        return records
+
+    def write(self, values):
+        if 'code' in values and any(record.point_ids and record.code != values['code'] for record in self):
+            raise ValidationError('El código no se cambia cuando el establecimiento ya tiene puntos de emisión (los números de comprobante lo incluyen).')
+        result = super().write(values)
+        if values.get('is_principal') and not self.env.context.get('_fiscal_establishment_internal'):
+            self._unset_other_principals()
+        return result
+
+
 class EmissionPoint(models.Model):
     _name = 'erpec.fiscal.point'
     _description = 'Establecimiento y punto de emisión (SRI)'
@@ -96,9 +145,11 @@ class EmissionPoint(models.Model):
     _order = 'company_id, establishment, emission'
 
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
-    establishment = fields.Char('Establecimiento', size=3, required=True, help='Código de 3 dígitos del establecimiento (local o sucursal) registrado en el RUC.')
-    establishment_name = fields.Char('Nombre del establecimiento', required=True)
-    establishment_address = fields.Char('Dirección del establecimiento', required=True, help='Se imprime como dirEstablecimiento en los comprobantes.')
+    establishment_id = fields.Many2one('erpec.fiscal.establishment', string='Establecimiento', check_company=True, ondelete='restrict',
+                                       help='Local o sucursal al que pertenece la caja. Puedes crearlo desde aquí con su nombre y dirección.')
+    establishment = fields.Char(related='establishment_id.code', store=True, readonly=True, string='Código de establecimiento')
+    establishment_name = fields.Char(related='establishment_id.name', string='Nombre del establecimiento')
+    establishment_address = fields.Char(related='establishment_id.address', string='Dirección del establecimiento')
     emission = fields.Char('Punto de emisión', size=3, required=True, help='Código de 3 dígitos de la caja o punto de venta dentro del establecimiento.')
     name = fields.Char('Nombre del punto de emisión', required=True, help='Por ejemplo: Caja 1.')
     ambiente = fields.Selection([('1', 'Pruebas'), ('2', 'Producción')], default='1', required=True, readonly=True,
@@ -111,6 +162,12 @@ class EmissionPoint(models.Model):
     notice = fields.Text(readonly=True, copy=False)
     _sql_constraints = [('point_unique', 'unique(company_id,establishment,emission)', 'Ya existe este establecimiento y punto de emisión en la empresa.')]
 
+    @api.constrains('establishment_id')
+    def _check_establishment(self):
+        for point in self:
+            if not point.establishment_id:
+                raise ValidationError('Selecciona el establecimiento del punto de emisión.')
+
     @api.constrains('establishment', 'emission')
     def _check_codes(self):
         for point in self:
@@ -122,6 +179,8 @@ class EmissionPoint(models.Model):
         if any(key in values for key in ('ambiente', 'production_acknowledged', 'production_by', 'production_at', 'company_id')) \
                 and self.env.context.get('_fiscal_point_internal') is not _POINT_INTERNAL:
             raise ValidationError('El ambiente se cambia con las acciones de habilitación.')
+        if ('establishment_id' in values or 'emission' in values) and any(point.journal_ids for point in self):
+            raise ValidationError('El establecimiento y el punto de emisión no se cambian cuando ya tienen diarios; crea un punto nuevo.')
         return super().write(values)
 
     def _next_sequence(self, kind):
@@ -140,10 +199,18 @@ class EmissionPoint(models.Model):
         return self.with_context(_fiscal_point_internal=_POINT_INTERNAL).write(values)
 
     def _ensure_journal(self):
-        """Un diario de ventas por punto y ambiente: el consecutivo de pruebas nunca se reutiliza en producción."""
+        """Un diario de ventas por punto y ambiente: el consecutivo de pruebas nunca se reutiliza en producción.
+        Antes de crear uno nuevo se ADOPTA un diario de ventas existente sin punto con el mismo establecimiento,
+        punto de emisión y ambiente (así no se duplican diarios ni se pierde el historial de numeración)."""
         self.ensure_one()
         Journal = self.env['account.journal'].with_context(active_test=False)
         journal = Journal.search([('ec_point_id', '=', self.id), ('ec_sri_ambiente', '=', self.ambiente), ('type', '=', 'sale')], limit=1)
+        if not journal:
+            journal = Journal.search([('company_id', '=', self.company_id.id), ('type', '=', 'sale'), ('ec_point_id', '=', False),
+                                      ('l10n_ec_entity', '=', self.establishment), ('l10n_ec_emission', '=', self.emission),
+                                      ('ec_sri_ambiente', '=', self.ambiente)], limit=1)
+            if journal:
+                journal.write({'ec_point_id': self.id, 'l10n_latam_use_documents': True})
         if journal:
             if not journal.active:
                 journal.active = True
@@ -158,12 +225,129 @@ class EmissionPoint(models.Model):
             'l10n_latam_use_documents': True, 'l10n_ec_entity': self.establishment, 'l10n_ec_emission': self.emission,
             'ec_point_id': self.id, 'ec_sri_ambiente': self.ambiente})
 
+    def action_create_liquidation_journal(self):
+        self.ensure_one()
+        journal = self._ensure_liquidation_journal()
+        return {'type': 'ir.actions.act_window', 'res_model': 'account.journal', 'res_id': journal.id, 'view_mode': 'form'}
+
+    def _ensure_liquidation_journal(self):
+        """Diario de compras dedicado a las liquidaciones de compra del punto y ambiente vigente (el
+        consecutivo lo asigna el sistema, a diferencia de las facturas de proveedores)."""
+        self.ensure_one()
+        Journal = self.env['account.journal'].with_context(active_test=False)
+        journal = Journal.search([('ec_point_id', '=', self.id), ('ec_sri_ambiente', '=', self.ambiente), ('type', '=', 'purchase')], limit=1)
+        if not journal:
+            prefix = 'LP' if self.ambiente == '1' else 'LR'
+            number = 1
+            while Journal.search_count([('company_id', '=', self.company_id.id), ('code', '=', '%s%03d' % (prefix, number))]):
+                number += 1
+            journal = self.env['account.journal'].create({
+                'name': 'Liquidaciones de compra %s-%s (%s)' % (self.establishment, self.emission, AMBIENTE_NAMES[self.ambiente]),
+                'code': '%s%03d' % (prefix, number), 'type': 'purchase', 'company_id': self.company_id.id,
+                'l10n_latam_use_documents': True, 'ec_point_id': self.id, 'ec_sri_ambiente': self.ambiente})
+        elif not journal.active:
+            journal.active = True
+        return journal
+
+    @api.model
+    def migrate_journals(self, dry_run=True):
+        """Lleva los diarios de ventas existentes (con establecimiento y punto de emisión) a puntos SRI, sin tocar
+        comprobantes. Con dry_run=True solo informa. Casos: (1) sin punto equivalente: crea el punto si la empresa
+        tiene dirección, si no queda 'requiere datos'; (2) punto existente cuyo diario propio está vacío: lo archiva y
+        adopta el diario con historial; (3) ambos con movimientos: conflicto, no se toca."""
+        if not self.env.user.has_group('account.group_account_manager'):
+            raise ValidationError('Solo un responsable contable puede migrar diarios a puntos de emisión.')
+        Journal = self.env['account.journal'].with_context(active_test=False)
+        Move = self.env['account.move'].with_context(active_test=False)
+        report = []
+        candidates = Journal.search([('type', '=', 'sale'), ('ec_point_id', '=', False), ('l10n_ec_entity', '!=', False),
+                                     ('l10n_ec_emission', '!=', False), ('l10n_latam_use_documents', '=', True)])
+        for journal in candidates:
+            entry = {'journal': '%s %s' % (journal.code, journal.name), 'company': journal.company_id.name,
+                     'point': '%s-%s' % (journal.l10n_ec_entity, journal.l10n_ec_emission)}
+            if not (re.fullmatch(r'[0-9]{3}', journal.l10n_ec_entity) and re.fullmatch(r'[0-9]{3}', journal.l10n_ec_emission)):
+                report.append(dict(entry, action='omitido', detail='establecimiento o punto de emisión inválidos'))
+                continue
+            point = self.with_context(active_test=False).search([('company_id', '=', journal.company_id.id),
+                                                                  ('establishment', '=', journal.l10n_ec_entity),
+                                                                  ('emission', '=', journal.l10n_ec_emission)], limit=1)
+            if not point:
+                if not journal.company_id.street:
+                    report.append(dict(entry, action='requiere datos', detail='la empresa no tiene dirección; crea el punto manualmente con su dirección de establecimiento'))
+                    continue
+                report.append(dict(entry, action='crear punto y adoptar diario', detail='dirección tomada de la empresa; revísala en el punto'))
+                if not dry_run:
+                    self.create({'company_id': journal.company_id.id, 'establishment': journal.l10n_ec_entity, 'emission': journal.l10n_ec_emission,
+                                 'establishment_name': 'Establecimiento %s' % journal.l10n_ec_entity, 'establishment_address': journal.company_id.street,
+                                 'name': 'Punto %s' % journal.l10n_ec_emission, 'ambiente': journal.ec_sri_ambiente})
+                continue
+            if point.ambiente != journal.ec_sri_ambiente:
+                report.append(dict(entry, action='omitido', detail='el diario es de %s y el punto está en %s' % (AMBIENTE_NAMES[journal.ec_sri_ambiente], AMBIENTE_NAMES[point.ambiente])))
+                continue
+            own = Journal.search([('ec_point_id', '=', point.id), ('ec_sri_ambiente', '=', point.ambiente), ('type', '=', 'sale')], limit=1)
+            if own and Move.search_count([('journal_id', '=', own.id)]):
+                if Move.search_count([('journal_id', '=', journal.id)]):
+                    report.append(dict(entry, action='conflicto', detail='el diario %s y el %s del punto tienen movimientos; requiere decisión manual' % (journal.code, own.code)))
+                    continue
+                report.append(dict(entry, action='omitido', detail='el punto ya tiene el diario %s con historial; %s queda sin punto' % (own.code, journal.code)))
+                continue
+            report.append(dict(entry, action='adoptar diario' + (' y archivar %s (sin movimientos)' % own.code if own else ''),
+                               detail='se conservan los comprobantes y su numeración'))
+            if not dry_run:
+                if own:
+                    own.write({'ec_point_id': False, 'active': False})
+                journal.write({'ec_point_id': point.id})
+        return report
+
+    def action_import_from_journals(self):
+        report = self.migrate_journals(dry_run=False)
+        lines = ['%s [%s]: %s' % (item['journal'], item['point'], item['action']) for item in report] or ['No hay diarios de ventas por migrar.']
+        return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                'params': {'title': 'Importación de diarios', 'message': '\n'.join(lines), 'sticky': True, 'type': 'info', 'next': {'type': 'ir.actions.client', 'tag': 'reload'}}}
+
     @api.model_create_multi
     def create(self, values_list):
+        Establishment = self.env['erpec.fiscal.establishment']
+        for values in values_list:
+            # Compatibilidad: se acepta el código/nombre/dirección del establecimiento y se busca o crea el registro.
+            if 'establishment_id' not in values and values.get('establishment'):
+                company = values.get('company_id') or self.env.company.id
+                establishment = Establishment.with_context(active_test=False).search([('company_id', '=', company), ('code', '=', values['establishment'])], limit=1)
+                if not establishment:
+                    establishment = Establishment.create({
+                        'company_id': company, 'code': values['establishment'],
+                        'name': values.get('establishment_name') or 'Establecimiento %s' % values['establishment'],
+                        'address': values.get('establishment_address') or '-'})
+                values['establishment_id'] = establishment.id
+            for legacy in ('establishment', 'establishment_name', 'establishment_address'):
+                values.pop(legacy, None)
         points = super().create(values_list)
         for point in points:
             point._ensure_journal()
         return points
+
+    @api.model
+    def audit_integrity(self):
+        """Verificación de integridad de la configuración (equivalente a la auditoría de establecimientos de
+        sinkroniq-mobile). Solo lectura: devuelve una lista de hallazgos, vacía si todo está bien."""
+        Journal = self.env['account.journal'].with_context(active_test=False)
+        findings = []
+        for journal in Journal.search([('type', '=', 'sale'), ('active', '=', True), ('ec_point_id', '=', False), ('l10n_ec_entity', '!=', False),
+                                       ('l10n_ec_emission', '!=', False), ('l10n_latam_use_documents', '=', True)]):
+            findings.append('Diario de ventas %s (%s) con %s-%s sin punto de emisión SRI.' % (journal.code, journal.company_id.name, journal.l10n_ec_entity, journal.l10n_ec_emission))
+        for point in self.with_context(active_test=False).search([]):
+            active = Journal.search([('ec_point_id', '=', point.id), ('ec_sri_ambiente', '=', point.ambiente), ('type', '=', 'sale'), ('active', '=', True)])
+            if not active:
+                findings.append('El punto %s-%s (%s) no tiene diario de ventas activo en %s.' % (point.establishment, point.emission, point.company_id.name, AMBIENTE_NAMES[point.ambiente]))
+            if len(active) > 1:
+                findings.append('El punto %s-%s tiene %d diarios de ventas activos en el mismo ambiente.' % (point.establishment, point.emission, len(active)))
+            if not point.establishment_id:
+                findings.append('El punto %s (%s) no tiene establecimiento.' % (point.emission, point.company_id.name))
+        for company in self.env['res.company'].search([]):
+            establishments = self.env['erpec.fiscal.establishment'].search([('company_id', '=', company.id)])
+            if establishments and not establishments.filtered('is_principal'):
+                findings.append('La empresa %s tiene establecimientos pero ninguno principal.' % company.name)
+        return findings
 
     def action_enable_production(self):
         self.ensure_one()
@@ -190,6 +374,17 @@ class EmissionPoint(models.Model):
                               'notice': 'Vuelto a pruebas: se usa el diario de pruebas con su propio consecutivo.'})
         self._ensure_journal()
         return True
+
+
+class Users(models.Model):
+    _inherit = 'res.users'
+
+    ec_point_id = fields.Many2one('erpec.fiscal.point', string='Punto de emisión predeterminado', check_company=True,
+                                  help='Se propone al crear guías de remisión y otros comprobantes de este usuario.')
+
+    @property
+    def SELF_WRITEABLE_FIELDS(self):
+        return super().SELF_WRITEABLE_FIELDS + ['ec_point_id']
 
 
 class Certificate(models.Model):

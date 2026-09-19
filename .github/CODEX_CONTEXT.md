@@ -432,3 +432,9 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Implementado pero NO verificado: reembolsos (factura con bloque `reembolsos`, IVA no objeto/exento). El SRI recibe pero la autorización queda PENDIENTE; sin el bloque la factura se autoriza al instante.
 - Detallado y NO ejecutado por instrucción del titular: migración de diarios a puntos (`docs/PLAN_MIGRACION_DIARIOS_PUNTOS_EMISION.md`; la demo tiene `INV` y `FP001` duplicados para 001-001).
 - 116/116 pruebas, demo actualizada con respaldo.
+
+## OP15 — Migración de diarios ejecutada, establecimientos y reembolsos corregidos — 19-09-2026
+
+- Ejecutada la migración de diarios a puntos con los datos del titular (establecimiento PRINCIPAL, LOS CARDENALES SN Y AZULEJOS, punto PRUEBAS): `INV` adoptado, `FP001` archivado, comprobantes intactos. Modelo normalizado con `erpec.fiscal.establishment` (padre, principal, protección) tras revisar sinkroniq-mobile; auditoría `audit_integrity`; frontend para crear establecimientos y puntos; punto por usuario; diario de liquidaciones.
+- Reembolsos: la implementación de referencia (codDocReembolso = código del sustento, totalComprobantesReembolso = cantidad) se AUTORIZA en celcer; la lectura literal de la ficha quedaba PENDIENTE.
+- 132/132 pruebas, demo actualizada con respaldo. Pendiente: empresa 2 sin dirección, producción real supervisada, RIDE oficial.
