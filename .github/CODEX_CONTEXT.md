@@ -467,3 +467,11 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Rotada la clave real en `erpec_fundador` (certificado y token PayPhone, verificado con el servidor en marcha), `erpec_a` y `erpec_demo`; respaldos del archivo de clave en `.cache/windows/backups/claves-*`.
 - Eliminadas las 6 bases `erpec_pp_test_*` tras comprobar que no estaban en uso. 158/158 fiscales y 48/48 de PayPhone/autoservicio/almacén.
 - Pendiente: `ERPEC_SECRET_KEY` en el despliegue real; retirar claves anteriores; otras familias de bases residuales sin revisar.
+
+## OP20 — Diagnóstico integral — 19-09-2026
+
+- Informe en `docs/DIAGNOSTICO_INTEGRAL_20260919.md` (defectos, seguridad, instancias, entorno, cobertura fiscal, gobierno y pendientes por prioridad).
+- Defecto crítico corregido: con `erpec_payroll` instalado no se podían crear notas de crédito/débito ni duplicar facturas (la guarda de `account.move.create` bloqueaba la clave `erpec_payroll_id` aunque fuera `False`). Ahora solo bloquea valores reales y los vínculos son `copy=False`; prueba de regresión `test_move_copy.py`.
+- Suite completa de los 22 módulos: de 32 errores a 1 abierto (conector) y 5 omisiones explícitas de tesorería sin datos sembrados.
+- Fundador: `admin_passwd` aleatorio (antes contraseña maestra por defecto).
+- Abierto: ensayo de extremo a extremo con el certificado de SINKRONET en la aplicación, respaldos y certificado ajeno en claro, dependencias, endurecimiento, curado de `pendingChecks`, prompts OP14–OP19.

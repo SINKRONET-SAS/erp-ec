@@ -68,11 +68,19 @@ class TreasuryCase(TransactionCase):
         with self.assertRaises(AccessError):
             self.env['erpec.bank.match'].with_user(stock).create({'statement_line_id':line.id,'payment_id':pay.id})
 
+    def _seeded(self,xmlid):
+        """Estas pruebas ejercitan la demo sembrada (scripts/seed-operational-demo.py y seed-treasury-demo.py); en una base
+        limpia se omiten de forma explícita en lugar de fallar por datos inexistentes."""
+        record=self.env.ref(xmlid,raise_if_not_found=False)
+        if not record:
+            self.skipTest('Requiere la demo sembrada: %s'%xmlid)
+        return record
+
     def period(self):
         self.env.company.erpec_payroll_bank_journal_id=self.bank
         self.env.company.erpec_payroll_payable_id=self.env['account.account'].create({
             'name':'Nómina por pagar ensayo','code':'TSPAY','account_type':'liability_payable','reconcile':True})
-        policy=self.env.ref('erpec_operational_demo.payroll_policy')
+        policy=self._seeded('erpec_operational_demo.payroll_policy')
         plan=self.env['account.analytic.plan'].create({'name':'Centros tesorería ensayo'})
         values=[]
         for index,wage in enumerate([1200,800]):
@@ -129,6 +137,7 @@ class TreasuryCase(TransactionCase):
         self.assertEqual(corrected.version,2)
 
     def test_sanitize_demo_and_repeat(self):
+        self._seeded('erpec_demo_seed.bill')
         originals=self.env.ref('erpec_demo_seed.bill') | self.env.ref('erpec_demo_seed.invoice')
         original_balances={move.id:move.line_ids.mapped('balance') for move in originals}
         self.env['erpec.workspace'].action_sanitize_demo()
@@ -152,6 +161,7 @@ class TreasuryCase(TransactionCase):
         self.assertEqual(self.env['account.move'].search_count([]),count)
 
     def test_sanitize_refuses_changed_source(self):
+        self._seeded('erpec_demo_seed.bill')
         source=self.env.ref('erpec_demo_seed.bill')
         retention=source.ec_accounting_withholding_ids
         retention.write({'reversal_date':fields.Date.today(),'reversal_reason':'Ensayo previo modificado'})
@@ -197,6 +207,7 @@ class TreasuryCase(TransactionCase):
             bill.with_user(new_test_user(self.env,login='treasury_supplier_stock',groups='stock.group_stock_user')).read(['amount_residual'])
 
     def test_sanitize_refuses_unrelated_commercial_link(self):
+        self._seeded('erpec_demo_seed.bill')
         self.env['erpec.workspace'].action_sanitize_demo()
         source=self.env.ref('erpec_demo_seed.invoice').invoice_line_ids.sale_line_ids
         other=source.order_id.copy({'order_line':[(5,0,0)]})

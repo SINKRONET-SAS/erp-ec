@@ -579,12 +579,13 @@ class Line(models.Model):
 
 class PayrollMove(models.Model):
     _inherit='account.move'
-    erpec_payroll_id=fields.Many2one('erpec.payroll.period','Cierre de nómina',readonly=True,copy=True,ondelete='restrict')
-    erpec_payroll_opening_balance_id=fields.Many2one('erpec.payroll.opening.balance','Carga de saldos iniciales',readonly=True,copy=True,ondelete='restrict')
+    # copy=False: copiar o revertir un asiento (nota de crédito, duplicar factura) no debe heredar el vínculo con la nómina.
+    erpec_payroll_id=fields.Many2one('erpec.payroll.period','Cierre de nómina',readonly=True,copy=False,ondelete='restrict')
+    erpec_payroll_opening_balance_id=fields.Many2one('erpec.payroll.opening.balance','Carga de saldos iniciales',readonly=True,copy=False,ondelete='restrict')
 
     @api.model_create_multi
     def create(self,values_list):
-        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and any(set(values)&{'erpec_payroll_id','erpec_payroll_opening_balance_id'} for values in values_list):
+        if self.env.context.get('_erpec_payroll_token') is not _INTERNAL and any(values.get('erpec_payroll_id') or values.get('erpec_payroll_opening_balance_id') for values in values_list):
             raise ValidationError('Genera el asiento desde el cierre de nómina o la carga de saldos iniciales.')
         return super().create(values_list)
 

@@ -6,6 +6,7 @@ from psycopg2 import IntegrityError
 class FiscalCase(TransactionCase):
     def setUp(self):
         super().setUp()
+        self.env.company.write({'country_id':self.env.ref('base.ec').id})
         self.partner = self.env['res.partner'].create({'name':'Proveedor sintético'})
         self.bill = self.env['account.move'].create({'move_type':'in_invoice','partner_id':self.partner.id,'invoice_line_ids':[(0,0,{'name':'Servicio','quantity':1,'price_unit':100,'tax_ids':[(5,0,0)]})]})
         group = self.env['account.tax.group'].create({'name':'Retención sintética','l10n_ec_type':'withhold_income_purchase'})

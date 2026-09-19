@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError, AccessError, UserError
 class RetentionCase(TransactionCase):
     def setUp(self):
         super().setUp()
+        self.env.company.write({'country_id':self.env.ref('base.ec').id})
         self.env.user.write({'groups_id':[(4,self.env.ref('account.group_account_user').id)]})
         self.partner=self.env['res.partner'].create({'name':'Tercero sintético retención'})
         self.journal=self.env['account.journal'].search([('company_id','=',self.env.company.id),('type','=','general')],limit=1)

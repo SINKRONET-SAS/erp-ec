@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-09-19T22:00:00.000Z",
+  "scope": "OP20: diagnostico integral del proyecto y correccion del defecto de nomina que bloqueaba notas de credito/debito y duplicado de facturas.",
+  "userInstruction": "realiza un diagnostico integral",
+  "report": "docs/DIAGNOSTICO_INTEGRAL_20260919.md",
+  "findings": {
+    "critical_fixed": "erpec_payroll rechazaba account.move.create con la clave erpec_payroll_id aunque fuera False; copy() y las reversiones fallaban con nomina instalada (demo y Fundador)",
+    "security_fixed": "Fundador sin admin_passwd (contrasena maestra por defecto)",
+    "security_open": [
+      "respaldos anteriores al cifrado",
+      "p12 y clave ajenos en claro en .cache/private",
+      "dependencias antiguas sin pip-audit",
+      "servidores sin endurecer para produccion"
+    ],
+    "tests": "suite completa de 22 modulos: 32 errores -> 1 error abierto y 5 omisiones explicitas (tesoreria sin datos sembrados)"
+  },
+  "newTests": [
+    "erpec_payroll/tests/test_move_copy.py"
+  ],
+  "governanceOpen": [
+    "pendingChecks acumula ~86 entradas sin curar",
+    "faltan prompts de fase OP14-OP19",
+    "versiones de manifiesto sin subir"
+  ],
+  "realMoneyMoved": false
+}

@@ -8,6 +8,7 @@ from odoo.addons.erpec_fiscal_connector.connector import ProtocolError
 class FiscalConnectorCase(TransactionCase):
     def setUp(self):
         super().setUp()
+        self.env.company.write({'country_id':self.env.ref('base.ec').id})
         self.env.user.write({'groups_id':[(4,self.env.ref('account.group_account_user').id)]})
         self.connection=self.env['erpec.fiscal.connection'].create({'company_id':self.env.company.id,'base_url':'http://127.0.0.1:3099','organization_ref':'organizacion-sintetica','empresa_ref':901,'workspace_ref':902,'emission_point_ref':903,'api_key':'sk_test_sintetica_sin_validez'})
         self.capabilities={'contractVersion':'1.0','source':'CUSTOM','ambiente':'PRUEBAS','identity':{'empresaId':901,'workspaceId':902,'empresaAmbiente':'1','ownerAmbiente':'1'},'scopes':['emit:factura','read:comprobantes']}
@@ -129,7 +130,7 @@ class FiscalConnectorCase(TransactionCase):
         with self.assertRaises(AccessError): self.connection.with_user(user).read(['api_key'])
         with self.assertRaises(ValidationError): self.connection.write({'empresa_ref':99})
         self.assertIn('ec_fiscal_job_ids',self.move.get_view(view_type='form')['arch'])
-        workspace=self.env['erpec.workspace'].search([],limit=1)
+        workspace=self.env['erpec.workspace'].search([('company_id','=',self.env.company.id)],limit=1)
         self.assertIn('Conector de pruebas instalado',workspace.fiscal_scope)
         self.assertIn('RUC del proveedor del sistema',workspace.fiscal_scope)
 
