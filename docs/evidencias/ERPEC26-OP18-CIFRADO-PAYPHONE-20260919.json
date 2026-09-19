@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-09-19T18:00:00.000Z",
+  "scope": "OP18: cifrado en reposo del token de PayPhone y almacen de secretos compartido erpec_secrets.",
+  "userInstruction": "si (aplicar el mismo cifrado a PayPhone)",
+  "tests": {
+    "fiscal": "146/146",
+    "payphone_selfservice_suite": "40/40",
+    "newTests": 6
+  },
+  "design": {
+    "sharedModule": "erpec_secrets (secret_store movido; erpec_fiscal_sri.secret_store queda como alias)",
+    "field": "token solo de entrada; token_encrypted + token_loaded; _bearer_token descifra al llamar a PayPhone"
+  },
+  "migration": {
+    "instances": [
+      "erpec_fundador",
+      "erpec_a"
+    ],
+    "result": "tokens en claro 1 -> 0 en ambas; VACUUM FULL; descifrado verificado; certificado del Fundador sigue verificado",
+    "backups": "sin datos de las tablas con secretos"
+  },
+  "flakyTestFixed": "las pruebas de alteracion anadian AA al final (a veces no cambia el token); ahora cambian un caracter del medio",
+  "residual": "bases de pruebas erpec_pp_test_* con tokens sinteticos en claro (no reales)",
+  "pending": [
+    "rotacion de clave maestra",
+    "definir ERPEC_SECRET_KEY en el despliegue y respaldarla aparte"
+  ],
+  "realMoneyMoved": false
+}

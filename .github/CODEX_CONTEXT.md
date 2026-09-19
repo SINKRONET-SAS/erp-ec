@@ -455,3 +455,8 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Defecto propio corregido: la primera migración cifró el base64 en vez de los bytes del `.p12`; se detectó verificando el certificado real y se reparó (migración 1.5.1 con pruebas).
 - El certificado de SINKRONET quedó verificado (CA reconocida, prueba de firma OK, vigente hasta 2029-03-10). 146/146 pruebas.
 - Pendiente: PayPhone sigue sin cifrar; sin rotación de clave; definir `ERPEC_SECRET_KEY` en el despliegue.
+
+## OP18 — Cifrado en reposo del token de PayPhone y módulo `erpec_secrets` — 19-09-2026
+
+- El almacén de cifrado pasó al módulo compartido `erpec_secrets`; el token de PayPhone ya no se guarda en claro (mismo patrón que el certificado: campo de entrada vacío al leer, `token_encrypted`, `_bearer_token()`). Migración aplicada en `erpec_fundador` y `erpec_a`; 146/146 fiscales y 40/40 de PayPhone/autoservicio.
+- Las pruebas de alteración se hicieron deterministas (cambiar un carácter del medio). Pendiente: rotación de clave maestra y `ERPEC_SECRET_KEY` en el despliegue.

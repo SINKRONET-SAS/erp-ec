@@ -70,8 +70,9 @@ class SecretStoreCase(TransactionCase):
         self.assertFalse(self.certificate.verified)
 
     def test_tampered_or_moved_ciphertext_is_rejected(self):
-        self.env.flush_all()
-        self.env.cr.execute('UPDATE erpec_fiscal_certificate SET p12_encrypted = p12_encrypted || %s WHERE id=%s', ['AA', self.certificate.id])
+        token = self._row()[0]
+        flipped = token[:40] + ('B' if token[40] != 'B' else 'C') + token[41:]
+        self.env.cr.execute('UPDATE erpec_fiscal_certificate SET p12_encrypted=%s WHERE id=%s', [flipped, self.certificate.id])
         self.certificate.invalidate_recordset()
         with self.assertRaisesRegex(ValidationError, 'descifrar'):
             self.certificate._signing_material()

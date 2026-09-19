@@ -10,6 +10,7 @@ import requests
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 from odoo.addons.erpec_suite.models.commercial import administrator
+from odoo.addons.erpec_secrets import secret_store
 
 _logger = logging.getLogger(__name__)
 API_URL = 'https://pay.payphonetodoesposible.com/api/button/'
@@ -34,7 +35,12 @@ class Provider(models.Model):
     name = fields.Char(default='PayPhone', required=True)
     company_id = fields.Many2one('res.company', string='Organización operadora', required=True,
                                 default=lambda self: self.env.company)
-    token = fields.Char('Token de la aplicación', groups='base.group_system', copy=False)
+    # El token NUNCA se guarda en claro: `token` es solo de entrada (se lee siempre vacío) y su inverso lo cifra con
+    # erpec_secrets; solo el servidor lo descifra, al llamar a PayPhone (_bearer_token).
+    token = fields.Char('Token de la aplicación (se guarda cifrado)', compute='_compute_token_input', inverse='_inverse_token',
+                        groups='base.group_system', copy=False)
+    token_encrypted = fields.Char('Token cifrado', groups='base.group_system', copy=False, readonly=True)
+    token_loaded = fields.Boolean('Token cargado (cifrado)', readonly=True, copy=False)
     store_id = fields.Char('StoreID de la tienda', groups='base.group_system', copy=False)
     public_url = fields.Char('Dominio autorizado', required=True,
                             help='Dominio HTTPS público desde el que PayPhone confirmará el pago (sin ruta ni parámetros).')
@@ -44,12 +50,32 @@ class Provider(models.Model):
     _sql_constraints = [('provider_company_unique', 'unique(company_id)',
                          'Ya existe una configuración PayPhone para esta organización.')]
 
-    @api.depends('token', 'store_id', 'public_url', 'test_acknowledged')
+    def _compute_token_input(self):
+        self.token = False
+
+    def _inverse_token(self):
+        for record in self:
+            value = (record.token or '').strip()
+            if value:
+                models.Model.write(record.sudo(), {
+                    'token_encrypted': secret_store.encrypt(value.encode('utf-8'), 'payphone:%d:token' % record.id), 'token_loaded': True})
+
+    def _bearer_token(self):
+        self.ensure_one()
+        record = self.sudo()
+        if not record.token_encrypted:
+            raise ValidationError('Configura Token, StoreID y confirma el ambiente antes de continuar.')
+        try:
+            return secret_store.decrypt(record.token_encrypted, 'payphone:%d:token' % record.id).decode('utf-8')
+        except secret_store.SecretError as error:
+            raise ValidationError(str(error)) from error
+
+    @api.depends('token_loaded', 'store_id', 'public_url', 'test_acknowledged')
     def _compute_status(self):
         for record in self:
             record.return_url = (record.public_url or '').rstrip('/') + RETURN_PATH
             record.status = ('Lista para preparar un cobro; conexión externa aún no verificada'
-                             if record.token and record.store_id and record.test_acknowledged
+                             if record.token_loaded and record.store_id and record.test_acknowledged
                              else 'Pendiente: Token, StoreID y confirmación del ambiente configurado')
 
     @api.constrains('public_url')
@@ -75,11 +101,11 @@ class Provider(models.Model):
 
     def _request(self, endpoint, payload):
         self.ensure_one()
-        if not self.token or not self.store_id or not self.test_acknowledged:
+        if not self.token_loaded or not self.store_id or not self.test_acknowledged:
             raise ValidationError('Configura Token, StoreID y confirma el ambiente antes de continuar.')
         try:
             response = requests.post(API_URL + endpoint, json=payload, headers={
-                'Authorization': 'Bearer ' + self.token.strip(),
+                'Authorization': 'Bearer ' + self._bearer_token(),
                 'Content-Type': 'application/json', 'Origin': self.public_url.rstrip('/'),
                 'Referer': self.public_url.rstrip('/') + '/',
             }, timeout=(5, 15), allow_redirects=False)
@@ -221,7 +247,7 @@ class Payment(models.Model):
         if self.state != 'draft':
             raise ValidationError('El pago ya fue enviado. Revisa su estado; no se enviará un segundo cobro.')
         provider = self.provider_id
-        if not provider.token or not provider.store_id or not provider.test_acknowledged:
+        if not provider.token_loaded or not provider.store_id or not provider.test_acknowledged:
             raise ValidationError('Completa la configuración privada de PayPhone.')
         if self.subscription_id.billing_owner != 'payphone_test' or self.subscription_id.activated_at:
             raise ValidationError('El contrato ya no corresponde a un borrador pendiente de pago.')
