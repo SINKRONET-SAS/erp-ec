@@ -97,6 +97,7 @@ class Guide(models.Model):
         company, partner = self.company_id, self.partner_id.commercial_partner_id
         if company.country_id.code != 'EC':
             raise ValidationError('Se requiere una empresa de Ecuador.')
+        company._check_regime_supported()
         if not company.ec_native_ordinary or not company.ec_native_accounting:
             raise ValidationError('Completa el perfil fiscal de la empresa (perfil ordinario y obligación contable).')
         if not self.line_ids:

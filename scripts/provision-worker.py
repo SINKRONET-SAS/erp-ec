@@ -129,6 +129,7 @@ def operate(job):
                 "lang=env['res.lang'].with_context(active_test=False).search([('code','=','es_EC')],limit=1)\n"
                 "env['base.language.install'].create({'lang_ids':[(6,0,lang.ids)],'overwrite':False}).lang_install()\n"
                 "env.ref('base.user_admin').write({'lang':'es_EC','tz':'America/Guayaquil'})\n"
+                "env.ref('base.user_admin').write({'groups_id':[(4,env.ref('account.group_account_user').id),(4,env.ref('account.group_account_manager').id)]})\n"
                 "if not env['erpec.workspace'].search_count([('company_id','=',c.id)]):\n"
                 "    env['erpec.workspace'].create({'company_id':c.id})\n"
                 "env.cr.commit()\n")

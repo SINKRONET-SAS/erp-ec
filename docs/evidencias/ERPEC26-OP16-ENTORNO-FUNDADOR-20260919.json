@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-09-19T14:00:00.000Z",
+  "scope": "OP16: configuracion del entorno del Fundador (SINKRONET S.A.S.) y campo de regimen fiscal.",
+  "userInstruction": "configuremos el entorno del Founder NOMBRE: SINKRONET S.A.S., R.U.C. 1793235327001, DIRECCION: LOS CARDENALES SN Y AZULEJOS, REGIMEN FISCAL: GENERAL",
+  "tests": {
+    "total": 133,
+    "failed": 0,
+    "errors": 0
+  },
+  "founder": {
+    "backup": ".cache/windows/backups/fundador-fiscal-config-20260919-083747",
+    "company": "SINKRONET S.A.S. 1793235327001, LOS CARDENALES SN Y AZULEJOS, regimen general, obligada a contabilidad SI",
+    "modules": "fiscal native, sri, withholding, guide instalados",
+    "userGroups": "fundador sin grupos contables: agregados",
+    "migrationDryRun": "crear punto 001-001 y adoptar INV (no aplicado)"
+  },
+  "codeChanges": [
+    "ec_tax_regime en res.company con bloqueo RIMPE en todas las vias de emision",
+    "provision-worker: administrador con grupos contables"
+  ],
+  "notInvented": [
+    "perfil ordinario (contribuyente especial/agente de retencion)",
+    "establecimiento y punto de emision registrados",
+    "certificado de SINKRONET"
+  ],
+  "pending": [
+    "confirmar perfil ordinario",
+    "establecimiento y punto reales",
+    "certificado propio de SINKRONET"
+  ],
+  "realMoneyMoved": false
+}

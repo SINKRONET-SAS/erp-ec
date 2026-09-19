@@ -799,6 +799,7 @@ class Move(models.Model):
         certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
+        self.company_id._check_regime_supported()
         point = self.journal_id.ec_point_id
         if not point:
             raise ValidationError('Asigna un punto de emisión SRI al diario de compras que emite liquidaciones.')
@@ -854,6 +855,7 @@ class Move(models.Model):
         certificate = self.env['erpec.fiscal.certificate'].search([('company_id', '=', self.company_id.id)], limit=1)
         if not certificate or not certificate.verified:
             raise ValidationError('Configura y verifica primero el certificado de firma electrónica de esta empresa.')
+        self.company_id._check_regime_supported()
         self.journal_id._sri_check_ambiente()
         point = self.journal_id.ec_point_id
         if point and not (self.l10n_latam_document_number or '').startswith('%s-%s-' % (point.establishment, point.emission)):

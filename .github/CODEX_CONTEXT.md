@@ -438,3 +438,9 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Ejecutada la migración de diarios a puntos con los datos del titular (establecimiento PRINCIPAL, LOS CARDENALES SN Y AZULEJOS, punto PRUEBAS): `INV` adoptado, `FP001` archivado, comprobantes intactos. Modelo normalizado con `erpec.fiscal.establishment` (padre, principal, protección) tras revisar sinkroniq-mobile; auditoría `audit_integrity`; frontend para crear establecimientos y puntos; punto por usuario; diario de liquidaciones.
 - Reembolsos: la implementación de referencia (codDocReembolso = código del sustento, totalComprobantesReembolso = cantidad) se AUTORIZA en celcer; la lectura literal de la ficha quedaba PENDIENTE.
 - 132/132 pruebas, demo actualizada con respaldo. Pendiente: empresa 2 sin dirección, producción real supervisada, RIDE oficial.
+
+## OP16 — Entorno del Fundador (SINKRONET S.A.S.) — 19-09-2026
+
+- `erpec_fundador` configurada con SINKRONET S.A.S., RUC 1793235327001, LOS CARDENALES SN Y AZULEJOS, régimen general (campo nuevo `ec_tax_regime`, RIMPE bloqueado), obligada a contabilidad; módulos fiscales instalados con respaldo. Detalle en `docs/ENTORNO_FUNDADOR.md`.
+- Hallazgo: el admin de una instancia nueva no tenía grupos contables y no veía los menús fiscales; corregido para el Fundador y en `scripts/provision-worker.py`.
+- Pendiente de datos del titular: perfil ordinario, establecimiento/punto registrados y certificado propio de SINKRONET.

@@ -10,6 +10,13 @@ class Company(models.Model):
     _inherit='res.company'
     ec_native_ordinary=fields.Boolean('Perfil ordinario revisado, sin atributos fiscales especiales')
     ec_native_accounting=fields.Selection([('SI','Sí'),('NO','No')],string='Obligado a llevar contabilidad (verificar RUC)')
+    ec_tax_regime=fields.Selection([('general','General'),('rimpe_emprendedor','RIMPE emprendedor'),('rimpe_popular','RIMPE negocio popular')],string='Régimen fiscal',
+        help='Los regímenes RIMPE exigen la leyenda contribuyenteRimpe en los comprobantes, que este motor aún no genera: no se permite emitir hasta ampliarlo.')
+
+    def _check_regime_supported(self):
+        for company in self:
+            if company.ec_tax_regime and company.ec_tax_regime!='general':
+                raise ValidationError('El régimen %s requiere ampliar el XML (leyenda contribuyenteRimpe) antes de emitir; este motor solo admite el régimen general.'%dict(company._fields['ec_tax_regime'].selection)[company.ec_tax_regime])
 
 
 class Move(models.Model):
@@ -33,6 +40,7 @@ class Move(models.Model):
             raise ValidationError('Se requiere factura de venta contabilizada en USD de Ecuador.')
         if self.ec_fiscal_job_ids:raise ValidationError('Esta factura ya está asignada al Facturador; conserva su autoridad y trazabilidad.')
         company=self.company_id;partner=self.partner_id.commercial_partner_id
+        company._check_regime_supported()
         if not company.ec_native_ordinary or not company.ec_native_accounting:
             raise ValidationError('El perfil tributario especial requiere ampliar el XML antes de usarlo.')
         identification='04' if partner.l10n_latam_identification_type_id==self.env.ref('l10n_ec.ec_ruc') else '05' if partner.l10n_latam_identification_type_id==self.env.ref('l10n_ec.ec_dni') else ''

@@ -98,6 +98,7 @@ class Withholding(models.Model):
             raise ValidationError('Se requiere una empresa de Ecuador y USD.')
         if not self.sri_sustento_code:
             raise ValidationError('Indica el sustento tributario (ATS) de la compra.')
+        company._check_regime_supported()
         if not company.ec_native_ordinary or not company.ec_native_accounting:
             raise ValidationError('Completa el perfil fiscal de la empresa (perfil ordinario y obligación contable).')
         subject_type = self._identification_code(partner)

@@ -70,3 +70,12 @@ class EstablishmentCase(TransactionCase):
             'name': 'Heredado', 'code': 'AUD1', 'type': 'sale', 'company_id': self.env.company.id,
             'l10n_latam_use_documents': True, 'l10n_ec_entity': '087', 'l10n_ec_emission': '088'})
         self.assertTrue([item for item in self.Point.audit_integrity() if '087-088' in item])
+
+
+    def test_rimpe_regime_blocks_native_emission(self):
+        company = self.env.company
+        company.ec_tax_regime = 'general'
+        company._check_regime_supported()
+        company.ec_tax_regime = 'rimpe_emprendedor'
+        with self.assertRaisesRegex(ValidationError, 'RIMPE'):
+            company._check_regime_supported()
