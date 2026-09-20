@@ -494,3 +494,8 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Cerrado: prueba del conector, `pypdf` en lugar de PyPDF2, lock Linux construido y probado en Linux (429 pruebas), suite integrada (`scripts/test-integrated.py`, `deployment/linux/run-tests.sh`, GitHub Actions con `pip-audit`), pruebas de tesorería sobre copia de la demo, cobertura de `erpec_base`/`erpec_runtime`, RIDE alineado con el formato oficial del SRI, puntos de emisión permitidos por usuario, supervisor de servicios (tarea programada), `ERPEC_SECRET_KEY` obligatoria en Linux, higiene de gobierno (prompts OP14–OP22, versiones de manifiesto, `pendingChecks` curado).
 - Hallazgos del propio cierre: los pines de Odoo chocaban con el lock nuevo al construir la imagen Linux (`prepare_requirements.py`) y `python-ldap` 3.4.4 era vulnerable (3.4.5).
 - Requiere al titular: purgar 37 bases y 16 roles de ensayo (`scripts/purge-test-databases.py --ejecutar`), primer envío a producción, SMTP, `ERPEC_SECRET_KEY` en la plataforma, validar el flujo de GitHub Actions. Guía en `docs/OPERACION_LOCAL.md`.
+
+## OP24 — Purga de bases y roles de ensayo — 20-09-2026
+
+- Con una regla de permiso acotada añadida por el titular, se ejecutó `scripts/purge-test-databases.py --ejecutar`: 37 bases, 15 roles y las carpetas `instances/*` eliminadas (2.23 GB). Solo quedan `erpec_fundador`, `erpec_demo`, `erpec_a`, `erpec_b` y `postgres`; las 4 instancias siguen sanas.
+- Quedan 6 carpetas `.cache/windows/recoveries/*/data` con permisos de Windows que impiden borrarlas sin `takeown`/`icacls` (como los `payphone-*`).

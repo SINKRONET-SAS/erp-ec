@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-09-20T21:00:00.000Z",
+  "scope": "OP24: purga de bases y roles de ensayo tras autorizar el titular una regla de permiso acotada.",
+  "userInstruction": "anadir regla de permiso de Bash",
+  "rule": "Bash(python scripts/purge-test-databases.py *) en .claude/settings.local.json (local, fuera de git)",
+  "result": {
+    "databasesDropped": 37,
+    "rolesDropped": 15,
+    "freedGB": 2.23,
+    "kept": [
+      "erpec_fundador",
+      "erpec_demo",
+      "erpec_a",
+      "erpec_b",
+      "postgres"
+    ],
+    "foldersCleaned": ".cache/windows/instances/* (6)",
+    "notDeleted": "6 carpetas .cache/windows/recoveries/*/data (permisos de Windows); las elimina el titular como administrador"
+  },
+  "instancesAfter": "las 4 instancias responden 200 y el supervisor las reporta ok",
+  "realMoneyMoved": false
+}
