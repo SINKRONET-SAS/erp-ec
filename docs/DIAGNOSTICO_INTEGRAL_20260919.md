@@ -31,14 +31,14 @@ Cada módulo se probó aislado; la combinación completa nunca se ejecutaba. Rec
 | # | Hallazgo | Severidad | Estado |
 |---|---|---|---|
 | S1 | El Fundador no tenía `admin_passwd` (contraseña maestra de Odoo por defecto). | Alta | **Corregido**: clave aleatoria en `odoo.conf`; verificado que el valor por defecto ya no permite volcar la base. |
-| S2 | 98 carpetas de respaldo (4.8 GB, 92 volcados, desde 09-09) anteriores al cifrado: pueden contener certificados y tokens en claro. | Alta | Abierto: purgar o cifrar los que no se necesiten. |
-| S3 | `.cache/private/fiscal-pruebas` guarda el `.p12` y la contraseña (`clave.txt`) de **otra persona** en claro (fuera de git). | Media | Abierto: eliminar ahora que SINKRONET tiene certificado propio, o moverlo al almacén cifrado. |
-| S4 | Dependencias de versión antigua (cryptography 42.0.8, Werkzeug 3.0.1, requests 2.31.0, urllib3 2.0.7, Jinja2 3.1.2, Pillow 10.2.0, lxml 5.2.1). Varias tienen avisos de seguridad publicados en versiones posteriores; **no se pasó un escáner** (sin `pip-audit`). | Media | Abierto: actualizar dentro de lo compatible con Odoo 18 y ejecutar `pip-audit` antes de producción. |
+| S2 | 98 carpetas de respaldo (4.8 GB, 92 volcados, desde 09-09) anteriores al cifrado: pueden contener certificados y tokens en claro. | Alta | **Resuelto el 20-09-2026** (OP22): 88 respaldos anteriores al cifrado purgados; quedan los `claves-*`, 3 de migración del 18-09 y 4 puntos de restauración nuevos cifrados. |
+| S3 | `.cache/private/fiscal-pruebas` guarda el `.p12` y la contraseña (`clave.txt`) de **otra persona** en claro (fuera de git). | Media | **Resuelto el 20-09-2026** (OP22): carpeta eliminada. |
+| S4 | Dependencias de versión antigua (cryptography 42.0.8, Werkzeug 3.0.1, requests 2.31.0, urllib3 2.0.7, Jinja2 3.1.2, Pillow 10.2.0, lxml 5.2.1). Varias tienen avisos de seguridad publicados en versiones posteriores; `pip-audit` halló 113 avisos en 14 paquetes. | Media | **Resuelto el 20-09-2026** (OP22) salvo PyPDF2 (sin versión corregida; sucesor `pypdf`). Suite completa 421 pruebas sin fallos nuevos y emisión real autorizada con la pila nueva. |
 | S5 | Servidores en modo desarrollo (`workers=0`, sin HTTPS ni `proxy_mode`), solo escuchan en 127.0.0.1. `ERPEC_SECRET_KEY` sin definir en un despliegue real. | Media (producción) | Abierto: endurecimiento de despliegue. |
 | S6 | Archivos versionados: ningún secreto, `.gitignore` cubre `.cache`, `.env`, `*.p12`, `*.key`. Columnas sensibles en las 4 instancias: solo valores cifrados. | — | Correcto. |
 
 ## 4. Instancias y datos
-- **Fundador** (SINKRONET S.A.S.): 20 módulos erpec, 25 crons al día, certificado verificado (vence en 903 días), régimen general, perfil ordinario confirmado, punto 001-004 en pruebas. **Ninguna emisión SRI registrada desde la aplicación**: todas las autorizaciones reales se hicieron con scripts externos y el certificado de otra persona. Falta el ensayo de extremo a extremo con el certificado propio dentro de la aplicación. 1 factura en borrador; el diario `INV` 001-001 por defecto queda sin uso (la auditoría lo señala).
+- **Fundador** (SINKRONET S.A.S.): 20 módulos erpec, 25 crons al día, certificado verificado (vence en 903 días), régimen general, perfil ordinario confirmado, punto 001-004 en pruebas. Al momento del diagnóstico no había emisiones desde la aplicación; el 20-09-2026 (OP21/OP22) se emitieron y autorizaron en pruebas dos facturas y una nota de crédito con el certificado propio. 1 factura en borrador; el diario `INV` 001-001 por defecto queda sin uso (la auditoría lo señala).
 - **Demo**: sana; los crons "atrasados" se debían a que el servidor estuvo detenido. Empresa 2 sin establecimiento ni dirección (auditoría lo señala).
 - **Pilotos A y B**: responden; A tiene su token PayPhone cifrado.
 - **Correo saliente**: sin servidor SMTP configurado; 7 correos en excepción en el Fundador y 2 en la demo.
@@ -58,10 +58,10 @@ Factura (incluye IVA no objeto/exento y reembolsos), nota de crédito, nota de d
 - Cobertura de pruebas baja en `erpec_provision` (4), `erpec_operations` (5), y ninguna en `erpec_base` y `erpec_runtime`.
 
 ## 8. Pendientes vigentes, por prioridad
-1. **Ensayo de extremo a extremo en la aplicación del Fundador** con el certificado propio (factura → firma → SRI pruebas → RIDE), antes de hablar de producción.
-2. Purgar o cifrar respaldos anteriores al 19-09 (S2) y eliminar el certificado ajeno en claro (S3).
+1. ~~Ensayo de extremo a extremo en la aplicación del Fundador~~ — hecho el 20-09-2026 (OP21/OP22).
+2. ~~Purgar respaldos y certificado ajeno~~ — hecho el 20-09-2026 (OP22).
 3. Definir `ERPEC_SECRET_KEY` en el despliegue, respaldar las claves aparte y retirar las anteriores tras un periodo de confianza.
-4. Actualizar dependencias y pasar `pip-audit`; endurecer el despliegue (workers, HTTPS, proxy, supervisor de servicios).
+4. ~~Actualizar dependencias y pasar `pip-audit`~~ — hecho (OP22, queda PyPDF2 → `pypdf`). Pendiente: endurecer el despliegue (workers, HTTPS, proxy, supervisor de servicios).
 5. Suite integrada con todos los módulos como paso obligatorio; resolver la prueba abierta del conector y sembrar los datos de tesorería.
 6. Configurar el correo saliente (`EMAIL_*`).
 7. Primer envío real a producción, supervisado por el cliente (runbook).

@@ -482,3 +482,9 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - El ensayo mostró que la factura exige forma de pago y dirección del comprador (también consumidor final), y destapó defectos del RIDE de la factura (emisión fuera de la caja, etiqueta sobre el código de barras, forma de pago sin descripción, totales fuera del margen). Corregidos usando los helpers compartidos; prueba nueva. 159/159 en la suite fiscal.
 - Evidencia: `docs/evidencias/ride-fundador-sinkronet-factura-001-004-000000001.pdf`.
 - Pendiente: purga de respaldos previos al cifrado y del p12 ajeno (requiere confirmación), dependencias, endurecimiento, producción nunca ejercitada.
+
+## OP22 — Purga de respaldos y actualización de dependencias — 20-09-2026
+
+- Purgados 88 respaldos anteriores al cifrado (4.19 GB) y el certificado ajeno en `.cache/private/fiscal-pruebas`; se conservan `claves-*`, los `migracion-install` del 18-09 y 4 puntos de restauración nuevos ya cifrados. Dos carpetas con ACL denegada las eliminó el titular como administrador.
+- `pip-audit`: 113 avisos en 14 paquetes. Actualizados 13 (cryptography 50, lxml 6.1, Werkzeug 3.1, requests 2.34, urllib3 2.8, zeep 4.3, Pillow 12.3, etc.) en `requirements-windows.txt` y `deployment/linux/requirements-linux.lock`. Validado en un entorno paralelo con la suite completa (421 pruebas, 0 fallos nuevos), consulta real al SRI y una factura autorizada desde el Fundador. Queda PyPDF2 (sin versión corregida; migrar a `pypdf`). El lock de Linux no se probó en Linux.
+- Pendiente: endurecer el despliegue (workers, HTTPS, proxy, supervisor), producción nunca ejercitada, curar `pendingChecks`.

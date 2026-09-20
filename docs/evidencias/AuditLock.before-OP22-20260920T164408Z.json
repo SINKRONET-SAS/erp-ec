@@ -4,19 +4,18 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-20T16:44:08.922Z",
+  "updatedAt": "2026-09-20T14:22:46.574Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "deployment/linux/requirements-linux.lock",
-    "docs/DIAGNOSTICO_INTEGRAL_20260919.md",
-    "docs/evidencias/AuditLock.before-OP22-20260920T164408Z.json",
-    "docs/evidencias/ERPEC26-OP22-PURGA-DEPENDENCIAS-20260920.json",
-    "requirements-windows.txt"
+    "addons/erpec_fiscal_sri/ride.py",
+    "addons/erpec_fiscal_sri/tests/test_ride.py",
+    "docs/evidencias/AuditLock.before-OP21-20260920T142246Z.json",
+    "docs/evidencias/ERPEC26-OP21-EXTREMO-A-EXTREMO-FUNDADOR-20260920.json"
   ],
   "validationChecks": [
-    "OP22: 88 respaldos previos al cifrado y el certificado ajeno purgados; 4 puntos de restauracion nuevos legibles",
-    "OP22: 13 dependencias actualizadas segun pip-audit; suite completa 421 pruebas sin fallos nuevos; pip check limpio",
-    "OP22: consulta real al SRI y factura 001-004-000000002 autorizada desde el Fundador con la pila nueva"
+    "OP21: factura y nota de credito emitidas desde la aplicacion del Fundador con el certificado de SINKRONET y autorizadas por el SRI (pruebas)",
+    "OP21: RIDE de la factura corregido (emision, clave de acceso, forma de pago, margen) con prueba nueva",
+    "OP21: suite fiscal y de secretos 159/159 sin fallos"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -113,23 +112,18 @@
     "OP21: purgar respaldos anteriores al cifrado y el p12 ajeno en claro (requiere confirmacion del titular)",
     "OP21: actualizar dependencias y pasar pip-audit",
     "OP21: endurecer despliegue (workers, HTTPS, proxy, supervisor de servicios)",
-    "OP21: primer envio a produccion nunca ejercitado",
-    "OP22: migrar PyPDF2 a pypdf (sin version corregida)",
-    "OP22: probar el lock de Linux en Linux",
-    "OP22: endurecer despliegue (workers, HTTPS, proxy, supervisor de servicios)",
-    "OP22: primer envio a produccion nunca ejercitado"
+    "OP21: primer envio a produccion nunca ejercitado"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "7f088725aa023983c42529fc1b37973aeb9770d0446ef8681ea28d89b5985d35",
-    "deployment/linux/requirements-linux.lock": "e4da66307ebbbdd6b89ae760144884c42ac3975e69671428dd3c4607dd23a1dd",
-    "docs/DIAGNOSTICO_INTEGRAL_20260919.md": "fa47c8897a074eda0d1f9afa9379c9497a8b2f6af20abec7e21c01512c47d77f",
-    "docs/evidencias/AuditLock.before-OP22-20260920T164408Z.json": "5b0d28a416dd3777dd683b7b29634d0dd7aed9c6fd74c002f9f7c5095c47892d",
-    "docs/evidencias/ERPEC26-OP22-PURGA-DEPENDENCIAS-20260920.json": "7a6ddeeae448e3c9512e7676ddc50320a6d502d8762821bd4c3168846277d404",
-    "requirements-windows.txt": "3d2a76ea913fb842a83eb59b2d664fc37d043b2024e4141f31e24255a4e187c1"
+    ".github/CODEX_CONTEXT.md": "e22bf9eff3e19e58836120c965746d6dd7e592b76af1216c294efe20bdf36765",
+    "addons/erpec_fiscal_sri/ride.py": "1364d0dca695a97fc13c24b8dddea9bc57205310321b16d03cff4835969fb7c9",
+    "addons/erpec_fiscal_sri/tests/test_ride.py": "e1af264475bfff43d69188847f379bfa2f416f690bb1086f7dd1c3cfd2d45cd6",
+    "docs/evidencias/AuditLock.before-OP21-20260920T142246Z.json": "460abdfb52f9d92a52e80f71675853232576c4241866b3ddd0ca4388f7b14c7d",
+    "docs/evidencias/ERPEC26-OP21-EXTREMO-A-EXTREMO-FUNDADOR-20260920.json": "579a8237702e7ff9817b559a3382596c58166fc7028a691f665dc9ce00316ce1"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP22-20260920T164408Z.json",
-  "previousAuditLockHash": "5b0d28a416dd3777dd683b7b29634d0dd7aed9c6fd74c002f9f7c5095c47892d",
-  "signature": "42fbb77e1833b92166fa8a7eb4b2f73eba34be07c099d841db0e2c3b5903a2e2",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP21-20260920T142246Z.json",
+  "previousAuditLockHash": "460abdfb52f9d92a52e80f71675853232576c4241866b3ddd0ca4388f7b14c7d",
+  "signature": "6693011877fe6558dd453f9d5dad52cc14d034a34ce5fb6c4db8abd670186b7b",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
