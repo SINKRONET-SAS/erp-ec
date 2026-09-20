@@ -475,3 +475,10 @@ El titular autoriza crear y ejecutar docs/PLAN_HAIKY_UI_UX.md y prompts ERPEC26-
 - Suite completa de los 22 módulos: de 32 errores a 1 abierto (conector) y 5 omisiones explícitas de tesorería sin datos sembrados.
 - Fundador: `admin_passwd` aleatorio (antes contraseña maestra por defecto).
 - Abierto: ensayo de extremo a extremo con el certificado de SINKRONET en la aplicación, respaldos y certificado ajeno en claro, dependencias, endurecimiento, curado de `pendingChecks`, prompts OP14–OP19.
+
+## OP21 — Ensayo de extremo a extremo en el Fundador y corrección del RIDE de la factura — 20-09-2026
+
+- En la aplicación de `erpec_fundador` (SINKRONET S.A.S., punto 001-004, pruebas): factura firmada con su propio certificado y **autorizada por el SRI**, y nota de crédito creada con el asistente nativo y **autorizada** (confirma el arreglo de nómina de OP21 en la instancia real).
+- El ensayo mostró que la factura exige forma de pago y dirección del comprador (también consumidor final), y destapó defectos del RIDE de la factura (emisión fuera de la caja, etiqueta sobre el código de barras, forma de pago sin descripción, totales fuera del margen). Corregidos usando los helpers compartidos; prueba nueva. 159/159 en la suite fiscal.
+- Evidencia: `docs/evidencias/ride-fundador-sinkronet-factura-001-004-000000001.pdf`.
+- Pendiente: purga de respaldos previos al cifrado y del p12 ajeno (requiere confirmación), dependencias, endurecimiento, producción nunca ejercitada.

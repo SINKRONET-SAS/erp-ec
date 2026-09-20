@@ -27,6 +27,12 @@ EMISION_LABEL = {'1': 'NORMAL', '2': 'CONTINGENCIA'}
 # Solo el código '2' (IVA) está confirmado y en uso por engine.py; otros códigos del catálogo
 # oficial (p. ej. ICE, IRBPNR) se muestran genéricos por número, sin asumir su nombre.
 IMPUESTO_LABEL = {'2': 'IVA'}
+# Catálogo SRI de formas de pago (tabla 24 de la ficha técnica).
+FORMA_PAGO_LABEL = {
+    '01': 'SIN UTILIZACIÓN DEL SISTEMA FINANCIERO', '15': 'COMPENSACIÓN DE DEUDAS', '16': 'TARJETA DE DÉBITO',
+    '17': 'DINERO ELECTRÓNICO', '18': 'TARJETA PREPAGO', '19': 'TARJETA DE CRÉDITO',
+    '20': 'OTROS CON UTILIZACIÓN DEL SISTEMA FINANCIERO', '21': 'ENDOSO DE TÍTULOS',
+}
 PORCENTAJE_LABEL = {'0': '0%', '2': '12%', '3': '14%', '4': '15%', '5': '5%', '6': 'no objeto', '7': 'exento'}
 
 HEADER_COLOR = colors.HexColor('#1A2840')
@@ -55,27 +61,7 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
     right = width - margin
     content_width = right - left
 
-    def box(x, y_top, w, h, fill=None):
-        """Recuadro con esquina superior en y_top (convención propia: y decrece hacia abajo)."""
-        page.setStrokeColor(BORDER_COLOR)
-        page.setLineWidth(0.6)
-        if fill is not None:
-            page.setFillColor(fill)
-            page.rect(x, y_top - h, w, h, stroke=1, fill=1)
-            page.setFillColor(colors.black)
-        else:
-            page.rect(x, y_top - h, w, h, stroke=1, fill=0)
-
-    def text_at(x, y_top, value, size=8, bold=False, color=colors.black, align='left', w=None):
-        page.setFillColor(color)
-        page.setFont('Helvetica-Bold' if bold else 'Helvetica', size)
-        if align == 'right' and w:
-            page.drawRightString(x + w, y_top, value)
-        elif align == 'center' and w:
-            page.drawCentredString(x + w / 2, y_top, value)
-        else:
-            page.drawString(x, y_top, value)
-        page.setFillColor(colors.black)
+    box, text_at = _drawing_helpers(page)
 
     # ── Recuadro emisor (izquierda) ────────────────────────────────────────
     y_top = height - margin
@@ -121,7 +107,7 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
         size=9, bold=True, align='center', w=right_box_w)
 
     auth_top = y_top - 12 * mm
-    auth_h = 30 * mm
+    auth_h = 35 * mm
     box(right_box_x, auth_top, right_box_w, auth_h, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
     text_at(right_box_x + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
@@ -139,7 +125,7 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
             size=7, bold=True, align='right', w=0)
     ry -= 4 * mm
     text_at(right_box_x + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
-    ry -= 8 * mm
+    ry -= 9.5 * mm
     clave_acceso = _text(info, 'claveAcceso')
     if clave_acceso:
         # Code128 es un Flowable, no una Drawing: se dibuja directo con drawOn(), no con
@@ -261,7 +247,8 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
 
     pay_y = y
     for pago in detail.findall('pagos/pago'):
-        text_at(left, pay_y, 'Forma de pago %s: %s' % (_text(pago, 'formaPago'), _text(pago, 'total')), size=8)
+        forma = _text(pago, 'formaPago')
+        text_at(left, pay_y, 'Forma de pago: %s — %s' % (FORMA_PAGO_LABEL.get(forma, 'código %s' % forma), _text(pago, 'total')), size=8)
         pay_y -= 4.5 * mm
 
     info_adicional = factura.findall('infoAdicional/campoAdicional')

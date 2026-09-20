@@ -4,18 +4,25 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-20T14:22:46.574Z",
+  "updatedAt": "2026-09-19T21:29:16.953Z",
   "filesModified": [
     ".github/CODEX_CONTEXT.md",
-    "addons/erpec_fiscal_sri/ride.py",
-    "addons/erpec_fiscal_sri/tests/test_ride.py",
-    "docs/evidencias/AuditLock.before-OP21-20260920T142246Z.json",
-    "docs/evidencias/ERPEC26-OP21-EXTREMO-A-EXTREMO-FUNDADOR-20260920.json"
+    "addons/erpec_fiscal_connector/tests/test_connector.py",
+    "addons/erpec_fiscal_documents/tests/test_documents.py",
+    "addons/erpec_payroll/models.py",
+    "addons/erpec_payroll/tests/__init__.py",
+    "addons/erpec_payroll/tests/test_move_copy.py",
+    "addons/erpec_treasury/tests/test_treasury.py",
+    "addons/erpec_withholding_accounting/tests/test_accounting.py",
+    "docs/DIAGNOSTICO_INTEGRAL_20260919.md",
+    "docs/evidencias/AuditLock.before-OP20-20260919T212916Z.json",
+    "docs/evidencias/ERPEC26-OP20-DIAGNOSTICO-INTEGRAL-20260919.json"
   ],
   "validationChecks": [
-    "OP21: factura y nota de credito emitidas desde la aplicacion del Fundador con el certificado de SINKRONET y autorizadas por el SRI (pruebas)",
-    "OP21: RIDE de la factura corregido (emision, clave de acceso, forma de pago, margen) con prueba nueva",
-    "OP21: suite fiscal y de secretos 159/159 sin fallos"
+    "OP20: diagnostico integral documentado en docs/DIAGNOSTICO_INTEGRAL_20260919.md",
+    "OP20: defecto de nomina (account.move.create/copy) corregido con prueba de regresion; verificado en la demo con reversion",
+    "OP20: suite completa de 22 modulos de 32 errores a 1 abierto y 5 omisiones explicitas",
+    "OP20: Fundador con admin_passwd propio verificado (db.list y db.dump rechazan la clave por defecto)"
   ],
   "pendingChecks": [
     "Aceptación visual integral de ciclos pendiente; el acceso web y navegación de facturas ya están verificados",
@@ -108,22 +115,24 @@
     "OP20: purgar respaldos anteriores al cifrado y el p12 ajeno en claro",
     "OP20: actualizar dependencias y pasar pip-audit",
     "OP20: curar pendingChecks y crear prompts de fase OP14-OP19",
-    "OP20: prueba abierta del conector (fiscal_scope) en instalacion completa",
-    "OP21: purgar respaldos anteriores al cifrado y el p12 ajeno en claro (requiere confirmacion del titular)",
-    "OP21: actualizar dependencias y pasar pip-audit",
-    "OP21: endurecer despliegue (workers, HTTPS, proxy, supervisor de servicios)",
-    "OP21: primer envio a produccion nunca ejercitado"
+    "OP20: prueba abierta del conector (fiscal_scope) en instalacion completa"
   ],
   "fileHashes": {
-    ".github/CODEX_CONTEXT.md": "e22bf9eff3e19e58836120c965746d6dd7e592b76af1216c294efe20bdf36765",
-    "addons/erpec_fiscal_sri/ride.py": "1364d0dca695a97fc13c24b8dddea9bc57205310321b16d03cff4835969fb7c9",
-    "addons/erpec_fiscal_sri/tests/test_ride.py": "e1af264475bfff43d69188847f379bfa2f416f690bb1086f7dd1c3cfd2d45cd6",
-    "docs/evidencias/AuditLock.before-OP21-20260920T142246Z.json": "460abdfb52f9d92a52e80f71675853232576c4241866b3ddd0ca4388f7b14c7d",
-    "docs/evidencias/ERPEC26-OP21-EXTREMO-A-EXTREMO-FUNDADOR-20260920.json": "579a8237702e7ff9817b559a3382596c58166fc7028a691f665dc9ce00316ce1"
+    ".github/CODEX_CONTEXT.md": "3722dade9ff13193d559e8cb8c619c64da71a807eec2c3d789edacc126af1da4",
+    "addons/erpec_fiscal_connector/tests/test_connector.py": "cea451cfe711776e301d192ea556c82fdf37455c0b8e68cf6b14647446f763e5",
+    "addons/erpec_fiscal_documents/tests/test_documents.py": "5c9e484341c856384900ac468ea59dc9147849b2be2d29eb52d3f21df16651e1",
+    "addons/erpec_payroll/models.py": "b8978ba481e7a9e0fe1632544ff63f9f13ce939eece5061f7715a262d046d65b",
+    "addons/erpec_payroll/tests/__init__.py": "fd55ac94655cdc7da9376a53cac2741eda456a4953308b01cbd81192c2d9e23c",
+    "addons/erpec_payroll/tests/test_move_copy.py": "a3f8b330b34a7c4dd0307501e366653cfcaea9b18714233d42b30b8d59dba2b2",
+    "addons/erpec_treasury/tests/test_treasury.py": "a026023d0efaf53527ab81050a08d9071b12084c3b262a92e84d92cf663c9bee",
+    "addons/erpec_withholding_accounting/tests/test_accounting.py": "4864a072b6841f52aa2c7d11978a5f97fb03297bcf0fcda7b0fe54015d63c3b9",
+    "docs/DIAGNOSTICO_INTEGRAL_20260919.md": "724c713f0b882d679c45e06b6022fe98eb30027b44a00d1514dd8feacc0a1055",
+    "docs/evidencias/AuditLock.before-OP20-20260919T212916Z.json": "97b2c312b0d103ebfe0d69e4330359c6523a3aaf77aaa438901506231913f894",
+    "docs/evidencias/ERPEC26-OP20-DIAGNOSTICO-INTEGRAL-20260919.json": "ddc3f6623b124fde7f31d78c55c3a62b1bc96afebb2c0112338a7ab144cb4d09"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP21-20260920T142246Z.json",
-  "previousAuditLockHash": "460abdfb52f9d92a52e80f71675853232576c4241866b3ddd0ca4388f7b14c7d",
-  "signature": "6693011877fe6558dd453f9d5dad52cc14d034a34ce5fb6c4db8abd670186b7b",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP20-20260919T212916Z.json",
+  "previousAuditLockHash": "97b2c312b0d103ebfe0d69e4330359c6523a3aaf77aaa438901506231913f894",
+  "signature": "0f3fc744acccb7d8350ac0d8cf2b0717564ef4c880a4bd18c6abd908066414e1",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

@@ -89,3 +89,19 @@ class TestRide(BaseCase):
         text = _extract_text(pdf)
         self.assertIn('AMBIENTE: 9', text)
         self.assertIn('EMISIÓN: 9', text)
+
+    def test_build_ride_shows_payment_description_and_keeps_text_inside_margins(self):
+        pdf = ride.build_ride(FACTURA_XML.encode('utf-8'), numero_autorizacion='1234567890',
+                               fecha_autorizacion='2026-09-16T10:00:00-05:00')
+        self.assertIn('OTROS CON UTILIZACIÓN DEL SISTEMA FINANCIERO', _extract_text(pdf))
+        page = PdfReader(io.BytesIO(pdf)).pages[0]
+        limit = float(page.mediabox.width) - 15 * 2.8346  # margen derecho de 15 mm
+        overflow = []
+
+        def visitor(text, cm, tm, font_dict, font_size):
+            if text.strip() and tm[4] > limit - 2:
+                overflow.append((text.strip(), round(tm[4])))
+        page.extract_text(visitor_text=visitor)
+        # Un texto alineado a la derecha se dibuja desde su origen: solo los que empiezan pasado
+        # el margen (etiquetas, no cifras cortas) delatan el desbordamiento del recuadro.
+        self.assertFalse([item for item in overflow if len(item[0]) > 8], overflow)

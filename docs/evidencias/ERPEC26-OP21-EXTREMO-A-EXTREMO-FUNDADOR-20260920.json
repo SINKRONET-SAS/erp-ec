@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-09-20T14:30:00.000Z",
+  "scope": "OP21: ensayo de extremo a extremo en la aplicacion del Fundador (SINKRONET S.A.S.) con su certificado propio, ambiente pruebas, y correccion del RIDE de la factura.",
+  "userInstruction": "adelante, se debe cubrir lo mas importante que falta",
+  "endToEnd": {
+    "instance": "erpec_fundador",
+    "point": "001-004",
+    "ambiente": "pruebas",
+    "invoice": {
+      "number": "001-004-000000001",
+      "total": "11.50",
+      "accessKey": "2009202601179323532700110010040000000012251529811",
+      "state": "authorized"
+    },
+    "creditNote": {
+      "number": "001-004-000000001 (nota de credito)",
+      "accessKey": "2009202604179323532700110010040000000014201203311",
+      "state": "authorized",
+      "howCreated": "asistente nativo account.move.reversal; confirma el arreglo de nomina en la instancia real"
+    },
+    "signer": "certificado de SINKRONET S.A.S. cifrado en reposo",
+    "ride": "docs/evidencias/ride-fundador-sinkronet-factura-001-004-000000001.pdf"
+  },
+  "rideDefectsFixed": [
+    "EMISION: NORMAL se salia de la caja (alineacion a la derecha con w=0)",
+    "etiqueta CLAVE DE ACCESO pisaba el codigo de barras",
+    "forma de pago mostraba solo el codigo; ahora la descripcion del catalogo SRI",
+    "totales sobresalian del margen"
+  ],
+  "requirementsFoundByTrial": [
+    "forma de pago obligatoria (ec_fiscal_payment_code)",
+    "direccion del comprador obligatoria, tambien para consumidor final"
+  ],
+  "tests": {
+    "fiscal_secrets_suite": "159 pruebas, 0 fallos",
+    "newTests": [
+      "test_ride: descripcion de forma de pago y texto dentro del margen"
+    ]
+  },
+  "notDone": [
+    "purga de respaldos anteriores al cifrado y del p12 ajeno en claro: requiere confirmacion expresa del titular",
+    "actualizacion de dependencias y pip-audit",
+    "endurecimiento de despliegue",
+    "produccion nunca ejercitada"
+  ],
+  "realMoneyMoved": false
+}
