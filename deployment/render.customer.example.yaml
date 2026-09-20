@@ -33,6 +33,11 @@ services:
         sync: false
       - key: ODOO_MASTER_PASSWORD
         generateValue: true
+      # Clave maestra de cifrado de secretos (mín. 32 caracteres). Generar con
+      #   python -c "import base64,os;print(base64.urlsafe_b64encode(os.urandom(48)).decode())"
+      # y guardar una copia FUERA de Render: perderla deja ilegible el certificado de firma.
+      - key: ERPEC_SECRET_KEY
+        sync: false
       - key: ERPEC_BOOTSTRAP
         value: "1"
 databases:

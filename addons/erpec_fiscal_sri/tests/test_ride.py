@@ -1,7 +1,7 @@
 """Pruebas de ride.py: genera un PDF real a partir de un XML de comprobante sintético."""
 import io
 
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 from odoo.tests.common import BaseCase
 

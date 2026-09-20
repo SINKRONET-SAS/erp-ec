@@ -31,6 +31,7 @@ Al terminar la primera instalación, retirar `ERPEC_BOOTSTRAP` y `ODOO_ADMIN_PAS
 | `ERPEC_COMPANY_NAME` | Nombre inicial de la organización |
 | `ODOO_ADMIN_PASSWORD` | Contraseña inicial privada; no se vuelve a aplicar tras inicializar |
 | `ODOO_MASTER_PASSWORD` | Clave privada del gestor de bases, cuya enumeración está deshabilitada |
+| `ERPEC_SECRET_KEY` | Clave maestra de cifrado de secretos (mín. 32 caracteres); obligatoria, con copia fuera del proveedor. Ver `docs/CIFRADO_CERTIFICADOS.md` |
 | `ERPEC_BOOTSTRAP` | `1` únicamente para inicialización o recuperación explícita incompleta |
 | `PORT` | Puerto HTTP del servicio; predeterminado 10000 |
 | `ERPEC_PROFILE` | Argumento de construcción `customer` o `controller`; cambiarlo requiere otra imagen y otra base |

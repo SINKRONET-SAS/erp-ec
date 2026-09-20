@@ -130,7 +130,7 @@ class FiscalConnectorCase(TransactionCase):
         with self.assertRaises(AccessError): self.connection.with_user(user).read(['api_key'])
         with self.assertRaises(ValidationError): self.connection.write({'empresa_ref':99})
         self.assertIn('ec_fiscal_job_ids',self.move.get_view(view_type='form')['arch'])
-        workspace=self.env['erpec.workspace'].search([('company_id','=',self.env.company.id)],limit=1)
+        workspace=self.env['erpec.workspace'].search([('company_id','=',self.env.company.id)],limit=1) or self.env['erpec.workspace'].create({'company_id':self.env.company.id})
         self.assertIn('Conector de pruebas instalado',workspace.fiscal_scope)
         self.assertIn('RUC del proveedor del sistema',workspace.fiscal_scope)
 

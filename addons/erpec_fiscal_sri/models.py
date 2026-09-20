@@ -387,6 +387,11 @@ class Users(models.Model):
     ec_point_id = fields.Many2one('erpec.fiscal.point', string='Punto de emisión predeterminado', check_company=True,
                                   help='Se propone al crear guías de remisión y otros comprobantes de este usuario.')
 
+    ec_allowed_point_ids = fields.Many2many(
+        'erpec.fiscal.point', 'erpec_user_point_rel', 'user_id', 'point_id', string='Puntos de emisión permitidos',
+        help='Si se indican, este usuario solo puede contabilizar y emitir comprobantes de venta con estos puntos. '
+             'Vacío = sin restricción. Lo define un administrador; el propio usuario no puede ampliarlo.')
+
     @property
     def SELF_WRITEABLE_FIELDS(self):
         return super().SELF_WRITEABLE_FIELDS + ['ec_point_id']
@@ -767,6 +772,23 @@ class Move(models.Model):
 
     ec_fiscal_emission_ids = fields.One2many('erpec.fiscal.emission', 'move_id', string='Emisiones nativas SRI', copy=False)
 
+    def _check_user_emission_point(self):
+        """Un usuario con puntos permitidos solo opera comprobantes de venta de esos puntos."""
+        if self.env.su:
+            return
+        allowed = self.env.user.sudo().ec_allowed_point_ids
+        if not allowed:
+            return
+        for move in self:
+            point = move.journal_id.ec_point_id
+            if move.move_type in ('out_invoice', 'out_refund') and point and point not in allowed:
+                raise ValidationError('Tu usuario no está autorizado para emitir con el punto %s-%s (%s). Puntos permitidos: %s.' % (
+                    point.establishment, point.emission, point.name, ', '.join('%s-%s' % (p.establishment, p.emission) for p in allowed)))
+
+    def _post(self, soft=True):
+        self._check_user_emission_point()
+        return super()._post(soft=soft)
+
     def _gather_native_common(self, allow_special_vat=False):
         """Datos compartidos entre factura y nota de crédito: identificación del emisor/
         comprador y líneas con impuesto. Duplicado intencional de la validación/armado de
@@ -891,6 +913,7 @@ class Move(models.Model):
     def action_native_emit(self):
         self.ensure_one()
         self.check_access('write')
+        self._check_user_emission_point()
         if self.state != 'posted' or self.move_type not in NATIVE_MOVE_TYPES or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
             raise ValidationError('Se requiere una factura, nota de crédito o nota de débito de venta contabilizada en USD de una empresa de Ecuador.')
         if self.ec_fiscal_job_ids:

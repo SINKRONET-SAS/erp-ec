@@ -31,6 +31,10 @@ def configuration():
     database = unquote(url.path.lstrip('/'))
     if not re.fullmatch('[a-z][a-z0-9_]{0,62}', database):
         raise ValueError('Nombre de base no permitido')
+    # Sin esta clave los secretos cifrados (certificado de firma, token PayPhone) quedarían atados a un
+    # archivo en el mismo disco de datos; debe venir del entorno y respaldarse aparte.
+    if len(setting('ERPEC_SECRET_KEY')) < 32:
+        raise ValueError('ERPEC_SECRET_KEY debe tener al menos 32 caracteres')
     instance = setting('ERPEC_INSTANCE_ID')
     if not re.fullmatch('[a-f0-9]{32}', instance):
         raise ValueError('Identidad de instancia inválida')

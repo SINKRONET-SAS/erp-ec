@@ -101,3 +101,47 @@ class EmissionPointCase(TransactionCase):
     def test_journal_numbers_must_match_the_point(self):
         with self.assertRaises(ValidationError):
             self.point.journal_ids.l10n_ec_emission = '005'
+
+    def _invoice_as(self, user, journal, number):
+        move = self.env['account.move'].with_user(user).create({
+            'move_type': 'out_invoice', 'journal_id': journal.id, 'partner_id': self.partner.id,
+            'invoice_date': '2026-09-18', 'date': '2026-09-18', 'ec_fiscal_payment_code': '20',
+            'l10n_latam_document_type_id': self.env.ref('l10n_ec.ec_dt_01').id,
+            'invoice_line_ids': [(0, 0, {'name': 'Servicio', 'quantity': 1, 'price_unit': 100, 'tax_ids': [(6, 0, self.tax.ids)]})]})
+        move.l10n_latam_document_number = number
+        return move
+
+    def _second_point(self):
+        return self.env['erpec.fiscal.point'].create({
+            'establishment': '001', 'establishment_name': 'Matriz', 'establishment_address': 'Av. Principal 123',
+            'emission': '003', 'name': 'Caja 2'})
+
+    def test_user_with_allowed_points_cannot_post_or_emit_with_another_point(self):
+        other = self._second_point()
+        user = new_test_user(self.env, login='cajero_restringido', groups='account.group_account_user')
+        user.write({'ec_allowed_point_ids': [(6, 0, self.point.ids)]})
+        forbidden = self._invoice_as(user, other.journal_ids, '001-003-000000001')
+        with self.assertRaisesRegex(ValidationError, 'no está autorizado'):
+            forbidden.action_post()
+        allowed = self._invoice_as(user, self.point.journal_ids, '001-002-000000001')
+        allowed.action_post()
+        self.assertEqual(allowed.state, 'posted')
+        posted_by_other = self._invoice(other.journal_ids, '001-003-000000002')
+        with self.assertRaisesRegex(ValidationError, 'no está autorizado'):
+            posted_by_other.with_user(user).action_native_emit()
+
+    def test_user_without_allowed_points_is_unrestricted(self):
+        other = self._second_point()
+        user = new_test_user(self.env, login='cajero_libre', groups='account.group_account_user')
+        for journal, number in ((self.point.journal_ids, '001-002-000000001'), (other.journal_ids, '001-003-000000001')):
+            invoice = self._invoice_as(user, journal, number)
+            invoice.action_post()
+            self.assertEqual(invoice.state, 'posted')
+
+    def test_user_cannot_extend_own_allowed_points(self):
+        other = self._second_point()
+        user = new_test_user(self.env, login='cajero_ambicioso', groups='account.group_account_user')
+        user.write({'ec_allowed_point_ids': [(6, 0, self.point.ids)]})
+        with self.assertRaises(Exception):
+            user.with_user(user).write({'ec_allowed_point_ids': [(6, 0, other.ids)]})
+        self.assertEqual(user.ec_allowed_point_ids, self.point)

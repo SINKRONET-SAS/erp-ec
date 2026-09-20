@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-09-20T20:00:00.000Z",
+  "scope": "OP23: cierre de lo abierto: prueba del conector, pypdf, lock Linux verificado en Linux, suite integrada y CI, RIDE alineado con el formato oficial, puntos permitidos por usuario, supervisor de servicios, higiene de gobierno.",
+  "userInstruction": "debe quedar cerrado lo que esta abierto",
+  "closed": {
+    "connectorTest": "el registro de erpec.workspace no existia en la base limpia; la prueba lo crea",
+    "pypdf": "PyPDF2 (sin version corregida) reemplazado por pypdf 6.19.0; Odoo 18 lo soporta",
+    "linuxLock": "la imagen Docker se construyo con el lock nuevo y paso las pruebas en Linux; se detecto y corrigio que los pines de Odoo chocaban con el lock (prepare_requirements.py) y python-ldap 3.4.4 vulnerable (3.4.5)",
+    "integratedSuite": "scripts/test-integrated.py (Windows) y deployment/linux/run-tests.sh + .github/workflows/tests.yml (Linux, pip-audit)",
+    "treasuryTests": "las 5 pruebas omitidas se ejecutan sobre una copia de la demo sembrada: 12/12",
+    "testCoverage": "8 pruebas nuevas en erpec_base y erpec_runtime (antes sin ninguna)",
+    "rideOfficialFormat": "R.U.C. en el recuadro derecho, Direccion Matriz y Sucursal, rotulo Razon Social / Nombres y Apellidos, Placa y Guia siempre visibles, EMISION en retencion y guia, forma de pago con descripcion",
+    "allowedPointsPerUser": "res.users.ec_allowed_point_ids; restringe contabilizar y emitir comprobantes de venta; el usuario no puede ampliarlo; 3 pruebas",
+    "serviceSupervisor": "scripts/supervisor-windows.py + tarea programada 'ERPEC Supervisor' (recupero solo el Fundador y las 4 instancias)",
+    "secretKeyLinux": "ERPEC_SECRET_KEY obligatoria en deployment/linux/runtime.py y en la plantilla Render",
+    "workers": "workers=0 documentado como decision deliberada (un solo puerto en PaaS y websocket)",
+    "unusedJournals": "diario INV 001-001 sin uso archivado en el Fundador (y borrador vacio eliminado) y en la empresa de ensayo de la demo; auditoria de puntos limpia en ambos",
+    "governance": "prompts OP14-OP22 creados, versiones de manifiesto subidas, pendingChecks curado"
+  },
+  "tests": {
+    "windowsIntegrated": "432 pruebas, 0 fallos, 0 errores",
+    "linuxIntegrated": "432 pruebas, 0 fallos, 0 errores",
+    "treasuryOnDemoCopy": "12 pruebas, 0 fallos, 0 omitidas"
+  },
+  "needsTheOwner": [
+    "ejecutar scripts/purge-test-databases.py --ejecutar (37 bases y 16 roles de ensayo; el permiso de borrado masivo fue denegado a la herramienta)",
+    "primer envio a produccion: requiere responsable contable y certificado reconocido",
+    "servidor SMTP: requiere cuenta y credenciales",
+    "definir ERPEC_SECRET_KEY en la plataforma real y respaldarla aparte",
+    "validar el flujo de GitHub Actions en un push real"
+  ],
+  "realMoneyMoved": false
+}

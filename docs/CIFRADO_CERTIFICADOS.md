@@ -50,5 +50,11 @@ El token de la aplicación PayPhone se guardaba en claro en `erpec_payphone_prov
 ## Bases residuales eliminadas
 Se borraron las 6 bases `erpec_pp_test_*` (tokens sintéticos en claro), tras comprobar que no tenían conexiones, ninguna configuración las usaba y no tenían rol propio. Las instancias reales (`erpec_fundador`, `erpec_a`, `erpec_b`, `erpec_demo`) no se tocaron. El clúster local conserva otras bases de prueba de otras familias (`ec_operational_*`, `ec_recovery_*`, `erp_*`, etc.) que no se revisaron ni borraron.
 
-## Pendiente
-- Definir `ERPEC_SECRET_KEY` en el despliegue real y respaldarla aparte.
+## Despliegue Linux (20-09-2026)
+- `deployment/linux/runtime.py` **exige** `ERPEC_SECRET_KEY` (mínimo 32 caracteres) y no arranca sin ella; la plantilla `deployment/render.customer.example.yaml` la declara con `sync: false` para que la fije una persona. Generarla con `python -c "import base64,os;print(base64.urlsafe_b64encode(os.urandom(48)).decode())"` y guardar una copia **fuera** del proveedor: perderla deja ilegibles el certificado de firma y el token de PayPhone.
+- En Windows local la clave vive en `erpec_secret.key` del directorio de datos de cada instancia y su respaldo en `.cache/windows/backups/claves-*`. No se conservan respaldos anteriores al cifrado (purgados el 20-09-2026).
+- `workers = 0` es deliberado: los proveedores tipo PaaS exponen un solo puerto y con workers > 0 Odoo mueve el websocket (chat, notificaciones) a otro puerto (`gevent_port`) que exigiría enrutar en un proxy. Para más capacidad, escalar con más instancias (una base por cliente) o poner Nginx delante y subir `workers` a 2×núcleos+1 con `proxy_mode = True` (ya activo) y el puerto de longpolling enrutado; no se cambia por defecto sin poder probarlo.
+- TLS lo termina el proveedor (Render) y `proxy_mode = True`; la base exige `sslmode=require`.
+
+## Estado
+- Clave maestra en despliegue real: obligatoria en Linux (resuelto). Retirar las claves anteriores (`erpec_secret.previous`) tras un periodo de confianza sigue siendo una decisión operativa del titular.

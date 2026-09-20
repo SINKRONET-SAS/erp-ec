@@ -74,12 +74,13 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
     if nombre_comercial and nombre_comercial != _text(info, 'razonSocial'):
         text_at(left + 3 * mm, ey, nombre_comercial, size=8)
         ey -= 4.5 * mm
-    text_at(left + 3 * mm, ey, 'RUC: ' + _text(info, 'ruc'), size=8)
-    ey -= 4.5 * mm
+    dir_matriz = _text(info, 'dirMatriz')
     dir_establecimiento = _text(detail, 'dirEstablecimiento')
-    direccion = dir_establecimiento or _text(info, 'dirMatriz')
-    text_at(left + 3 * mm, ey, 'Dirección: ' + direccion, size=8)
+    text_at(left + 3 * mm, ey, 'Dirección Matriz: ' + dir_matriz, size=8)
     ey -= 4.5 * mm
+    if dir_establecimiento:
+        text_at(left + 3 * mm, ey, 'Dirección Sucursal: ' + dir_establecimiento, size=8)
+        ey -= 4.5 * mm
     obligado_contabilidad = _text(detail, 'obligadoContabilidad')
     if obligado_contabilidad:
         text_at(left + 3 * mm, ey, 'Obligado a llevar contabilidad: ' + obligado_contabilidad, size=8)
@@ -107,9 +108,11 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
         size=9, bold=True, align='center', w=right_box_w)
 
     auth_top = y_top - 12 * mm
-    auth_h = 35 * mm
+    auth_h = 39 * mm
     box(right_box_x, auth_top, right_box_w, auth_h, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
+    text_at(right_box_x + 2 * mm, ry, 'R.U.C.: ' + _text(info, 'ruc'), size=9, bold=True)
+    ry -= 4.5 * mm
     text_at(right_box_x + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
     ry -= 3.5 * mm
     text_at(right_box_x + 2 * mm, ry, numero_autorizacion or 'PENDIENTE', size=7)
@@ -141,21 +144,18 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
     # ── Caja comprador ──────────────────────────────────────────────────────
     placa = _text(detail, 'placa')
     guia_remision = _text(detail, 'guiaRemision')
-    client_h = (16 if not (placa or guia_remision) else 20) * mm
+    client_h = 20 * mm
     box(left, y, content_width, client_h, fill=PANEL_FILL)
     cy = y - 4.5 * mm
-    text_at(left + 3 * mm, cy, 'Comprador: ' + _text(detail, 'razonSocialComprador'), size=9, bold=True)
+    text_at(left + 3 * mm, cy, 'Razón Social / Nombres y Apellidos: ' + _text(detail, 'razonSocialComprador'), size=9, bold=True)
     cy -= 4.5 * mm
     text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'identificacionComprador'), size=8)
-    text_at(left + content_width / 2, cy, 'Fecha de emisión: ' + _text(detail, 'fechaEmision'), size=8)
+    text_at(left + content_width / 2, cy, 'Fecha Emisión: ' + _text(detail, 'fechaEmision'), size=8)
     cy -= 4.5 * mm
     text_at(left + 3 * mm, cy, 'Dirección: ' + _text(detail, 'direccionComprador'), size=8)
-    if placa or guia_remision:
-        cy -= 4.5 * mm
-        if placa:
-            text_at(left + 3 * mm, cy, 'Placa / Matrícula: ' + placa, size=8)
-        if guia_remision:
-            text_at(left + content_width / 2, cy, 'Guía de remisión: ' + guia_remision, size=8)
+    cy -= 4.5 * mm
+    text_at(left + 3 * mm, cy, 'Placa / Matrícula: ' + placa, size=8)
+    text_at(left + content_width / 2, cy, 'Guía de remisión: ' + guia_remision, size=8)
     y -= client_h + 3 * mm
 
     # ── Tabla de detalle ─────────────────────────────────────────────────────
@@ -308,11 +308,11 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     ey = y_top - 5 * mm
     text_at(left + 3 * mm, ey, _text(info, 'razonSocial'), size=11, bold=True, color=HEADER_COLOR)
     ey -= 5 * mm
-    text_at(left + 3 * mm, ey, 'RUC: ' + _text(info, 'ruc'), size=8)
+    text_at(left + 3 * mm, ey, 'Dirección Matriz: ' + _text(info, 'dirMatriz')[:48], size=8)
     ey -= 4.5 * mm
-    direccion = _text(detail, 'dirEstablecimiento') or _text(info, 'dirMatriz')
-    text_at(left + 3 * mm, ey, 'Dirección: ' + direccion, size=8)
-    ey -= 4.5 * mm
+    if _text(detail, 'dirEstablecimiento'):
+        text_at(left + 3 * mm, ey, 'Dirección Sucursal: ' + _text(detail, 'dirEstablecimiento')[:46], size=8)
+        ey -= 4.5 * mm
     obligado_contabilidad = _text(detail, 'obligadoContabilidad')
     if obligado_contabilidad:
         text_at(left + 3 * mm, ey, 'Obligado a llevar contabilidad: ' + obligado_contabilidad, size=8)
@@ -328,9 +328,11 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
         size=9, bold=True, align='center', w=right_box_w)
 
     auth_top = y_top - 12 * mm
-    auth_h = 35 * mm
+    auth_h = 39 * mm
     box(right_box_x, auth_top, right_box_w, auth_h, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
+    text_at(right_box_x + 2 * mm, ry, 'R.U.C.: ' + _text(info, 'ruc'), size=9, bold=True)
+    ry -= 4.5 * mm
     text_at(right_box_x + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
     ry -= 3.5 * mm
     text_at(right_box_x + 2 * mm, ry, numero_autorizacion or 'PENDIENTE', size=7)
@@ -358,7 +360,7 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
     client_h = 20 * mm
     box(left, y, content_width, client_h, fill=PANEL_FILL)
     cy = y - 4.5 * mm
-    text_at(left + 3 * mm, cy, ('Proveedor: ' + _text(detail, 'razonSocialProveedor')) if is_liq else ('Comprador: ' + _text(detail, 'razonSocialComprador')), size=9, bold=True)
+    text_at(left + 3 * mm, cy, 'Razón Social / Nombres y Apellidos: ' + (_text(detail, 'razonSocialProveedor') if is_liq else _text(detail, 'razonSocialComprador')), size=9, bold=True)
     cy -= 4.5 * mm
     text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'identificacionProveedor' if is_liq else 'identificacionComprador'), size=8)
     text_at(left + content_width / 2, cy, 'Fecha de emisión: ' + _text(detail, 'fechaEmision'), size=8)
@@ -497,10 +499,11 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     ey = y_top - 5 * mm
     text_at(left + 3 * mm, ey, _text(info, 'razonSocial'), size=11, bold=True, color=HEADER_COLOR)
     ey -= 5 * mm
-    text_at(left + 3 * mm, ey, 'RUC: ' + _text(info, 'ruc'), size=8)
+    text_at(left + 3 * mm, ey, 'Dirección Matriz: ' + _text(info, 'dirMatriz')[:48], size=8)
     ey -= 4.5 * mm
-    text_at(left + 3 * mm, ey, 'Dirección: ' + (_text(detail, 'dirEstablecimiento') or _text(info, 'dirMatriz')), size=8)
-    ey -= 4.5 * mm
+    if _text(detail, 'dirEstablecimiento'):
+        text_at(left + 3 * mm, ey, 'Dirección Sucursal: ' + _text(detail, 'dirEstablecimiento')[:46], size=8)
+        ey -= 4.5 * mm
     if _text(detail, 'obligadoContabilidad'):
         text_at(left + 3 * mm, ey, 'Obligado a llevar contabilidad: ' + _text(detail, 'obligadoContabilidad'), size=8)
     rx = left + 80 * mm
@@ -510,8 +513,10 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     text_at(rx, y_top - 10.5 * mm, 'No. %s-%s-%s' % (_text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
             size=9, bold=True, align='center', w=rw)
     auth_top = y_top - 12 * mm
-    box(rx, auth_top, rw, 35 * mm, fill=PANEL_FILL)
+    box(rx, auth_top, rw, 39 * mm, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
+    text_at(rx + 2 * mm, ry, 'R.U.C.: ' + _text(info, 'ruc'), size=9, bold=True)
+    ry -= 4.5 * mm
     text_at(rx + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
     ry -= 3.5 * mm
     text_at(rx + 2 * mm, ry, numero_autorizacion or 'PENDIENTE', size=7)
@@ -520,6 +525,8 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     ry -= 4 * mm
     ambiente = _text(info, 'ambiente')
     text_at(rx + 2 * mm, ry, 'AMBIENTE: ' + AMBIENTE_LABEL.get(ambiente, ambiente or '—'), size=7, bold=True)
+    tipo_emision = _text(info, 'tipoEmision')
+    text_at(rx + rw - 2 * mm, ry, 'EMISIÓN: ' + EMISION_LABEL.get(tipo_emision, tipo_emision or '—'), size=7, bold=True, align='right', w=0)
     ry -= 4 * mm
     text_at(rx + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
     ry -= 9.5 * mm
@@ -528,11 +535,11 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
         code128.Code128(clave, barHeight=8 * mm, barWidth=0.3).drawOn(page, rx + 2 * mm, ry)
         text_at(rx + 2 * mm, ry - 4 * mm, clave, size=6)
 
-    y = auth_top - 35 * mm - 4 * mm
+    y = auth_top - 39 * mm - 4 * mm
     doc = root.find('docsSustento/docSustento')
     box(left, y, content_width, 27 * mm, fill=PANEL_FILL)
     cy = y - 4.5 * mm
-    text_at(left + 3 * mm, cy, 'Sujeto retenido: ' + _text(detail, 'razonSocialSujetoRetenido'), size=9, bold=True)
+    text_at(left + 3 * mm, cy, 'Razón Social / Nombres y Apellidos: ' + _text(detail, 'razonSocialSujetoRetenido'), size=9, bold=True)
     cy -= 4.5 * mm
     text_at(left + 3 * mm, cy, 'Identificación: ' + _text(detail, 'identificacionSujetoRetenido'), size=8)
     text_at(left + content_width / 2, cy, 'Fecha de emisión: ' + _text(detail, 'fechaEmision'), size=8)
@@ -593,10 +600,11 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
     ey = y_top - 5 * mm
     text_at(left + 3 * mm, ey, _text(info, 'razonSocial'), size=11, bold=True, color=HEADER_COLOR)
     ey -= 5 * mm
-    text_at(left + 3 * mm, ey, 'RUC: ' + _text(info, 'ruc'), size=8)
+    text_at(left + 3 * mm, ey, 'Dirección Matriz: ' + _text(info, 'dirMatriz')[:48], size=8)
     ey -= 4.5 * mm
-    text_at(left + 3 * mm, ey, 'Dirección: ' + (_text(detail, 'dirEstablecimiento') or _text(info, 'dirMatriz'))[:48], size=8)
-    ey -= 4.5 * mm
+    if _text(detail, 'dirEstablecimiento'):
+        text_at(left + 3 * mm, ey, 'Dirección Sucursal: ' + _text(detail, 'dirEstablecimiento')[:46], size=8)
+        ey -= 4.5 * mm
     if _text(detail, 'obligadoContabilidad'):
         text_at(left + 3 * mm, ey, 'Obligado a llevar contabilidad: ' + _text(detail, 'obligadoContabilidad'), size=8)
     rx = left + 80 * mm
@@ -606,8 +614,10 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
     text_at(rx, y_top - 10.5 * mm, 'No. %s-%s-%s' % (_text(info, 'estab'), _text(info, 'ptoEmi'), _text(info, 'secuencial')),
             size=9, bold=True, align='center', w=rw)
     auth_top = y_top - 12 * mm
-    box(rx, auth_top, rw, 35 * mm, fill=PANEL_FILL)
+    box(rx, auth_top, rw, 39 * mm, fill=PANEL_FILL)
     ry = auth_top - 4 * mm
+    text_at(rx + 2 * mm, ry, 'R.U.C.: ' + _text(info, 'ruc'), size=9, bold=True)
+    ry -= 4.5 * mm
     text_at(rx + 2 * mm, ry, 'NÚMERO DE AUTORIZACIÓN:', size=7, bold=True, color=BORDER_COLOR)
     ry -= 3.5 * mm
     text_at(rx + 2 * mm, ry, numero_autorizacion or 'PENDIENTE', size=7)
@@ -616,6 +626,8 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
     ry -= 4 * mm
     ambiente = _text(info, 'ambiente')
     text_at(rx + 2 * mm, ry, 'AMBIENTE: ' + AMBIENTE_LABEL.get(ambiente, ambiente or '—'), size=7, bold=True)
+    tipo_emision = _text(info, 'tipoEmision')
+    text_at(rx + rw - 2 * mm, ry, 'EMISIÓN: ' + EMISION_LABEL.get(tipo_emision, tipo_emision or '—'), size=7, bold=True, align='right', w=0)
     ry -= 4 * mm
     text_at(rx + 2 * mm, ry, 'CLAVE DE ACCESO:', size=7, bold=True)
     ry -= 9.5 * mm
@@ -624,7 +636,7 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
         code128.Code128(clave, barHeight=8 * mm, barWidth=0.3).drawOn(page, rx + 2 * mm, ry)
         text_at(rx + 2 * mm, ry - 4 * mm, clave, size=6)
 
-    y = auth_top - 35 * mm - 4 * mm
+    y = auth_top - 39 * mm - 4 * mm
     box(left, y, content_width, 34 * mm, fill=PANEL_FILL)
     cy = y - 4.5 * mm
     text_at(left + 3 * mm, cy, 'Transportista: ' + _text(detail, 'razonSocialTransportista'), size=9, bold=True)

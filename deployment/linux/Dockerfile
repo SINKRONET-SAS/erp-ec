@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 COPY upstream.json /opt/erpec/upstream.json
 RUN git init /opt/odoo && cd /opt/odoo && git remote add origin https://github.com/odoo/odoo.git && git fetch --depth 1 origin b1fd3a9eee5d575848ac649d2f5103537d8de7a4 && git checkout --detach FETCH_HEAD && test "$(git rev-parse HEAD)" = b1fd3a9eee5d575848ac649d2f5103537d8de7a4 && rm -rf .git
 COPY deployment/linux/requirements-linux.lock /opt/erpec/requirements-linux.lock
-RUN pip install --no-cache-dir -r /opt/odoo/requirements.txt -c /opt/erpec/requirements-linux.lock && pip freeze > /opt/erpec/python-installed.txt
+COPY deployment/linux/prepare_requirements.py /opt/erpec/prepare_requirements.py
+RUN python /opt/erpec/prepare_requirements.py /opt/odoo/requirements.txt /opt/erpec/requirements-linux.lock > /opt/erpec/requirements-combined.txt && pip install --no-cache-dir -r /opt/erpec/requirements-combined.txt -c /opt/erpec/requirements-linux.lock && pip freeze > /opt/erpec/python-installed.txt
 RUN useradd --uid 10001 --create-home odoo && mkdir -p /var/data/odoo /opt/erpec/addons && chown -R odoo:odoo /var/data
 COPY deployment/linux/runtime.py /opt/erpec/runtime.py
 COPY addons/erpec_base /opt/erpec/addons/erpec_base

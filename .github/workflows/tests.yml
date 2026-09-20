@@ -1,0 +1,29 @@
+name: Pruebas integradas y dependencias
+
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+
+jobs:
+  suite-linux:
+    name: Suite integrada (Linux, todos los módulos)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagen y ejecutar todas las pruebas
+        run: bash deployment/linux/run-tests.sh
+
+  dependencias:
+    name: Auditoría de dependencias
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: pip-audit sobre el lock de producción
+        run: |
+          pip install pip-audit
+          pip-audit -r deployment/linux/requirements-linux.lock --no-deps --disable-pip
