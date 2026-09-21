@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-21T03:23:29.698Z",
+  "updatedAt": "2026-09-21T03:07:05.285Z",
   "filesModified": [
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
@@ -53,10 +53,7 @@
     "addons/erpec_fiscal_sri/tests/di25_concurrency_probe.py",
     "docs/DI25-02_INTEGRIDAD_FISCAL.md",
     "docs/evidencias/DI25/DI25-02-progreso.json",
-    "docs/evidencias/AuditLock.before-DI25-02-PARCIAL-20260921T030705285Z.json",
-    "docs/evidencias/AuditLock.before-DI25-02-REGRESION-20260921T032329698Z.json",
-    "docs/evidencias/DI25/DI25-02-capturas.json",
-    "docs/evidencias/DI25/DI25-02-UI.md"
+    "docs/evidencias/AuditLock.before-DI25-02-PARCIAL-20260921T030705285Z.json"
   ],
   "validationChecks": [
     "DI25-01: suite Windows y Linux 432 pruebas, 0 fallos, 0 errores, 5 omisiones en cada entorno",
@@ -111,24 +108,21 @@
     "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json": "c66fb46126ffaa32a7364f93ea8f5684358106031642e0d16cf1e55680ed7b8d",
     "docs/evidencias/DI25/DI25-01-cierre.json": "94acb7c59f4820b18bceb3aca824656a479ffbf21281d2b4ffd88f6685f434e1",
     "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json": "2330a8ef7ad03b29fcbbbf5f2b37a40eb12caf6927597c90cdcaa67680cfd167",
-    "addons/erpec_fiscal_connector/connector.py": "6731ee43c401ebb96fa59a56fb6cc5910a245f49b371a9f6f8a951962ea2732c",
+    "addons/erpec_fiscal_connector/connector.py": "a488d2740ed4652df996bcbd53b3524b09955d1c093f72f8824fbd324f230852",
     "addons/erpec_fiscal_native/models.py": "a7effb44e2e97a1a19e68ecf0a6dda50ccf462bb2441dfd79f5e9e8f6aecb411",
     "addons/erpec_fiscal_sri/models.py": "a50f555f9c61f5b41bfe53635f5ebb95f6d4a32c0ac4ea756dd6e1ba2eab13b5",
-    "addons/erpec_fiscal_sri/views.xml": "4e2112a00e678e0c3bf9e36a0328a9d8112fdd3dd5d4b09efe9994605427caae",
+    "addons/erpec_fiscal_sri/views.xml": "14bbdebd6f88bf443d9bebb2e1db564683ea271ed08c6d70336d5f7f3b30af37",
     "addons/erpec_fiscal_sri/tests/__init__.py": "a368cddf9be82d097705ff4c94c0fceee6030664349155026dd9dfc259296211",
     "addons/erpec_fiscal_sri/tests/test_emission.py": "004d8d10b2cc7beb45701bdba2f1562e35a131b1127d4a8218fbb1d89a5d1d57",
     "addons/erpec_fiscal_sri/tests/test_di25_concurrency.py": "99358d54a07db6b9201b7f855a4598f9bd9d3790dfa9d651ddc57607451002ef",
     "addons/erpec_fiscal_sri/tests/di25_concurrency_probe.py": "a9677cf44a6e89add326a83dfb79c1a4d88e7d7b3a8d166286fa823ed473d146",
     "docs/DI25-02_INTEGRIDAD_FISCAL.md": "61336746641b1e1b2b64d67beba03e3d5a17a4f876ce8bfe45dada325476e0eb",
-    "docs/evidencias/DI25/DI25-02-progreso.json": "bf5345091e918c0d5702876ed861cb14228c3b7eb16a15204b9ebb48b171a132",
-    "docs/evidencias/AuditLock.before-DI25-02-PARCIAL-20260921T030705285Z.json": "7ddad4b3ac1d31f694194f19e703581bd0d3a825b327064314517586c8ad86f4",
-    "docs/evidencias/AuditLock.before-DI25-02-REGRESION-20260921T032329698Z.json": "22a06d4d3090c07dca6f785507fece1a4b1ebd44067de7d7f290fc0649bc63f0",
-    "docs/evidencias/DI25/DI25-02-capturas.json": "a5eae125e8010fdd7a90ad9b336bc10e701fbddef2167fc9eea702d270751a0c",
-    "docs/evidencias/DI25/DI25-02-UI.md": "2cf9d113989cb8403fdc1bd108646714507f2fd96c6fc10f1bf6767c05a29567"
+    "docs/evidencias/DI25/DI25-02-progreso.json": "381c25b781df7444b482cc0deece207da06bdeaadf535dec925dba50c45ff86d",
+    "docs/evidencias/AuditLock.before-DI25-02-PARCIAL-20260921T030705285Z.json": "7ddad4b3ac1d31f694194f19e703581bd0d3a825b327064314517586c8ad86f4"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-02-REGRESION-20260921T032329698Z.json",
-  "previousAuditLockHash": "22a06d4d3090c07dca6f785507fece1a4b1ebd44067de7d7f290fc0649bc63f0",
-  "signature": "f086f1f7319b53fcac3e656f530c12245ebc78fafe2500169c4f94fbb162a54b",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-02-PARCIAL-20260921T030705285Z.json",
+  "previousAuditLockHash": "7ddad4b3ac1d31f694194f19e703581bd0d3a825b327064314517586c8ad86f4",
+  "signature": "4394bfa186b1f62c49d5491acc06d5a09adfee133cc0961d50d73149c12c433f",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

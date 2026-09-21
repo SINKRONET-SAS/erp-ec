@@ -1,7 +1,7 @@
 {
   "phase": "DI25-02",
   "status": "en-validacion",
-  "updatedAt": "2026-09-21T03:07:05.285Z",
+  "updatedAt": "2026-09-21T03:23:29.698Z",
   "reproduction": {
     "log": ".cache/windows/ec_integrated_test_d8ffefe6c8f2.log",
     "testsReported": 95,
@@ -20,9 +20,34 @@
     "concurrency": "Ambos órdenes, dos transacciones PostgreSQL, una autoridad; aprobado en proceso separado"
   },
   "pending": [
-    "Suite integrada completa tras la corrección del mensaje",
-    "Validación Linux",
-    "Revisión visual en instancia desechable"
+    "Suite Windows completa tras corrección de recordset vacío",
+    "CI Linux de corrección y vistas finales"
   ],
-  "externalCalls": false
+  "externalCalls": false,
+  "fullRegression": {
+    "testedCommit": "fd003587b7d9f51acd2b1a4033e7f42e913261fa",
+    "windows": {
+      "testsReported": 441,
+      "failed": 0,
+      "errors": 1,
+      "exit": 1,
+      "log": ".cache/windows/ec_integrated_test_12a804913c04.log"
+    },
+    "linux": {
+      "testsReported": 441,
+      "failed": 0,
+      "errors": 1,
+      "exit": 1,
+      "run": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35556448751"
+    },
+    "cause": "Comprobación de permiso de escritura en recordset vacío al cancelar un pedido sin facturas en borrador",
+    "fix": "Conjunto vacío tratado como operación sin cambios y registrado; permisos de comprobantes reales conservados",
+    "status": "Corregido; repetición en curso"
+  },
+  "ui": {
+    "passed": true,
+    "scope": "Bandeja, ficha, confirmación cancelada y búsqueda vacía; rol contable sintético",
+    "report": "docs/evidencias/DI25/DI25-02-UI.md",
+    "manifest": "docs/evidencias/DI25/DI25-02-capturas.json"
+  }
 }

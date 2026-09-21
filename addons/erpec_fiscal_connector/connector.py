@@ -289,6 +289,9 @@ class Move(models.Model):
 
     def _lock_fiscal_source(self):
         """Serializa autoridades y cambios incluso bajo REPEATABLE READ de Odoo."""
+        if not self:
+            _logger.debug('Sin comprobantes que bloquear code=FISCAL_CONJUNTO_VACIO statusCode=200 correlationId=sin-documento userId=%s', self.env.uid)
+            return
         self.check_access('write')
         self.flush_recordset(['write_date'])
         for move in self.sorted('id'):

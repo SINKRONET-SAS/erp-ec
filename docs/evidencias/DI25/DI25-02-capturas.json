@@ -1,0 +1,24 @@
+{
+  "capturedAt": "2026-09-21T03:23:29.698Z",
+  "environment": "Instancia desechable, sin cron ni SRI",
+  "viewport": "1280x720",
+  "inspected": true,
+  "files": [
+    {
+      "path": "docs/evidencias/DI25/DI25-02-01-bandeja.png",
+      "sha256": "474e61a76f28ded46e75f1ed451808ac02455a3607a4f410b76e0c5ef870f6fe"
+    },
+    {
+      "path": "docs/evidencias/DI25/DI25-02-02-ficha.png",
+      "sha256": "05fafe9a8435269bdf72c5888d74318c0e9ee90e8609ef80d496aa4703000a74"
+    },
+    {
+      "path": "docs/evidencias/DI25/DI25-02-03-recuperacion.png",
+      "sha256": "43410b5d62316d5f54233c8f0594a8bbc25698ba52c447fa6dc04d086cd7e751"
+    },
+    {
+      "path": "docs/evidencias/DI25/DI25-02-04-sin-resultados.png",
+      "sha256": "8e7cbdaed81cdd9bdeca0648a283a1311c0000e383ac829c422052af770de6f6"
+    }
+  ]
+}
