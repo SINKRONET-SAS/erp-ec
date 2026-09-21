@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.3",
-  "updatedAt": "2026-09-21T14:02:29.979Z",
+  "updatedAt": "2026-09-21T14:11:37.777Z",
   "status": "demo-instalada-verificada-aceptacion-externa-pendiente",
   "requested": "Casos editables visibles en demo para aceptación externa, ampliados a pendientes de matriz y sueldo USD 5.000",
   "cases": 19,
@@ -33,7 +33,6 @@
     "sha256": "ad94fea77132f439835c0116907a13fd427b91aaa095fe67d3f07bafb9331f01"
   },
   "pending": [
-    "CI final de ajustes XML de presentación posteriores a fbd8116",
     "Aceptación nominal del experto y cobertura restante de matriz: 100 canastas, exenciones personales y demás regímenes excluidos"
   ],
   "legalAccepted": false,
@@ -134,5 +133,15 @@
     "pagesVisuallyInspected": 2,
     "expertAcceptance": false
   },
-  "presentationChangesAfterSuite": "Solo tax_review_views.xml: legibilidad de listado, año sin agrupación y precisión del texto de fórmula. Instalado y validado visualmente; no cambios de motor."
+  "presentationChangesAfterSuite": "Solo tax_review_views.xml: legibilidad de listado, año sin agrupación y precisión del texto de fórmula. Instalado y validado visualmente; no cambios de motor.",
+  "finalLinux": {
+    "conclusion": "success",
+    "headSha": "06231255ed3aecd0841d921c1fada7a1767d5190",
+    "status": "completed",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35609525885",
+    "tests": 457,
+    "failed": 0,
+    "errors": 0,
+    "logSha256": "052af4a82776eeb3af12fd805f08081506be33e7bc07ea3f23f445528533b997"
+  }
 }
