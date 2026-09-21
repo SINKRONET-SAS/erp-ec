@@ -3,7 +3,7 @@
   "task": "DI25-03.5",
   "moduleVersion": "18.0.1.13.1",
   "expertAccepted": false,
-  "status": "controles-automaticos-desplegados-aceptacion-externa-pendiente",
+  "status": "controles-automaticos-desplegados-ci-linux-aprobado-aceptacion-externa-pendiente",
   "instruction": "Adjunto pronunciamiento tecnico: los pendientes deben, en lo posible, dejar de ser acciones manuales y pasar a controles de validacion automatizados; verificar cambios del commit; desplegar matriz de pendientes.",
   "previousIncrementVerified": {
     "commit": "c47359d8eb9fac9d7132d0a5c53f17f9156e0ce5",
@@ -78,5 +78,15 @@
     "La verificacion de expedientes es documental interna; no sustituye la consulta a la autoridad.",
     "Los sintéticos de demo no habilitan beneficios operativos."
   ],
-  "ciLinux": "pendiente hasta el push; se registra en un commit posterior de evidencia"
+  "ciLinux": {
+    "commit": "a753558",
+    "run": "35664339580",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35664339580",
+    "conclusion": "success",
+    "jobsSucceeded": 5,
+    "tests": 533,
+    "failed": 0,
+    "errors": 0,
+    "verifiedLiveWith": "gh run view"
+  }
 }
