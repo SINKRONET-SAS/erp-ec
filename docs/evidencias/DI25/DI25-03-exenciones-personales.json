@@ -1,8 +1,8 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.3",
-  "updatedAt": "2026-09-21T19:06:51.518Z",
-  "status": "exenciones-implementadas-validadas-aceptacion-pendiente",
+  "updatedAt": "2026-09-21T19:36:50.412Z",
+  "status": "exenciones-implementadas-verificadas-windows-linux-y-demo-aceptacion-pendiente",
   "normativeSources": [
     "LRTI, codificación SRI con última reforma 2026-04-01, art. 9 num. 12",
     "Reglamento LRTI arts. 49 y 50 (extracto SRI)",
@@ -40,20 +40,35 @@
     "log": ".cache/windows/ec_integrated_test_di2503ex3.log",
     "sha256": "943ed6aa921d3c44c5d381ae7eb015006ac417dc7cf3fb7589664263c83f7d27"
   },
-  "linuxCi": "no ejecutado en esta pasada",
-  "demoUpdated": false,
+  "linuxCi": {
+    "conclusion": "success",
+    "headSha": "c47359d8eb9fac9d7132d0a5c53f17f9156e0ce5",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35645129313",
+    "jobs": [
+      "gobierno",
+      "Suite integrada (imagen sin fuentes montadas)",
+      "Arranque real de imagen controller",
+      "Arranque real de imagen customer",
+      "Auditoría de dependencias"
+    ],
+    "tests": 478,
+    "failed": 0,
+    "errors": 0,
+    "logSha256": "ed54b9a909767f69413f9d801fa1579226a3a6cb7fe97c6312fb61eb738ca11f"
+  },
+  "demoUpdated": true,
   "expertAccepted": false,
   "pending": [
     "Aceptación del responsable tributario y decisiones de criterio de DI25-03_PAQUETE_ACEPTACION.md",
     "Otros empleadores y acumulados: importación única contra comprobante",
-    "Ausencias y bases laborales; décimos, reserva y cierre anual; regímenes especiales",
-    "Ejecución Linux/CI remoto y actualización de la demo"
+    "Ausencias y bases laborales; décimos, reserva y cierre anual; regímenes especiales"
   ],
   "limits": [
     "No se valida calificación sanitaria, parentesco ni sustitución ante autoridad",
     "Sin reliquidación retroactiva de retenciones mensuales",
     "Edad: 65 cumplidos al 1 de enero; decisión de implementación por confirmar",
-    "No se inicia DI25-04; no hay homologación ni presentación SRI"
+    "No se inicia DI25-04; no hay homologación ni presentación SRI",
+    "La revisión visual autenticada de la demo no la realizó el asistente: no introduce contraseñas"
   ],
   "codeHashes": {
     "addons/erpec_payroll/__manifest__.py": "f33fed67cccb59c4137af0a32ee536d7955e99f8c8cde8f4126889bb63d0d89c",
@@ -67,5 +82,49 @@
     "addons/erpec_payroll/tests/test_annex_rdep.py": "65577e87d2a524d3193514e54b8e8a5dc9a0a55ff45b32d638f7214edcbca8b6",
     "addons/erpec_payroll/tests/test_tax_review.py": "3d7ae1824c57544ebca28cf6f901f4b22f8360d3db316cf7c258ba7fee752acf",
     "addons/erpec_payroll/tests/test_personal_exemptions.py": "a4305849adb36595b7ecddf4893c01c39b4bb17f44dd43cac243b350dade46a0"
-  }
+  },
+  "deployment": {
+    "updated": true,
+    "url": "http://127.0.0.1:8369",
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\di25-exemptions-20260921T193040Z",
+    "backupContents": [
+      "database.dump",
+      "erpec_payroll",
+      "filestore"
+    ],
+    "databaseBackupSha256": "2613d643938045dd3a173183fd99a425b566dc0098c95451081bf3e852546ee2",
+    "moduleVersion": "18.0.1.11.0",
+    "upgradeExit": 0,
+    "seed": {
+      "firstRun": {
+        "created": 7,
+        "preserved": 25
+      },
+      "repeatedRun": {
+        "created": 0,
+        "preserved": 32
+      }
+    },
+    "economicBeforeAndAfter": {
+      "account_move": {
+        "count": 29,
+        "sha256": "a8622b866306ea7cfb3d7a36369bc818fd0c5955f5c5ee9ff67977c513bd7fb8"
+      },
+      "account_move_line": {
+        "count": 134,
+        "sha256": "3e8b48328adc0efdc32b3faeacb59f336cfbd5cb656d26062132238e889737be"
+      },
+      "payroll_period": {
+        "count": 8,
+        "sha256": "9b3a8c397212087542052ca65651b319d10683813f247b99d035e2d00b6e346d"
+      },
+      "payroll_line": {
+        "count": 9,
+        "sha256": "81abd02cde6099afa88344d013e63ae57842d6052acd7ea0ed5ab8c440aa7a4a"
+      }
+    },
+    "economicUnchanged": true,
+    "verification": "Dentro de la base de la demo: 32 casos, todos con «Coincide con la referencia aritmética»; vistas de empleado, ensayo y agregador RDEP cargan para el responsable de nómina. Inspección visual autenticada en pantalla pendiente del titular."
+  },
+  "responsibleDraft": "docs/DI25-03_BORRADOR_RESPUESTAS_RESPONSABLE.md"
 }
