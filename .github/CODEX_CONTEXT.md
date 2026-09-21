@@ -1,3 +1,9 @@
+# Estado vigente: DI25-03 · ensayos visibles en preparación
+
+El titular autorizó ejemplos editables para aceptación externa y ampliar los casos de la matriz. Implementados 19 escenarios con otro empleador, salario variable, ausencias, gastos/cargas, Galápagos, décimos/reserva y cierre de impuesto; validación final e instalación demo en curso. Guía: docs/DI25-03_ENSAYOS_RENTA_DEMO.md; evidencia del paquete: docs/evidencias/DI25/DI25-03-ensayos-renta.json. La suite inicial de tres casos pasó 455 pruebas, pero no acredita aún la ampliación. No cerrar DI25-03 ni iniciar DI25-04. Mantener aceptación externa pendiente, sin alterar XML/asientos/roles por estos ensayos.
+
+---
+
 # Estado vigente: DI25-03 parcial por cobertura y aceptación tributaria
 
 DI25-00–02 cerradas. DI25-03: correcciones anuales RDEP, beneficios y cuotas implementadas; tres recorridos UI documentados. Código f236621 validado con 448 pruebas en Windows y Linux, 0 fallos/errores y 5 omisiones de Tesorería por entorno, salida 0; ambos perfiles Linux aprobados. Las ejecuciones Windows interrumpidas no cuentan como aprobación. Evidencia: docs/evidencias/DI25/DI25-03-progreso.json; estado de los 20 hallazgos: docs/evidencias/DI25/estado-hallazgos.json.

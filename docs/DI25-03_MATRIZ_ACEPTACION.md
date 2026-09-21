@@ -1,3 +1,20 @@
+# Casos de demo para revisión externa — ampliación autorizada
+
+Paquete de 19 ejemplos implementado, en validación antes de actualizar la demo. Guía: [Ensayos de renta](DI25-03_ENSAYOS_RENTA_DEMO.md). Evidencia vigente del paquete: evidencias/DI25/DI25-03-ensayos-renta.json.
+
+| Pendiente de la matriz | Ejemplos preparados | Límite que permanece |
+|---|---|---|
+| Otro empleador y acumulados | 01–03; acumulado sumado una vez, IESS y retenciones separados | Cotejo con comprobante y aceptación externa; XML sigue bloqueado |
+| Cambio salarial y ausencias | 04–05; efecto anual de remuneración variable | Justificar descuento y cada base laboral; no calcula automáticamente días/contratos |
+| Tarifa, gastos y cargas | 06–17; USD 5.000 mensuales, seis niveles de cargas, dos regiones | Sustento de gastos/cargas, elegibilidad insular y aceptación |
+| Décimos y reserva | 18; total informado separado del gravado | Devengo, bases diferenciadas y mapeo integral RDEP |
+| Cierre anual del impuesto | 19; impuesto y retenciones conciliados | Cierre completo del anexo y referencia aprobada |
+| Exenciones personales y regímenes especiales | Conservan bloqueo previo; no se simula cobertura | Referencias de tercera edad/discapacidad, convenios e impuesto asumido |
+
+Los ejemplos reducen la falta de material revisable; no convierten la coincidencia aritmética ni una observación guardada en aprobación tributaria.
+
+---
+
 # DI25-03 — Matriz para aceptación tributaria y laboral
 
 Estado: pendiente. Esta matriz prepara la revisión; no constituye aprobación ni autoriza datos reales.

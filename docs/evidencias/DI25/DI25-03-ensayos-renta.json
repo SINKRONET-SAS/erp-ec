@@ -1,0 +1,41 @@
+{
+  "phase": "DI25-03",
+  "task": "DI25-03.3",
+  "updatedAt": "2026-09-21T12:54:33.339Z",
+  "status": "ensayos-implementados-validacion-final-en-curso",
+  "requested": "Casos editables visibles en demo para aceptación externa, ampliados a pendientes de matriz y sueldo USD 5.000",
+  "cases": 19,
+  "guide": "docs/DI25-03_ENSAYOS_RENTA_DEMO.md",
+  "sourceHashes": {
+    "addons/erpec_payroll/__init__.py": "294df869f286fb0af8ae2e5742f4275a824d5c60bc8675a7a8adfdfb5f033bdb",
+    "addons/erpec_payroll/__manifest__.py": "25f3c59227e66bafa82bcba064d11661d184f7fdce1b7fe57a6e7d8337540718",
+    "addons/erpec_payroll/ir.model.access.csv": "d98bb6cd7a995025eacea2ca32e2112cf94a21d92a3e2828dafc644ec2db7bcd",
+    "addons/erpec_payroll/tax_review.py": "7854e60972a5388f2688ead15d6c7989689d0d5687c2ce32935eca4ff0ea9784",
+    "addons/erpec_payroll/tax_review_cases.py": "5bcb10f820ebc296d06a6a5d210c3bf35d4153f9b33b59accb60f7e3c64b1ca5",
+    "addons/erpec_payroll/tax_review_views.xml": "10023df08d043fd86e15c97f7fd8664bf8e4a683ed1059542c59f1111524589d",
+    "addons/erpec_payroll/tests/__init__.py": "e6aecdb365abb48c45d2627ee8d66229a3e382181f60b21abd42f4064286a6e9",
+    "addons/erpec_payroll/tests/test_tax_review.py": "72f053de2f4571cc7d5f3890fd8080b41bd9b97dd2cf004a374d267a66ec314c",
+    "scripts/seed-tax-review-demo.py": "1e78564f437719f80faf895bfdf195e2ca7d3d24c043b340a907836cf50655a3"
+  },
+  "arithmeticPreflight": {
+    "cases": 19,
+    "passed": true,
+    "scope": "Funciones puras; no sustituye Odoo ni aceptación externa"
+  },
+  "initialSuite": {
+    "tests": 455,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "exit": 0,
+    "scope": "Versión inicial de tres casos; anterior a ampliación a 19",
+    "log": ".cache/windows/ec_integrated_test_02f81fee392d.log",
+    "sha256": "ad94fea77132f439835c0116907a13fd427b91aaa095fe67d3f07bafb9331f01"
+  },
+  "pending": [
+    "Suite integrada final Windows/Linux",
+    "Respaldo, actualización demo, casos y verificación visual",
+    "Aceptación externa y cobertura restante de DI25-03"
+  ],
+  "legalAccepted": false
+}

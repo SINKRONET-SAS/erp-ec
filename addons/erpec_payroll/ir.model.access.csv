@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payroll_tax_review,Responsable ensayo renta,model_erpec_payroll_tax_review,group_payroll_manager,1,1,1,1
 access_payroll_policy,Responsable policy,model_erpec_payroll_policy,group_payroll_manager,1,1,1,0
 access_payroll_mapping,Responsable mapping,model_erpec_payroll_mapping,group_payroll_manager,1,1,1,1
 access_payroll_tax_bracket,Responsable tax bracket,model_erpec_payroll_tax_bracket,group_payroll_manager,1,1,1,1
