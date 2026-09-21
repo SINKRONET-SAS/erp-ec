@@ -130,3 +130,83 @@ class EmissionCase(TransactionCase):
             emission.with_user(user).read(['access_key'])
         with self.assertRaises(AccessError):
             self.certificate.with_user(user).write({'verified': True})
+
+    def _di25_emission(self, move=None, state='signed'):
+        from ..models import _INTERNAL
+        return self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_INTERNAL).create({
+            'move_id': (move or self.move).id, 'state': state, 'access_key': '1' * 49,
+            'xml_signed': base64.b64encode(b'<ensayo/>')})
+
+    def test_di25_queue_does_not_starve_signed(self):
+        signed = self._di25_emission()
+        for _ in range(10):
+            self._di25_emission(self.move.copy(), 'blocked')
+        with patch.object(type(signed), '_transmit', autospec=True) as transmit:
+            self.env['erpec.fiscal.emission']._cron_process()
+        self.assertIn(signed.id, [call.args[0].id for call in transmit.call_args_list])
+
+    def test_di25_native_blocks_external(self):
+        from odoo.addons.erpec_fiscal_connector.connector import _INTERNAL
+        connection = self.env['erpec.fiscal.connection'].create({
+            'company_id': self.env.company.id, 'base_url': 'http://127.0.0.1:3099',
+            'organization_ref': 'ensayo', 'empresa_ref': 1, 'workspace_ref': 1, 'emission_point_ref': 1})
+        connection.with_context(_fiscal_internal=_INTERNAL).write({'verified': True})
+        self._di25_emission()
+        with self.assertRaisesRegex(ValidationError, 'nativa'):
+            self.move.action_queue_fiscal()
+
+    def test_di25_signed_content_is_immutable(self):
+        self._di25_emission()
+        with self.assertRaises(ValidationError):
+            self.move.invoice_line_ids.write({'name': 'Concepto alterado después de firmar'})
+        with self.assertRaises(ValidationError):
+            self.move.write({'ec_fiscal_payment_code': '01'})
+        with self.assertRaises(ValidationError):
+            self.move.button_draft()
+
+    def test_di25_failure_isolated_and_latency_visible(self):
+        first = self._di25_emission()
+        second = self._di25_emission(self.move.copy())
+        def transmit(emission):
+            if emission == first:
+                raise RuntimeError('Fallo sintético del trabajo')
+            emission._save(state='waiting', next_attempt=__import__('datetime').datetime(2099, 1, 1))
+        with patch.object(type(first), '_transmit', autospec=True, side_effect=transmit):
+            self.env['erpec.fiscal.emission']._cron_process()
+        self.assertEqual(first.state, 'blocked')
+        self.assertEqual(first.last_error, 'FISCAL_TRABAJO_ERROR')
+        self.assertEqual(second.state, 'waiting')
+        self.assertTrue(second.first_attempt_at)
+        self.assertGreaterEqual(second.dispatch_delay_seconds, 0)
+
+    def test_di25_recovery_queries_original_key_without_resigning(self):
+        emission = self._di25_emission(state='blocked')
+        original = (emission.access_key, emission.xml_signed)
+        emission.action_review()
+        with patch.object(sri_client, 'consultar_autorizacion', return_value=('NO AUTORIZADO', None, [])), patch.object(sri_client, 'enviar_recepcion') as send:
+            emission.action_process()
+        send.assert_not_called()
+        self.assertEqual(emission.state, 'rejected')
+        self.assertEqual((emission.access_key, emission.xml_signed), original)
+
+    def test_di25_commit_trigger_and_idempotency(self):
+        with patch.object(type(self.env['ir.cron']), '_trigger', autospec=True) as trigger:
+            one = self.move.action_native_emit()
+            two = self.move.action_native_emit()
+        self.assertEqual(one['res_id'], two['res_id'])
+        self.assertEqual(trigger.call_count, 1)
+
+    def test_di25_cannot_move_line_into_signed_document(self):
+        other = self.move.copy()
+        self._di25_emission()
+        with self.assertRaises(ValidationError):
+            other.invoice_line_ids.write({'move_id': self.move.id})
+
+    def test_di25_preview_matches_signed_economic_content(self):
+        from lxml import etree
+        preview = self.env['erpec.fiscal.preview'].browse(self.move.action_native_preview()['res_id'])
+        emission = self.env['erpec.fiscal.emission'].browse(self.move.action_native_emit()['res_id'])
+        a = etree.fromstring(base64.b64decode(preview.xml_file))
+        b = etree.fromstring(base64.b64decode(emission.xml_unsigned))
+        for tag in ['detalles', 'infoFactura']:
+            self.assertEqual(etree.tostring(a.find(tag)), etree.tostring(b.find(tag)))

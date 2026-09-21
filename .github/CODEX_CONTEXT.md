@@ -1,3 +1,9 @@
+# DI25-02 en validación
+
+DI25-01 cerrada. DI25-02: tres defectos reproducidos; exclusión común, inmutabilidad, cola y seguimiento implementados. Concurrencia independiente aprobada. Suite completa y UI pendientes; no iniciar DI25-03 hasta cierre válido. Detalle: docs/DI25-02_INTEGRIDAD_FISCAL.md.
+
+---
+
 # Estado vigente DI25 — cierre 01 y continuación autorizada
 
 DI25-01 completada con evidencia en docs/evidencias/DI25/DI25-01-cierre.json: 432 pruebas Windows y 432 Linux, 0 fallos/errores, 5 omisiones en cada entorno. CI a18b637 aprobado; ambos perfiles arrancan sin fuentes montadas. Gobierno recursivo y ejecutores corregidos. DI25-02 es la siguiente fase autorizada. La autorización general del usuario comprende todos los prompts, revisión, correcciones, commit y push; se mantienen dependencias y gates externos. No hay emisión ni despliegue productivo autorizado por estos ensayos. Esta sección prevalece sobre estados históricos inferiores.

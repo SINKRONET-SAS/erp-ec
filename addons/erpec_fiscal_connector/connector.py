@@ -154,6 +154,10 @@ class Job(models.Model):
     def create(self, values_list):
         if self.env.context.get('_fiscal_internal') is not _INTERNAL:
             raise ValidationError('Prepara el envío desde la factura contabilizada.')
+        moves = self.env['account.move'].browse([v['move_id'] for v in values_list if v.get('move_id')])
+        moves._lock_fiscal_source()
+        if moves._has_native_fiscal_emissions():
+            raise ValidationError('El comprobante ya tiene una emisión nativa; conserva esa autoridad.')
         return super().create(values_list)
 
     def write(self, values):
@@ -250,8 +254,10 @@ class Move(models.Model):
 
     def action_queue_fiscal(self):
         self.ensure_one(); self.check_access('write')
-        self.env.cr.execute('SELECT id FROM account_move WHERE id=%s FOR UPDATE', [self.id])
+        self._lock_fiscal_source()
         self.invalidate_recordset()
+        if self._has_native_fiscal_emissions():
+            raise ValidationError('El comprobante ya tiene una emisión nativa; conserva esa autoridad.')
         existing = self.env['erpec.fiscal.job'].search([('move_id','=',self.id)])
         if existing:
             return {'type':'ir.actions.act_window','res_model':'erpec.fiscal.job','res_id':existing.id,'view_mode':'form'}
@@ -281,24 +287,46 @@ class Move(models.Model):
         job = self.env['erpec.fiscal.job'].with_context(_fiscal_internal=_INTERNAL).create({'move_id':self.id,'connection_id':connection.id,'external_reference':reference,'correlation_id':uuid.uuid4().hex,'payload':payload})
         return {'type':'ir.actions.act_window','res_model':'erpec.fiscal.job','res_id':job.id,'view_mode':'form'}
 
+    def _lock_fiscal_source(self):
+        """Serializa autoridades y cambios incluso bajo REPEATABLE READ de Odoo."""
+        self.check_access('write')
+        self.flush_recordset(['write_date'])
+        for move in self.sorted('id'):
+            # La versión MVCC obliga a reintentar una lectura concurrente antigua.
+            self.env.cr.execute('UPDATE account_move SET write_date=write_date WHERE id=%s', [move.id])
+        links = [name for name in ('ec_fiscal_job_ids', 'ec_fiscal_emission_ids') if name in self._fields]
+        self.invalidate_recordset(links, flush=False)
+
+    def _has_native_fiscal_emissions(self):
+        """Extensión para la autoridad nativa, sin exigir su instalación."""
+        return False
+
+    def _check_fiscal_mutation(self):
+        self._lock_fiscal_source()
+        if self._has_fiscal_jobs():
+            raise ValidationError('El comprobante conserva una emisión fiscal; sus datos y sustentos no se modifican. Corrige con una nota o procedimiento fiscal.')
+
     def _has_fiscal_jobs(self):
         self.check_access('read')
         # Consulta interna limitada al vínculo; no concede acceso a la bandeja fiscal.
-        return bool(self.sudo().ec_fiscal_job_ids)
+        return bool(self.sudo().ec_fiscal_job_ids) or self._has_native_fiscal_emissions()
 
     def button_draft(self):
+        self._lock_fiscal_source()
         if self._has_fiscal_jobs():
             raise ValidationError('La factura tiene una solicitud fiscal persistente. Revisa su resultado antes de cualquier corrección fiscal.')
         return super().button_draft()
 
     def button_cancel(self):
+        self._lock_fiscal_source()
         if self._has_fiscal_jobs():
             raise ValidationError('La cancelación contable no anula una solicitud fiscal. Revisa el documento en Facturador.')
         return super().button_cancel()
 
 
     def write(self, values):
-        if set(values) & {'partner_id','company_id','currency_id','move_type','invoice_line_ids','line_ids','invoice_date','ec_fiscal_payment_code','state'}:
+        if set(values) & {'partner_id','company_id','currency_id','move_type','invoice_line_ids','line_ids','invoice_date','ec_fiscal_payment_code','state','name','journal_id','l10n_latam_document_number','l10n_latam_document_type_id','ref','narration','ec_sri_reimbursement_ids'}:
+            self._lock_fiscal_source()
             if self._has_fiscal_jobs():
                 raise ValidationError('El envío fiscal conserva el contenido de esta factura. No cambies sus datos después de prepararlo.')
         return super().write(values)
@@ -308,20 +336,20 @@ class MoveLine(models.Model):
     _inherit = 'account.move.line'
 
     def write(self, values):
-        if set(values) & {'move_id','name','product_id','quantity','price_unit','discount','tax_ids','currency_id','balance','debit','credit','amount_currency'} and self.move_id._has_fiscal_jobs():
-            raise ValidationError('Los importes y conceptos están vinculados a una solicitud fiscal persistente.')
+        if set(values) & {'move_id','name','product_id','quantity','price_unit','discount','tax_ids','currency_id','balance','debit','credit','amount_currency','display_type'}:
+            moves = self.move_id | self.env['account.move'].browse(values.get('move_id') or [])
+            moves._check_fiscal_mutation()
         return super().write(values)
 
     @api.model_create_multi
     def create(self, values_list):
         for values in values_list:
-            if values.get('move_id') and self.env['account.move'].browse(values['move_id'])._has_fiscal_jobs():
-                raise ValidationError('No se agregan apuntes a una factura con envío fiscal preparado.')
+            if values.get('move_id'):
+                self.env['account.move'].browse(values['move_id'])._check_fiscal_mutation()
         return super().create(values_list)
 
     def unlink(self):
-        if self.move_id._has_fiscal_jobs():
-            raise ValidationError('No se eliminan apuntes vinculados a un envío fiscal.')
+        self.move_id._check_fiscal_mutation()
         return super().unlink()
 
 

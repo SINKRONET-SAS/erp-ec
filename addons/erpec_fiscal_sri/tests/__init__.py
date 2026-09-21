@@ -10,3 +10,5 @@ from . import test_migration
 from . import test_establishment
 from . import test_secret_store
 from . import test_secret_rotation
+
+from . import test_di25_concurrency

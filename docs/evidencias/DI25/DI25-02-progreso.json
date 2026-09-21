@@ -1,0 +1,28 @@
+{
+  "phase": "DI25-02",
+  "status": "en-validacion",
+  "updatedAt": "2026-09-21T03:07:05.285Z",
+  "reproduction": {
+    "log": ".cache/windows/ec_integrated_test_d8ffefe6c8f2.log",
+    "testsReported": 95,
+    "failed": 3,
+    "errors": 0,
+    "exit": 1,
+    "sha256": "56dba233fd6bb1196e3798610499b54358529ce095f0bed5cbf676141a6b47d5"
+  },
+  "intermediate": {
+    "log": ".cache/windows/ec_integrated_test_1b3d7bc90466.log",
+    "testsReported": 161,
+    "failed": 1,
+    "errors": 0,
+    "exit": 1,
+    "reason": "Mensaje de bloqueo de reembolsos; corregido",
+    "concurrency": "Ambos órdenes, dos transacciones PostgreSQL, una autoridad; aprobado en proceso separado"
+  },
+  "pending": [
+    "Suite integrada completa tras la corrección del mensaje",
+    "Validación Linux",
+    "Revisión visual en instancia desechable"
+  ],
+  "externalCalls": false
+}

@@ -33,6 +33,30 @@ class Move(models.Model):
             if move.state!='posted':missing.append('factura contabilizada')
             move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Preparación XML dentro del ERP, sin servicio Facturador. Ambiente PRUEBAS. Falta implementar y validar firma XAdES, envío/consulta SRI, RIDE autorizado y el RUC del proveedor del sistema en la información adicional cuando corresponda; esta vista previa no emite ni autoriza.'
 
+    def _gather_native_common(self, allow_special_vat=False):
+        """Datos comunes para vista previa y emisión; una validación de líneas e identificación."""
+        self.ensure_one()
+        company = self.company_id
+        partner = self.partner_id.commercial_partner_id
+        identification = ('04' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_ruc')
+                          else '05' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_dni')
+                          else '06' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_passport') else '')
+        items = []
+        for line in self.invoice_line_ids.filtered(lambda row: row.display_type == 'product'):
+            tax = line.tax_ids
+            special = {'not_charged_vat': 'no_object', 'exempt_vat': 'exempt'}.get(tax.tax_group_id.l10n_ec_type) if len(tax) == 1 else None
+            if (len(tax) != 1 or tax.amount_type != 'percent' or tax.price_include or tax.include_base_amount
+                    or not ((tax.tax_group_id.l10n_ec_type, tax.amount) in [('zero_vat', 0), ('vat15', 15)] or (allow_special_vat and special and tax.amount == 0))):
+                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por línea (y no objeto/exento solo en facturas), sin impuestos incluidos ni compuestos.')
+            items.append({'code': line.product_id.default_code or str(line.id), 'description': line.name,
+                          'quantity': line.quantity, 'unit': line.price_unit, 'discount': line.discount,
+                          'rate': special if (allow_special_vat and special) else tax.amount, 'subtotal': line.price_subtotal,
+                          'tax': line.price_total - line.price_subtotal})
+        return {'date': str(self.invoice_date), 'number': self.l10n_latam_document_number, 'issuer_vat': company.vat,
+                'issuer_name': company.name, 'issuer_address': company.street, 'buyer_type': identification,
+                'buyer_vat': partner.vat, 'buyer_name': partner.name, 'buyer_address': partner.street,
+                'accounting': company.ec_native_accounting, 'total': self.amount_total, 'items': items}
+
     def action_native_preview(self):
         self.ensure_one();self.check_access('read')
         if not self.env.user.has_group('account.group_account_user'):raise ValidationError('La preparación fiscal requiere permisos contables.')
@@ -43,14 +67,9 @@ class Move(models.Model):
         company._check_regime_supported()
         if not company.ec_native_ordinary or not company.ec_native_accounting:
             raise ValidationError('El perfil tributario especial requiere ampliar el XML antes de usarlo.')
-        identification='04' if partner.l10n_latam_identification_type_id==self.env.ref('l10n_ec.ec_ruc') else '05' if partner.l10n_latam_identification_type_id==self.env.ref('l10n_ec.ec_dni') else ''
-        items=[]
-        for line in self.invoice_line_ids.filtered(lambda row:row.display_type=='product'):
-            tax=line.tax_ids
-            if len(tax)!=1 or tax.amount_type!='percent' or tax.price_include or tax.include_base_amount or (tax.tax_group_id.l10n_ec_type,tax.amount) not in [('zero_vat',0),('vat15',15)]:
-                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por línea, sin impuestos incluidos ni compuestos.')
-            items.append({'code':line.product_id.default_code or str(line.id),'description':line.name,'quantity':line.quantity,'unit':line.price_unit,'discount':line.discount,'rate':tax.amount,'subtotal':line.price_subtotal,'tax':line.price_total-line.price_subtotal})
-        data={'date':str(self.invoice_date),'number':self.l10n_latam_document_number,'issuer_vat':company.vat,'issuer_name':company.name,'issuer_address':company.street,'buyer_type':identification,'buyer_vat':partner.vat,'buyer_name':partner.name,'buyer_address':partner.street,'accounting':company.ec_native_accounting,'payment':self.ec_fiscal_payment_code,'total':self.amount_total,'items':items}
+        data = self._gather_native_common()
+        data['payment'] = self.ec_fiscal_payment_code
+        data['ambiente'] = '1'
         # Código reproducible solo para previsualización; no reserva un secuencial fiscal.
         digest=hashlib.sha256(json.dumps(data,sort_keys=True,ensure_ascii=False).encode('utf-8')).hexdigest();data['numeric']=str(int(digest[:12],16)%100000000).zfill(8)
         try:key,xml=generate(data)

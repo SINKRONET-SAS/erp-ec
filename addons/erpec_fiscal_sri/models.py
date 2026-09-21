@@ -1,26 +1,22 @@
-"""Emisión nativa real: firma XAdES + transmisión SOAP directa al SRI (ambiente PRUEBAS).
-Segunda autoridad de emisión, independiente de erpec_fiscal_connector (que delega en un
-servicio Facturador externo) — gobernada por la misma regla "una autoridad por comprobante"
-que ya aplica en erpec_fiscal_native.models. Ver docs/PLAN_HAIKY_FACTURACION_NATIVA.md.
-
-`_gather_native_data()` duplica intencionalmente una porción pequeña de la lógica de
-`erpec_fiscal_native.models.Move.action_native_preview` (validación de líneas/IVA y armado del
-diccionario para engine.generate()): ese archivo está en edición por otra sesión en paralelo al
-escribir este incremento, así que no se pudo extraer a una función compartida. Consolidar en un
-incremento posterior cuando el archivo esté libre.
-"""
+"""Emisión nativa con autoridad exclusiva, cola durable y datos compartidos con la vista previa."""
 import base64
 import hashlib
+import logging
+import uuid
+import time
 import re
 import secrets
 from datetime import timedelta
 
+from psycopg2 import errors as pg_errors
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.erpec_fiscal_native import xades
 from odoo.addons.erpec_fiscal_native.engine import generate
 from odoo.addons.erpec_fiscal_native import liquidacion_engine, notacredito_engine, notadebito_engine
+
+_logger = logging.getLogger(__name__)
 
 from . import ride as ride_module
 from . import secret_store
@@ -594,8 +590,24 @@ class Emission(models.Model):
         ('rejected', 'No autorizada'),
         ('returned', 'Devuelta en recepción'),
         ('blocked', 'Revisión requerida'),
-    ], default='draft', required=True, readonly=True)
+    ], string='Estado', default='draft', required=True, readonly=True)
+    correlation_id = fields.Char('Correlación', default=lambda self: uuid.uuid4().hex, readonly=True, copy=False)
+    first_attempt_at = fields.Datetime('Primer despacho', readonly=True, copy=False)
+    last_attempt_at = fields.Datetime('Último intento', readonly=True, copy=False)
+    last_error = fields.Char('Último error registrado', readonly=True, copy=False)
+    queue_age_seconds = fields.Float('Edad en cola (segundos)', compute='_compute_queue_metrics')
+    dispatch_delay_seconds = fields.Float('Demora del primer despacho (segundos)', compute='_compute_queue_metrics')
+    authority = fields.Char('Autoridad', compute='_compute_queue_metrics')
     attempts = fields.Integer('Intentos', readonly=True)
+
+    @api.depends('create_date', 'first_attempt_at', 'state')
+    def _compute_queue_metrics(self):
+        now = fields.Datetime.now()
+        for emission in self:
+            start = emission.create_date or now
+            emission.queue_age_seconds = max(0, (now - start).total_seconds()) if emission.state not in ('authorized', 'rejected') else 0
+            emission.dispatch_delay_seconds = max(0, (emission.first_attempt_at - start).total_seconds()) if emission.first_attempt_at else 0
+            emission.authority = 'Firma nativa y SRI directo'
     next_attempt = fields.Datetime('Próximo intento', readonly=True)
     message = fields.Text('Estado y siguiente acción', readonly=True, default='Solicitud preparada. Procesar la cola para firmar y transmitir.')
     _sql_constraints = [('one_invoice', 'unique(move_id)', 'El comprobante ya tiene una emisión nativa.')]
@@ -619,7 +631,15 @@ class Emission(models.Model):
     def create(self, values_list):
         if self.env.context.get('_fiscal_sri_internal') is not _INTERNAL:
             raise ValidationError('Prepara la emisión desde el comprobante contabilizado.')
-        return super().create(values_list)
+        moves = self.env['account.move'].browse([v['move_id'] for v in values_list if v.get('move_id')])
+        moves._lock_fiscal_source()
+        if moves.sudo().ec_fiscal_job_ids:
+            raise ValidationError('Este comprobante ya está asignado al Facturador externo.')
+        records = super().create(values_list)
+        if records.filtered(lambda emission: emission.state == 'signed'):
+            # El disparador persiste en la misma transacción; despierta el trabajador tras commit.
+            self.env.ref('erpec_fiscal_sri.emission_cron')._trigger()
+        return records
 
     def write(self, values):
         if self.env.context.get('_fiscal_sri_internal') is not _INTERNAL:
@@ -639,13 +659,17 @@ class Emission(models.Model):
             emission.invalidate_recordset()
             if emission.state in ('authorized', 'rejected'):
                 continue
+            if emission.state in ('blocked', 'returned', 'draft'):
+                raise UserError('Revisa la incidencia y usa Consultar estado SRI; no se retransmite un documento detenido.')
             if emission.next_attempt and emission.next_attempt > fields.Datetime.now():
                 raise UserError('Espera al próximo intento indicado para no saturar el servicio.')
             if emission.attempts >= MAX_ATTEMPTS:
                 emission._save(state='blocked', message='Se agotaron %d intentos. Revisar y reabrir explícitamente.' % MAX_ATTEMPTS)
                 continue
             try:
-                emission._save(attempts=emission.attempts + 1)
+                now = fields.Datetime.now()
+                emission._save(attempts=emission.attempts + 1, last_attempt_at=now,
+                               first_attempt_at=emission.first_attempt_at or now)
                 if emission.state in ('draft', 'signed'):
                     emission._transmit()
                 elif emission.state in ('sent', 'waiting'):
@@ -654,9 +678,25 @@ class Emission(models.Model):
                 delay = RETRY_DELAY_SECONDS * max(1, emission.attempts)
                 emission._save(
                     state='blocked' if not error.retry else emission.state,
-                    message=error.code,
+                    message=error.code + '. Revisa el próximo intento; correlación: ' + emission.correlation_id,
+                    last_error=error.code,
                     next_attempt=fields.Datetime.now() + timedelta(seconds=delay) if error.retry else False,
                 )
+                _logger.warning('Incidencia SRI code=FISCAL_SRI_ERROR statusCode=502 correlationId=%s userId=%s retry=%s',
+                                emission.correlation_id, self.env.uid, error.retry)
+        return True
+
+    def action_review(self):
+        """Recupera el estado conservando clave y XML; no vuelve a firmar ni transmite."""
+        for emission in self:
+            emission.check_access('write')
+            self.env.cr.execute('SELECT id FROM erpec_fiscal_emission WHERE id=%s FOR UPDATE', [emission.id])
+            emission.invalidate_recordset()
+            if emission.state not in ('blocked', 'returned') or not emission.access_key:
+                raise UserError('Solo una emisión detenida con clave de acceso admite esta consulta.')
+            emission._save(state='waiting', attempts=0, next_attempt=False,
+                           message='Consulta de recuperación pendiente; se conservan el XML y la clave originales.')
+        self.env.ref('erpec_fiscal_sri.emission_cron')._trigger()
         return True
 
     def _transmit(self):
@@ -664,17 +704,47 @@ class Emission(models.Model):
         xml_signed = base64.b64decode(self.xml_signed)
         estado, mensajes = sri_client.enviar_recepcion(xml_signed, ambiente=self.ambiente)
         if estado == 'DEVUELTA':
-            self._save(state='returned', message='DEVUELTA en Recepción: ' + str(mensajes))
+            self._save(state='returned', message='DEVUELTA en Recepción: ' + str(mensajes), last_error='SRI_DEVUELTA', next_attempt=False)
             return
         self._save(state='waiting', message='RECIBIDA; esperando autorización.',
                     next_attempt=fields.Datetime.now() + timedelta(seconds=POLL_DELAY_SECONDS))
 
     @api.model
     def _cron_process(self):
-        emissions = self.search([('state', 'not in', ['authorized', 'rejected']),
-                                  '|', ('next_attempt', '=', False), ('next_attempt', '<=', fields.Datetime.now())], limit=10)
+        domain = [('state', 'in', ['signed', 'sent', 'waiting']),
+                  '|', ('next_attempt', '=', False), ('next_attempt', '<=', fields.Datetime.now())]
+        emissions = self.search(domain, order='id asc', limit=10)
+        deadline = time.monotonic() + 40
+        processed = 0
         for emission in emissions:
-            emission.action_process()
+            if time.monotonic() >= deadline:
+                _logger.info('Lote aplazado code=FISCAL_TIEMPO_LOTE statusCode=202 correlationId=%s userId=%s', emission.correlation_id, self.env.uid)
+                break
+            try:
+                with self.env.cr.savepoint():
+                    self.env.cr.execute('SELECT id FROM erpec_fiscal_emission WHERE id=%s FOR UPDATE SKIP LOCKED', [emission.id])
+                    if not self.env.cr.fetchone():
+                        _logger.info('Emisión ocupada code=FISCAL_OCUPADA statusCode=409 correlationId=%s userId=%s', emission.correlation_id, self.env.uid)
+                        continue
+                    emission.action_process()
+                    processed += 1
+            except (pg_errors.SerializationFailure, pg_errors.DeadlockDetected):
+                raise
+            except Exception as error:
+                # Se revierte solo este trabajo; no se publican XML, secretos ni detalles del proveedor.
+                emission.invalidate_recordset()
+                processed += 1
+                now = fields.Datetime.now()
+                emission._save(state='blocked', next_attempt=False, last_error='FISCAL_TRABAJO_ERROR',
+                               attempts=emission.attempts + 1, last_attempt_at=now, first_attempt_at=emission.first_attempt_at or now,
+                               message='Error interno. Revisa la correlación y consulta el estado SRI antes de continuar: ' + emission.correlation_id)
+                _logger.error('Emisión detenida code=FISCAL_TRABAJO_ERROR statusCode=500 correlationId=%s userId=%s exceptionType=%s',
+                              emission.correlation_id, self.env.uid, type(error).__name__)
+        remaining = self.search_count(domain)
+        cron = self.env.ref('erpec_fiscal_sri.emission_cron')
+        cron._notify_progress(done=processed, remaining=remaining)
+        if remaining:
+            cron._trigger()
 
     def _poll(self):
         self.ensure_one()
@@ -739,8 +809,7 @@ class Reimbursement(models.Model):
                 raise ValidationError('La autorización del comprobante requiere de 10 a 49 dígitos.')
 
     def _check_editable(self):
-        if any(move.ec_fiscal_emission_ids for move in self.mapped('move_id')):
-            raise ValidationError('La factura ya fue firmada; sus sustentos de reembolso no se modifican.')
+        self.mapped('move_id')._check_fiscal_mutation()
 
     @api.model_create_multi
     def create(self, values_list):
@@ -750,6 +819,8 @@ class Reimbursement(models.Model):
 
     def write(self, values):
         self._check_editable()
+        if values.get('move_id'):
+            self.env['account.move'].browse(values['move_id'])._check_fiscal_mutation()
         return super().write(values)
 
     def unlink(self):
@@ -772,6 +843,10 @@ class Move(models.Model):
 
     ec_fiscal_emission_ids = fields.One2many('erpec.fiscal.emission', 'move_id', string='Emisiones nativas SRI', copy=False)
 
+    def _has_native_fiscal_emissions(self):
+        self.check_access('read')
+        return bool(self.sudo().ec_fiscal_emission_ids)
+
     def _check_user_emission_point(self):
         """Un usuario con puntos permitidos solo opera comprobantes de venta de esos puntos."""
         if self.env.su:
@@ -790,33 +865,10 @@ class Move(models.Model):
         return super()._post(soft=soft)
 
     def _gather_native_common(self, allow_special_vat=False):
-        """Datos compartidos entre factura y nota de crédito: identificación del emisor/
-        comprador y líneas con impuesto. Duplicado intencional de la validación/armado de
-        datos de erpec_fiscal_native.models.Move.action_native_preview — ver docstring del
-        módulo."""
-        self.ensure_one()
-        company = self.company_id
-        partner = self.partner_id.commercial_partner_id
-        identification = ('04' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_ruc')
-                          else '05' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_dni')
-                          else '06' if partner.l10n_latam_identification_type_id == self.env.ref('l10n_ec.ec_passport') else '')
-        items = []
-        for line in self.invoice_line_ids.filtered(lambda row: row.display_type == 'product'):
-            tax = line.tax_ids
-            special = {'not_charged_vat': 'no_object', 'exempt_vat': 'exempt'}.get(tax.tax_group_id.l10n_ec_type) if len(tax) == 1 else None
-            if (len(tax) != 1 or tax.amount_type != 'percent' or tax.price_include or tax.include_base_amount
-                    or not ((tax.tax_group_id.l10n_ec_type, tax.amount) in [('zero_vat', 0), ('vat15', 15)] or (allow_special_vat and special and tax.amount == 0))):
-                raise ValidationError('Revisar IVA: se admite una tarifa 0 o 15 por línea (y no objeto/exento solo en facturas), sin impuestos incluidos ni compuestos.')
-            items.append({'code': line.product_id.default_code or str(line.id), 'description': line.name,
-                          'quantity': line.quantity, 'unit': line.price_unit, 'discount': line.discount,
-                          'rate': special if (allow_special_vat and special) else tax.amount, 'subtotal': line.price_subtotal,
-                          'tax': line.price_total - line.price_subtotal})
-        return {'date': str(self.invoice_date), 'number': self.l10n_latam_document_number, 'issuer_vat': company.vat,
-                'issuer_name': company.name, 'issuer_address': company.street, 'buyer_type': identification,
-                'buyer_vat': partner.vat, 'buyer_name': partner.name, 'buyer_address': partner.street,
-                'accounting': company.ec_native_accounting, 'total': self.amount_total, 'items': items,
-                'ambiente': self.journal_id.ec_sri_ambiente or '1',
-                'establishment_address': self.journal_id.ec_point_id.establishment_address or False}
+        data = super()._gather_native_common(allow_special_vat=allow_special_vat)
+        data.update(ambiente=self.journal_id.ec_sri_ambiente or '1',
+                    establishment_address=self.journal_id.ec_point_id.establishment_address or False)
+        return data
 
     def _gather_native_data(self):
         data = self._gather_native_common(allow_special_vat=True)
@@ -860,6 +912,10 @@ class Move(models.Model):
         sale del consecutivo del punto de emisión del diario (por ambiente) y se asigna antes de contabilizar."""
         self.ensure_one()
         self.check_access('write')
+        self._lock_fiscal_source()
+        self.invalidate_recordset()
+        if self.sudo().ec_fiscal_job_ids:
+            raise ValidationError('Este comprobante ya está asignado al Facturador externo.')
         if not self.ec_is_liquidation or self.state == 'cancel' or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
             raise ValidationError('Se requiere una factura de proveedor con tipo documental Liquidación de compra (03), en USD, de una empresa de Ecuador.')
         if self.ec_fiscal_emission_ids:
@@ -891,7 +947,7 @@ class Move(models.Model):
         emission = self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_INTERNAL).create({
             'move_id': self.id, 'access_key': access_key, 'ambiente': data['ambiente'],
             'xml_unsigned': base64.b64encode(xml_unsigned), 'xml_signed': base64.b64encode(xml_signed),
-            'state': 'signed', 'message': 'Firmada. Procesar la cola para transmitir al SRI.'})
+            'state': 'signed', 'message': 'Firmada. Despacho solicitado al confirmar la transacción; revisa la demora y el estado de la cola.'})
         return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission', 'res_id': emission.id, 'view_mode': 'form'}
 
     def _gather_native_debit_note_data(self):
@@ -913,10 +969,12 @@ class Move(models.Model):
     def action_native_emit(self):
         self.ensure_one()
         self.check_access('write')
+        self._lock_fiscal_source()
+        self.invalidate_recordset()
         self._check_user_emission_point()
         if self.state != 'posted' or self.move_type not in NATIVE_MOVE_TYPES or self.currency_id.name != 'USD' or self.company_id.country_id.code != 'EC':
             raise ValidationError('Se requiere una factura, nota de crédito o nota de débito de venta contabilizada en USD de una empresa de Ecuador.')
-        if self.ec_fiscal_job_ids:
+        if self.sudo().ec_fiscal_job_ids:
             raise ValidationError('Este comprobante ya está asignado al Facturador externo; conserva su autoridad y trazabilidad.')
         if self.ec_fiscal_emission_ids:
             return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission',
@@ -951,6 +1009,6 @@ class Move(models.Model):
         emission = self.env['erpec.fiscal.emission'].with_context(_fiscal_sri_internal=_INTERNAL).create({
             'move_id': self.id, 'access_key': access_key, 'ambiente': data['ambiente'],
             'xml_unsigned': base64.b64encode(xml_unsigned), 'xml_signed': base64.b64encode(xml_signed),
-            'state': 'signed', 'message': 'Firmada. Procesar la cola para transmitir al SRI.',
+            'state': 'signed', 'message': 'Firmada. Despacho solicitado al confirmar la transacción; revisa la demora y el estado de la cola.',
         })
         return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission', 'res_id': emission.id, 'view_mode': 'form'}
