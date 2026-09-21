@@ -40,6 +40,12 @@ jobs:
         run: docker build --build-arg ERPEC_PROFILE=${{ matrix.profile }} -f deployment/linux/Dockerfile -t erpec-linux-${{ matrix.profile }}:phase04 .
       - name: Probar arranque, interfaz, aislamiento y recreación
         run: python scripts/verify-linux.py --profile ${{ matrix.profile }}
+      - name: Conservar resultado sin credenciales
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultado-${{ matrix.profile }}
+          path: .cache/linux/*/result.json
 
   dependencias:
     name: Auditoría de dependencias

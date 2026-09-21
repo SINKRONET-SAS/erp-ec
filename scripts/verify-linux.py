@@ -115,7 +115,7 @@ def main(profile):
         def invoke(model, method, args, kwargs=None, password=private['admin']):
             return call(url,'erpec_app',password,model,method,args,kwargs)
         assert invoke('erpec.workspace','search_count',[[]]) == 1
-        assert invoke('ir.module.module','search_count',[[('name','in',['erpec_suite','erpec_provision','erpec_payphone'])]]) == (0 if profile == 'customer' else 3)
+        assert invoke('ir.module.module','search_count',[[('name','in',['erpec_suite','erpec_provision','erpec_payphone']), ('state','=','installed')]]) == (0 if profile == 'customer' else 3)
         evidence['checks'].append('Módulos separados según perfil '+profile)
         partner = invoke('res.partner','create',[{'name':'Persistencia Linux '+stamp}])
         data = base64.b64encode(('Archivo persistente '+stamp).encode()).decode()

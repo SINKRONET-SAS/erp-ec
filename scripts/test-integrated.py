@@ -2,6 +2,7 @@
 import argparse
 import configparser
 import json
+import os
 import re
 import secrets
 import subprocess
@@ -100,7 +101,8 @@ def main():
             config.write(handle)
         tags = ','.join('/' + module for module in modules)
         result = subprocess.run([args.python, str(ODOO), '-c', str(conf_path), '-i', ','.join(modules), '--test-tags', tags, '--stop-after-init', '--no-http'],
-                                cwd=str(ROOT), capture_output=True, text=True, timeout=args.timeout)
+                                cwd=str(ROOT), capture_output=True, text=True, encoding='utf-8',
+                                env={**os.environ, 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8'}, timeout=args.timeout)
     finally:
         try:
             cleanup_owned(connection, name, database_created, role_created)

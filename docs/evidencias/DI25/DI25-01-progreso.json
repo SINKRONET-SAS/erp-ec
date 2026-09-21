@@ -1,7 +1,7 @@
 {
   "phase": "DI25-01",
   "status": "en-validacion",
-  "updatedAt": "2026-09-21T02:22:10.059Z",
+  "updatedAt": "2026-09-21T02:31:31.183Z",
   "checks": [
     "6 pruebas de gobierno aprobadas",
     "7 pruebas del ejecutor Windows aprobadas",
@@ -18,5 +18,19 @@
     "reason": "sailor-ingest.sock inaccesible; reinicio normal no resuelve; no se restableció ni borró Docker"
   },
   "rollback": "Restituir ejecutores/imagen anterior en checkout aislado; no reescribir snapshots ni borrar bases existentes",
-  "authorization": "Solicitud del usuario: ejecutar todos los prompts, revisar regresiones, commit y push"
+  "authorization": "Solicitud del usuario: ejecutar todos los prompts, revisar regresiones, commit y push",
+  "regression": {
+    "attempt": "ec_integrated_test_b70d211e51ca",
+    "reportedTests": 432,
+    "reportedFailed": 0,
+    "reportedErrors": 0,
+    "runnerExit": 1,
+    "cause": "Registro Windows no UTF-8; corregido fijando PYTHONUTF8/PYTHONIOENCODING en el proceso hijo. Reejecución en curso.",
+    "accepted": false
+  },
+  "ci": {
+    "run": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35554280635",
+    "commit": "657c0670acb7b0024eff9e5dad1890c79c91dc1f",
+    "status": "en curso; gobierno y dependencias aprobados"
+  }
 }

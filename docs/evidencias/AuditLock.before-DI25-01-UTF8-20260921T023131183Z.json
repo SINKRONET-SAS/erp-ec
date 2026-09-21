@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-21T02:31:31.183Z",
+  "updatedAt": "2026-09-21T02:22:10.059Z",
   "filesModified": [
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
@@ -39,8 +39,7 @@
     ".dockerignore",
     ".github/workflows/tests.yml",
     "docs/evidencias/DI25/DI25-01-progreso.json",
-    "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json",
-    "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json"
+    "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json"
   ],
   "validationChecks": [
     "Cadena completa anterior: 89 eslabones",
@@ -80,22 +79,21 @@
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json": "de67ecc73c15639c66edaf57a5599b49d61200ca3c537f8c88bed2081a877e14",
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/test-governance.cjs": "5deed55bb45852620f306450f28af0f55e785f9f9a9b7f80ad87955e2c62b142",
-    "scripts/test-integrated.py": "0a230e5b52c3d3d904c0bea1812b397d66eea08f5d9b13fe02c97c7f75ee7327",
+    "scripts/test-integrated.py": "2f44d5b4a2ca47b398693bb013acc140d6bf49b2bf4e4ba7855935c27f1687fd",
     "scripts/test-runner-safety.py": "deb4748c7e295d0035fc36fa04da0a1327b2500917cd664ac92567b0a6e24c50",
     "scripts/test-linux-runner.py": "2ecfba8f55197c0dc66b6fadec22cee16da2168e820ad39de698a8d3792819a9",
-    "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
+    "scripts/verify-linux.py": "e579981e77d1302289570491607213636e1941386438ea05fdfde1070f1ff67f",
     "deployment/linux/run-tests.sh": "918f1119a7f42a8f332fd34c00adb300e7255956a25a5d36559b9179fec29f50",
     "deployment/linux/Dockerfile": "839a042fc9c79b7185515883493a5b0a550fc54a3ee92c3c41b78fca7b3676f4",
     "deployment/linux/runtime.py": "7541c536962c8cf224a18858c14200fa040c95a14cb15e22b75152a8980b1532",
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/workflows/tests.yml": "f798dd653bf9aab00524ae7f4a094497914c0972f3e51f8eb6e8e5f84e99c4af",
-    "docs/evidencias/DI25/DI25-01-progreso.json": "9f1123933db9bb4439881cb330e3a38e089f519730ec1aa551a0117e42d58a14",
-    "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json": "66157af679f0e849a63a6249941aef99a8a8d789faa359fcdc6162e41466de01",
-    "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json": "c66fb46126ffaa32a7364f93ea8f5684358106031642e0d16cf1e55680ed7b8d"
+    ".github/workflows/tests.yml": "290a7875a2c1f928d373704d0ab450e4e161de863c603de1b56a892b0c107bc5",
+    "docs/evidencias/DI25/DI25-01-progreso.json": "c67378ffce7733ac18a67a3761a2e0c622a4f8e1af0f9524866010779366454b",
+    "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json": "66157af679f0e849a63a6249941aef99a8a8d789faa359fcdc6162e41466de01"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json",
-  "previousAuditLockHash": "c66fb46126ffaa32a7364f93ea8f5684358106031642e0d16cf1e55680ed7b8d",
-  "signature": "17713594623ccf5fac249741c36f17e567aafd243a99d73807f70b05dcfb85fe",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json",
+  "previousAuditLockHash": "66157af679f0e849a63a6249941aef99a8a8d789faa359fcdc6162e41466de01",
+  "signature": "de2ced4c51e08c887431b64d6204b58a64ab941ce4b54f429771c93ad5b60e27",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
