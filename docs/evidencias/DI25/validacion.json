@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-09-21T02:12:19.399Z",
+  "baseCommit": "f97affa8cf36ca0389597b973ae1b5dbeb6b38a9",
+  "scope": "Diagnóstico, sin correcciones funcionales",
+  "initialGovernance": {
+    "command": "node scripts/verify-governance.cjs",
+    "exitCode": 0,
+    "scope": "Eslabón inmediato y entregables; no funcionalidad"
+  },
+  "staticChecks": {
+    "pythonParsed": 190,
+    "xmlParsed": 49,
+    "modules": 22,
+    "utf8Documents": "verificados",
+    "prompts": 8
+  },
+  "suite": {
+    "command": ".venv/Scripts/python.exe scripts/test-integrated.py",
+    "failed": 0,
+    "errors": 0,
+    "testsReported": 432,
+    "runnerExitCode": 0,
+    "logPath": ".cache/windows/ec_integrated_test_67918a.log",
+    "logSha256": "cb057b9a29679a130543eb2b31f802698aab44d0e7632dbaa978c507ae73d2e7",
+    "testDatabase": "ec_integrated_test_67918a",
+    "omitted": [
+      "2026-09-21 02:11:05,567 7932 INFO ec_integrated_test_67918a odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_prepare_reverse_and_correction : Requiere la demo sembrada: erpec_operational_demo.payroll_policy ",
+      "2026-09-21 02:11:05,952 7932 INFO ec_integrated_test_67918a odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_demo_and_repeat : Requiere la demo sembrada: erpec_demo_seed.bill ",
+      "2026-09-21 02:11:06,340 7932 INFO ec_integrated_test_67918a odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_refuses_changed_source : Requiere la demo sembrada: erpec_demo_seed.bill ",
+      "2026-09-21 02:11:06,739 7932 INFO ec_integrated_test_67918a odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_refuses_unrelated_commercial_link : Requiere la demo sembrada: erpec_demo_seed.bill ",
+      "2026-09-21 02:11:11,703 7932 INFO ec_integrated_test_67918a odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_two_employees_partial_payment_and_statement : Requiere la demo sembrada: erpec_operational_demo.payroll_policy "
+    ],
+    "summary": [
+      "2026-09-21 02:03:56,412 7932 INFO ec_integrated_test_67918a odoo.service.server: Starting post tests ",
+      "2026-09-21 02:11:14,318 7932 INFO ec_integrated_test_67918a odoo.service.server: 364 post-tests in 437.91s, 99434 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_base: 6 tests 7.14s 3087 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_data_protection: 30 tests 6.93s 3992 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_field_routes: 31 tests 8.24s 4070 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_fiscal_connector: 12 tests 9.90s 3881 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_fiscal_documents: 8 tests 5.62s 2179 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_fiscal_guide_sri: 8 tests 3.79s 1004 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_fiscal_native: 68 tests 9.04s 2249 queries ",
+      "2026-09-21 02:11:14,322 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_fiscal_sri: 116 tests 58.88s 16504 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_fiscal_withholding_sri: 8 tests 8.83s 2467 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_imports: 10 tests 24.86s 8684 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_manufacturing: 9 tests 13.82s 5483 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_operations: 5 tests 2.53s 491 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_payphone: 31 tests 8.41s 3166 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_payroll: 94 tests 46.07s 18981 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_provision: 4 tests 1.85s 180 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_runtime: 6 tests 0.51s 43 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_secrets: 10 tests 0.41s 17 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_selfservice: 14 tests 4.07s 1423 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_suite: 7 tests 3.51s 1246 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_treasury: 16 tests 26.98s 11501 queries ",
+      "2026-09-21 02:11:14,323 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_withholding_accounting: 10 tests 9.07s 4027 queries ",
+      "2026-09-21 02:11:14,324 7932 INFO ec_integrated_test_67918a odoo.tests.stats: erpec_workspace: 51 tests 27.85s 13318 queries ",
+      "2026-09-21 02:11:14,324 7932 INFO ec_integrated_test_67918a odoo.tests.result: 0 failed, 0 error(s) of 432 tests when loading database 'ec_integrated_test_67918a' ",
+      "2026-09-21 02:11:14,324 7932 INFO ec_integrated_test_67918a odoo.service.server: Initiating shutdown "
+    ],
+    "scope": "Base nueva sin datos de demo; no aceptación visual ni servicios externos reales"
+  },
+  "firstAttempt": {
+    "database": "ec_integrated_test_f9c595",
+    "runnerExitCode": 1,
+    "odooExitCode": 4294967295,
+    "reason": "Permiso denegado al filestore del perfil; sin resumen de tests; repetido con permisos autorizados"
+  },
+  "packageInspection": {
+    "method": "COPY de Dockerfile y depends de manifests, sin construir imagen nueva",
+    "missingDependencies": [
+      {
+        "module": "erpec_payphone",
+        "missing": "erpec_secrets"
+      }
+    ]
+  },
+  "reproductions": "docs/evidencias/DI25/repro-result.json",
+  "limitations": [
+    "La búsqueda de cola se simula; pendiente transacción ORM concurrente.",
+    "No se ejecutaron Docker/CI remoto, producción SRI, homologación bancaria, correo real, pentest o carga.",
+    "No aceptación visual completa por roles ni certificación jurídica.",
+    "El ejecutor limpia DB/rol/config; no acredita purga del filestore temporal del perfil Windows."
+  ]
+}

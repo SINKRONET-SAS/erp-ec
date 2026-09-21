@@ -1,0 +1,61 @@
+{
+  "scope": "Funciones reales aisladas y motor puro; sin ORM, DB ni SRI. No prueba integración.",
+  "rdep_variable_income": {
+    "monthly_wages": [
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      3000
+    ],
+    "accumulated_tax_base": 12677.0,
+    "tax_on_accumulated_base_using_repository_table": 23.45,
+    "last_month_annual_projection_used_by_rdep": 2296.7
+  },
+  "fiscal_queue": {
+    "actual_method_executed": "Emission._cron_process",
+    "domain": [
+      [
+        "state",
+        "not in",
+        [
+          "authorized",
+          "rejected"
+        ]
+      ],
+      "|",
+      [
+        "next_attempt",
+        "=",
+        false
+      ],
+      [
+        "next_attempt",
+        "<=",
+        "2026-09-21"
+      ]
+    ],
+    "limit": 10,
+    "selected_states": [
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked",
+      "blocked"
+    ],
+    "older_signed_document_processed": false,
+    "assumption": "Diez bloqueados más recientes sin próxima fecha y una firmada anterior elegible; search simulado."
+  }
+}

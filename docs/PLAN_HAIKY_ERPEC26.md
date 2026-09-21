@@ -57,3 +57,8 @@ Complemento local TX00–TX02: PLAN_HAIKY_IMPUESTOS.md. Relaciona catálogo, cue
 ## Revisión transversal autorizada — 14-09-2026
 
 El titular pidió una pasada al funcionamiento, cálculos y reportes de nómina, facturación electrónica en pruebas y producción, y monetización. Se ejecuta como complemento CF01 de SP02 conforme a `docs/PLAN_HAIKY_REVISION_NOMINA_FISCAL_MONETIZACION.md`. La revisión puede corregir defectos locales reproducibles, pero no convierte simulaciones en homologación externa ni cierra las fases 04–08.
+
+
+## Diagnóstico integral DI25 — 20-09-2026
+
+Solicitud de diagnóstico UI/UX, duplicación, errores y cumplimiento Ecuador con despliegue de plan y gobierno. Ver PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md y DIAGNOSTICO_INTEGRAL_DI25.md. DI25-00 es diagnóstico/documentación; DI25-01–07 requieren ejecutar sus prompts conforme a dependencias y autorización. No se cierran fases maestras ni se acredita corrección funcional por esta publicación.

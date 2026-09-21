@@ -6,14 +6,40 @@ on:
   pull_request:
 
 jobs:
+  gobierno:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node scripts/verify-governance.cjs --git
+      - run: node --test scripts/test-governance.cjs
+
   suite-linux:
-    name: Suite integrada (Linux, todos los módulos)
+    name: Suite integrada (imagen sin fuentes montadas)
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+      - run: python scripts/test-linux-runner.py
       - name: Construir imagen y ejecutar todas las pruebas
         run: bash deployment/linux/run-tests.sh
+
+  perfiles:
+    name: Arranque real de imagen ${{ matrix.profile }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [customer, controller]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir perfil
+        run: docker build --build-arg ERPEC_PROFILE=${{ matrix.profile }} -f deployment/linux/Dockerfile -t erpec-linux-${{ matrix.profile }}:phase04 .
+      - name: Probar arranque, interfaz, aislamiento y recreación
+        run: python scripts/verify-linux.py --profile ${{ matrix.profile }}
 
   dependencias:
     name: Auditoría de dependencias

@@ -9,17 +9,13 @@ COPY deployment/linux/prepare_requirements.py /opt/erpec/prepare_requirements.py
 RUN python /opt/erpec/prepare_requirements.py /opt/odoo/requirements.txt /opt/erpec/requirements-linux.lock > /opt/erpec/requirements-combined.txt && pip install --no-cache-dir -r /opt/erpec/requirements-combined.txt -c /opt/erpec/requirements-linux.lock && pip freeze > /opt/erpec/python-installed.txt
 RUN useradd --uid 10001 --create-home odoo && mkdir -p /var/data/odoo /opt/erpec/addons && chown -R odoo:odoo /var/data
 COPY deployment/linux/runtime.py /opt/erpec/runtime.py
-COPY addons/erpec_base /opt/erpec/addons/erpec_base
-COPY addons/erpec_runtime /opt/erpec/addons/erpec_runtime
+COPY addons /opt/erpec/addons
 EXPOSE 10000
 USER odoo
 ENTRYPOINT ["python", "/opt/erpec/runtime.py"]
 
 FROM core AS controller
 USER root
-COPY addons/erpec_suite /opt/erpec/addons/erpec_suite
-COPY addons/erpec_provision /opt/erpec/addons/erpec_provision
-COPY addons/erpec_payphone /opt/erpec/addons/erpec_payphone
 RUN printf 'controller' > /opt/erpec/profile
 USER odoo
 

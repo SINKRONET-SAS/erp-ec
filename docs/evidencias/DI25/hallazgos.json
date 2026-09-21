@@ -1,0 +1,227 @@
+{
+  "plan": "DI25",
+  "cutoffLocal": "2026-09-20",
+  "baseCommit": "f97affa8cf36ca0389597b973ae1b5dbeb6b38a9",
+  "findings": [
+    {
+      "id": "DI25-01",
+      "priority": "P1",
+      "evidenceType": "Código + reproducción aislada",
+      "title": "Cola fiscal puede dejar emisiones válidas sin procesar",
+      "source": "addons/erpec_fiscal_sri/models.py:635,673",
+      "observation": "_cron_process selecciona diez registros id desc excluyendo solo authorized/rejected. blocked y returned siguen entrando; action_process no los transmite ni consulta. Diez bloqueados recientes desplazan una firmada anterior. La reproducción ejecuta el método real con búsqueda simulada; falta caso ORM concurrente.",
+      "phase": "DI25-02",
+      "acceptance": "Seleccionar estados procesables, orden justo y bloqueo por trabajo; recuperación explícita y prueba de diez bloqueados más un pendiente.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-02",
+      "priority": "P1",
+      "evidenceType": "Código; riesgo de integración",
+      "title": "Autoridad fiscal exclusiva no se comprueba en ambos sentidos",
+      "source": "addons/erpec_fiscal_sri/models.py:913; addons/erpec_fiscal_connector/connector.py:251",
+      "observation": "Emisión nativa rechaza ec_fiscal_job_ids, pero action_queue_fiscal no consulta ec_fiscal_emission_ids. El nativo tampoco toma el mismo bloqueo de account_move que el conector. Existe ruta para asignar dos autoridades; no se enviaron documentos duplicados para demostrarla.",
+      "phase": "DI25-02",
+      "acceptance": "Guarda bidireccional y reserva atómica compartida; ensayar nativo→externo, externo→nativo y concurrencia sin red.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-03",
+      "priority": "P1",
+      "evidenceType": "Código; requiere ensayo ORM",
+      "title": "Protección del documento nativo firmado incompleta",
+      "source": "addons/erpec_fiscal_sri/models.py:770; addons/erpec_fiscal_connector/connector.py:302",
+      "observation": "Las guardas de cancelación, borrador y edición del conector miran trabajos externos; el módulo SRI protege los sustentos de reembolso pero no amplía esas guardas para todas las líneas/cabecera de la factura nativa. Odoo puede imponer restricciones adicionales; no se afirma alteración consumada de una factura autorizada.",
+      "phase": "DI25-02",
+      "acceptance": "Probar edición/cancelación/borrado mediante ORM con todos los módulos; fijar instantánea fiscal y política de corrección, sin confundir anulación contable con fiscal.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-04",
+      "priority": "P1",
+      "evidenceType": "Motor ejecutado + código agregador",
+      "title": "RDEP mezcla base anual acumulada con impuesto del último registro",
+      "source": "addons/erpec_payroll/annex_rdep.py:268; addons/erpec_payroll/engine.py:74",
+      "observation": "action_build ordena por id y conserva annual_tax_caused del último registro, mientras suma la base anual. Caso sintético con 11 meses de USD 1.000 y diciembre de USD 3.000: base acumulada 12.677; impuesto según tabla del repositorio 23,45 frente a proyección del último mes 2.296,70. No es una liquidación tributaria real. El orden id tampoco garantiza último mes.",
+      "phase": "DI25-03",
+      "acceptance": "Reconciliar impuesto anual con flujos reales, novedades y otros empleadores; tabla temporal, orden cronológico y aprobación contable independiente.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-05",
+      "priority": "P1",
+      "evidenceType": "Código",
+      "title": "Corrección de nómina omite beneficios del período y conserva cuotas",
+      "source": "addons/erpec_payroll/models.py:367,379,462,831",
+      "observation": "action_correct copia entradas escalares; no copia benefit_line_ids. action_reverse no neutraliza cuotas del libro y _compute_balance resta todas las deducciones sin filtrar estado del período. Recalcular una corrección puede perder beneficios o consumir otra cuota. No se declara pérdida monetaria real.",
+      "phase": "DI25-03",
+      "acceptance": "Reproducción con bono, préstamo parcial y reversión/corrección; conservar beneficios y vincular reversión/reaplicación de cuotas sin doble descuento.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-06",
+      "priority": "P1",
+      "evidenceType": "Código + límite de alcance",
+      "title": "Una bandera grava conjuntamente conceptos laborales diferentes",
+      "source": "addons/erpec_payroll/models.py:760; addons/erpec_payroll/engine.py:70",
+      "observation": "taxable controla IESS, renta, décimos, vacaciones y reserva juntos. La proyección mensual no incorpora acumulados previos ni retenciones anteriores. Es límite explícito del motor; no todos los beneficios o regímenes pueden representarse correctamente.",
+      "phase": "DI25-03",
+      "acceptance": "Matriz legal por concepto/base/régimen, equivalencia independiente y bloqueo visible de casos no soportados.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-07",
+      "priority": "P1",
+      "evidenceType": "Código + portal oficial",
+      "title": "ATS incompleto y procedencia de catálogo pendiente de conciliar",
+      "source": "addons/erpec_fiscal_native/ats_catalog.py:357; addons/erpec_workspace/tax_intersection.py; docs/PLAN_HAIKY_PRODUCCION_DESPLIEGUE.md",
+      "observation": "Hay catálogo y sustento por línea; no se encontró generador integral ATS en addons. La copia declara 03-03-2026, mientras el portal oficial lista catálogo 06-08-2026 y plugin 1.18.0 de 31-08-2026. La fecha distinta exige comparar archivos; no prueba por sí sola que los códigos locales sean incorrectos.",
+      "phase": "DI25-04",
+      "acceptance": "Comparar bytes/catálogos oficiales, versionar vigencia, completar compras/ventas/anulados aplicables y conciliar con contabilidad y DIMM.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-08",
+      "priority": "P1",
+      "evidenceType": "Código + norma oficial",
+      "title": "Transmisión inmediata no queda acreditada por cola de un minuto",
+      "source": "addons/erpec_fiscal_sri/models.py:950; addons/erpec_fiscal_sri/data/cron.xml",
+      "observation": "Emitir deja state=signed y espera procesamiento manual o cron de un minuto (lote de diez). El SRI comunica transmisión inmediata desde 01-01-2026. No se midió demora real bajo carga ni se concluye sanción automática por sesenta segundos.",
+      "phase": "DI25-02",
+      "acceptance": "Diseñar despacho inmediato durable, contingencia, latencia observable y conciliación; validar interpretación operativa con responsable tributario.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-09",
+      "priority": "P1",
+      "evidenceType": "Código",
+      "title": "Exclusión comercial no integrada a la entrega de campañas",
+      "source": "addons/erpec_data_protection/models.py:106; addons/erpec_data_protection/tests/test_data_protection.py:58",
+      "observation": "La bandera ec_marketing_email_opt_out solo se escribe/muestra/prueba; no hay consumidor de la preferencia en addons para mass_mailing o mail.blacklist. Marketing por correo está visible en demo. No se enviaron mensajes ni se comprobó un envío indebido.",
+      "phase": "DI25-05",
+      "acceptance": "Integrar exclusión con campañas y canal efectivo; probar destinatario excluido y separar correo comercial de rol de pago o comprobante transaccional.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-10",
+      "priority": "P1",
+      "evidenceType": "Código",
+      "title": "Clave del conector fiscal sigue como Char sin cifrado propio",
+      "source": "addons/erpec_fiscal_connector/connector.py:44,80",
+      "observation": "api_key tiene restricción de grupo y copy=False, pero se almacena como texto y se usa directamente. erpec_secrets cifra PayPhone y certificado; esa cobertura no alcanza al conector. No se leyeron valores privados.",
+      "phase": "DI25-05",
+      "acceptance": "Migrar al almacén compartido con rotación, respaldo y reversión; no mostrar ni registrar la clave.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-11",
+      "priority": "P1",
+      "evidenceType": "Código; cierre de dependencias",
+      "title": "Imagen controller omite dependencia de PayPhone",
+      "source": "deployment/linux/Dockerfile; addons/erpec_payphone/__manifest__.py",
+      "observation": "Dockerfile copia base/runtime/suite/provision/payphone, pero no erpec_secrets requerido por PayPhone. La suite Linux monta todos los addons en /extra y puede pasar ocultando el defecto de la imagen distribuida. Perfil customer solo empaqueta base/runtime: no equivale al ERP operativo local.",
+      "phase": "DI25-01",
+      "acceptance": "Validar dependencias y arranque de cada imagen sin montaje de fuentes; definir módulos contratados por perfil y verificar UI resultante.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-12",
+      "priority": "P1",
+      "evidenceType": "Código",
+      "title": "Ejecutor Linux puede aceptar resumen verde pese a salida fallida",
+      "source": "deployment/linux/run-tests.sh:25",
+      "observation": "La tubería docker|tee|grep termina con || true y la decisión final solo busca texto '0 failed, 0 error(s)'. Se pierde el código de salida de Docker y no se exige conteo positivo. No se ejecutó Docker en esta pasada.",
+      "phase": "DI25-01",
+      "acceptance": "Conservar PIPESTATUS de Docker, exigir pruebas positivas y manifest de módulos; prueba negativa con resumen verde seguido de exit no cero.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-13",
+      "priority": "P1",
+      "evidenceType": "Código; riesgo condicionado",
+      "title": "Nombre arbitrario del ensayo usado en limpieza privilegiada",
+      "source": "scripts/test-integrated.py:33,49",
+      "observation": "--name solo valida sintaxis. cleanup ejecuta DROP DATABASE IF EXISTS nombre WITH (FORCE) como postgres sin marcador de propiedad. Si existe una DB del mismo nombre y no su rol, CREATE ROLE puede pasar, CREATE DATABASE falla y finally elimina la DB preexistente. No se ensayó con datos reales.",
+      "phase": "DI25-01",
+      "acceptance": "Prefijo reservado, comprobación previa de DB/rol, indicador de creación efectiva y limpieza solo de recursos propios; prueba con dobles sin DROP real.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-14",
+      "priority": "P2",
+      "evidenceType": "Visual actual + código",
+      "title": "Inicio fiscal comunica capacidades desactualizadas",
+      "source": "docs/evidencias/DI25/02-alerta-fiscal.png; addons/erpec_workspace/views.xml:38",
+      "observation": "Inicio afirma que faltan firma y envío aunque el menú ofrece emisiones nativas. Es correcto advertir que la empresa demo no tiene RUC; es incorrecto atribuirlo a ausencia global del motor. Formularios también dicen solo pruebas pese a existir habilitación de producción.",
+      "phase": "DI25-06",
+      "acceptance": "Estado derivado de módulos, empresa, ambiente y certificado; separar falta de configuración, alcance técnico y validación externa.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-15",
+      "priority": "P2",
+      "evidenceType": "Visual actual + código",
+      "title": "Bandeja ofrece creación manual que el servidor prohíbe",
+      "source": "docs/evidencias/DI25/04-emisiones.png; docs/evidencias/DI25/05-formulario-sin-origen.png; addons/erpec_fiscal_sri/models.py:618",
+      "observation": "Nuevo abre formulario con Procesar, pero create exige token interno y origen contabilizado. Se abrió y descartó sin guardar. Lista vacía sin orientación y columna State en inglés.",
+      "phase": "DI25-06",
+      "acceptance": "Deshabilitar creación manual; mostrar enlace al comprobante/origen autorizado, estado vacío útil y etiqueta Estado.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-16",
+      "priority": "P2",
+      "evidenceType": "Visual actual",
+      "title": "Entrada pública de demo conserva plantilla y enlaces sin destino",
+      "source": "docs/evidencias/DI25/01-entrada.png",
+      "observation": "La raíz redirige a /es y muestra YourLogo, My Website, contacto de ejemplo y enlace Legal a #. La captura es demo local con sesión existente; no demuestra exposición pública productiva.",
+      "phase": "DI25-06",
+      "acceptance": "Entrada apropiada al producto; identidad, ayuda y destinos legales reales antes de publicación; probar visitante y usuario autenticado.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-17",
+      "priority": "P2",
+      "evidenceType": "Código + visual",
+      "title": "Solapamiento de adaptadores, menús y sustentos",
+      "source": "addons/erpec_fiscal_sri/models.py:792; addons/erpec_fiscal_native/models.py:36; addons/erpec_fiscal_documents/documents.py; docs/evidencias/DI25/03-menu-fiscal.png",
+      "observation": "_gather_native_common reconoce duplicación con vista previa. Existen reembolsos de compra y sustentos SRI de venta, y retenciones de referencia/contables/electrónicas. No son todos duplicados eliminables: hay propósitos distintos. Los accesos Fiscal y Facturación necesitan autoridad y etiquetas claras.",
+      "phase": "DI25-02",
+      "acceptance": "Mapa de dueño/consumidores, adaptador común para validación compartida y equivalencia; conservar entidades con semántica distinta y retirar rutas obsoletas con migración.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-18",
+      "priority": "P2",
+      "evidenceType": "Código + revisión documental",
+      "title": "Gobierno valida un eslabón y nueve prompts históricos",
+      "source": "scripts/verify-governance.cjs:15; .github/CODEX_CONTEXT.md",
+      "observation": "El verificador comprueba predecesor inmediato y hashes actuales, no recorre toda la cadena; solo exige prompts 00–08. Contexto mantiene cabecera 13-09 y estados superados en secciones antiguas. No hay evidencia de manipulación de archivos.",
+      "phase": "DI25-01",
+      "acceptance": "Validación recursiva hasta génesis con detección de ciclos, inventario de prompts actual y sección de estado vigente separada de historia.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-19",
+      "priority": "P2",
+      "evidenceType": "Código + obligación por evaluar",
+      "title": "Privacidad requiere operación y aplicabilidad por empresa",
+      "source": "addons/erpec_data_protection/models.py; addons/erpec_field_routes; docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md",
+      "observation": "Existen RAT, solicitudes y brechas; no acreditan por sí solos avisos, conservación efectiva, contratos de encargado, transferencias, base de geolocalización o DPD cuando corresponda. El encabezado del módulo aún describe fuentes secundarias y ausencia de SMTP como si fueran estado actual.",
+      "phase": "DI25-05",
+      "acceptance": "Matriz por tratamiento, fundamento, responsable, plazo y evidencia; validar normativa SPDP y contratos; pruebas de acceso, exportación, conservación y exclusión.",
+      "status": "abierto"
+    },
+    {
+      "id": "DI25-20",
+      "priority": "P2",
+      "evidenceType": "Cobertura pendiente",
+      "title": "Aceptación comercial transversal y externa sin cierre integral",
+      "source": "docs/OPERACION_LOCAL.md; .vscode/AuditLock.json; docs/VALIDACION_ARCHIVOS_BANCARIOS.md",
+      "observation": "La revisión visual actual cubre entrada/inicio/fiscal; no ciclos completos por comprador, bodega, operario, vendedor, nómina y contador. Siguen gates de producción SRI, SMTP, bancos, hosting, CI remoto y recuperación con clave separada. Evidencia histórica no se presenta como ensayo de hoy.",
+      "phase": "DI25-07",
+      "acceptance": "Matriz de escenarios por rol, pruebas negativas y concurrencia; actas externas por servicio, restauración sin tocar demo y decisión de salida por alcance.",
+      "status": "abierto"
+    }
+  ]
+}

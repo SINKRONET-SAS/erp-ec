@@ -1,3 +1,30 @@
+# Ejecución DI25 autorizada — 21-09-2026 UTC
+
+El usuario autorizó ejecutar todos los prompts, corregir regresiones y realizar commit y push. Se mantiene el orden y no se repite autorización por fase. DI25-01 en curso: ejecutores y cadena corregidos; pruebas negativas aprobadas. Docker local no inicia por socket inaccesible; arranque Linux se verificará en GitHub Actions con imágenes reales. No se certifica todavía el cierre de DI25-01 ni se inicia DI25-02. La autorización de ejecución sustituye el alcance documental de la sección histórica inferior.
+
+---
+
+# Estado vigente — Diagnóstico integral DI25 (20-09-2026, Ecuador)
+
+Esta sección prevalece para la nueva solicitud sobre las descripciones históricas de capacidades. El historial inferior se conserva sin reescribir sus evidencias.
+
+- Alcance actual autorizado: diagnóstico integral UI/UX, funcionalidad duplicada, errores y cumplimiento Ecuador, y despliegue documental de plan, contexto, AuditLock y prompts. No confundir esta entrega con ejecución de correcciones.
+- Informe: docs/DIAGNOSTICO_INTEGRAL_DI25.md. Plan: docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md. Hallazgos y fuentes: docs/evidencias/DI25/.
+- 20 hallazgos abiertos (13 P1 y 7 P2), con naturaleza de evidencia explícita. Prioritarios: cola fiscal, autoridad bidireccional/inmutabilidad, agregación anual RDEP, corrección de beneficios/cuotas, exclusión comercial, clave del conector y fiabilidad del empaquetado/pruebas.
+- La revisión reconoce firma nativa, SRI en pruebas, cifrado/rotación y avances OP20–OP24; no repetir afirmaciones antiguas de ausencia de esas capacidades.
+- Estado DI25: 00 completada solo como diagnóstico/documentación; 01–07 pendientes. Orden: gobierno/pruebas → integridad fiscal → nómina/RDEP → ATS/tributación → privacidad/secretos/correo → UI/UX → aceptación/salida. Prompts: .github/prompts/ERPEC26-DI25-00.md a ERPEC26-DI25-07.md.
+- Ejecutar cada prompt según autorización vigente y dependencia cerrada con lock válido. La solicitud de desplegar el plan no autoriza emitir comprobantes productivos, presentar anexos, transferir fondos o enviar correos reales.
+- Suite de esta pasada: 432 pruebas reportadas, 0 fallos, 0 errores, 5 omisiones de Tesorería por datos de demo ausentes; salida 0. No equivale a 432 casos funcionales completos aceptados.
+- Evidencia nueva: cinco capturas de acceso/inicio/fiscal, revisión de código y fuentes oficiales, reproducciones aisladas de RDEP y cola. Resultado de suite y límites en docs/evidencias/DI25/validacion.json; no sustituye aceptación visual por roles ni homologación.
+- Se mantienen fases maestras 00–03 cerradas y 04 parcial; este complemento no cierra 04–08. Certificado propio ya documentado; comprobar disponibilidad privada sin pedirlo ni exponerlo de nuevo.
+- Conservar pendientes externos del lock anterior: producción supervisada, SMTP, clave en plataforma, CI remoto/Render, retiro controlado de claves anteriores y carpetas con permisos. Incluir bancos/servicio y aceptación integral según alcance; no bloquean la documentación.
+- Preservar trabajo preexistente en .claude/ y docs/evidencias/AuditLock.before-CF01.json; no fueron creados por DI25.
+- Antes de modificar y al cerrar: node scripts/verify-governance.cjs. Ese ejecutor heredado valida un eslabón; su ampliación recursiva corresponde a DI25-01. No atribuirle garantías que aún no comprueba.
+
+---
+
+## Contexto histórico conservado
+
 # Contexto vigente ERPEC26
 
 Actualizado: 13-09-2026. Leer junto con RULES.md, docs/PLAN_HAIKY_ERPEC26.md y docs/PLAN_AMPLIACION_OPERATIVA.md. Este contexto orienta la continuidad; no acredita por sí mismo avances funcionales.

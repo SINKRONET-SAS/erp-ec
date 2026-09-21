@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "planCode": "ERPEC26",
+  "phaseCompleted": "ERPEC26-03",
+  "phaseInProgress": "ERPEC26-04",
+  "status": "partial-awaiting-external-validation",
+  "updatedAt": "2026-09-20T17:39:14.759Z",
+  "filesModified": [
+    ".github/CODEX_CONTEXT.md",
+    ".github/prompts/ERPEC26-OP23-CIERRE-PENDIENTES.md",
+    ".github/prompts/ERPEC26-OP24-PURGA-BASES.md",
+    "docs/evidencias/AuditLock.before-OP24-20260920T173914Z.json",
+    "docs/evidencias/ERPEC26-OP24-PURGA-BASES-20260920.json"
+  ],
+  "validationChecks": [
+    "OP24: 37 bases y 15 roles de ensayo eliminados; solo quedan las 4 instancias reales y postgres",
+    "OP24: las 4 instancias responden y el supervisor las reporta ok tras la purga"
+  ],
+  "pendingChecks": [
+    "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
+    "OP24: primer envio a produccion (responsable contable + certificado reconocido)",
+    "OP24: configurar servidor SMTP (cuenta y credenciales)",
+    "OP24: definir ERPEC_SECRET_KEY en la plataforma real y respaldarla aparte",
+    "OP24: validar el flujo de GitHub Actions en un push real y desplegar en Render (nunca desplegado)",
+    "OP24: retirar claves anteriores (erpec_secret.previous) tras un periodo de confianza"
+  ],
+  "fileHashes": {
+    ".github/CODEX_CONTEXT.md": "d4c3fbf0ab048d8217550a5d0c11c08c96692145e8a0876188dde5c8aed1a686",
+    ".github/prompts/ERPEC26-OP23-CIERRE-PENDIENTES.md": "b5e79e99491f789f8c1e0ee32f9b38a1911a0d269ebc34cd7c2e94e8ea7ffbf7",
+    ".github/prompts/ERPEC26-OP24-PURGA-BASES.md": "c51a02bcbd16f6c600f936b8f2b66ab2ea87fc81c8f792e850e76db7fde85b0a",
+    "docs/evidencias/AuditLock.before-OP24-20260920T173914Z.json": "dd9c54b2fa51192f3211cbccd4fec4ca325fc36763144305d16f7197c87c9f1d",
+    "docs/evidencias/ERPEC26-OP24-PURGA-BASES-20260920.json": "3f7fa23cf54e237692e81d61fbed2b15720278fef558cc7fce055d9e30364fea"
+  },
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-OP24-20260920T173914Z.json",
+  "previousAuditLockHash": "dd9c54b2fa51192f3211cbccd4fec4ca325fc36763144305d16f7197c87c9f1d",
+  "signature": "e94f4ec3cbe3a2c917b0edbbf284de5ac0ab7e67903e274cd1c30f240ad80353",
+  "taxProcess": {
+    "phaseCompleted": "TX08",
+    "status": "conciliacion-tarifas-instalada-verificada",
+    "plan": "docs/PLAN_HAIKY_IMPUESTOS_SP02.md",
+    "evidence": "docs/evidencias/ERPEC26-TX08-CIERRE.json",
+    "sp02Closed": false,
+    "automaticDocumentApplication": true,
+    "intersectionUnit": "detalle-por-linea",
+    "samePlanRequired": false
+  }
+}

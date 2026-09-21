@@ -21,7 +21,7 @@ socket.setdefaulttimeout(10)
 
 
 def docker(*args, input=None, check=True):
-    result = subprocess.run(['docker', *args], input=input, text=True, capture_output=True, encoding='utf-8', timeout=180)
+    result = subprocess.run(['docker', *args], input=input, text=True, capture_output=True, encoding='utf-8', timeout=900)
     if check and result.returncode:
         raise RuntimeError('Docker falló: ' + args[0] + '; ' + result.stderr[:300])
     return result
@@ -91,7 +91,7 @@ def main(profile):
         instance = uuid.uuid4().hex
         values = {'DATABASE_URL':'postgresql://erpec_app:'+private['db']+'@'+pg+':5432/erpec_app',
             'DB_SSLMODE':'disable', 'ERPEC_INSTANCE_ID':instance, 'ERPEC_BOOTSTRAP':'1',
-            'ODOO_ADMIN_PASSWORD':private['admin'],'ODOO_MASTER_PASSWORD':private['manager'],'ERPEC_SECRET_KEY':secrets.token_urlsafe(48),
+            'ODOO_ADMIN_PASSWORD':private['admin'],'ODOO_MASTER_PASSWORD':private['manager'],'ERPEC_SECRET_KEY':base64.urlsafe_b64encode(secrets.token_bytes(32)).decode(),
             'ERPEC_COMPANY_NAME':'ERP EC ensayo Linux'}
         appenv = directory/'customer.env'
         write(appenv, ''.join(k+'='+v+'\n' for k,v in values.items()))

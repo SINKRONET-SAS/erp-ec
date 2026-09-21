@@ -1,0 +1,27 @@
+{
+  "capturedThisRun": true,
+  "inspectedSavedFiles": true,
+  "scope": "Acceso, inicio y fiscal en demo; no aceptación integral por roles",
+  "screenshots": [
+    {
+      "path": "docs/evidencias/DI25/01-entrada.png",
+      "sha256": "94ba76bd61316f0eebf1e4baaeee11587b9a912eaf20aa675231d36e29befde1"
+    },
+    {
+      "path": "docs/evidencias/DI25/02-alerta-fiscal.png",
+      "sha256": "7ccbf6dca7165af7553e71884479164db16697d4deefa0145032ef6e6173245f"
+    },
+    {
+      "path": "docs/evidencias/DI25/03-menu-fiscal.png",
+      "sha256": "f010e7910fbb030e687e42adaa0ed2649498e74ddf944c46a6059267c5851cc0"
+    },
+    {
+      "path": "docs/evidencias/DI25/04-emisiones.png",
+      "sha256": "7b75c260ebaaf56041f03b60860d8e8ae994df28519b016044d6b809e20a02d6"
+    },
+    {
+      "path": "docs/evidencias/DI25/05-formulario-sin-origen.png",
+      "sha256": "5fa56a53c1f09e92b016c1b5027194bd4564d6f57305374f94261ba2259d29eb"
+    }
+  ]
+}

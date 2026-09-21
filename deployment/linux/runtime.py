@@ -135,7 +135,7 @@ def main():
                 setting('ODOO_ADMIN_PASSWORD')
                 setting('ERPEC_COMPANY_NAME')
                 marker.write_text(instance, encoding='utf-8')
-                modules = 'base,l10n_ec,erpec_base,erpec_runtime' + (',erpec_payphone' if profile == 'controller' else '')
+                modules = 'base,l10n_ec,erpec_base,erpec_runtime' + (',erpec_selfservice' if profile == 'controller' else ',erpec_workspace,erpec_treasury,erpec_fiscal_sri,erpec_fiscal_withholding_sri,erpec_fiscal_guide_sri,erpec_field_routes,erpec_data_protection')
                 subprocess.run(command + ['-i', modules, '--stop-after-init', '--no-http'], check=True, timeout=900)
                 # Datos privados por entorno; nunca interpolar credenciales dentro del programa.
                 code = """import os

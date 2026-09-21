@@ -1,0 +1,22 @@
+{
+  "phase": "DI25-01",
+  "status": "en-validacion",
+  "updatedAt": "2026-09-21T02:22:10.059Z",
+  "checks": [
+    "6 pruebas de gobierno aprobadas",
+    "7 pruebas del ejecutor Windows aprobadas",
+    "Ejecutor Bash real: éxito, salida fallida con resumen verde, cero pruebas y módulo ausente; 4 escenarios aprobados",
+    "Cadena anterior de 89 eslabones válida"
+  ],
+  "pending": [
+    "Suite Windows con ejecutor corregido",
+    "Construcción y suite Linux sin montar fuentes",
+    "Arranque real de perfiles customer y controller en CI"
+  ],
+  "localDocker": {
+    "available": false,
+    "reason": "sailor-ingest.sock inaccesible; reinicio normal no resuelve; no se restableció ni borró Docker"
+  },
+  "rollback": "Restituir ejecutores/imagen anterior en checkout aislado; no reescribir snapshots ni borrar bases existentes",
+  "authorization": "Solicitud del usuario: ejecutar todos los prompts, revisar regresiones, commit y push"
+}
