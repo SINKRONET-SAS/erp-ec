@@ -1,0 +1,58 @@
+{
+  "phase": "DI25-02",
+  "status": "completada",
+  "updatedAt": "2026-09-21T03:32:40.011Z",
+  "testedCommit": "edf7cee82c36a0bfbf82fb01c1ae3071f9f4a72e",
+  "criteria": {
+    "DI25-02.1": "Cola elegible ordenada, disparo durable y aislamiento del error; pruebas con diez bloqueadas y fallo inesperado",
+    "DI25-02.2": "Exclusión en ambos órdenes y dos transacciones PostgreSQL independientes con retry de serialización",
+    "DI25-02.3": "Inmutabilidad de cabecera, líneas y sustentos; recuperación conserva clave/XML; idempotencia",
+    "DI25-02.4": "Cuatro capturas inspeccionadas en instancia ficticia; estado, autoridad, error, próxima acción, edad y primer intento visibles"
+  },
+  "windows": {
+    "testsReported": 441,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "log": ".cache/windows/ec_integrated_test_2fe067523dee.log",
+    "sha256": "8c58f55cf20e5bf3b9b23e06859e74e87ef0e1a42a4ee5fb98f4b59232b3be10"
+  },
+  "linux": {
+    "testsReported": 441,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "log": ".cache/di25-02-linux-final.log",
+    "sha256": "e519527add434514face4febf2a1c3f5738d5f0ad5eaea6f8927e1317e629de3"
+  },
+  "ci": {
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35557377341",
+    "conclusion": "success",
+    "checks": [
+      "gobierno",
+      "dependencias",
+      "suite-linux",
+      "customer",
+      "controller"
+    ]
+  },
+  "ui": {
+    "report": "docs/evidencias/DI25/DI25-02-UI.md",
+    "manifest": "docs/evidencias/DI25/DI25-02-capturas.json",
+    "screenshots": 4
+  },
+  "regressionsResolved": [
+    "Cancelación de venta con conjunto vacío de facturas ya no exige permiso de escritura fiscal",
+    "Mensaje de inmutabilidad conserva contrato comprobado por prueba de reembolsos"
+  ],
+  "limits": [
+    "Cinco omisiones de Tesorería por datos de demo ausentes",
+    "Primer intento mide despacho local, no recepción SRI ni cumplimiento del plazo legal",
+    "No hay emisión productiva ni aceptación legal; prueba concurrente usa datos sintéticos",
+    "UI de esta fase en escritorio; accesibilidad y otros roles quedan en fase06",
+    "Instalación aislada y actualizaciones de vistas verificadas; no se migró la demo ni producción"
+  ],
+  "rollback": "docs/DI25-02_INTEGRIDAD_FISCAL.md"
+}

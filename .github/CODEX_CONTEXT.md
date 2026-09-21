@@ -1,3 +1,9 @@
+# Estado vigente: DI25-02 cerrada; continuar DI25-03
+
+441 pruebas reportadas en Windows y Linux, 0 fallos y 0 errores, 5 omisiones de Tesorería por entorno. CI edf7cee aprobado, ambos perfiles aprobados, cuatro capturas fiscales inspeccionadas. Evidencia: docs/evidencias/DI25/DI25-02-cierre.json. La regresión de cancelación de venta detectada se corrigió y se repitió la suite completa. DI25-03 es la siguiente fase autorizada; no hay cierre comercial ni acreditación legal. Esta sección prevalece sobre la historia inferior.
+
+---
+
 # DI25-02 en validación
 
 DI25-01 cerrada. DI25-02: tres defectos reproducidos; exclusión común, inmutabilidad, cola y seguimiento implementados. Concurrencia independiente aprobada. Suite completa y UI pendientes; no iniciar DI25-03 hasta cierre válido. Detalle: docs/DI25-02_INTEGRIDAD_FISCAL.md.
