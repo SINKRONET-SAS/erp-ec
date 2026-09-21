@@ -1,3 +1,9 @@
+# Estado vigente DI25 — cierre 01 y continuación autorizada
+
+DI25-01 completada con evidencia en docs/evidencias/DI25/DI25-01-cierre.json: 432 pruebas Windows y 432 Linux, 0 fallos/errores, 5 omisiones en cada entorno. CI a18b637 aprobado; ambos perfiles arrancan sin fuentes montadas. Gobierno recursivo y ejecutores corregidos. DI25-02 es la siguiente fase autorizada. La autorización general del usuario comprende todos los prompts, revisión, correcciones, commit y push; se mantienen dependencias y gates externos. No hay emisión ni despliegue productivo autorizado por estos ensayos. Esta sección prevalece sobre estados históricos inferiores.
+
+---
+
 # Ejecución DI25 autorizada — 21-09-2026 UTC
 
 El usuario autorizó ejecutar todos los prompts, corregir regresiones y realizar commit y push. Se mantiene el orden y no se repite autorización por fase. DI25-01 en curso: ejecutores y cadena corregidos; pruebas negativas aprobadas. Docker local no inicia por socket inaccesible; arranque Linux se verificará en GitHub Actions con imágenes reales. No se certifica todavía el cierre de DI25-01 ni se inicia DI25-02. La autorización de ejecución sustituye el alcance documental de la sección histórica inferior.

@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-21T02:43:01.117Z",
+  "updatedAt": "2026-09-21T02:31:31.183Z",
   "filesModified": [
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
@@ -40,14 +40,11 @@
     ".github/workflows/tests.yml",
     "docs/evidencias/DI25/DI25-01-progreso.json",
     "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json",
-    "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json",
-    "docs/evidencias/DI25/DI25-01-cierre.json",
-    "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json"
+    "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json"
   ],
   "validationChecks": [
-    "DI25-01: suite Windows y Linux 432 pruebas, 0 fallos, 0 errores, 5 omisiones en cada entorno",
-    "CI a18b637: gobierno, dependencias y ambos perfiles aprobados",
-    "6 pruebas gobierno, 7 seguridad ejecutor Windows y 4 escenarios Bash"
+    "Cadena completa anterior: 89 eslabones",
+    "6 pruebas de gobierno, 7 del ejecutor Windows y 4 escenarios Bash aprobados"
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -61,7 +58,7 @@
   ],
   "fileHashes": {
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md": "faf1e2712d152b517d8cf06a9cb3ee90b6c9018ba25a4a8cfa46c864fbeb74a3",
-    "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "5b54921a2f7986e04d777cc0b1ee2f220494139b5ceca441b2ffb1cc17c88b43",
+    "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "f1f291408ae610f79f7880ecdcd3755ef72f5191607293d0be028f6951bfacd7",
     "docs/evidencias/DI25/hallazgos.json": "3242b402531dffdbe60bd5a2338fab2dc8519e1f6de28c6fe1cc8ea3c9bd47ec",
     "docs/evidencias/DI25/fuentes-legales.json": "69531fb904ccd96502a06d79c84ba5c7cfa18abd7103941adea25c1fb04732c5",
     ".github/prompts/ERPEC26-DI25-00.md": "6dedd464202df5529d7b477d00a194decf23aa63d00987baed84c8448cea0c31",
@@ -72,7 +69,7 @@
     ".github/prompts/ERPEC26-DI25-05.md": "8bb31f889510049e9d2cb4f2c82e3751eeb8071f21c1af6d8f43109d42125710",
     ".github/prompts/ERPEC26-DI25-06.md": "f353192f7f39b6939f78fc546cc7f14057888c297c4709f295567573b29e21d3",
     ".github/prompts/ERPEC26-DI25-07.md": "a755712e87217abc2c46a83f8859ce7d2f03c948f7716c1f3303a2428eb245e3",
-    ".github/CODEX_CONTEXT.md": "fafdb3a6756e8f428f3cff527aadebdc08b4c52aa01ddf69158f340d6b6e6a1d",
+    ".github/CODEX_CONTEXT.md": "98215576af0c28addbd1c6ee27388c65e166a1ee9e605146b928272cc64fe5c5",
     "docs/PLAN_HAIKY_ERPEC26.md": "3c90b48f4a07ddbe823e5be73911a80c2a1b75e56e01ac9e374b9527e7abfc24",
     "docs/evidencias/DI25/repro_diagnostico.py": "c88d5cb0a44ea2b82466081c1a67009f969750d173290aa5eddadc8df8446fa8",
     "docs/evidencias/DI25/repro-result.json": "0f26508828664cabc4e768cdd8ca016b1e4433d67e55e21ec999190cb18e419a",
@@ -94,13 +91,11 @@
     ".github/workflows/tests.yml": "f798dd653bf9aab00524ae7f4a094497914c0972f3e51f8eb6e8e5f84e99c4af",
     "docs/evidencias/DI25/DI25-01-progreso.json": "9f1123933db9bb4439881cb330e3a38e089f519730ec1aa551a0117e42d58a14",
     "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json": "66157af679f0e849a63a6249941aef99a8a8d789faa359fcdc6162e41466de01",
-    "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json": "c66fb46126ffaa32a7364f93ea8f5684358106031642e0d16cf1e55680ed7b8d",
-    "docs/evidencias/DI25/DI25-01-cierre.json": "94acb7c59f4820b18bceb3aca824656a479ffbf21281d2b4ffd88f6685f434e1",
-    "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json": "2330a8ef7ad03b29fcbbbf5f2b37a40eb12caf6927597c90cdcaa67680cfd167"
+    "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json": "c66fb46126ffaa32a7364f93ea8f5684358106031642e0d16cf1e55680ed7b8d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json",
-  "previousAuditLockHash": "2330a8ef7ad03b29fcbbbf5f2b37a40eb12caf6927597c90cdcaa67680cfd167",
-  "signature": "ef84b8b41324c99d894115d6d202ae3305e7661582c70a9b7a5a0e8d25045d82",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-01-UTF8-20260921T023131183Z.json",
+  "previousAuditLockHash": "c66fb46126ffaa32a7364f93ea8f5684358106031642e0d16cf1e55680ed7b8d",
+  "signature": "17713594623ccf5fac249741c36f17e567aafd243a99d73807f70b05dcfb85fe",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -114,11 +109,11 @@
   "diagnosticImprovement": {
     "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
     "diagnostic": "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
-    "phaseCompleted": "DI25-01",
-    "phaseInProgress": null,
-    "nextPhase": "DI25-02",
-    "status": "fase01-completada",
-    "evidence": "docs/evidencias/DI25/DI25-01-cierre.json",
+    "phaseCompleted": "DI25-00",
+    "phaseInProgress": "DI25-01",
+    "nextPhase": "DI25-01",
+    "status": "implementacion-fase01-en-validacion",
+    "evidence": "docs/evidencias/DI25/DI25-01-progreso.json",
     "findings": 20,
     "implementationCompleted": false
   }

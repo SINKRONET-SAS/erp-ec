@@ -2,11 +2,13 @@
 
 Fecha: 20-09-2026 (Ecuador). Plan complementario al maestro ERPEC26; no renumera ni cierra sus fases.
 Fuente: [Diagnóstico integral DI25](DIAGNOSTICO_INTEGRAL_DI25.md).
-Estado: **DI25-00 completada únicamente como diagnóstico y documentación. DI25-01–07 pendientes de ejecución mediante su prompt y autorización vigente.**
+Estado vigente: **DI25-00 y DI25-01 completadas en sus alcances. DI25-02 siguiente; DI25-02–07 autorizadas por el usuario, pendientes de ejecución y gates.**
+
+DI25-01: cierre técnico en evidencias/DI25/DI25-01-cierre.json. La solicitud posterior autoriza implementar todos los prompts y publicar los cambios.
 
 ## Objetivo y alcance
 
-Resolver los hallazgos comprobados y verificar los riesgos de UI/UX, duplicación, errores, operación y cumplimiento Ecuador sobre el producto existente. Mantener Odoo Community y una autoridad por cálculo, documento, asiento y cobro. La solicitud actual despliega el plan; no acredita su implementación.
+Resolver los hallazgos comprobados y verificar los riesgos de UI/UX, duplicación, errores, operación y cumplimiento Ecuador sobre el producto existente. Mantener Odoo Community y una autoridad por cálculo, documento, asiento y cobro. La publicación inicial fue documental; los cierres posteriores acreditan únicamente las verificaciones registradas.
 
 Respetar RULES.md y AGENTS.md. No alterar repositorios fuente, contratos vigentes, datos de la demo ni evidencias históricas como efecto secundario. No recrear funciones ya construidas en OP/TX/UIUX/CF. Actualizar estado vigente con evidencia nueva y conservar historia.
 

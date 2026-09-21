@@ -1,0 +1,92 @@
+{
+  "phase": "DI25-01",
+  "status": "completada",
+  "updatedAt": "2026-09-21T02:43:01.117Z",
+  "testedCommit": "a18b637b0aaf8017522679872bb80e59a8886567",
+  "criteria": {
+    "DI25-01.1": "7 pruebas negativas; suite Windows con salida 0; bases y roles de ambos intentos ausentes tras limpieza",
+    "DI25-01.2": "4 escenarios Bash; 432 pruebas en imagen real sin /extra; ambos perfiles aprobados",
+    "DI25-01.3": "6 pruebas; cadena de 91 eslabones hasta génesis y 17 prompts"
+  },
+  "windows": {
+    "testsReported": 432,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "log": ".cache/windows/ec_integrated_test_4cc90b6cd678.log",
+    "sha256": "18b6f8a3489bc347cdc15d092239755611814e158b5ae169c6767de9b165bc9c"
+  },
+  "linux": {
+    "testsReported": 432,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "log": ".cache/di25-linux-suite-final.log",
+    "sha256": "cd75611170da49a924510e39d234ec590173fc134e7888910cf2946f75bfcc07"
+  },
+  "ci": {
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35554687551",
+    "conclusion": "success",
+    "watchExit": 0,
+    "checks": [
+      "gobierno",
+      "dependencias",
+      "suite-linux",
+      "customer",
+      "controller"
+    ]
+  },
+  "profiles": [
+    {
+      "scope": "Docker Linux local; no despliegue ni llamadas a Render",
+      "checks": [
+        "Dos procesos no pueden abrir simultáneamente el mismo filestore",
+        "Arranque real Python 3.12, PostgreSQL 17 y Community fijado; usuario PostgreSQL sin privilegios administrativos",
+        "Módulos separados según perfil controller",
+        "Recreación del contenedor conserva contacto, adjunto físico y contraseña cambiada; sin duplicar espacio ni reinstalar",
+        "Rol de cliente no puede conectar a la base ajena",
+        "Interfaz de acceso HTTP 200 y espacio visible identificado como Linux",
+        "Arranque bloqueado ante pérdida de disco o identidad de otra instancia"
+      ],
+      "passed": true,
+      "testedAt": "2026-09-21T02:39:02.759147+00:00",
+      "instance": "f4bfc7ec451241fdb0df1d75e8c7b9b9",
+      "image": "sha256:fcef22def85905c7c3ed59e375089df12bfd5dd8b9a6a66e828771c6093eb39b",
+      "profile": "controller",
+      "resourcesPrefix": "erpec-linux-8c0e263b4c",
+      "dataPreserved": true
+    },
+    {
+      "scope": "Docker Linux local; no despliegue ni llamadas a Render",
+      "checks": [
+        "Dos procesos no pueden abrir simultáneamente el mismo filestore",
+        "Arranque real Python 3.12, PostgreSQL 17 y Community fijado; usuario PostgreSQL sin privilegios administrativos",
+        "Módulos separados según perfil customer",
+        "Recreación del contenedor conserva contacto, adjunto físico y contraseña cambiada; sin duplicar espacio ni reinstalar",
+        "Rol de cliente no puede conectar a la base ajena",
+        "Interfaz de acceso HTTP 200 y espacio visible identificado como Linux",
+        "Arranque bloqueado ante pérdida de disco o identidad de otra instancia"
+      ],
+      "passed": true,
+      "testedAt": "2026-09-21T02:39:34.849451+00:00",
+      "instance": "8df96ec2994f496e99b764ed7953f78b",
+      "image": "sha256:a1631a3c6b024ea947a478bb28bd17881bc2ead4c8598cef43a330fabf8cb7c8",
+      "profile": "customer",
+      "resourcesPrefix": "erpec-linux-f5b07c89be",
+      "dataPreserved": true
+    }
+  ],
+  "regressionsResolved": [
+    "Codificación del registro Windows fijada a UTF-8",
+    "Comprobación de perfiles utiliza estado instalado y no presencia del módulo"
+  ],
+  "limits": [
+    "5 pruebas de tesorería omitidas por demo ausente; no equivalen a aceptación operativa",
+    "Docker Desktop local continúa indisponible; Linux probado en GitHub Actions",
+    "No despliegue Render, envío real SRI, SMTP ni bancos; sin cierre comercial",
+    "Aviso no bloqueante de acciones GitHub con runtime Node 20 forzado a 24"
+  ],
+  "rollback": "Revertir cambios de ejecutores/empaquetado en checkout aislado; nunca reescribir snapshots ni borrar bases ajenas"
+}
