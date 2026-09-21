@@ -1,6 +1,6 @@
 # Actualización: supuesto especial de 100 canastas
 
-Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Se añaden seis ejemplos (20–25) al ensayo; validación integrada e instalación en curso. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
+Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Seis ejemplos nuevos (20–25) instalados y verificados en demo: 25 casos en total. Windows/Linux: 459 pruebas sin fallos/errores; Windows 5 omisiones. Evidencia: docs/evidencias/DI25/DI25-03-100-canastas.json. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
 
 ---
 

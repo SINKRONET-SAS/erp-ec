@@ -1,6 +1,6 @@
 # Actualización: supuesto especial de 100 canastas
 
-Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Se añaden seis ejemplos (20–25) al ensayo; validación integrada e instalación en curso. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
+Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Seis ejemplos nuevos (20–25) instalados y verificados en demo: 25 casos en total. Windows/Linux: 459 pruebas sin fallos/errores; Windows 5 omisiones. Evidencia: docs/evidencias/DI25/DI25-03-100-canastas.json. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
 
 ---
 
@@ -27,7 +27,7 @@ La coincidencia de bytes prueba que se revisó el mismo archivo que publica esa 
 | Rebaja | 18 % sobre el menor entre gastos y tope | Motor común usado por los ensayos |
 | Cargas 0, 1, 2, 3, 4, 5 o más | 7, 9, 11, 14, 17, 20 canastas | Doce casos Continente/Galápagos |
 | Ajuste insular | Factor 1,803 | Modifica el tope de gastos; la elegibilidad debe verificarse |
-| Supuesto especial del titular o sus cargas | 100 canastas en las condiciones descritas | **No cubierto**: interfaz y guía excluyen esas condiciones; no aplicar un caso general |
+| Supuesto especial del titular o sus cargas | 100 canastas en las condiciones descritas | **Cubierto en demo** por los casos 20–25; acreditación personal y exenciones de base pendientes |
 | Validez de cargas y sustento de gastos | Condiciones y exclusión de doble registro | Entradas del ensayo; no comprobación documental automática |
 
 Los topes ordinarios y el factor insular coinciden con la fuente. Los casos con USD 5.000 usan gastos ficticios suficientes para alcanzar el máximo; no afirman que todo trabajador tenga derecho al máximo.
@@ -38,4 +38,4 @@ El boletín permite contrastar gastos/cargas de 2026. No contiene la tabla gener
 
 La expresión “3 cargas o más” del texto previo se corrigió: existen topes distintos para 3, 4 y 5 o más. Tampoco se mezclan los antiguos topes de deducción mencionados para 2016 con esta rebaja de 2026.
 
-**Resultado: verificación documental externa realizada para el alcance anterior.** No hay aprobación nominal del experto, validación de certificados personales ni homologación integral. DI25-03 sigue parcial. El supuesto de 100 canastas y las demás exenciones pendientes deben desarrollarse y revisarse antes de ampliar el alcance.
+**Resultado: verificación documental externa realizada para el alcance anterior.** No hay aprobación nominal del experto, validación de certificados personales ni homologación integral. DI25-03 sigue parcial. El supuesto de 100 canastas ya cuenta con referencia y ejemplos en demo; las exenciones de base y la acreditación real permanecen pendientes.
