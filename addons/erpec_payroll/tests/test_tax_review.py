@@ -120,7 +120,7 @@ class TaxReviewCase(TransactionCase):
 
     def test_all_visible_examples_against_independent_references(self):
         from ..tax_review_cases import CASES
-        self.assertEqual(len(CASES), 25)
+        self.assertEqual(len(CASES), 32)
         for key, case in CASES.items():
             with self.subTest(case=key):
                 self.review.scenario = key
@@ -194,3 +194,44 @@ class TaxReviewCase(TransactionCase):
                 personal_expense_cap(5752.6, special_expense=indicator)
         with self.assertRaises(ValueError):
             review_calculation(dict(BASE_INPUTS, special_condition='invalid'), PARAMS)
+
+    def test_personal_exemption_cases_recompute_and_validate(self):
+        self.review.scenario = 'exempt_elderly'
+        self.review.action_load_reference()
+        self.assertEqual((self.review.annual_base, self.review.personal_exemption, self.review.taxable_base), (27165, 12208, 14957))
+        self.assertEqual((self.review.tax_caused, self.review.annual_tax), (137.45, 137.45))
+        with Form(self.review) as form:
+            form.exemption_kind = 'disability'
+            form.disability_percentage = 40
+            self.assertEqual((form.personal_exemption, form.taxable_base, form.annual_tax), (14649.60, 12515.40, 15.37))
+            form.disability_percentage = 85
+            self.assertEqual((form.personal_exemption, form.taxable_base, form.annual_tax), (24416, 2749, 0))
+        self.review.write({'exemption_kind': 'substitute', 'disability_percentage': 80, 'exemption_months': 6})
+        self.assertEqual((self.review.personal_exemption, self.review.annual_tax), (9766.40, 351.96))
+        self.review.exemption_kind = 'none'
+        self.assertEqual((self.review.personal_exemption, self.review.annual_tax), (0, 1481.75))
+        self.assertIn('modificadas', self.review.reference_status)
+        for values in ({'exemption_kind': 'disability', 'disability_percentage': 29},
+                       {'exemption_kind': 'disability', 'disability_percentage': 101},
+                       {'exemption_kind': 'substitute', 'disability_percentage': 50, 'exemption_months': 13},
+                       {'exemption_kind': 'substitute', 'disability_percentage': 50, 'exemption_months': 0}):
+            with self.assertRaises(ValidationError), self.cr.savepoint():
+                self.review.write(values)
+
+    def test_exemption_coexists_with_special_rebate_and_other_employer_uses_same_claim(self):
+        self.review.scenario = 'exempt_with_special'
+        self.review.action_load_reference()
+        self.assertEqual((self.review.taxable_base, self.review.tax_caused, self.review.rebate, self.review.annual_tax),
+                         (29914, 1894.10, 1440, 454.10))
+        self.review.scenario = 'exempt_capped'
+        self.review.action_load_reference()
+        self.assertEqual((self.review.personal_exemption, self.review.taxable_base, self.review.annual_tax), (9055, 0, 0))
+        # Un ingreso anterior se suma antes de aplicar una sola exención; no se duplica por empleador.
+        self.review.scenario = 'exempt_elderly'
+        self.review.action_load_reference()
+        self.review.write({'other_income': 6000, 'other_iess': 567})
+        self.assertEqual((self.review.annual_base, self.review.personal_exemption, self.review.taxable_base),
+                         (32598, 12208, 20390))
+        self.assertEqual(self.review.without_other_tax, 137.45)
+        with self.assertRaises(ValueError):
+            review_calculation(dict(BASE_INPUTS, exemption_kind='invalid'), PARAMS)

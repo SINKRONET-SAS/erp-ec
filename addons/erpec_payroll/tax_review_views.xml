@@ -19,7 +19,7 @@
     <sheet>
       <div class="alert alert-info" role="status">
         <strong>Ensayo para revisión tributaria · Ecuador 2026</strong>
-        <p>Persona ficticia del régimen general, sin cálculo de exenciones personales sobre la base. Modifica el ingreso de otro empleador y sal del campo para ver el recálculo; guarda para conservar el ensayo.</p>
+        <p>Persona ficticia del régimen general. Puede ensayar una exención personal de la base (adulto mayor, discapacidad o sustituto). Modifica el ingreso de otro empleador y sal del campo para ver el recálculo; guarda para conservar el ensayo.</p>
         <p>Los importes son anuales. El ingreso anterior se suma una sola vez. Este ensayo no cambia roles, asientos, retenciones ni XML RDEP. La aceptación del experto sigue pendiente.</p>
       </div>
       <div class="oe_title"><h1><field name="name" placeholder="Nombre del caso ficticio"/></h1></div>
@@ -36,15 +36,25 @@
       <group string="3. Gastos y meses por revisar" col="4">
         <field name="personal_expenses"/><field name="dependents"/><field name="special_condition"/><field name="remaining_months"/><field name="galapagos"/>
       </group>
+      <group string="3 bis. Exención personal de la base (LRTI art. 9, num. 12)" col="4">
+        <field name="exemption_kind"/>
+        <field name="disability_percentage" invisible="exemption_kind not in ('disability', 'substitute')"/>
+        <field name="exemption_months" invisible="exemption_kind != 'substitute'"/>
+      </group>
+      <div class="alert alert-warning" invisible="exemption_kind == 'none'" role="status">
+        <p>Se deduce de los ingresos antes de la tarifa. Adulto mayor: una fracción básica. Discapacidad o sustituto: dos fracciones, proporcional al grado (30-49 % aplica 60; 50-74 %, 70; 75-84 %, 80; 85-100 %, 100). No se suman con la de edad: rige la más beneficiosa y este ensayo permite elegir una a la vez.</p>
+        <p>Es distinta del tope de 100 canastas y pueden coexistir. Seleccionarla no acredita edad, calificación ni el documento entregado hasta el 15 de enero. No ingresar datos médicos reales.</p>
+      </div>
       <div class="alert alert-warning" invisible="special_condition == 'none'" role="status">
         <p>Supuesto sintético: discapacidad o enfermedad catastrófica, rara o huérfana del titular o una carga familiar. El tope es 100 canastas, sin sumar canastas ordinarias ni multiplicarlo por las cargas. Seleccionar este supuesto no acredita certificados, dependencia ni elegibilidad.</p>
-        <p>Se aplica 18 % del menor entre gastos y tope. El exceso de rebaja sobre el impuesto no genera devolución. No incluye la exención personal de la base por discapacidad ni por tercera edad. No ingresar datos médicos reales.</p>
+        <p>Se aplica 18 % del menor entre gastos y tope. El exceso de rebaja sobre el impuesto no genera devolución. La exención de la base se ensaya aparte, en la sección 3 bis. No ingresar datos médicos reales.</p>
       </div>
       <div class="alert alert-danger" role="alert" invisible="not validation_error"><field name="validation_error" nolabel="1"/></div>
       <group string="4. Resultado del ensayo (USD)" invisible="validation_error">
         <group string="Cálculo anual">
           <field name="total_informed"/><field name="exempt_income"/>
           <field name="combined_income"/><field name="combined_iess"/><field name="annual_base"/>
+          <field name="personal_exemption"/><field name="taxable_base"/>
           <field name="tax_caused"/><field name="expense_cap"/><field name="rebate"/><field name="annual_tax"/>
         </group>
         <group string="Comparación y retenciones">
@@ -53,7 +63,7 @@
           <field name="monthly_estimate"/><field name="last_estimate"/>
         </group>
       </group>
-      <p>Base = ingresos gravados de ambos empleadores − IESS personal a cargo del trabajador. IR anual = máximo entre cero e impuesto de tabla menos rebaja. Las retenciones se restan después, sin reducir la base.</p>
+      <p>Base = ingresos gravados de ambos empleadores − IESS personal a cargo del trabajador; la base gravable resta además la exención personal. IR anual = máximo entre cero e impuesto de tabla menos rebaja. Las retenciones se restan después, sin reducir la base.</p>
       <p>Las cuotas son una distribución orientativa del saldo entre los meses pendientes. La última absorbe los centavos; con un solo mes se usa únicamente la última cuota. Una retención superior al impuesto no genera aquí una devolución automática.</p>
       <notebook>
         <page string="Referencia y observaciones">
@@ -65,7 +75,7 @@
         </page>
         <page string="Tabla y alcance">
           <field name="parameter_summary" nolabel="1"/>
-          <p>Alcance del caso: cambio de empleador durante el mismo año, aportes personales pagados por el trabajador, sin exenciones de la base por discapacidad o tercera edad ni convenios; la rebaja especial de 100 canastas puede ensayarse por separado. Galápagos aplica únicamente el factor de gastos del ensayo, sujeto a verificar elegibilidad. No representa una liquidación automática de todos los regímenes.</p>
+          <p>Alcance del caso: cambio de empleador durante el mismo año, aportes personales pagados por el trabajador, con exención de la base por tercera edad, discapacidad o sustituto ensayable, sin convenios; la rebaja especial de 100 canastas puede ensayarse por separado. Galápagos aplica únicamente el factor de gastos del ensayo, sujeto a verificar elegibilidad. No representa una liquidación automática de todos los regímenes.</p>
           <p>Contrastar contra el comprobante anterior y la proyección anual, evitando repetir acumulados. No importar estos valores a cada mes de nómina.</p>
           <a href="https://www.sri.gob.ec/impuesto-renta" target="_blank" rel="noopener noreferrer">Base y tabla del Impuesto a la Renta — SRI</a><br/>
           <a href="https://www.sri.gob.ec/detalle-noticias?idnoticia=1261&amp;marquesina=1" target="_blank" rel="noopener noreferrer">Rebaja por gastos personales 2026 — SRI</a>

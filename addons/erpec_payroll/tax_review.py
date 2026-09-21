@@ -3,16 +3,17 @@ import json
 from decimal import Decimal, ROUND_DOWN
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
-from .engine import annual_income_tax, money, number, personal_expense_cap
+from .engine import annual_income_tax, apply_personal_exemption, money, number, personal_expense_cap
 from .models import manager
 from .parameters_ec2026 import PARAMS
 from .tax_review_cases import BASE_INPUTS, CASES
 
 INPUTS = ('current_income', 'current_iess', 'current_withheld', 'other_income',
           'other_iess', 'other_withheld', 'personal_expenses', 'dependents', 'remaining_months',
-          'exempt_thirteenth', 'exempt_fourteenth', 'exempt_reserve')
+          'exempt_thirteenth', 'exempt_fourteenth', 'exempt_reserve', 'disability_percentage', 'exemption_months')
 
-RESULTS = ('exempt_income', 'total_informed', 'combined_income', 'combined_iess', 'annual_base', 'tax_caused',
+RESULTS = ('exempt_income', 'total_informed', 'combined_income', 'combined_iess', 'annual_base',
+           'personal_exemption', 'taxable_base', 'tax_caused',
            'expense_cap', 'rebate', 'annual_tax', 'without_other_tax', 'tax_increase',
            'total_withheld', 'pending_tax', 'excess_withheld', 'monthly_estimate', 'last_estimate')
 
@@ -27,6 +28,16 @@ def review_calculation(data, parameters):
     if special == 'dependent' and values['dependents'] < 1:
         raise ValueError('El supuesto de una carga familiar requiere al menos una carga.')
     special_expense = special != 'none'
+    exemption = data.get('exemption_kind', 'none')
+    if exemption not in ('none', 'elderly', 'disability', 'substitute'):
+        raise ValueError('Selecciona una exención personal válida para el ensayo.')
+    claims = []
+    if exemption == 'elderly':
+        claims = [{'kind': 'elderly'}]
+    elif exemption in ('disability', 'substitute'):
+        claims = [{'kind': exemption, 'percentage': values['disability_percentage']}]
+        if exemption == 'substitute':
+            claims[0]['months'] = values['exemption_months']
     if region not in ('NO', 'SI'):
         raise ValueError('Selecciona Continente o Galápagos para el ensayo.')
     if any(value < 0 for value in values.values()):
@@ -41,9 +52,11 @@ def review_calculation(data, parameters):
     income = money(values['current_income'] + values['other_income'])
     iess = money(values['current_iess'] + values['other_iess'])
     base = money(income - iess)
-    caused, rebate, annual = annual_income_tax(base, values['personal_expenses'], parameters, int(values['dependents']), region, special_expense=special_expense)
-    _, _, without = annual_income_tax(money(values['current_income'] - values['current_iess']),
-                                      values['personal_expenses'], parameters, int(values['dependents']), region, special_expense=special_expense)
+    # La exención se deduce de los ingresos, no del impuesto; la más beneficiosa, nunca la suma.
+    _, applied, taxable = apply_personal_exemption(base, parameters, claims)
+    caused, rebate, annual = annual_income_tax(taxable, values['personal_expenses'], parameters, int(values['dependents']), region, special_expense=special_expense)
+    _, _, without_base = apply_personal_exemption(money(values['current_income'] - values['current_iess']), parameters, claims)
+    _, _, without = annual_income_tax(without_base, values['personal_expenses'], parameters, int(values['dependents']), region, special_expense=special_expense)
     annual, without = money(annual), money(without)
     withheld = money(values['current_withheld'] + values['other_withheld'])
     pending, excess = max(Decimal(0), annual - withheld), max(Decimal(0), withheld - annual)
@@ -53,6 +66,7 @@ def review_calculation(data, parameters):
     exempt = money(sum(values[key] for key in ('exempt_thirteenth', 'exempt_fourteenth', 'exempt_reserve')))
     return dict(exempt_income=exempt, total_informed=money(income+exempt),
                 combined_income=income, combined_iess=iess, annual_base=base,
+                personal_exemption=applied, taxable_base=taxable,
                 tax_caused=money(caused), expense_cap=money(personal_expense_cap(parameters['expense_limit'], int(values['dependents']), region, special_expense=special_expense)),
                 rebate=money(rebate), annual_tax=annual, without_other_tax=without,
                 tax_increase=money(annual-without), total_withheld=withheld,
@@ -93,6 +107,15 @@ class TaxReview(models.Model):
         ('dependent', '100 canastas · carga familiar ficticia')],
         string='Supuesto de rebaja', default='none', required=True,
         help='Discapacidad o enfermedad catastrófica, rara o huérfana. Selección sintética; no acredita elegibilidad ni calcula exenciones de la base.')
+    exemption_kind = fields.Selection([
+        ('none', 'Sin exención personal'),
+        ('elderly', 'Adulto mayor · una fracción básica'),
+        ('disability', 'Discapacidad · dos fracciones por grado'),
+        ('substitute', 'Sustituto · dos fracciones por grado y meses')],
+        string='Exención personal de la base', default='none', required=True,
+        help='LRTI art. 9 num. 12. Selección sintética; no acredita edad, calificación ni sustitución. Se aplica la más beneficiosa, nunca la suma.')
+    disability_percentage = fields.Integer('Grado de discapacidad (%)', help='Entero de 30 a 100 para discapacidad o sustituto. Escala del Reglamento LOD, art. 6.')
+    exemption_months = fields.Integer('Meses como sustituto', default=12, help='Proporción del año en que ejerció como sustituto; solo aplica al sustituto.')
     exempt_thirteenth = fields.Float('Décimo tercero informado (exento)', digits=(16, 2))
     exempt_fourteenth = fields.Float('Décimo cuarto informado (exento)', digits=(16, 2))
     exempt_reserve = fields.Float('Fondo de reserva informado (exento)', digits=(16, 2))
@@ -104,6 +127,8 @@ class TaxReview(models.Model):
     reference_status = fields.Char('Comparación con referencia', compute='_compute_review')
     combined_income = fields.Float('Ingresos gravados sumados', compute='_compute_review', digits=(16, 2))
     combined_iess = fields.Float('IESS personal sumado', compute='_compute_review', digits=(16, 2))
+    personal_exemption = fields.Float('Exención personal aplicada', compute='_compute_review', digits=(16, 2))
+    taxable_base = fields.Float('Base gravable después de la exención', compute='_compute_review', digits=(16, 2))
     annual_base = fields.Float('Base imponible anual', compute='_compute_review', digits=(16, 2))
     tax_caused = fields.Float('IR causado según tabla', compute='_compute_review', digits=(16, 2))
     expense_cap = fields.Float('Tope de gastos del supuesto', compute='_compute_review', digits=(16, 2))
@@ -124,10 +149,10 @@ class TaxReview(models.Model):
                 or self.policy_id.year != 2026 or not self.policy_id.synthetic):
             raise ValueError('Utiliza una empresa DEMO sin RUC y una política sintética 2026 de la misma empresa.')
         parameters = json.loads(self.policy_id.parameters or '{}')
-        data = {key: self[key] for key in (*INPUTS, 'galapagos', 'special_condition')}
+        data = {key: self[key] for key in (*INPUTS, 'galapagos', 'special_condition', 'exemption_kind')}
         return data, parameters, review_calculation(data, parameters)
 
-    @api.depends(*INPUTS, 'galapagos', 'special_condition', 'scenario', 'policy_id.parameters', 'policy_id.synthetic', 'policy_id.year',
+    @api.depends(*INPUTS, 'galapagos', 'special_condition', 'exemption_kind', 'scenario', 'policy_id.parameters', 'policy_id.synthetic', 'policy_id.year',
                  'policy_id.company_id', 'company_id', 'company_id.name', 'company_id.vat')
     def _compute_review(self):
         for record in self:
@@ -153,7 +178,7 @@ class TaxReview(models.Model):
                                                if actual == tuple(money(value) for value in case[2:6])
                                                else 'Diferencia con la referencia: requiere revisión.')
 
-    @api.constrains(*INPUTS, 'galapagos', 'special_condition', 'policy_id', 'company_id')
+    @api.constrains(*INPUTS, 'galapagos', 'special_condition', 'exemption_kind', 'policy_id', 'company_id')
     def _check_review(self):
         for record in self:
             try:

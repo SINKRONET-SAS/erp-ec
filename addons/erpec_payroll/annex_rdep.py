@@ -64,8 +64,10 @@ from lxml import etree
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from .models import manager
-from .engine import personal_expense_cap, annual_income_tax, money, number
+from .engine import (personal_expense_cap, annual_income_tax, apply_personal_exemption, money, number,
+                     resolve_exemption_claims, resolve_special_expense)
 
+SPECIAL_EXPENSE = [('none', 'General · según cargas'), ('holder', '100 canastas · titular'), ('dependent', '100 canastas · carga familiar')]
 DISABILITY_TYPES = [
     ('00', '00 (sin descripción en el esquema oficial SRI; confirmar en la ficha técnica antes de usar)'),
     ('01', '01 · Trabajador con discapacidad'),
@@ -106,9 +108,9 @@ def _basic_fraction(policy):
     return brackets[0]['to']
 
 
-def _personal_expense_cap(policy, dependents_count, galapagos):
+def _personal_expense_cap(policy, dependents_count, galapagos, special_expense=False):
     expense_limit = json.loads(policy.parameters)['expense_limit']
-    return float(personal_expense_cap(expense_limit, dependents_count, galapagos))
+    return float(personal_expense_cap(expense_limit, dependents_count, galapagos, special_expense=special_expense))
 
 
 def _ascii_name(value):
@@ -163,6 +165,44 @@ class Employee(models.Model):
         BEN_GALPG, string='Beneficiario Régimen Especial de Galápagos (RDEP)', default='NO',
         help='Campo benGalpg del esquema SRI: indica si el empleado tributa bajo el Régimen Especial de la Provincia de Galápagos (LOREG). Confirmado vigente para 2026 por el Boletín NAC-COM-26-006 del SRI (06-02-2026): en Galápagos, el tope de gastos personales se multiplica por el Índice de Precios al Consumidor Especial de Galápagos (IPCEG), 1.803. Marcar SI aplica el factor 1.803 al tope de gastos personales de este empleado; "NO" es el valor por defecto para empleados fuera de Galápagos.')
     ec_rdep_establishment = fields.Char('Establecimiento (RDEP)', help='Campo estab: 3 dígitos, código de establecimiento del RUC donde trabaja el empleado.')
+    # Acreditación de exenciones personales (LRTI art. 9 num. 12; Reglamento LRTI arts. 49-50).
+    # Se guarda solo la referencia del documento, nunca su contenido médico.
+    ec_rdep_exemption_year = fields.Integer(
+        'Año de la acreditación de exención', groups='erpec_payroll.group_payroll_manager',
+        help='Ejercicio fiscal para el que se entregó el documento de edad o discapacidad. Sin coincidir con el año del cálculo no se aplica la exención.')
+    ec_rdep_exemption_ref = fields.Char(
+        'Referencia del documento de exención', groups='erpec_payroll.group_payroll_manager',
+        help='Número o código del documento entregado; no registrar diagnósticos ni copias del documento.')
+    ec_rdep_exemption_date = fields.Date(
+        'Fecha de entrega al empleador', groups='erpec_payroll.group_payroll_manager',
+        help='El Reglamento LRTI, art. 50, fija el 15 de enero del ejercicio. Una entrega posterior bloquea el anexo hasta criterio del responsable.')
+    ec_rdep_exemption_months = fields.Integer(
+        'Meses de ejercicio como sustituto', default=12, groups='erpec_payroll.group_payroll_manager',
+        help='Solo para el tipo 02 (sustituto): proporción del año en que ejerció esa calidad.')
+    ec_rdep_special_expense = fields.Selection(
+        SPECIAL_EXPENSE, string='Tope de gastos personales', default='none',
+        groups='erpec_payroll.group_payroll_manager',
+        help='100 canastas por discapacidad o enfermedad catastrófica, rara o huérfana del contribuyente o de una carga. Requiere referencia del documento del año.')
+    ec_rdep_special_expense_year = fields.Integer('Año del documento del tope especial', groups='erpec_payroll.group_payroll_manager')
+    ec_rdep_special_expense_ref = fields.Char('Referencia del documento del tope especial', groups='erpec_payroll.group_payroll_manager')
+
+    def _rdep_personal_status(self, year):
+        """Exenciones y tope especial acreditados para el año, con sus incidencias y avisos."""
+        self.ensure_one()
+        claims, issues, notes = resolve_exemption_claims(
+            year, self.birthday, self.ec_rdep_disability_type, self.ec_rdep_disability_percentage,
+            self.ec_rdep_disability_id_type, self.ec_rdep_disability_id, self.ec_rdep_exemption_year,
+            self.ec_rdep_exemption_ref, self.ec_rdep_exemption_date, self.ec_rdep_exemption_months)
+        special, special_issues = resolve_special_expense(
+            year, self.ec_rdep_special_expense, self.ec_rdep_special_expense_year,
+            self.ec_rdep_special_expense_ref, self.ec_rdep_dependents_count)
+        return {'claims': claims, 'special_expense': special, 'issues': issues+special_issues, 'notes': notes}
+
+    @api.constrains('ec_rdep_exemption_months')
+    def _check_ec_rdep_exemption_months(self):
+        for employee in self:
+            if not 1 <= employee.ec_rdep_exemption_months <= 12:
+                raise ValidationError('Los meses de ejercicio como sustituto van de 1 a 12.')
 
     @api.constrains('ec_rdep_disability_percentage')
     def _check_ec_rdep_disability_percentage(self):
@@ -220,6 +260,10 @@ class Line(models.Model):
         data = super()._inputs()
         data['dependents_count'] = self.employee_id.ec_rdep_dependents_count
         data['galapagos'] = self.employee_id.ec_rdep_ben_galpg or 'NO'
+        # Solo lo acreditado para el año del período; lo inconsistente no se aplica y el anexo lo bloquea.
+        status = self.employee_id.sudo()._rdep_personal_status(self.period_id.year)
+        data['exemptions'] = status['claims']
+        data['special_expense'] = status['special_expense']
         return data
 
     @api.constrains(*RDEP_LINE_INPUT_KEYS)
@@ -234,7 +278,8 @@ class Line(models.Model):
         # familiares, no un tope por categoría (ver constante DEPENDENTS_BASKETS).
         for line in self:
             total = sum(line[key] for key in EXPENSE_CATEGORY_KEYS)
-            cap = _personal_expense_cap(line.period_id.policy_id, line.employee_id.ec_rdep_dependents_count, line.employee_id.ec_rdep_ben_galpg)
+            special = line.employee_id.sudo()._rdep_personal_status(line.period_id.year)['special_expense']
+            cap = _personal_expense_cap(line.period_id.policy_id, line.employee_id.ec_rdep_dependents_count, line.employee_id.ec_rdep_ben_galpg, special)
             if total > cap:
                 raise ValidationError('El total de gastos personales (%.2f) supera el tope anual (%.2f) según las cargas familiares declaradas.' % (total, cap))
 
@@ -289,7 +334,7 @@ class RdepAnnex(models.Model):
                          period.policy_id.parameters,
                          [(line.id, line.employee_id.id, line.result, line._copy_inputs())
                           for line in period.line_ids.sorted('id')]) for period in periods],
-            'employees': employees.sorted('id').read(sorted(employee_fields)),
+            'employees': employees.sudo().sorted('id').read(sorted(employee_fields)),
         }
         return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode('utf-8')).hexdigest()
 
@@ -303,11 +348,8 @@ class RdepAnnex(models.Model):
         if any(any(line[key] for key in special_inputs) for line in periods.line_ids):
             issues.append('Ingresos especiales, impuesto asumido u otros empleadores: falta conciliación independiente aprobada.')
         for employee in periods.line_ids.employee_id:
-            if (employee.ec_rdep_disability_type in ('00', '01', '02', '03')
-                    or employee.ec_rdep_disability_percentage
-                    or (employee.birthday and self.year - employee.birthday.year >= 65)):
-                issues.append('Exenciones por edad o discapacidad: falta validar aplicabilidad y fórmula con el responsable tributario.')
-                break
+            for message in employee.sudo()._rdep_personal_status(self.year)['issues']:
+                issues.append('Empleado %s: %s' % (employee.name, message))
         if any(employee.ec_rdep_ben_galpg == 'SI' for employee in periods.line_ids.employee_id):
             issues.append('Galápagos: falta validar el régimen completo, además del tope de gastos.')
         if any(employee.ec_rdep_treaty_applies == 'SI' or
@@ -322,6 +364,8 @@ class RdepAnnex(models.Model):
         for annex in self:
             periods = annex._posted_periods()
             issues = annex._coverage_issues(periods)
+            issues += ['Aviso, %s: %s' % (employee.name, note) for employee in periods.line_ids.employee_id
+                       for note in employee.sudo()._rdep_personal_status(annex.year)['notes']]
             if annex.source_hash and annex.source_hash != annex._source_signature(periods):
                 issues.insert(0, 'Los datos cambiaron: vuelve a agregar los períodos antes de generar XML.')
             annex.review_notice = '\n'.join(issues) or (
@@ -357,14 +401,17 @@ class RdepAnnex(models.Model):
         records = []
         for employee_id, values in totals.items():
             employee = self.env['hr.employee'].browse(employee_id)
-            annual_base = money(max(0, values['base'] - values['personal_iess']))
+            status = employee.sudo()._rdep_personal_status(self.year)
+            exemption_kind, exemption, annual_base = apply_personal_exemption(
+                max(0, values['base'] - values['personal_iess']), parameters, status['claims'])
             actual_expenses = sum(values[key] for key in EXPENSE_CATEGORY_KEYS)
             caused, rebate, after_rebate = annual_income_tax(
                 annual_base, actual_expenses, parameters, employee.ec_rdep_dependents_count,
-                employee.ec_rdep_ben_galpg or 'NO')
+                employee.ec_rdep_ben_galpg or 'NO', special_expense=status['special_expense'])
             records.append({
                 'annex_id': self.id, 'employee_id': employee_id, **values,
                 'annual_base': float(annual_base),
+                'personal_exemption': float(exemption), 'personal_exemption_kind': exemption_kind,
                 'annual_tax_caused': float(money(caused)),
                 'personal_expense_rebate': float(money(rebate)),
                 'annual_tax_after_rebate': float(money(after_rebate)),
@@ -373,7 +420,7 @@ class RdepAnnex(models.Model):
         self.line_ids.unlink()
         self.env['erpec.payroll.rdep.line'].create(records)
         self.write({'policy_id': policy.id, 'source_hash': self._source_signature(periods),
-                    'calculation_method': 'DI25-03 v1 · tarifa sobre acumulados efectivos; vista previa limitada',
+                    'calculation_method': 'DI25-03 v2 · tarifa sobre acumulados efectivos, exención personal acreditada y tope especial; vista previa limitada',
                     'state': 'draft', 'xml_file': False, 'filename': False, 'digest': False})
         return True
 
@@ -431,8 +478,9 @@ class RdepAnnex(models.Model):
             add(emp, 'tipIdDiscap', employee.ec_rdep_disability_id_type or 'N')
             if employee.ec_rdep_disability_id:
                 add(emp, 'idDiscap', employee.ec_rdep_disability_id)
-            # Las exenciones especiales se bloquean arriba hasta aprobar su oráculo.
-            disability_relief = elderly_relief = 0
+            # Exención acreditada y aplicada al agregar; el valor coincide con la base imponible.
+            disability_relief = line.personal_exemption if line.personal_exemption_kind in ('disability', 'substitute') else 0
+            elderly_relief = line.personal_exemption if line.personal_exemption_kind == 'elderly' else 0
             add(detail, 'suelSal', round(line.salary, 2))
             add(detail, 'sobSuelComRemu', round(line.overtime + line.bonus_commission, 2))
             add(detail, 'partUtil', round(line.annual_profit_sharing, 2))
@@ -458,8 +506,8 @@ class RdepAnnex(models.Model):
             add(detail, 'deducVestim', round(line.expense_clothing, 2))
             if line.expense_tourism:
                 add(detail, 'deduccionTurismo', round(line.expense_tourism, 2))
-            add(detail, 'exoDiscap', disability_relief)
-            add(detail, 'exoTerEd', elderly_relief)
+            add(detail, 'exoDiscap', round(disability_relief, 2))
+            add(detail, 'exoTerEd', round(elderly_relief, 2))
             add(detail, 'basImp', round(line.annual_base, 2))
             add(detail, 'impRentCaus', round(line.annual_tax_caused, 2))
             if line.personal_expense_rebate:
@@ -495,7 +543,11 @@ class RdepAnnexLine(models.Model):
     reserve_iess = fields.Float('Fondo de reserva acumulado (fondoReserva)', readonly=True)
     personal_iess = fields.Float('Aporte personal IESS acumulado (apoPerIess)', readonly=True)
     tax = fields.Float('Impuesto a la renta retenido acumulado (valRet)', readonly=True)
-    annual_base = fields.Float('Base imponible anual efectiva', readonly=True)
+    annual_base = fields.Float('Base imponible anual efectiva (después de la exención)', readonly=True)
+    personal_exemption = fields.Float('Exención personal aplicada (exoDiscap o exoTerEd)', readonly=True)
+    personal_exemption_kind = fields.Selection(
+        [('none', 'Sin exención'), ('elderly', 'Adulto mayor'), ('disability', 'Discapacidad'), ('substitute', 'Sustituto')],
+        string='Tipo de exención aplicada', readonly=True, default='none')
     tax_difference = fields.Float('Impuesto anual menos retenciones (sin ajuste automático)', readonly=True)
     annual_tax_caused = fields.Float('Impuesto a la renta causado (impRentCaus)', readonly=True)
     personal_expense_rebate = fields.Float('Rebaja por gastos personales (rebajaGastosPersonales)', readonly=True)

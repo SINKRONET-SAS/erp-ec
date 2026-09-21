@@ -1,3 +1,9 @@
+Actualización: exenciones personales integradas
+
+Adulto mayor, discapacidad y sustituto implementados (LRTI art. 9 num. 12, codificación SRI 01-04-2026; Reglamento LRTI arts. 49-50; Reglamento LOD art. 6), con acreditación por año, controles y bloqueo de casos no cubiertos. Integrados en el cálculo mensual, el agregador RDEP (exoTerEd/exoDiscap) y los ensayos; el tope de 100 canastas también llega ya a nómina y RDEP. Ensayos 26–32 (32 casos en total). Windows: 478 pruebas, 0 fallos, 0 errores, 5 omisiones, salida 0 (módulo de nómina 113 sin fallos). Linux/CI remoto y demo no actualizados en esta pasada. Ver docs/DI25-03_EXENCIONES_PERSONALES.md, docs/DI25-03_PAQUETE_ACEPTACION.md y docs/evidencias/DI25/DI25-03-exenciones-personales.json. No hay aceptación del responsable tributario: DI25-03 permanece parcial y no inicia DI25-04. Esta actualización prevalece sobre las exenciones «pendientes de implementar» de los estados inferiores.
+
+---
+
 # Actualización: supuesto especial de 100 canastas
 
 Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Seis ejemplos nuevos (20–25) instalados y verificados en demo: 25 casos en total. Windows/Linux: 459 pruebas sin fallos/errores; Windows 5 omisiones. Evidencia: docs/evidencias/DI25/DI25-03-100-canastas.json. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
@@ -42,7 +48,7 @@ Responsable tributario/contable: pendiente de identificación por el titular. Fe
 | Beneficio corregido | Beneficio 125 con nota; reversión y corrección deben conservar tipo, monto y nota, y volver al mismo neto bajo la misma política. | Automatizado. Determinar bases legales separadas de IESS, IR, décimos, vacaciones y reserva por concepto. |
 | Préstamo corregido | Total 250, cuota 100. Saldo 150 al calcular; 250 al revertir; 150 tras corrección. Dos filas históricas, una vigente. | Automatizado y visible; sin desembolso real. |
 | Otros empleadores | Definir ingreso, IESS y retención certificados, período y si el importe es flujo o acumulado importado. | XML bloqueado. Se requiere caso de referencia con certificado y resultado anual aprobado, usando datos anonimizados. |
-| Exenciones | Definir año, condición aplicable, grado y fecha efectiva, sustitución y prioridad/incompatibilidad de beneficios. | XML bloqueado. Validar la norma vigente; se retiró la aplicación automática de fórmulas heredadas no justificadas. |
+| Exenciones | Definir año, condición aplicable, grado y fecha efectiva, sustitución y prioridad/incompatibilidad de beneficios. | Implementado con acreditación por año y bloqueo de casos no cubiertos (ver DI25-03_EXENCIONES_PERSONALES.md); falta aceptación y las decisiones de criterio de DI25-03_PAQUETE_ACEPTACION.md. Otros regímenes siguen bloqueados. |
 | Acumulados y gastos | Definir fuente de ingresos/retenciones anteriores y cómo se evita repetir acumulados en varios meses; gastos efectivos frente a proyección. | Agregación de flujos probada; falta caso certificado de importación y conciliación completa. |
 | Cambios de sueldo y ausencias | Caso salarial variable cubierto; definir días, tipo de ausencia, efectos en cada base y retención acumulada. | Cambio salarial anual probado. Ausencias y reliquidación mensual pendientes de oráculo. |
 | Décimos y reserva | Acordar montos pagados/acumulados y mapeo anual según política y régimen, incluyendo mensualización. | Cobertura integral no aceptada; no liberar RDEP productivo. |

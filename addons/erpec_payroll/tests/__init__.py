@@ -8,3 +8,4 @@ from . import test_mail_server_env
 from . import test_benefits_advances
 from . import test_move_copy
 from . import test_tax_review
+from . import test_personal_exemptions

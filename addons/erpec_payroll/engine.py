@@ -57,6 +57,143 @@ def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO', *, s
     return cap*number(GALAPAGOS_IPCEG_FACTOR) if galapagos == 'SI' else cap
 
 
+# LRTI art. 9 num. 12 (codificación SRI, última reforma 01-04-2026): mayores de 65 años,
+# una fracción básica gravada con tarifa cero; personas con discapacidad calificada y su
+# sustituto único, el doble de esa fracción; no son simultáneas y se aplica la más
+# beneficiosa. Reglamento LRTI arts. 49 y 50: se deduce del total de ingresos y el
+# documento se entrega al empleador hasta el 15 de enero. Reglamento LOD art. 6: solo
+# desde 30 % de discapacidad y en proporción al grado. Única implementación: la reutilizan
+# la nómina mensual, el anexo RDEP y los ensayos tributarios.
+ELDERLY_MIN_AGE = 65
+DISABILITY_BENEFIT_SCALE = ((30, 49, 60), (50, 74, 70), (75, 84, 80), (85, 100, 100))
+EXEMPTION_DEADLINE = (1, 15)  # mes y día del año fiscal para entregar el documento
+
+
+def basic_fraction(parameters):
+    """Fracción básica gravada con tarifa cero: primer tramo de la tabla vigente."""
+    validate_parameters(parameters)
+    first = parameters['tax_brackets'][0]
+    if number(first['rate']) != 0 or number(first['base']) != 0 or first['to'] is None:
+        raise ValueError('El primer tramo de la tabla debe ser la fracción básica con tarifa cero.')
+    return number(first['to'])
+
+
+def disability_benefit_percent(percentage):
+    """Porcentaje de aplicación del beneficio según el grado (Reglamento LOD, art. 6)."""
+    value = number(percentage)
+    if value % 1:
+        raise ValueError('El grado de discapacidad debe ser un entero.')
+    for low, high, applied in DISABILITY_BENEFIT_SCALE:
+        if low <= value <= high:
+            return applied
+    raise ValueError('El beneficio exige un grado de discapacidad entre 30 % y 100 %.')
+
+
+def validate_exemption_claim(claim):
+    kind = claim.get('kind')
+    if kind == 'elderly':
+        return
+    if kind not in ('disability', 'substitute'):
+        raise ValueError('Tipo de exención personal no reconocido.')
+    disability_benefit_percent(claim.get('percentage', 0))
+    months = number(claim.get('months', 12))
+    if months % 1 or not 1 <= months <= 12:
+        raise ValueError('Los meses de ejercicio del sustituto deben estar entre 1 y 12.')
+    if kind == 'disability' and months != 12:
+        raise ValueError('El titular con discapacidad no se prorratea por meses.')
+
+
+def personal_exemption_amount(parameters, claim):
+    """Monto máximo anual de una exención acreditada, antes del tope por base disponible."""
+    validate_exemption_claim(claim)
+    if claim['kind'] == 'elderly':
+        return money(basic_fraction(parameters))
+    percent = Decimal(disability_benefit_percent(claim['percentage']))
+    return money(basic_fraction(parameters)*2*percent/100*number(claim.get('months', 12))/12)
+
+
+def apply_personal_exemption(annual_base, parameters, claims=()):
+    """Aplica la exención más beneficiosa, nunca la suma, limitada a la base disponible.
+
+    Devuelve (tipo aplicado o 'none', monto aplicado, base imponible resultante)."""
+    annual_base = max(Decimal(0), number(annual_base))
+    best_kind, best_amount = 'none', Decimal(0)
+    for claim in claims:
+        amount = personal_exemption_amount(parameters, claim)
+        if amount > best_amount:
+            best_kind, best_amount = claim['kind'], amount
+    applied = min(best_amount, annual_base)
+    return (best_kind if applied > 0 else 'none'), money(applied), money(annual_base-applied)
+
+
+def resolve_exemption_claims(year, birthday, disability_type, disability_percentage, disability_id_type,
+                             disability_id, accreditation_year, accreditation_ref, accreditation_date, months=12):
+    """Decide qué exenciones están acreditadas para el ejercicio. Función pura.
+
+    Devuelve (reclamos aplicables, incidencias que bloquean el anexo, avisos). Sin
+    acreditación del mismo año no se aplica exención: la condición detectada solo genera un
+    aviso. Una acreditación incompleta o en un caso no cubierto queda como incidencia y no
+    se aplica. Cubre ejercicios completos; los cambios de condición dentro del año se bloquean."""
+    claims, issues, notes = [], [], []
+    conditions = []
+    if birthday and year-birthday.year >= ELDERLY_MIN_AGE:
+        conditions.append('elderly')
+    if disability_type in ('00', '01', '02'):
+        conditions.append(disability_type)
+    accredited = bool(accreditation_ref) and accreditation_year == year and bool(accreditation_date)
+    if not accredited:
+        if conditions:
+            notes.append('Condición de edad o discapacidad detectada sin acreditación vigente del año %s: no se aplica exención.' % year)
+        return claims, issues, notes
+    if not conditions:
+        issues.append('Hay una acreditación de exención sin condición de edad o discapacidad registrada en el empleado.')
+        return claims, issues, notes
+    if (accreditation_date.year, accreditation_date.month, accreditation_date.day) > (year, *EXEMPTION_DEADLINE):
+        issues.append('El documento se entregó después del 15 de enero: falta criterio del responsable sobre su aplicación retroactiva.')
+        return claims, issues, notes
+    for condition in conditions:
+        if condition == 'elderly':
+            # Solo ejercicio completo: la mayoría de edad se alcanza el 1 de enero o antes.
+            if (birthday.year+ELDERLY_MIN_AGE, birthday.month, birthday.day) <= (year, 1, 1):
+                claims.append({'kind': 'elderly'})
+            else:
+                issues.append('Cumple 65 años durante el ejercicio: falta criterio del responsable sobre la exención parcial o completa.')
+        elif condition == '00':
+            issues.append('El tipo de discapacidad 00 no tiene descripción en el esquema oficial: no se aplica exención.')
+        else:
+            claim = {'kind': 'disability' if condition == '01' else 'substitute', 'percentage': disability_percentage or 0}
+            if condition == '02':
+                if disability_id_type in (None, False, '', 'N') or not disability_id:
+                    issues.append('El sustituto requiere identificar a la persona con discapacidad sustituida.')
+                    continue
+                claim['months'] = months
+            try:
+                validate_exemption_claim(claim)
+            except ValueError as error:
+                issues.append(str(error))
+                continue
+            claims.append(claim)
+    return claims, issues, notes
+
+
+def resolve_special_expense(year, mode, accreditation_year, accreditation_ref, dependents_count):
+    """Decide si el tope de 100 canastas está acreditado para el ejercicio. Función pura.
+
+    Devuelve (aplica, incidencias). Sin marca del empleado rige el tope general. Una marca
+    sin documento del mismo año o sin cargas, cuando corresponde a una carga, no se aplica
+    y bloquea el anexo. No valida el certificado sanitario ni el parentesco."""
+    if mode in (None, False, '', 'none'):
+        return False, []
+    if mode not in ('holder', 'dependent'):
+        return False, ['El supuesto de 100 canastas no es reconocido.']
+    issues = []
+    if not accreditation_ref or accreditation_year != year:
+        issues.append('El supuesto de 100 canastas requiere referencia del documento entregado en el año %s.' % year)
+    if mode == 'dependent' and int(dependents_count or 0) < 1:
+        issues.append('El supuesto de una carga con condición especial requiere al menos una carga declarada.')
+    return not issues, issues
+
+
 def annual_income_tax(annual_base, personal_expenses, parameters, dependents_count=0, galapagos='NO', *, special_expense=False):
     """Una sola tarifa para proyección mensual y consolidación anual efectiva."""
     validate_parameters(parameters)
@@ -94,9 +231,11 @@ def calculate(data, parameters, year, month):
     employer = money(base*number(parameters['employer_rate']))
     employer_other = money(base*number(parameters.get('employer_other_rate',0)))
     annual_base = max(Decimal(0), (base-iess)*12)
+    _, exemption, annual_base = apply_personal_exemption(annual_base, parameters, data.get('exemptions', ()))
     annual_tax, rebate, tax_after_rebate = annual_income_tax(
         annual_base, data.get('personal_expenses', 0), parameters,
-        data.get('dependents_count', 0), data.get('galapagos', 'NO'))
+        data.get('dependents_count', 0), data.get('galapagos', 'NO'),
+        special_expense=data.get('special_expense', False))
     tax = money(tax_after_rebate/12)
     thirteenth = money(base*number(parameters['thirteenth_rate']))
     fourteenth = money(number(parameters['minimum_salary'])*number(parameters['fourteenth_rate'])*days/30)
@@ -117,7 +256,7 @@ def calculate(data, parameters, year, month):
     cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess)
     # Estas magnitudes son proyecciones mensuales; el RDEP aplica la misma tarifa
     # a los acumulados efectivos, sin copiar una proyección de un mes aislado.
-    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'annual_tax_after_rebate':tax_after_rebate}.items()}
+    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption}.items()}
 
 
 def validate_parameters(parameters):

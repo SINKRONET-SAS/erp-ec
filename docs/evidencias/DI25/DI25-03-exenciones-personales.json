@@ -1,0 +1,71 @@
+{
+  "phase": "DI25-03",
+  "task": "DI25-03.3",
+  "updatedAt": "2026-09-21T19:06:51.518Z",
+  "status": "exenciones-implementadas-validadas-aceptacion-pendiente",
+  "normativeSources": [
+    "LRTI, codificación SRI con última reforma 2026-04-01, art. 9 num. 12",
+    "Reglamento LRTI arts. 49 y 50 (extracto SRI)",
+    "Reglamento LOD art. 6 (escala 60/70/80/100 %)",
+    "SRI, Impuesto a la Renta (una fracción adulto mayor; dos fracciones discapacidad o sustituto)"
+  ],
+  "consultedAt": "2026-09-21",
+  "cases": {
+    "total": 32,
+    "new": 7,
+    "range": "26-32",
+    "arithmeticReferences": "a mano, independientes del motor"
+  },
+  "implemented": [
+    "Exención de adulto mayor, discapacidad y sustituto en una única función del motor",
+    "Integración en cálculo mensual, agregador RDEP (exoTerEd, exoDiscap, basImp) y ensayos",
+    "Acreditación por año, referencia y fecha; bloqueo de casos no cubiertos; aviso sin acreditación",
+    "Tope de 100 canastas acreditado y aplicado en cálculo mensual, validación de gastos y RDEP"
+  ],
+  "windows": {
+    "modules": "todos",
+    "tests": 478,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "exit": 0,
+    "log": ".cache/windows/ec_integrated_test_di2503full1.log",
+    "sha256": "ff100094701cf49a6125809eca1011366892f6c62de59374225ba3b622052be1"
+  },
+  "moduleRun": {
+    "module": "erpec_payroll",
+    "tests": 113,
+    "failed": 0,
+    "errors": 0,
+    "log": ".cache/windows/ec_integrated_test_di2503ex3.log",
+    "sha256": "943ed6aa921d3c44c5d381ae7eb015006ac417dc7cf3fb7589664263c83f7d27"
+  },
+  "linuxCi": "no ejecutado en esta pasada",
+  "demoUpdated": false,
+  "expertAccepted": false,
+  "pending": [
+    "Aceptación del responsable tributario y decisiones de criterio de DI25-03_PAQUETE_ACEPTACION.md",
+    "Otros empleadores y acumulados: importación única contra comprobante",
+    "Ausencias y bases laborales; décimos, reserva y cierre anual; regímenes especiales",
+    "Ejecución Linux/CI remoto y actualización de la demo"
+  ],
+  "limits": [
+    "No se valida calificación sanitaria, parentesco ni sustitución ante autoridad",
+    "Sin reliquidación retroactiva de retenciones mensuales",
+    "Edad: 65 cumplidos al 1 de enero; decisión de implementación por confirmar",
+    "No se inicia DI25-04; no hay homologación ni presentación SRI"
+  ],
+  "codeHashes": {
+    "addons/erpec_payroll/__manifest__.py": "f33fed67cccb59c4137af0a32ee536d7955e99f8c8cde8f4126889bb63d0d89c",
+    "addons/erpec_payroll/engine.py": "4cab51faee327be60cad552576589224a43623c108178388a3ad4cdd77156f9d",
+    "addons/erpec_payroll/annex_rdep.py": "65e2c705efd88caf24e8582e4f23bdfdbf4b3305b4f22ae52e98f6d0b1bcf12c",
+    "addons/erpec_payroll/views.xml": "b64a09f8555bc427ec3c1c2d182b5579fe2f93cc92b08ad44d542da0167f8386",
+    "addons/erpec_payroll/tax_review.py": "4ad1b44e2df842f4415b38c358d5ebe47ec265201d43613f7ef3a9df88ab2d66",
+    "addons/erpec_payroll/tax_review_cases.py": "35b7eb59fd326ade1b8b76de37d93078a81512e1089ad040a3bcb44533db8b4e",
+    "addons/erpec_payroll/tax_review_views.xml": "95b26a5463834ffdf7e2f75e6cbce8e77461be1581728a84c6cf32972dfe912e",
+    "addons/erpec_payroll/tests/__init__.py": "fc6507f46afa7cf82df3f80fcd01110c4ddfe48225aeb7cbafde0fc8b2e59617",
+    "addons/erpec_payroll/tests/test_annex_rdep.py": "65577e87d2a524d3193514e54b8e8a5dc9a0a55ff45b32d638f7214edcbca8b6",
+    "addons/erpec_payroll/tests/test_tax_review.py": "3d7ae1824c57544ebca28cf6f901f4b22f8360d3db316cf7c258ba7fee752acf",
+    "addons/erpec_payroll/tests/test_personal_exemptions.py": "a4305849adb36595b7ecddf4893c01c39b4bb17f44dd43cac243b350dade46a0"
+  }
+}

@@ -1,3 +1,9 @@
+Actualización: exenciones personales integradas
+
+Adulto mayor, discapacidad y sustituto implementados (LRTI art. 9 num. 12, codificación SRI 01-04-2026; Reglamento LRTI arts. 49-50; Reglamento LOD art. 6), con acreditación por año, controles y bloqueo de casos no cubiertos. Integrados en el cálculo mensual, el agregador RDEP (exoTerEd/exoDiscap) y los ensayos; el tope de 100 canastas también llega ya a nómina y RDEP. Ensayos 26–32 (32 casos en total). Windows: 478 pruebas, 0 fallos, 0 errores, 5 omisiones, salida 0 (módulo de nómina 113 sin fallos). Linux/CI remoto y demo no actualizados en esta pasada. Ver docs/DI25-03_EXENCIONES_PERSONALES.md, docs/DI25-03_PAQUETE_ACEPTACION.md y docs/evidencias/DI25/DI25-03-exenciones-personales.json. No hay aceptación del responsable tributario: DI25-03 permanece parcial y no inicia DI25-04. Esta actualización prevalece sobre las exenciones «pendientes de implementar» de los estados inferiores.
+
+---
+
 # Actualización: supuesto especial de 100 canastas
 
 Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Seis ejemplos nuevos (20–25) instalados y verificados en demo: 25 casos en total. Windows/Linux: 459 pruebas sin fallos/errores; Windows 5 omisiones. Evidencia: docs/evidencias/DI25/DI25-03-100-canastas.json. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.

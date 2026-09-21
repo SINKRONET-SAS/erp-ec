@@ -3,7 +3,8 @@ BASE_INPUTS = dict(current_income=18000, current_iess=1701, current_withheld=50,
                    other_income=0, other_iess=0, other_withheld=0,
                    personal_expenses=1000, dependents=0, remaining_months=3,
                    exempt_thirteenth=0, exempt_fourteenth=0, exempt_reserve=0,
-                   galapagos='NO', special_condition='none')
+                   galapagos='NO', special_condition='none',
+                   exemption_kind='none', disability_percentage=0, exemption_months=12)
 CASES = {
     'baseline': ('01 · Sin otro empleador', {}, 16299, 242, 62, 12,
                  '18.000 − 1.701 = 16.299; 167 + (16.299 − 15.549) × 10 % = 242; '
@@ -93,3 +94,31 @@ for key, label, condition, region, dependents, income, iess, expenses, base, cau
                              personal_expenses=expenses, remaining_months=12),
                   base, caused, annual, annual,
                   note + ' Solo rebaja por gastos; no calcula exención personal por discapacidad ni valida certificados.')
+
+# Exenciones personales de la base (LRTI art. 9 num. 12; Reglamento LRTI arts. 49-50; Reglamento LOD art. 6).
+# Fracción básica 2026 = 12.208. Cada referencia es aritmética independiente del motor.
+# Base común: 30.000 − 2.835 (IESS supuesto 9,45 %) = 27.165. Sin exención el IR sería 1.481,75.
+EXEMPTION_CASES = (
+    ('exempt_elderly', '26 · Adulto mayor · una fracción básica', dict(exemption_kind='elderly'), 27165, 137.45,
+     'Exención 12.208; base gravable 14.957; (14.957 − 12.208) × 5 % = 137,45. No se prorratea por la fecha de cumpleaños.'),
+    ('exempt_disability_40', '27 · Discapacidad 40 % · aplica 60 %', dict(exemption_kind='disability', disability_percentage=40), 27165, 15.37,
+     '2 × 12.208 × 60 % = 14.649,60; base gravable 12.515,40; (12.515,40 − 12.208) × 5 % = 15,37.'),
+    ('exempt_disability_50', '28 · Discapacidad 50 % · aplica 70 %', dict(exemption_kind='disability', disability_percentage=50), 27165, 0,
+     '24.416 × 70 % = 17.091,20; base gravable 10.073,80, dentro de la fracción básica: IR cero.'),
+    ('exempt_disability_100', '29 · Discapacidad 100 % · aplica 100 %', dict(exemption_kind='disability', disability_percentage=100), 27165, 0,
+     'Exención 24.416; base gravable 2.749: IR cero.'),
+    ('exempt_substitute', '30 · Sustituto 80 % durante seis meses', dict(exemption_kind='substitute', disability_percentage=80, exemption_months=6), 27165, 351.96,
+     '24.416 × 80 % = 19.532,80; por 6/12 = 9.766,40; base gravable 17.398,60; 167 + (17.398,60 − 15.549) × 10 % = 351,96.'),
+    ('exempt_capped', '31 · Exención limitada por la base disponible', dict(exemption_kind='elderly', current_income=10000, current_iess=945), 9055, 0,
+     'Base 9.055 menor que 12.208: se aplica solo 9.055, no el monto máximo; base gravable cero.'),
+    ('exempt_with_special', '32 · Discapacidad 100 % con tope de 100 canastas',
+     dict(exemption_kind='disability', disability_percentage=100, special_condition='holder', current_income=60000,
+          current_iess=5670, personal_expenses=8000), 54330, 454.10,
+     'Base 54.330 − 24.416 = 29.914; 1.412 + (29.914 − 26.700) × 15 % = 1.894,10; rebaja 8.000 × 18 % = 1.440; IR 454,10. '
+     'La exención de la base y el tope de gastos son beneficios distintos y coexisten.'),
+)
+for key, label, overrides, base, annual, note in EXEMPTION_CASES:
+    inputs = dict(current_income=30000, current_iess=2835, current_withheld=0, personal_expenses=0, remaining_months=12)
+    inputs.update(overrides)
+    CASES[key] = (label, inputs, base, {'exempt_with_special': 1894.10}.get(key, annual), annual, annual,
+                  note + ' Solo exención de la base y tarifa; no valida documentos, calificación ni la entrega del 15 de enero.')

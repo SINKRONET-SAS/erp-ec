@@ -14,6 +14,10 @@ from ..engine import calculate
 class RdepAnnexCase(TransactionCase):
     def setUp(self):
         super().setUp()
+        self._build_fixture()
+
+    def _build_fixture(self):
+        """Empresa, política activa, empleado y tercero sintéticos; la reutilizan otras pruebas del anexo."""
         self.company = self.env.company
         self.company.write({'name': 'DEMO nómina sintética', 'vat': False})
         self.expense = self.env['account.account'].create({'code': 'RDEPTESTEXP', 'name': 'Nómina ensayo RDEP', 'account_type': 'expense'})
@@ -285,9 +289,14 @@ class RdepAnnexCase(TransactionCase):
         annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
         annex.action_build()
         annex.action_generate_xml()
-        for values in [{'ec_rdep_disability_type': '01', 'ec_rdep_disability_percentage': 40},
-                       {'ec_rdep_disability_type': '04', 'ec_rdep_disability_percentage': 0, 'birthday': '2000-01-01'},
-                       {'birthday': False, 'ec_rdep_ben_galpg': 'SI'}]:
+        accreditation = {'ec_rdep_exemption_year': self.policy.year, 'ec_rdep_exemption_ref': 'DOC-SINTETICO-1'}
+        # Exenciones acreditadas de forma incompleta o no cubierta bloquean; sin acreditación solo avisan.
+        for values in [dict(accreditation, ec_rdep_exemption_date='%s-01-20' % self.policy.year,
+                            ec_rdep_disability_type='01', ec_rdep_disability_percentage=40),
+                       dict(accreditation, ec_rdep_exemption_date='%s-01-10' % self.policy.year,
+                            ec_rdep_disability_type='04', ec_rdep_disability_percentage=0,
+                            birthday='%s-06-01' % (self.policy.year-65)),
+                       {'birthday': False, 'ec_rdep_ben_galpg': 'SI', 'ec_rdep_exemption_ref': False, 'ec_rdep_exemption_date': False}]:
             self.employee.write(values)
             annex.action_build()
             self.assertFalse(annex.xml_file)
