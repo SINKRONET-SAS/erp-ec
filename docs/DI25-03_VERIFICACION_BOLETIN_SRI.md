@@ -1,3 +1,9 @@
+# Actualización: supuesto especial de 100 canastas
+
+Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Se añaden seis ejemplos (20–25) al ensayo; validación integrada e instalación en curso. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
+
+---
+
 # Verificación documental externa — Boletín SRI NAC-COM-26-006
 
 Fecha de revisión: 21-09-2026. Documento aportado por el titular: “BOLETÍN 006 - SRI HABILITA LA PROYECCIÓN DE GASTOS PERSONALES 2026 PARA REDUCIR EL IMPUESTO A LA RENTA.pdf”.

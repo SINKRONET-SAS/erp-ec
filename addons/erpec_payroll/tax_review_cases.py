@@ -3,7 +3,7 @@ BASE_INPUTS = dict(current_income=18000, current_iess=1701, current_withheld=50,
                    other_income=0, other_iess=0, other_withheld=0,
                    personal_expenses=1000, dependents=0, remaining_months=3,
                    exempt_thirteenth=0, exempt_fourteenth=0, exempt_reserve=0,
-                   galapagos='NO')
+                   galapagos='NO', special_condition='none')
 CASES = {
     'baseline': ('01 · Sin otro empleador', {}, 16299, 242, 62, 12,
                  '18.000 − 1.701 = 16.299; 167 + (16.299 − 15.549) × 10 % = 242; '
@@ -70,3 +70,26 @@ CASES['annual_close'] = (
     21732, 816.28, 636.28, 0,
     'Base 21.732; IR después de rebaja 636,28. Retenciones 486,28 + 150 = 636,28; saldo cero. '
     'Conciliación del impuesto en este ensayo; no valida por sí sola todo el XML ni sus casilleros.')
+
+# Referencias explícitas: 100 × 821,80 = 82.180; Galápagos × 1,803 = 148.170,54.
+# Las cargas no multiplican ni se suman al tope especial.
+SPECIAL_CASES = (
+    ('special_holder', '20 · Titular · 100 canastas · gastos 30.000', 'holder', 'NO', 0, 60000, 5670, 30000, 54330, 6903.75, 1503.75,
+     'Rebaja 30.000 × 18 % = 5.400; IR 6.903,75 − 5.400 = 1.503,75.'),
+    ('special_dependent', '21 · Carga familiar · 100 canastas · gastos 30.000', 'dependent', 'NO', 1, 60000, 5670, 30000, 54330, 6903.75, 1503.75,
+     'Una carga con condición especial: mismo tope 82.180; rebaja 5.400; IR 1.503,75.'),
+    ('special_zero', '22 · Rebaja especial mayor al impuesto · sin devolución', 'holder', 'NO', 0, 60000, 5670, 100000, 54330, 6903.75, 0,
+     'Rebaja calculada 82.180 × 18 % = 14.792,40; supera el causado 6.903,75. IR cero; la diferencia no genera devolución.'),
+    ('special_cap', '23 · Tope especial continental · gastos 200.000', 'dependent', 'NO', 5, 240000, 22680, 200000, 217320, 64296.68, 49504.28,
+     'Base 217.320; causado 24.572 + (217.320 − 109.956) × 37 % = 64.296,68; rebaja 14.792,40; IR 49.504,28. No sumar canastas por cinco cargas.'),
+    ('special_galapagos', '24 · Tope especial Galápagos · gastos 200.000', 'holder', 'SI', 0, 240000, 22680, 200000, 217320, 64296.68, 37625.98,
+     'Tope 82.180 × 1,803 = 148.170,54; rebaja 26.670,70; IR 64.296,68 − 26.670,70 = 37.625,98. Elegibilidad insular pendiente.'),
+    ('special_no_expenses', '25 · Supuesto especial sin gastos · sin rebaja', 'holder', 'NO', 0, 60000, 5670, 0, 54330, 6903.75, 6903.75,
+     'La condición especial no concede automáticamente el máximo: gastos cero; rebaja cero; IR 6.903,75.'),
+)
+for key, label, condition, region, dependents, income, iess, expenses, base, caused, annual, note in SPECIAL_CASES:
+    CASES[key] = (label, dict(special_condition=condition, galapagos=region, dependents=dependents,
+                             current_income=income, current_iess=iess, current_withheld=0,
+                             personal_expenses=expenses, remaining_months=12),
+                  base, caused, annual, annual,
+                  note + ' Solo rebaja por gastos; no calcula exención personal por discapacidad ni valida certificados.')

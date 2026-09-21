@@ -21,6 +21,12 @@ def review_calculation(data, parameters):
     """Consolida una sola vez los importes anuales y reutiliza la tarifa común."""
     values = {key: number(data[key]) for key in INPUTS}
     region = data.get('galapagos', 'NO')
+    special = data.get('special_condition', 'none')
+    if special not in ('none', 'holder', 'dependent'):
+        raise ValueError('Selecciona un supuesto especial válido para el ensayo.')
+    if special == 'dependent' and values['dependents'] < 1:
+        raise ValueError('El supuesto de una carga familiar requiere al menos una carga.')
+    special_expense = special != 'none'
     if region not in ('NO', 'SI'):
         raise ValueError('Selecciona Continente o Galápagos para el ensayo.')
     if any(value < 0 for value in values.values()):
@@ -35,9 +41,9 @@ def review_calculation(data, parameters):
     income = money(values['current_income'] + values['other_income'])
     iess = money(values['current_iess'] + values['other_iess'])
     base = money(income - iess)
-    caused, rebate, annual = annual_income_tax(base, values['personal_expenses'], parameters, int(values['dependents']), region)
+    caused, rebate, annual = annual_income_tax(base, values['personal_expenses'], parameters, int(values['dependents']), region, special_expense=special_expense)
     _, _, without = annual_income_tax(money(values['current_income'] - values['current_iess']),
-                                      values['personal_expenses'], parameters, int(values['dependents']), region)
+                                      values['personal_expenses'], parameters, int(values['dependents']), region, special_expense=special_expense)
     annual, without = money(annual), money(without)
     withheld = money(values['current_withheld'] + values['other_withheld'])
     pending, excess = max(Decimal(0), annual - withheld), max(Decimal(0), withheld - annual)
@@ -47,7 +53,7 @@ def review_calculation(data, parameters):
     exempt = money(sum(values[key] for key in ('exempt_thirteenth', 'exempt_fourteenth', 'exempt_reserve')))
     return dict(exempt_income=exempt, total_informed=money(income+exempt),
                 combined_income=income, combined_iess=iess, annual_base=base,
-                tax_caused=money(caused), expense_cap=money(personal_expense_cap(parameters['expense_limit'], int(values['dependents']), region)),
+                tax_caused=money(caused), expense_cap=money(personal_expense_cap(parameters['expense_limit'], int(values['dependents']), region, special_expense=special_expense)),
                 rebate=money(rebate), annual_tax=annual, without_other_tax=without,
                 tax_increase=money(annual-without), total_withheld=withheld,
                 pending_tax=money(pending), excess_withheld=money(excess),
@@ -81,6 +87,12 @@ class TaxReview(models.Model):
     dependents = fields.Integer('Cargas familiares', default=0)
     remaining_months = fields.Integer('Meses pendientes del ajuste', default=3)
     galapagos = fields.Selection([('NO', 'Continente'), ('SI', 'Galápagos · elegibilidad por revisar')], string='Región del ensayo', default='NO', required=True)
+    special_condition = fields.Selection([
+        ('none', 'General · según cargas'),
+        ('holder', '100 canastas · titular ficticio'),
+        ('dependent', '100 canastas · carga familiar ficticia')],
+        string='Supuesto de rebaja', default='none', required=True,
+        help='Discapacidad o enfermedad catastrófica, rara o huérfana. Selección sintética; no acredita elegibilidad ni calcula exenciones de la base.')
     exempt_thirteenth = fields.Float('Décimo tercero informado (exento)', digits=(16, 2))
     exempt_fourteenth = fields.Float('Décimo cuarto informado (exento)', digits=(16, 2))
     exempt_reserve = fields.Float('Fondo de reserva informado (exento)', digits=(16, 2))
@@ -94,7 +106,7 @@ class TaxReview(models.Model):
     combined_iess = fields.Float('IESS personal sumado', compute='_compute_review', digits=(16, 2))
     annual_base = fields.Float('Base imponible anual', compute='_compute_review', digits=(16, 2))
     tax_caused = fields.Float('IR causado según tabla', compute='_compute_review', digits=(16, 2))
-    expense_cap = fields.Float('Tope de gastos según cargas', compute='_compute_review', digits=(16, 2))
+    expense_cap = fields.Float('Tope de gastos del supuesto', compute='_compute_review', digits=(16, 2))
     rebate = fields.Float('Rebaja calculada por gastos', compute='_compute_review', digits=(16, 2))
     annual_tax = fields.Float('IR anual después de rebaja', compute='_compute_review', digits=(16, 2))
     without_other_tax = fields.Float('IR anual sin otro empleador', compute='_compute_review', digits=(16, 2))
@@ -112,10 +124,10 @@ class TaxReview(models.Model):
                 or self.policy_id.year != 2026 or not self.policy_id.synthetic):
             raise ValueError('Utiliza una empresa DEMO sin RUC y una política sintética 2026 de la misma empresa.')
         parameters = json.loads(self.policy_id.parameters or '{}')
-        data = {key: self[key] for key in (*INPUTS, 'galapagos')}
+        data = {key: self[key] for key in (*INPUTS, 'galapagos', 'special_condition')}
         return data, parameters, review_calculation(data, parameters)
 
-    @api.depends(*INPUTS, 'galapagos', 'scenario', 'policy_id.parameters', 'policy_id.synthetic', 'policy_id.year',
+    @api.depends(*INPUTS, 'galapagos', 'special_condition', 'scenario', 'policy_id.parameters', 'policy_id.synthetic', 'policy_id.year',
                  'policy_id.company_id', 'company_id', 'company_id.name', 'company_id.vat')
     def _compute_review(self):
         for record in self:
@@ -141,7 +153,7 @@ class TaxReview(models.Model):
                                                if actual == tuple(money(value) for value in case[2:6])
                                                else 'Diferencia con la referencia: requiere revisión.')
 
-    @api.constrains(*INPUTS, 'galapagos', 'policy_id', 'company_id')
+    @api.constrains(*INPUTS, 'galapagos', 'special_condition', 'policy_id', 'company_id')
     def _check_review(self):
         for record in self:
             try:

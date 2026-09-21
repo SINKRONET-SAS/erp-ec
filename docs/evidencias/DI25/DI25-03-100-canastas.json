@@ -1,0 +1,28 @@
+{
+  "phase": "DI25-03",
+  "task": "DI25-03.3",
+  "updatedAt": "2026-09-21T18:07:37.099Z",
+  "status": "base-normativa-constatada-implementacion-en-validacion",
+  "normativeReferenceResolved": true,
+  "guide": "docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md",
+  "cases": 25,
+  "newCases": 6,
+  "arithmeticPreflight": {
+    "passed": 25,
+    "scope": "Referencias explícitas independientes; no sustituye integración Odoo"
+  },
+  "codeHashes": {
+    "addons/erpec_payroll/__manifest__.py": "a363b84553a2338a142d1fc69109bb61fdcfce830ab029ae5140c1d1fa3067e4",
+    "addons/erpec_payroll/engine.py": "a072cc8dc711be71b474fba4871f2a9e95635985a6bf41bfdbd4bfeed8ce8131",
+    "addons/erpec_payroll/tax_review.py": "af2e1a22547b31dcac6b2eef8ee65820f4542b1e84434bde68158c8dc0963ad5",
+    "addons/erpec_payroll/tax_review_cases.py": "8ed4cc873b46c057bad72f147876555e9c8dda1e3093f98b4ff3f6e34a2cb89f",
+    "addons/erpec_payroll/tax_review_views.xml": "fc4d89d75bc48ceeeaa738d48a66c3931485155876f4b87ae1ed8b538df07c03",
+    "addons/erpec_payroll/tests/test_tax_review.py": "7d6a31cece830891e584a5ff90877875f0a1c3f3445830c910f33cdbd1aa5532"
+  },
+  "expertAccepted": false,
+  "pending": [
+    "Suite integrada Windows/Linux",
+    "Instalación demo respaldada y verificación visible",
+    "Aceptación nominal, documentación de elegibilidad y demás exenciones fuera del alcance"
+  ]
+}

@@ -120,7 +120,7 @@ class TaxReviewCase(TransactionCase):
 
     def test_all_visible_examples_against_independent_references(self):
         from ..tax_review_cases import CASES
-        self.assertEqual(len(CASES), 19)
+        self.assertEqual(len(CASES), 25)
         for key, case in CASES.items():
             with self.subTest(case=key):
                 self.review.scenario = key
@@ -149,3 +149,48 @@ class TaxReviewCase(TransactionCase):
         self.assertEqual(self.review.annual_tax, 2369.73)
         self.review.dependents = 5
         self.assertEqual(self.review.annual_tax, 1569.61)
+
+    def test_special_rebate_toggle_minimum_and_no_false_refund(self):
+        self.review.scenario = 'special_holder'
+        self.review.action_load_reference()
+        self.assertEqual(self.review.expense_cap, 82180)
+        self.assertEqual(self.review.rebate, 5400)
+        self.assertEqual(self.review.annual_tax, 1503.75)
+        with Form(self.review) as form:
+            form.special_condition = 'none'
+            self.assertEqual(form.annual_tax, 5868.28)
+            form.special_condition = 'holder'
+            self.assertEqual(form.annual_tax, 1503.75)
+        self.review.invalidate_recordset()
+        self.assertEqual(self.review.special_condition, 'holder')
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            self.review.special_condition = 'dependent'
+        self.review.write({'dependents': 1, 'special_condition': 'dependent'})
+        self.assertEqual(self.review.expense_cap, 82180)
+        self.review.dependents = 5
+        self.assertEqual(self.review.expense_cap, 82180)
+        self.review.personal_expenses = 100000
+        self.assertEqual(self.review.rebate, 14792.40)
+        self.assertEqual(self.review.annual_tax, 0)
+        self.assertEqual(self.review.excess_withheld, 0)
+        self.assertEqual(self.review.pending_tax, 0)
+        self.review.scenario = 'special_galapagos'
+        self.review.action_load_reference()
+        self.assertEqual(self.review.expense_cap, 148170.54)
+        self.assertEqual(self.review.rebate, 26670.70)
+        self.assertEqual(self.review.annual_tax, 37625.98)
+        self.review.scenario = 'previous'
+        self.review.action_load_reference()
+        self.assertEqual(self.review.special_condition, 'none')
+        self.assertEqual(self.review.annual_tax, 636.28)
+
+    def test_special_indicator_is_explicit_and_legacy_calls_unchanged(self):
+        from ..engine import annual_income_tax, personal_expense_cap
+        self.assertEqual(float(personal_expense_cap(5752.6)), 5752.6)
+        self.assertEqual(float(personal_expense_cap(5752.6, special_expense=True)), 82180)
+        self.assertEqual(float(annual_income_tax(54330, 30000, PARAMS)[2]), 5868.282)
+        for indicator in ('false', 'true', 1, None):
+            with self.assertRaises(ValueError):
+                personal_expense_cap(5752.6, special_expense=indicator)
+        with self.assertRaises(ValueError):
+            review_calculation(dict(BASE_INPUTS, special_condition='invalid'), PARAMS)

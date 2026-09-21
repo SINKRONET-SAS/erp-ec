@@ -45,16 +45,19 @@ BASELINE_BASKETS = 7  # cargas=0, la base sobre la que ya está expresado expens
 GALAPAGOS_IPCEG_FACTOR = 1.803
 
 
-def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO'):
+def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO', *, special_expense=False):
     dependents_count = int(dependents_count or 0)
     if dependents_count < 0:
         raise ValueError('Las cargas familiares no pueden ser negativas.')
-    baskets = DEPENDENTS_BASKETS.get(dependents_count, DEPENDENTS_BASKETS_MAX)
+    if type(special_expense) is not bool:
+        raise ValueError('El supuesto especial requiere un indicador booleano explícito.')
+    # LRTI, segundo innumerado posterior al art. 10, literal c; SRI 2026.
+    baskets = 100 if special_expense else DEPENDENTS_BASKETS.get(dependents_count, DEPENDENTS_BASKETS_MAX)
     cap = number(expense_limit)/BASELINE_BASKETS*baskets
     return cap*number(GALAPAGOS_IPCEG_FACTOR) if galapagos == 'SI' else cap
 
 
-def annual_income_tax(annual_base, personal_expenses, parameters, dependents_count=0, galapagos='NO'):
+def annual_income_tax(annual_base, personal_expenses, parameters, dependents_count=0, galapagos='NO', *, special_expense=False):
     """Una sola tarifa para proyección mensual y consolidación anual efectiva."""
     validate_parameters(parameters)
     annual_base = max(Decimal(0), number(annual_base))
@@ -68,7 +71,7 @@ def annual_income_tax(annual_base, personal_expenses, parameters, dependents_cou
             break
     if annual_tax is None:
         raise ValueError('La tabla de renta no cubre la base anual.')
-    cap = personal_expense_cap(parameters['expense_limit'], dependents_count, galapagos)
+    cap = personal_expense_cap(parameters['expense_limit'], dependents_count, galapagos, special_expense=special_expense)
     rebate = min(expenses, cap)*number(parameters['rebate_rate'])
     return annual_tax, rebate, max(Decimal(0), annual_tax-rebate)
 

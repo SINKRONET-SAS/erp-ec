@@ -1,3 +1,9 @@
+# Actualización: supuesto especial de 100 canastas
+
+Referencia normativa constatada y corregida para 2026. Ver docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md. Se añaden seis ejemplos (20–25) al ensayo; validación integrada e instalación en curso. El pendiente de base normativa queda resuelto; la aceptación del experto y las exenciones de la base siguen separadas. Esta actualización prevalece sobre la exclusión histórica de 100 canastas indicada abajo. DI25-03 permanece parcial y no inicia DI25-04.
+
+---
+
 # Estado actualizado: demo y contraste externo verificados
 
 Verificación del 21-09-2026: 19 casos instalados y visibles en Áreas → Nómina → Ensayos tributarios de renta. Edición, persistencia, rechazo de IESS inválido y restablecimiento comprobados en pantalla. Suite del motor: 457 pruebas Windows y 457 Linux, sin fallos ni errores; Windows reporta 5 omisiones de entorno. Ajustes posteriores solo de presentación XML verificados en demo; CI final 0623125 aprobado: 457 pruebas Linux sin fallos/errores, perfiles customer/controller, gobierno y dependencias aprobados. Boletín SRI aportado cotejado byte a byte con la descarga oficial: ver docs/DI25-03_VERIFICACION_BOLETIN_SRI.md. Esto acredita contraste documental y ensayos, no aceptación nominal del experto. DI25-03 permanece parcial; no iniciar DI25-04.

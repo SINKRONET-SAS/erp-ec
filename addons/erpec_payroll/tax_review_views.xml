@@ -19,7 +19,7 @@
     <sheet>
       <div class="alert alert-info" role="status">
         <strong>Ensayo para revisión tributaria · Ecuador 2026</strong>
-        <p>Persona ficticia del régimen general, sin exenciones personales especiales. Modifica el ingreso de otro empleador y sal del campo para ver el recálculo; guarda para conservar el ensayo.</p>
+        <p>Persona ficticia del régimen general, sin cálculo de exenciones personales sobre la base. Modifica el ingreso de otro empleador y sal del campo para ver el recálculo; guarda para conservar el ensayo.</p>
         <p>Los importes son anuales. El ingreso anterior se suma una sola vez. Este ensayo no cambia roles, asientos, retenciones ni XML RDEP. La aceptación del experto sigue pendiente.</p>
       </div>
       <div class="oe_title"><h1><field name="name" placeholder="Nombre del caso ficticio"/></h1></div>
@@ -34,8 +34,12 @@
         </group>
       </group>
       <group string="3. Gastos y meses por revisar" col="4">
-        <field name="personal_expenses"/><field name="dependents"/><field name="remaining_months"/><field name="galapagos"/>
+        <field name="personal_expenses"/><field name="dependents"/><field name="special_condition"/><field name="remaining_months"/><field name="galapagos"/>
       </group>
+      <div class="alert alert-warning" invisible="special_condition == 'none'" role="status">
+        <p>Supuesto sintético: discapacidad o enfermedad catastrófica, rara o huérfana del titular o una carga familiar. El tope es 100 canastas, sin sumar canastas ordinarias ni multiplicarlo por las cargas. Seleccionar este supuesto no acredita certificados, dependencia ni elegibilidad.</p>
+        <p>Se aplica 18 % del menor entre gastos y tope. El exceso de rebaja sobre el impuesto no genera devolución. No incluye la exención personal de la base por discapacidad ni por tercera edad. No ingresar datos médicos reales.</p>
+      </div>
       <div class="alert alert-danger" role="alert" invisible="not validation_error"><field name="validation_error" nolabel="1"/></div>
       <group string="4. Resultado del ensayo (USD)" invisible="validation_error">
         <group string="Cálculo anual">
@@ -61,7 +65,7 @@
         </page>
         <page string="Tabla y alcance">
           <field name="parameter_summary" nolabel="1"/>
-          <p>Alcance del caso: cambio de empleador durante el mismo año, aportes personales pagados por el trabajador, sin discapacidad, tercera edad, enfermedades catastróficas ni convenios. Galápagos aplica únicamente el factor de gastos del ensayo, sujeto a verificar elegibilidad. No representa una liquidación automática de todos los regímenes.</p>
+          <p>Alcance del caso: cambio de empleador durante el mismo año, aportes personales pagados por el trabajador, sin exenciones de la base por discapacidad o tercera edad ni convenios; la rebaja especial de 100 canastas puede ensayarse por separado. Galápagos aplica únicamente el factor de gastos del ensayo, sujeto a verificar elegibilidad. No representa una liquidación automática de todos los regímenes.</p>
           <p>Contrastar contra el comprobante anterior y la proyección anual, evitando repetir acumulados. No importar estos valores a cada mes de nómina.</p>
           <a href="https://www.sri.gob.ec/impuesto-renta" target="_blank" rel="noopener noreferrer">Base y tabla del Impuesto a la Renta — SRI</a><br/>
           <a href="https://www.sri.gob.ec/detalle-noticias?idnoticia=1261&amp;marquesina=1" target="_blank" rel="noopener noreferrer">Rebaja por gastos personales 2026 — SRI</a>
