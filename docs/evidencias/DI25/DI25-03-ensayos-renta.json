@@ -1,8 +1,8 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.3",
-  "updatedAt": "2026-09-21T12:54:33.339Z",
-  "status": "ensayos-implementados-validacion-final-en-curso",
+  "updatedAt": "2026-09-21T14:02:29.979Z",
+  "status": "demo-instalada-verificada-aceptacion-externa-pendiente",
   "requested": "Casos editables visibles en demo para aceptación externa, ampliados a pendientes de matriz y sueldo USD 5.000",
   "cases": 19,
   "guide": "docs/DI25-03_ENSAYOS_RENTA_DEMO.md",
@@ -12,7 +12,7 @@
     "addons/erpec_payroll/ir.model.access.csv": "d98bb6cd7a995025eacea2ca32e2112cf94a21d92a3e2828dafc644ec2db7bcd",
     "addons/erpec_payroll/tax_review.py": "7854e60972a5388f2688ead15d6c7989689d0d5687c2ce32935eca4ff0ea9784",
     "addons/erpec_payroll/tax_review_cases.py": "5bcb10f820ebc296d06a6a5d210c3bf35d4153f9b33b59accb60f7e3c64b1ca5",
-    "addons/erpec_payroll/tax_review_views.xml": "10023df08d043fd86e15c97f7fd8664bf8e4a683ed1059542c59f1111524589d",
+    "addons/erpec_payroll/tax_review_views.xml": "a438354f06d824abc08ca0269627d9306997efc6652f96cbf32cec5fbef36b47",
     "addons/erpec_payroll/tests/__init__.py": "e6aecdb365abb48c45d2627ee8d66229a3e382181f60b21abd42f4064286a6e9",
     "addons/erpec_payroll/tests/test_tax_review.py": "72f053de2f4571cc7d5f3890fd8080b41bd9b97dd2cf004a374d267a66ec314c",
     "scripts/seed-tax-review-demo.py": "1e78564f437719f80faf895bfdf195e2ca7d3d24c043b340a907836cf50655a3"
@@ -33,9 +33,106 @@
     "sha256": "ad94fea77132f439835c0116907a13fd427b91aaa095fe67d3f07bafb9331f01"
   },
   "pending": [
-    "Suite integrada final Windows/Linux",
-    "Respaldo, actualización demo, casos y verificación visual",
-    "Aceptación externa y cobertura restante de DI25-03"
+    "CI final de ajustes XML de presentación posteriores a fbd8116",
+    "Aceptación nominal del experto y cobertura restante de matriz: 100 canastas, exenciones personales y demás regímenes excluidos"
   ],
-  "legalAccepted": false
+  "legalAccepted": false,
+  "windows": {
+    "tests": 457,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "exit": 0,
+    "sourceCommit": "fbd811609757f9fc364d71818806f8d54dddc825",
+    "logSha256": "722e9a75f70d3d1d607dd8bf4b93cc3dbaa809b3dc687ea66dbdfd4718c4b740"
+  },
+  "linux": {
+    "tests": 457,
+    "failed": 0,
+    "errors": 0,
+    "conclusion": "success",
+    "run": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35604856519",
+    "sourceCommit": "fbd811609757f9fc364d71818806f8d54dddc825",
+    "logSha256": "d3f855dff81d9c6ba7914616a9e1ec9b64dc0eb394e802ae62d0a35f7d21e880"
+  },
+  "deployment": {
+    "updated": true,
+    "backup": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups\\di25-tax-review-20260921T132246Z",
+    "databaseBackupSha256": "fd8279da757874bf2eba466f545906bbabb7c1a8adba4cd3cb20b043445d39ff",
+    "economicBeforeAndAfter": {
+      "account_move": {
+        "count": 29,
+        "sha256": "2ee65c9bb38ed165b88337a850bb022b6ee3a347e1c028ea6983be3f6030b63c"
+      },
+      "account_move_line": {
+        "count": 134,
+        "sha256": "c074f167b56432d991ddc92a5aca198601bc1d946ee354b8563680e35ef15df4"
+      },
+      "payroll_period": {
+        "count": 8,
+        "sha256": "d86f9e92b2700b8ca7e731fa3b4d05ac836e51772a287cc32bdd9ff04e3aecd9"
+      },
+      "payroll_line": {
+        "count": 9,
+        "sha256": "60d1463812ae1ce85d094acc2d12a40dfa3696eab3b5ab7bfdc97355932320db"
+      }
+    },
+    "repeatedSeed": true,
+    "demoUrl": "http://127.0.0.1:8369",
+    "upgradeExit": 0
+  },
+  "layoutRecovery": {
+    "checkedAt": "2026-09-21T13:33:37.532055+00:00",
+    "results": [
+      {
+        "attempt": 1,
+        "exit": 0,
+        "stdout": "Caso conservado: 01 · Sin otro empleador\nCaso conservado: 02 · Ingreso anterior de USD 6.000\nCaso conservado: 03 · Ingreso anterior de USD 10.000\nCaso conservado: 04 · Cambio salarial a mitad del año\nCaso conservado: 05 · Mes con ingreso reducido por ausencia\nCaso conservado: 06 · USD 5.000 · Continente · 0 cargas\nCaso conservado: 07 · USD 5.000 · Continente · 1 cargas\nCaso conservado: 08 · USD 5.000 · Continente · 2 cargas\nCaso conservado: 09 · USD 5.000 · Continente · 3 cargas\nCaso conservado: 10 · USD 5.000 · Continente · 4 cargas\nCaso conservado: 11 · USD 5.000 · Continente · 5 cargas\nCaso conservado: 12 · USD 5.000 · Galápagos · 0 cargas\nCaso conservado: 13 · USD 5.000 · Galápagos · 1 cargas\nCaso conservado: 14 · USD 5.000 · Galápagos · 2 cargas\nCaso conservado: 15 · USD 5.000 · Galápagos · 3 cargas\nCaso conservado: 16 · USD 5.000 · Galápagos · 4 cargas\nCaso conservado: 17 · USD 5.000 · Galápagos · 5 cargas\nCaso conservado: 18 · Décimos y reserva separados del ingreso gravado\nCaso conservado: 19 · Cierre anual con retenciones conciliadas\n",
+        "stderr": ""
+      },
+      {
+        "attempt": 2,
+        "exit": 0,
+        "stdout": "Caso conservado: 01 · Sin otro empleador\nCaso conservado: 02 · Ingreso anterior de USD 6.000\nCaso conservado: 03 · Ingreso anterior de USD 10.000\nCaso conservado: 04 · Cambio salarial a mitad del año\nCaso conservado: 05 · Mes con ingreso reducido por ausencia\nCaso conservado: 06 · USD 5.000 · Continente · 0 cargas\nCaso conservado: 07 · USD 5.000 · Continente · 1 cargas\nCaso conservado: 08 · USD 5.000 · Continente · 2 cargas\nCaso conservado: 09 · USD 5.000 · Continente · 3 cargas\nCaso conservado: 10 · USD 5.000 · Continente · 4 cargas\nCaso conservado: 11 · USD 5.000 · Continente · 5 cargas\nCaso conservado: 12 · USD 5.000 · Galápagos · 0 cargas\nCaso conservado: 13 · USD 5.000 · Galápagos · 1 cargas\nCaso conservado: 14 · USD 5.000 · Galápagos · 2 cargas\nCaso conservado: 15 · USD 5.000 · Galápagos · 3 cargas\nCaso conservado: 16 · USD 5.000 · Galápagos · 4 cargas\nCaso conservado: 17 · USD 5.000 · Galápagos · 5 cargas\nCaso conservado: 18 · Décimos y reserva separados del ingreso gravado\nCaso conservado: 19 · Cierre anual con retenciones conciliadas\n",
+        "stderr": ""
+      }
+    ],
+    "economicPreserved": true,
+    "layoutBackup": ".cache/windows/backups/di25-tax-review-layout-20260921T133108Z",
+    "incident": "Actualización XML aprobada; segundo seed del instalador interrumpido sin diagnóstico concluyente. No se computa como ejecución aprobada. Dos repeticiones posteriores terminaron con salida 0 y conservaron 19 casos. Sesiones recuperadas reiniciando exclusivamente la demo bajo el usuario con permisos existentes, sin cambiar ACL ni credenciales."
+  },
+  "ui": {
+    "checkedAt": "2026-09-21T14:02:29.979Z",
+    "url": "http://127.0.0.1:8369/odoo/action-817",
+    "cases": 19,
+    "checks": [
+      "Caso 02: ingreso anterior 6000→10000, IESS 567→945, IR anual 636.28→1070.92 y saldo 436.28→870.92",
+      "Guardado y recarga conservan las entradas y el resultado modificado",
+      "IESS anterior 11000 sobre ingreso 10000 oculta resultados y rechaza guardar; cambios inválidos descartados",
+      "Restablecer referencia devuelve ingreso 6000, IESS 567, IR 636.28 y saldo 436.28",
+      "Listado visible de 19 casos; año 2026 sin separador de miles y etiquetas ajustadas"
+    ],
+    "screenshots": [
+      {
+        "path": "docs/evidencias/DI25/DI25-03-ensayo-modificado.png",
+        "sha256": "4bc061407e2b52eb2c733d90f523e4a71f295f8ce29b1d4d74d546d4419201f5"
+      },
+      {
+        "path": "docs/evidencias/DI25/DI25-03-ensayo-validacion.png",
+        "sha256": "cd8c189803f8b88601f35a2a4bf7ea5e695883b35bdfee5eab08aca31a98cc0c"
+      },
+      {
+        "path": "docs/evidencias/DI25/DI25-03-ensayos-listado.png",
+        "sha256": "e61e2062b70bdc13d698f0994095117460a411793a2fb64db8c03eea4ff600e2"
+      }
+    ]
+  },
+  "externalDocument": {
+    "report": "docs/DI25-03_VERIFICACION_BOLETIN_SRI.md",
+    "identicalToOfficial": true,
+    "sha256": "82d0ac6abfd7602332c5bec223e580dfbdd195e322d4eedbcccb906b96692b44",
+    "pagesVisuallyInspected": 2,
+    "expertAcceptance": false
+  },
+  "presentationChangesAfterSuite": "Solo tax_review_views.xml: legibilidad de listado, año sin agrupación y precisión del texto de fórmula. Instalado y validado visualmente; no cambios de motor."
 }

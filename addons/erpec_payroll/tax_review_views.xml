@@ -6,9 +6,9 @@
 <record id="tax_review_list" model="ir.ui.view">
   <field name="name">erpec.payroll.tax.review.list</field><field name="model">erpec.payroll.tax.review</field>
   <field name="arch" type="xml"><list>
-    <field name="name"/><field name="year"/><field name="other_income"/>
-    <field name="annual_base"/><field name="annual_tax"/><field name="pending_tax"/>
-    <field name="reference_status"/><field name="company_id" groups="base.group_multi_company"/>
+    <field name="name" width="320px"/><field name="year" optional="hide" options="{'enable_formatting': False}"/><field name="other_income" string="Otro empleador"/>
+    <field name="annual_base" string="Base anual"/><field name="annual_tax" string="IR anual"/><field name="pending_tax" string="Saldo IR"/>
+    <field name="reference_status" optional="hide"/><field name="company_id" optional="hide" groups="base.group_multi_company"/>
   </list></field>
 </record>
 <record id="tax_review_form" model="ir.ui.view">
@@ -24,7 +24,7 @@
       </div>
       <div class="oe_title"><h1><field name="name" placeholder="Nombre del caso ficticio"/></h1></div>
       <group><group><field name="company_id" groups="base.group_multi_company"/><field name="policy_id" options="{'no_create': True}"/></group>
-        <group><field name="year"/><field name="scenario"/></group></group>
+        <group><field name="year" options="{'enable_formatting': False}"/><field name="scenario"/></group></group>
       <group>
         <group string="1. Empleador actual · total anual proyectado">
           <field name="current_income"/><field name="current_iess"/><field name="current_withheld"/>
@@ -49,7 +49,7 @@
           <field name="monthly_estimate"/><field name="last_estimate"/>
         </group>
       </group>
-      <p>Base = ingresos gravados de ambos empleadores − IESS personal a cargo del trabajador. IR anual = máximo de cero entre impuesto de tabla y su rebaja. Las retenciones se restan después, sin reducir la base.</p>
+      <p>Base = ingresos gravados de ambos empleadores − IESS personal a cargo del trabajador. IR anual = máximo entre cero e impuesto de tabla menos rebaja. Las retenciones se restan después, sin reducir la base.</p>
       <p>Las cuotas son una distribución orientativa del saldo entre los meses pendientes. La última absorbe los centavos; con un solo mes se usa únicamente la última cuota. Una retención superior al impuesto no genera aquí una devolución automática.</p>
       <notebook>
         <page string="Referencia y observaciones">

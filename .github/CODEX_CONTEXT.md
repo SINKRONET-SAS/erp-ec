@@ -1,3 +1,11 @@
+# Estado actualizado: demo y contraste externo verificados
+
+Verificación del 21-09-2026: 19 casos instalados y visibles en Áreas → Nómina → Ensayos tributarios de renta. Edición, persistencia, rechazo de IESS inválido y restablecimiento comprobados en pantalla. Suite del motor: 457 pruebas Windows y 457 Linux, sin fallos ni errores; Windows reporta 5 omisiones de entorno. Ajustes posteriores solo de presentación XML verificados en demo; CI final pendiente. Boletín SRI aportado cotejado byte a byte con la descarga oficial: ver docs/DI25-03_VERIFICACION_BOLETIN_SRI.md. Esto acredita contraste documental y ensayos, no aceptación nominal del experto. DI25-03 permanece parcial; no iniciar DI25-04.
+
+Evidencia: docs/evidencias/DI25/DI25-03-ensayos-renta.json. Esta actualización prevalece sobre los estados históricos inferiores.
+
+---
+
 # Estado vigente: DI25-03 · ensayos visibles en preparación
 
 El titular autorizó ejemplos editables para aceptación externa y ampliar los casos de la matriz. Implementados 19 escenarios con otro empleador, salario variable, ausencias, gastos/cargas, Galápagos, décimos/reserva y cierre de impuesto; validación final e instalación demo en curso. Guía: docs/DI25-03_ENSAYOS_RENTA_DEMO.md; evidencia del paquete: docs/evidencias/DI25/DI25-03-ensayos-renta.json. La suite inicial de tres casos pasó 455 pruebas, pero no acredita aún la ampliación. No cerrar DI25-03 ni iniciar DI25-04. Mantener aceptación externa pendiente, sin alterar XML/asientos/roles por estos ensayos.

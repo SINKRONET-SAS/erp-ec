@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-21T14:02:29.979Z",
+  "updatedAt": "2026-09-21T12:54:33.339Z",
   "filesModified": [
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
@@ -87,9 +87,7 @@
     "scripts/seed-tax-review-demo.py",
     "docs/DI25-03_ENSAYOS_RENTA_DEMO.md",
     "docs/evidencias/DI25/DI25-03-ensayos-renta.json",
-    "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json",
-    "docs/DI25-03_VERIFICACION_BOLETIN_SRI.md",
-    "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json"
+    "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json"
   ],
   "validationChecks": [
     "DI25-01: suite Windows y Linux 432 pruebas, 0 fallos, 0 errores, 5 omisiones en cada entorno",
@@ -99,8 +97,7 @@
     "DI25-03 parcial: 3 defectos reproducidos; 83 pruebas de módulo aprobadas; no cierre de fase",
     "DI25-03: CI 7f0d918 aprobado, 448 pruebas Linux, 5 omisiones; tres capturas UI verificadas; sin aceptación tributaria",
     "DI25-03: código f236621, Windows y Linux 448 pruebas, 0 fallos/errores, 5 omisiones por entorno, salida 0; CI 35558952932 e imágenes aprobadas; UI sintética inspeccionada. Fase parcial: aceptación y cobertura tributaria pendientes.",
-    "DI25-03.3: 19 referencias aritméticas contrastadas; suite inicial 455/0 fallos/0 errores/5 omisiones aprobada antes de ampliación. Suite final y demo pendientes; no aceptación externa.",
-    "DI25-03.3: 457 pruebas Windows/Linux sin fallos; demo 19 casos, editar/guardar/recargar/restablecer y rechazo de IESS inválido verificados; PDF oficial idéntico. Aceptación tributaria pendiente."
+    "DI25-03.3: 19 referencias aritméticas contrastadas; suite inicial 455/0 fallos/0 errores/5 omisiones aprobada antes de ampliación. Suite final y demo pendientes; no aceptación externa."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -125,7 +122,7 @@
     ".github/prompts/ERPEC26-DI25-05.md": "8bb31f889510049e9d2cb4f2c82e3751eeb8071f21c1af6d8f43109d42125710",
     ".github/prompts/ERPEC26-DI25-06.md": "f353192f7f39b6939f78fc546cc7f14057888c297c4709f295567573b29e21d3",
     ".github/prompts/ERPEC26-DI25-07.md": "a755712e87217abc2c46a83f8859ce7d2f03c948f7716c1f3303a2428eb245e3",
-    ".github/CODEX_CONTEXT.md": "78d5c68add34aafa692df088ba3f3a44542faddca5903ccce02d293b41b8a673",
+    ".github/CODEX_CONTEXT.md": "58a6ce47920f3d119da4f2efe9bd5338059f429706f87cb4871108b178199ffc",
     "docs/PLAN_HAIKY_ERPEC26.md": "3c90b48f4a07ddbe823e5be73911a80c2a1b75e56e01ac9e374b9527e7abfc24",
     "docs/evidencias/DI25/repro_diagnostico.py": "c88d5cb0a44ea2b82466081c1a67009f969750d173290aa5eddadc8df8446fa8",
     "docs/evidencias/DI25/repro-result.json": "0f26508828664cabc4e768cdd8ca016b1e4433d67e55e21ec999190cb18e419a",
@@ -180,7 +177,7 @@
     "docs/evidencias/AuditLock.before-DI25-03-PARCIAL-20260921T034245145Z.json": "7d1ca2ab732773e560318a2aab32cea02276ea3de6cb20be19f8163e3ef2a25a",
     "docs/evidencias/DI25/DI25-03-UI.md": "556acdfbbcc8e89688299de296a5aa3dbb8be9ed6e248ddd19aaaebb78aa5fdf",
     "docs/evidencias/DI25/DI25-03-capturas.json": "228625c2b1428b9ece614400feb65d89b62d47cb509253314e3edb465bc2c8e2",
-    "docs/DI25-03_MATRIZ_ACEPTACION.md": "515ffc1ca01a509d3981c1a568558e8f57892a62350aac0adc617ef4f3a93b6a",
+    "docs/DI25-03_MATRIZ_ACEPTACION.md": "4e94c9e9c17a0c2fc2b7803798427c06cbb0bb77559c8de036ce590edb8e7e3c",
     "docs/evidencias/AuditLock.before-DI25-03-UI-20260921T035141799Z.json": "0eea4ff065f8a74e5fb949cad7a1d64242c19326adae5c0ebaf36ffc607e7151",
     "docs/evidencias/DI25/estado-hallazgos.json": "9297ea904073810fee8ed761057340a66865de0abc8ff6978321e8cc17bb66bd",
     "docs/evidencias/AuditLock.before-DI25-03-VALIDACION-20260921T111415814Z.json": "a40e7f1e10f362db16044dfd586cb1fd0b4e09309056de27c6047940c2efb798",
@@ -188,19 +185,17 @@
     "addons/erpec_payroll/ir.model.access.csv": "d98bb6cd7a995025eacea2ca32e2112cf94a21d92a3e2828dafc644ec2db7bcd",
     "addons/erpec_payroll/tax_review.py": "7854e60972a5388f2688ead15d6c7989689d0d5687c2ce32935eca4ff0ea9784",
     "addons/erpec_payroll/tax_review_cases.py": "5bcb10f820ebc296d06a6a5d210c3bf35d4153f9b33b59accb60f7e3c64b1ca5",
-    "addons/erpec_payroll/tax_review_views.xml": "a438354f06d824abc08ca0269627d9306997efc6652f96cbf32cec5fbef36b47",
+    "addons/erpec_payroll/tax_review_views.xml": "10023df08d043fd86e15c97f7fd8664bf8e4a683ed1059542c59f1111524589d",
     "addons/erpec_payroll/tests/__init__.py": "e6aecdb365abb48c45d2627ee8d66229a3e382181f60b21abd42f4064286a6e9",
     "addons/erpec_payroll/tests/test_tax_review.py": "72f053de2f4571cc7d5f3890fd8080b41bd9b97dd2cf004a374d267a66ec314c",
     "scripts/seed-tax-review-demo.py": "1e78564f437719f80faf895bfdf195e2ca7d3d24c043b340a907836cf50655a3",
-    "docs/DI25-03_ENSAYOS_RENTA_DEMO.md": "38d2be2f11bb7ae5590dae51e49d7f88ab2b56bbb5499dded714f41943908603",
-    "docs/evidencias/DI25/DI25-03-ensayos-renta.json": "248987faec43509ae11773a31a39c8fb024d8e8ed20739c93e79df267fac4d67",
-    "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json": "74175aad0e1af8ecae5e66dc3a753ce030c997048a8409e725548f5a5481350d",
-    "docs/DI25-03_VERIFICACION_BOLETIN_SRI.md": "af97173484430647d8f0670c9b96a8c2f303be463fefc0b628d812788ecab72c",
-    "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json": "82c618865aca0ba96f7e98180c6aac59ccf22d9cd19860f9eedcf949811fbf4a"
+    "docs/DI25-03_ENSAYOS_RENTA_DEMO.md": "0e4631939beae7d0cf9359065620c3942013b265c9b0dc2fce812d48c1b398fe",
+    "docs/evidencias/DI25/DI25-03-ensayos-renta.json": "041a58cb98b174fec4491ed6c850d6d2338fcf74a40a106ae1d466c6343b53c7",
+    "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json": "74175aad0e1af8ecae5e66dc3a753ce030c997048a8409e725548f5a5481350d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json",
-  "previousAuditLockHash": "82c618865aca0ba96f7e98180c6aac59ccf22d9cd19860f9eedcf949811fbf4a",
-  "signature": "b0859d0b8b9198a898f0d24708087a3888b2c93d29edbef7452043084f0e95f6",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json",
+  "previousAuditLockHash": "74175aad0e1af8ecae5e66dc3a753ce030c997048a8409e725548f5a5481350d",
+  "signature": "4272df04378e8cf1018fcb360d17b5f0b9353f9d0dfb5d9a819399b2cba6c870",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
