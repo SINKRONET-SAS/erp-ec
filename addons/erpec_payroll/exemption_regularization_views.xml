@@ -1,0 +1,54 @@
+<odoo>
+<record id="exemption_regularization_company_rule" model="ir.rule">
+  <field name="name">Regularizaciones de exención por empresa</field><field name="model_id" ref="model_erpec_payroll_exemption_regularization"/>
+  <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+</record>
+<record id="exemption_regularization_list" model="ir.ui.view">
+  <field name="name">erpec.payroll.exemption.regularization.list</field><field name="model">erpec.payroll.exemption.regularization</field>
+  <field name="arch" type="xml"><list decoration-muted="state == 'revoked'">
+    <field name="employee_id"/><field name="year" options="{'enable_formatting': False}"/><field name="document_ref"/>
+    <field name="delivered_date"/><field name="effect_date"/><field name="criterion_reference"/>
+    <field name="state" widget="badge" decoration-success="state == 'verified'" decoration-warning="state == 'draft'" decoration-muted="state == 'revoked'"/>
+    <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+  </list></field>
+</record>
+<record id="exemption_regularization_form" model="ir.ui.view">
+  <field name="name">erpec.payroll.exemption.regularization.form</field><field name="model">erpec.payroll.exemption.regularization</field>
+  <field name="arch" type="xml"><form>
+    <header>
+      <button name="action_verify" type="object" string="Verificar regularización" class="oe_highlight" invisible="state != 'draft'"/>
+      <button name="action_revoke" type="object" string="Revocar" invisible="state != 'verified'"/>
+      <field name="state" widget="statusbar"/>
+    </header>
+    <sheet>
+      <div class="alert alert-warning" role="status">
+        Un documento de discapacidad o de sustituto entregado después del 15 de enero no se aplica ni permite cerrar la nómina. Esta regularización es el
+        procedimiento: registra el fundamento (criterio formal del responsable tributario o pronunciamiento del SRI), la validación realizada y la fecha
+        desde la que surte efecto, que nunca es retroactiva sobre meses contabilizados. La verifica otra persona; las retenciones futuras se recalculan con la
+        reliquidación acumulada y la conciliación anual se ve en el anexo RDEP.
+      </div>
+      <group readonly="state != 'draft'">
+        <group string="Documento tardío">
+          <field name="employee_id"/><field name="year" options="{'enable_formatting': False}"/>
+          <field name="document_ref"/><field name="delivered_date"/>
+          <field name="company_id" groups="base.group_multi_company"/>
+        </group>
+        <group string="Regularización">
+          <field name="effect_date"/><field name="criterion_reference"/>
+        </group>
+      </group>
+      <group readonly="state != 'draft'" string="Validación realizada"><field name="validation_note" nolabel="1"/></group>
+      <group string="Verificación" invisible="state == 'draft'">
+        <field name="verified_by"/><field name="verified_at"/><field name="revoked_reason" readonly="state == 'revoked'"/>
+      </group>
+    </sheet>
+    <chatter/>
+  </form></field>
+</record>
+<record id="exemption_regularization_action" model="ir.actions.act_window">
+  <field name="name">Regularización de documentos tardíos</field><field name="res_model">erpec.payroll.exemption.regularization</field>
+  <field name="view_mode">list,form</field>
+  <field name="help" type="html"><p class="o_view_nocontent_smiling_face">Registra la regularización de un documento entregado después del 15 de enero.</p><p>Sin ella, el documento tardío no se aplica.</p></field>
+</record>
+<menuitem id="exemption_regularization_menu" name="Regularización de documentos tardíos" parent="payroll_menu" action="exemption_regularization_action" sequence="29" groups="group_payroll_manager"/>
+</odoo>

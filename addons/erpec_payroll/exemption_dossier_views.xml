@@ -6,7 +6,7 @@
 <record id="exemption_dossier_list" model="ir.ui.view">
   <field name="name">erpec.payroll.exemption.dossier.list</field><field name="model">erpec.payroll.exemption.dossier</field>
   <field name="arch" type="xml"><list decoration-muted="state == 'revoked'">
-    <field name="employee_id"/><field name="kind"/><field name="year" options="{'enable_formatting': False}"/>
+    <field name="employee_id"/><field name="kind"/><field name="condition" optional="show"/><field name="year" options="{'enable_formatting': False}"/>
     <field name="valid_from"/><field name="valid_to"/><field name="document_ref"/><field name="authority"/>
     <field name="state" widget="badge" decoration-success="state == 'verified'" decoration-warning="state == 'draft'" decoration-muted="state == 'revoked'"/>
     <field name="company_id" optional="hide" groups="base.group_multi_company"/>
@@ -36,10 +36,13 @@
           <field name="valid_from"/><field name="valid_to"/>
         </group>
       </group>
+      <group readonly="state != 'draft'" string="Condición acreditada" invisible="kind == 'substitute'">
+        <field name="condition" required="kind != 'substitute'"/><field name="disability_percentage" invisible="condition != 'disability'"/>
+      </group>
       <group readonly="state != 'draft'" string="Persona sustituida o a cargo" invisible="kind == 'special_holder'">
         <field name="person_id_type"/><field name="person_id"/>
         <field name="relationship" invisible="kind != 'special_dependent'"/>
-        <field name="disability_percentage" invisible="kind != 'substitute'"/>
+        <field name="disability_percentage" invisible="kind != 'substitute'" string="Grado de discapacidad de la persona sustituida (%)"/>
       </group>
       <group string="Verificación" invisible="state == 'draft'">
         <field name="verified_by"/><field name="verified_at"/><field name="verification_scope"/>

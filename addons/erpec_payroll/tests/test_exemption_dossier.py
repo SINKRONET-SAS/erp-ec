@@ -29,7 +29,7 @@ class ExemptionDossierCase(TransactionCase):
         return self.model.create(dict(base, **values))
 
     def _special_holder(self, **values):
-        return self._dossier(kind='special_holder', person_id=False, person_id_type=False, disability_percentage=0, **values)
+        return self._dossier(kind='special_holder', condition='catastrophic', person_id=False, person_id_type=False, disability_percentage=0, **values)
 
     def _as_substitute(self):
         self.employee.write({
@@ -109,7 +109,7 @@ class ExemptionDossierCase(TransactionCase):
 
     def test_a_dependent_cannot_be_used_twice(self):
         self._special('dependent')
-        values = {'kind': 'special_dependent', 'person_id': '1711111111', 'relationship': 'Hijo', 'disability_percentage': 0}
+        values = {'kind': 'special_dependent', 'condition': 'rare', 'person_id': '1711111111', 'relationship': 'Hijo', 'disability_percentage': 0}
         self._verify(self._dossier(**values))
         other = self._other_employee('Otra persona ficticia')
         with self.assertRaisesRegex(ValidationError, 'doble uso'):
@@ -148,7 +148,10 @@ class ExemptionDossierCase(TransactionCase):
         cases = [
             {'valid_to': date(self.year + 1, 1, 31)}, {'valid_from': date(self.year, 12, 31), 'valid_to': date(self.year, 1, 1)},
             {'person_id': False}, {'disability_percentage': 20}, {'issue_date': date(2999, 1, 1)}, {'person_id_type': False},
-            {'kind': 'special_dependent', 'relationship': False}]
+            {'kind': 'special_dependent', 'condition': 'rare', 'relationship': False},
+            {'kind': 'special_holder', 'condition': False, 'person_id': False, 'person_id_type': False, 'disability_percentage': 0},
+            {'kind': 'special_holder', 'condition': 'disability', 'person_id': False, 'person_id_type': False, 'disability_percentage': 10},
+            {'condition': 'rare'}]  # el sustituto no lleva condición de 100 canastas
         for values in cases:
             with self.subTest(values=values), self.assertRaises(ValidationError):
                 self._dossier(**values)
@@ -157,3 +160,15 @@ class ExemptionDossierCase(TransactionCase):
         user = new_test_user(self.env, login='sin_nomina_d4', groups='base.group_user')
         with self.assertRaises(AccessError):
             self.model.with_user(user).create({'employee_id': self.employee.id, 'year': self.year, 'kind': 'special_holder'})
+
+    def test_each_condition_is_its_own_documentary_route(self):
+        self._special('holder')
+        disability = self._dossier(kind='special_holder', condition='disability', disability_percentage=60, person_id=False, person_id_type=False)
+        self.assertEqual(disability.condition, 'disability')
+        for condition in ('catastrophic', 'rare', 'orphan'):
+            with self.subTest(condition=condition):
+                record = self._dossier(kind='special_holder', condition=condition, disability_percentage=0, person_id=False, person_id_type=False,
+                                       document_ref='DOC-' + condition)
+                self.assertEqual(record.condition, condition)
+        with self.assertRaisesRegex(ValidationError, 'condición'):
+            self._dossier(kind='special_holder', condition=False, disability_percentage=0, person_id=False, person_id_type=False)

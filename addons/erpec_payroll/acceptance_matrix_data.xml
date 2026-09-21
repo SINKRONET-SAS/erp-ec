@@ -6,15 +6,15 @@
 <field name="tests">test_d1_birthday_boundaries_and_late_age_evidence,test_resolution_requires_current_year_accreditation</field>
 <field name="pending">Confirmar si la acreditación documental sigue siendo obligatoria para el adulto mayor, ya que la edad se deduce de la fecha de nacimiento. La reliquidación de retenciones futuras depende de D6.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_d2" model="erpec.payroll.acceptance.matrix"><field name="sequence">2</field><field name="code">D2</field>
-<field name="item">Documento entregado después del 15 de enero</field><field name="expert_decision">corregir</field><field name="control_state">blocked</field>
-<field name="control">No hay decisión caso por caso: un documento tardío de discapacidad o sustitución no aplica la exención y bloquea cierre, contabilización y XML. No existe casilla para saltar el bloqueo.</field>
-<field name="tests">test_d2_late_disability_cannot_close</field>
-<field name="pending">Procedimiento escrito de regularización (validación, fecha de efecto, retenciones futuras, conciliación anual), sin aplicación retroactiva sobre nóminas cerradas.</field><field name="owner">Responsable tributario</field></record>
+<field name="item">Documento entregado después del 15 de enero</field><field name="expert_decision">corregir</field><field name="control_state">automated</field>
+<field name="control">Un documento tardío no se aplica ni permite cerrar la nómina hasta que exista una regularización verificada: fundamento registrado (criterio formal o pronunciamiento del SRI), validación realizada, fecha de efecto que nunca es retroactiva sobre meses contabilizados y verificación por otra persona. Desde esa fecha la exención entra en la reliquidación acumulada; los meses previos quedan sin exención y cerrados.</field>
+<field name="tests">test_d2_late_disability_cannot_close,test_late_document_blocks_until_a_verified_regularization_and_applies_only_from_its_effect_date,test_regularized_exemption_lowers_only_the_future_retentions_and_never_reopens_closed_months,test_regularization_is_never_retroactive,test_regularization_controls</field>
+<field name="pending">El sistema registra el fundamento pero no lo evalúa. Confirmar que este procedimiento, derivado del texto del pronunciamiento, es el que el responsable desea.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_d3" model="erpec.payroll.acceptance.matrix"><field name="sequence">3</field><field name="code">D3</field>
-<field name="item">Concurrencia de adulto mayor y discapacidad</field><field name="expert_decision">aceptar</field><field name="control_state">partial</field>
-<field name="control">Se aplica solo la exención más favorable, nunca la suma; el tipo aplicado queda registrado en el anexo RDEP.</field>
-<field name="tests">test_best_exemption_is_applied_never_the_sum,test_best_of_elderly_and_disability_never_added</field>
-<field name="pending">Conservar el cálculo comparativo de las opciones no aplicadas como evidencia del expediente.</field><field name="owner">Desarrollo</field></record>
+<field name="item">Concurrencia de adulto mayor y discapacidad</field><field name="expert_decision">aceptar</field><field name="control_state">automated</field>
+<field name="control">Se aplica solo la exención más favorable, nunca la suma. El anexo RDEP conserva la comparación de todas las exenciones acreditadas con su importe y la que se aplicó.</field>
+<field name="tests">test_best_exemption_is_applied_never_the_sum,test_best_of_elderly_and_disability_never_added,test_annex_keeps_the_comparison_of_accredited_exemptions</field>
+<field name="pending">Sin pendiente técnico; falta la aceptación del responsable.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_d4" model="erpec.payroll.acceptance.matrix"><field name="sequence">4</field><field name="code">D4</field>
 <field name="item">Sustituto y cambio dentro del ejercicio</field><field name="expert_decision">condicionar</field><field name="control_state">automated</field>
 <field name="control">Expediente con documento, autoridad, identificación, vigencia y grado; lo verifica otra persona. Se rechaza el solapamiento del mismo sustituido y el uso del beneficio para más de una persona. El beneficio es proporcional a los días acreditados.</field>
@@ -26,15 +26,15 @@
 <field name="tests">test_official_scale_and_amounts,test_applied_rebate_never_exceeds_tax_and_does_not_invent_refund,test_di25_annual_table_2026_independent_oracle</field>
 <field name="pending">Catálogo y validador RDEP 2026 publicados por el SRI; los códigos tipo 00 y tipo 03 no se fijan por analogía.</field><field name="owner">SRI</field></record>
 <record id="matrix_d6" model="erpec.payroll.acceptance.matrix"><field name="sequence">6</field><field name="code">D6</field>
-<field name="item">Cambios durante el año</field><field name="expert_decision">condicionar</field><field name="control_state">partial</field>
-<field name="control">Una huella de datos tributarios, política, líneas e historial impide cerrar o contabilizar si algo cambió después de calcular. La brecha entre la retención acumulada y el impuesto anual se muestra por trabajador. No se reabren nóminas.</field>
-<field name="tests">test_changed_tax_data_must_recalculate_before_close,test_changed_tax_data_after_close_cannot_post,test_same_inputs_keep_validation_hash_and_cannot_forge_it,test_annual_retention_gap_is_reported_per_employee</field>
-<field name="pending">Reliquidación mensual acumulada de las retenciones futuras: cambia la retención de cada mes y requiere criterio y casos de aceptación del responsable.</field><field name="owner">Responsable tributario</field></record>
+<field name="item">Cambios durante el año</field><field name="expert_decision">condicionar</field><field name="control_state">automated</field>
+<field name="control">Reliquidación mensual acumulada: cada mes recalcula sobre lo acumulado el impuesto causado y la rebaja, resta las retenciones ya efectuadas (y las certificadas del empleador anterior) y reparte el saldo entre los meses que faltan; nunca es negativa y no reabre nóminas. Una huella impide cerrar con datos cambiados. El anexo muestra el impuesto proyectado y la retención futura sugerida.</field>
+<field name="tests">test_without_history_the_annual_projection_is_unchanged,test_a_raise_is_recovered_in_the_remaining_months_and_the_year_closes_at_zero,test_over_withholding_never_produces_a_negative_retention,test_the_year_gap_is_shown_as_a_future_monthly_retention_while_months_remain,test_certified_income_of_the_previous_employer_enters_the_projection,test_changed_tax_data_must_recalculate_before_close</field>
+<field name="pending">Método adoptado según el texto del pronunciamiento: saldo repartido entre los meses restantes al nivel del último mes, sin devolución automática de sobre-retenciones. Requiere su confirmación.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_d7" model="erpec.payroll.acceptance.matrix"><field name="sequence">7</field><field name="code">D7</field>
 <field name="item">Límite de 100 canastas</field><field name="expert_decision">rechazar</field><field name="control_state">automated</field>
-<field name="control">La referencia aislada no reduce la retención ni habilita el tope. Exige un expediente verificado que cubra todo el ejercicio, con vínculo y dependencia para una carga y sin doble uso. El sistema no emite diagnósticos ni guarda datos de salud.</field>
-<field name="tests">test_d7_reference_alone_cannot_reduce_tax_or_close,test_special_limit_needs_a_verified_full_year_dossier,test_a_dependent_cannot_be_used_twice</field>
-<field name="pending">Consulta a la fuente oficial de la condición; discapacidad y enfermedad catastrófica requieren rutas documentales separadas cuando la autoridad las publique.</field><field name="owner">Autoridad competente</field></record>
+<field name="control">La referencia aislada no reduce la retención ni habilita el tope. Exige un expediente verificado que cubra todo el ejercicio, con condición acreditada por ruta separada (discapacidad con su grado, enfermedad catastrófica, rara o huérfana), vínculo y dependencia para una carga y sin doble uso. El sistema no emite diagnósticos ni guarda datos de salud.</field>
+<field name="tests">test_d7_reference_alone_cannot_reduce_tax_or_close,test_special_limit_needs_a_verified_full_year_dossier,test_a_dependent_cannot_be_used_twice,test_each_condition_is_its_own_documentary_route</field>
+<field name="pending">Consulta a la fuente oficial de la condición y lista de autoridades válidas por condición (hoy la autoridad se registra como texto).</field><field name="owner">Autoridad competente</field></record>
 <record id="matrix_d8" model="erpec.payroll.acceptance.matrix"><field name="sequence">8</field><field name="code">D8</field>
 <field name="item">Ingresos y retenciones del empleador anterior</field><field name="expert_decision">corregir</field><field name="control_state">automated</field>
 <field name="control">Registro idempotente y versionado por trabajador, RUC de origen, ejercicio y documento, con huella; la rectificación sustituye a la versión anterior con bitácora. Las novedades deben conciliar con el comprobante vigente: si no, se bloquean cierre, contabilización y XML.</field>
@@ -46,48 +46,48 @@
 <field name="tests">test_seal_matches_the_hash_and_the_shipped_2026_parameters,test_silent_change_of_sealed_values_is_detected,test_sealed_year_with_altered_policy_blocks_the_calculation,test_independent_official_figures</field>
 <field name="pending">Cargar y sellar cada ejercicio nuevo con su fuente oficial.</field><field name="owner">Desarrollo</field></record>
 <record id="matrix_c02" model="erpec.payroll.acceptance.matrix"><field name="sequence">12</field><field name="code">C02</field>
-<field name="item">Caso 2 · base imponible de 12.677</field><field name="expert_decision">parcial</field><field name="control_state">partial</field>
-<field name="control">El impuesto causado de 23,45 = (12.677 − 12.208) × 5 % está verificado por una prueba independiente.</field>
-<field name="tests">test_independent_official_figures,test_di25_annual_table_2026_independent_oracle</field>
-<field name="pending">El saldo de 5,45 no se valida sin demostrar gastos, cargas, límite aplicable y la rebaja de 18,00 con soportes.</field><field name="owner">Responsable tributario</field></record>
+<field name="item">Caso 2 · base imponible de 12.677</field><field name="expert_decision">parcial</field><field name="control_state">automated</field>
+<field name="control">El impuesto causado de 23,45 = (12.677 − 12.208) × 5 % y el saldo de 5,45 se reproducen con supuestos explícitos (gastos personales de 100 = rebaja de 18,00, sin cargas, límite de 5.752,60) en una prueba independiente.</field>
+<field name="tests">test_case_2_balance_with_explicit_assumptions,test_independent_official_figures</field>
+<field name="pending">Los soportes reales de gastos y cargas de cada trabajador; la prueba demuestra el cálculo, no el gasto.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_c03" model="erpec.payroll.acceptance.matrix"><field name="sequence">13</field><field name="code">C03</field>
 <field name="item">Caso 3 · incidencia de cada concepto</field><field name="expert_decision">bloquear</field><field name="control_state">external</field>
 <field name="control">Aviso persistente: los beneficios propios no tienen matriz de incidencia aprobada; el cálculo no se acepta como evidencia. Es solo aviso, no bloqueo.</field>
 <field name="pending">Matriz aprobada por concepto (IR, IESS, décimos, vacaciones, fondos de reserva, contabilidad y RDEP) con pruebas reproducibles.</field><field name="owner">Responsable tributario y laboral</field></record>
 <record id="matrix_c04" model="erpec.payroll.acceptance.matrix"><field name="sequence">14</field><field name="code">C04</field>
-<field name="item">Caso 4 · conciliación de saldos, devengo, pago y asiento</field><field name="expert_decision">condicionar</field><field name="control_state">partial</field>
-<field name="control">Cada período contabilizado se recalcula contra su asiento (débitos y créditos); una diferencia bloquea el XML.</field>
-<field name="tests">test_ledger_reconciles_and_a_tampered_move_is_detected</field>
-<field name="pending">Conciliar saldos, devengo y pago. Es una prueba funcional y contable, no una validación tributaria autónoma.</field><field name="owner">Contabilidad</field></record>
+<field name="item">Caso 4 · conciliación de saldos, devengo, pago y asiento</field><field name="expert_decision">condicionar</field><field name="control_state">automated</field>
+<field name="control">Cada período contabilizado se recalcula contra su asiento (una diferencia bloquea el XML) y el anexo avisa del devengo (asiento fuera del mes de la nómina) y del pago (saldo por pagar o cuenta no conciliable).</field>
+<field name="tests">test_ledger_reconciles_and_a_tampered_move_is_detected,test_settlement_notes_show_accrual_and_payment_status</field>
+<field name="pending">Aceptación de contabilidad. Hoy el asiento se fecha el día de contabilización, no el mes de la nómina, y lo avisa.</field><field name="owner">Contabilidad</field></record>
 <record id="matrix_c05" model="erpec.payroll.acceptance.matrix"><field name="sequence">15</field><field name="code">C05</field>
 <field name="item">Caso 5 · cambio de empleador</field><field name="expert_decision">bloquear</field><field name="control_state">automated</field>
 <field name="control">D8 implementado: comprobante versionado, conciliación con las novedades y rectificación sin duplicados; sin conciliación se bloquea el cierre.</field>
 <field name="tests">test_rectification_supersedes_with_log_and_never_duplicates_the_active_one,test_matching_certificate_unblocks_the_close_after_recalculating,test_mismatching_amounts_are_reported_with_both_figures</field>
 <field name="pending">Comprobar con un comprobante real del empleador anterior.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_c06" model="erpec.payroll.acceptance.matrix"><field name="sequence">16</field><field name="code">C06</field>
-<field name="item">Caso 6 · repetir exenciones y gastos con D1–D7</field><field name="expert_decision">bloquear</field><field name="control_state">partial</field>
-<field name="control">Las pruebas de adulto mayor, discapacidad, sustituto y gastos personales se repiten con D1–D7 corregidos en nómina, RDEP y ensayos 26–32.</field>
-<field name="tests">test_monthly_retention_uses_only_accredited_exemptions,test_verified_dossier_applies_the_substitute_claim_and_lowers_the_retention,test_special_limit_needs_a_verified_full_year_dossier</field>
-<field name="pending">Repetir los casos con soportes vigentes reales y volver a solicitar la aceptación externa.</field><field name="owner">Responsable tributario</field></record>
+<field name="item">Caso 6 · repetir exenciones y gastos con D1–D7</field><field name="expert_decision">bloquear</field><field name="control_state">automated</field>
+<field name="control">Las pruebas de adulto mayor, discapacidad, sustituto y gastos personales se repiten con D1–D7 corregidos en nómina, RDEP y ensayos 26–32, con soportes sintéticos.</field>
+<field name="tests">test_monthly_retention_uses_only_accredited_exemptions,test_verified_dossier_applies_the_substitute_claim_and_lowers_the_retention,test_special_limit_needs_a_verified_full_year_dossier,test_regularized_exemption_lowers_only_the_future_retentions_and_never_reopens_closed_months</field>
+<field name="pending">Repetirlo con soportes reales de un cliente real.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_c07" model="erpec.payroll.acceptance.matrix"><field name="sequence">17</field><field name="code">C07</field>
-<field name="item">Caso 7 · idempotencia y reliquidación acumulada</field><field name="expert_decision">bloquear</field><field name="control_state">partial</field>
-<field name="control">El mismo insumo produce el mismo resultado (huella) y la consolidación anual no se duplica; los comprobantes llevan bitácora de cambios.</field>
-<field name="tests">test_same_inputs_keep_validation_hash_and_cannot_forge_it,test_build_sums_two_posted_periods_and_is_idempotent</field>
-<field name="pending">Reliquidación acumulada de retenciones (ver D6).</field><field name="owner">Responsable tributario</field></record>
+<field name="item">Caso 7 · idempotencia y reliquidación acumulada</field><field name="expert_decision">bloquear</field><field name="control_state">automated</field>
+<field name="control">El mismo insumo produce el mismo resultado (huella), la consolidación anual no se duplica, la reliquidación acumulada concilia entre períodos (el ejercicio cierra en cero) y los comprobantes llevan bitácora de cambios.</field>
+<field name="tests">test_same_inputs_keep_validation_hash_and_cannot_forge_it,test_build_sums_two_posted_periods_and_is_idempotent,test_a_raise_is_recovered_in_the_remaining_months_and_the_year_closes_at_zero</field>
+<field name="pending">Aceptación externa con casos del responsable.</field><field name="owner">Responsable tributario</field></record>
 <record id="matrix_c08" model="erpec.payroll.acceptance.matrix"><field name="sequence">18</field><field name="code">C08</field>
-<field name="item">Caso 8 · cambio salarial y ausencias</field><field name="expert_decision">mixto</field><field name="control_state">partial</field>
-<field name="control">El cambio salarial actualiza la proyección anual sobre acumulados efectivos y la brecha de retención se muestra por trabajador.</field>
-<field name="tests">test_di25_variable_year_uses_actual_accumulated_base,test_annual_retention_gap_is_reported_per_employee</field>
-<field name="pending">Ausencias: efectos laborales, IESS, tributarios y contables aún sin definir ni probar.</field><field name="owner">Responsable tributario y laboral</field></record>
+<field name="item">Caso 8 · cambio salarial y ausencias</field><field name="expert_decision">mixto</field><field name="control_state">blocked</field>
+<field name="control">Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras (probado). Ausencias: el módulo no las modela; no existe cálculo que aceptar hasta que se definan sus efectos.</field>
+<field name="tests">test_a_raise_is_recovered_in_the_remaining_months_and_the_year_closes_at_zero,test_late_hire_uses_the_annualised_projection_without_history</field>
+<field name="pending">Definir y probar los efectos laborales, IESS, tributarios y contables de las ausencias.</field><field name="owner">Responsable tributario y laboral</field></record>
 <record id="matrix_c09" model="erpec.payroll.acceptance.matrix"><field name="sequence">19</field><field name="code">C09</field>
 <field name="item">Caso 9 · décimos, vacaciones y fondos de reserva</field><field name="expert_decision">bloquear</field><field name="control_state">external</field>
 <field name="control">Sin regla propia: el décimo tercero y cuarto se tratan como rentas exentas fuera de la proyección del art. 104 y el resto no se acepta como evidencia.</field>
 <field name="pending">Reglas separadas de devengo y pago, y mapeo RDEP de cada concepto, sin analogías.</field><field name="owner">Responsable tributario y laboral</field></record>
 <record id="matrix_c10" model="erpec.payroll.acceptance.matrix"><field name="sequence">20</field><field name="code">C10</field>
 <field name="item">Caso 10 · cierre anual y conciliación</field><field name="expert_decision">bloquear</field><field name="control_state">partial</field>
-<field name="control">Conciliación automática nómina ↔ asiento y retención acumulada ↔ impuesto anual, visible en el anexo. El XML sigue siendo vista previa y se bloquea con diferencias.</field>
-<field name="tests">test_ledger_reconciles_and_a_tampered_move_is_detected,test_annual_retention_gap_is_reported_per_employee,test_di25_actual_expenses_and_benefits_reconcile_xml</field>
-<field name="pending">Conciliar en conjunto el Formulario 107, los ajustes y el empleador anterior, y validar con el catálogo oficial del RDEP 2026.</field><field name="owner">Responsable tributario y SRI</field></record>
+<field name="control">Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con el reporte por trabajador (impuesto proyectado, saldo y retención futura sugerida). El XML sigue siendo vista previa y se bloquea con diferencias.</field>
+<field name="tests">test_ledger_reconciles_and_a_tampered_move_is_detected,test_annual_retention_gap_is_reported_per_employee,test_di25_actual_expenses_and_benefits_reconcile_xml,test_the_year_gap_is_shown_as_a_future_monthly_retention_while_months_remain</field>
+<field name="pending">Formato oficial del Formulario 107 y validador del RDEP 2026: ambos los debe publicar el SRI.</field><field name="owner">SRI</field></record>
 <record id="matrix_c11" model="erpec.payroll.acceptance.matrix"><field name="sequence">21</field><field name="code">C11</field>
 <field name="item">Caso 11 · Galápagos, no residentes, convenio e impuesto asumido</field><field name="expert_decision">mixto</field><field name="control_state">blocked</field>
 <field name="control">Galápagos (factor 1,803) sin elegibilidad, residencia extranjera, convenio, impuesto asumido y otros ingresos bloquean el cierre. El factor no se usa sin soporte.</field>

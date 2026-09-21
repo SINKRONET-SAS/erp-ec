@@ -50,7 +50,7 @@ class AcceptanceMatrixCase(TransactionCase):
     def test_states_are_consistent_with_the_documented_limits(self):
         by_code = {row.code: row for row in self.rows}
         # Lo que depende del SRI o de reglas aún no aprobadas nunca figura como control automático completo.
-        for code in ('D2', 'D5', 'D6', 'C03', 'C09', 'C10'):
+        for code in ('D5', 'C03', 'C09', 'C10'):
             self.assertNotEqual(by_code[code].control_state, 'automated', code)
         self.assertEqual(by_code['D8'].control_state, 'automated')
 

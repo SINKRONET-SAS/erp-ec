@@ -43,13 +43,30 @@ El titular pidió que los pendientes dejen de ser acciones manuales y pasen, en 
 
 Corrección del ejecutor de pruebas: cada corrida usa su propio puerto HTTP. CODEX había lanzado dos suites a la vez y la segunda falló por cuatro errores `TestHealth`, que compartían el puerto 8069; no era un defecto del producto.
 
-### Lo que no se automatizó y por qué
+## Tercera ronda 18.0.1.14.0: cierre de las filas parciales
 
-- **D2 · regularización de un documento tardío:** el bloqueo es automático, pero el procedimiento escrito (fecha de efecto, ajuste futuro, conciliación en la declaración) lo define el responsable tributario. Sin ese procedimiento cualquier regla sería una decisión discrecional, justo lo que el pronunciamiento prohíbe.
-- **D6 · reliquidación mensual acumulada:** cambia la retención de cada mes y solo debe entrar con el criterio del responsable y casos de aceptación. Hoy el sistema mide la brecha y no la corrige.
-- **Caso 3 (matriz de incidencia por concepto) y caso 11 (Galápagos, no residentes, convenios, impuesto asumido):** requieren reglas aprobadas; siguen bloqueados.
-- **Catálogo y validador RDEP 2026, autenticidad de certificados y consulta a la autoridad:** dependen del SRI y de terceros. El XML sigue siendo vista previa interna.
-- **Adulto mayor:** el sistema exige una acreditación del año (referencia y fecha) para reconocerlo, aunque la edad se deduce de la fecha de nacimiento. El pronunciamiento (D1) pide reconocerlo por la edad del ejercicio. Se deja como está a la espera de que el responsable confirme si la acreditación documental sigue siendo obligatoria.
+El titular pidió terminar las filas parciales para poder avanzar. Todo lo que el propio pronunciamiento especifica quedó como control ejecutable; lo que depende de un tercero se dejó explícito.
+
+| Fila | Qué se cerró | Cómo |
+|---|---|---|
+| **D6 · reliquidación acumulada** | Cada mes recalcula sobre lo acumulado el impuesto causado y la rebaja, resta lo ya retenido (y lo retenido por el empleador anterior certificado) y reparte el saldo entre los meses que faltan. Nunca es negativa; no reabre nóminas. Sin historial rige la proyección anual de siempre, así que los cálculos existentes no cambian. | `engine.calculate` con `prior_*` y `other_*`; la línea toma el historial contabilizado y los comprobantes vigentes. Un año con aumento salarial en el mes 7 cierra con diferencia cero. |
+| **D2 · documento tardío** | El procedimiento del pronunciamiento hecho expediente: fundamento registrado, validación realizada, fecha de efecto que nunca cae en un mes contabilizado y verificación por otra persona. Antes de la fecha de efecto la exención no se aplica (aviso); desde ella entra en la reliquidación. | `erpec.payroll.exemption.regularization`, menú **Regularización de documentos tardíos**. |
+| **D3 · comparación** | El anexo RDEP conserva el importe de cada exención acreditada y la que se aplicó. | Campo `exemption_comparison` de la línea del anexo. |
+| **D7 · rutas separadas** | Discapacidad (con su grado), enfermedad catastrófica, rara y huérfana son condiciones distintas y obligatorias en el expediente de 100 canastas. | Campo `condition` del expediente. |
+| **Caso 2** | El saldo de 5,45 se reproduce con supuestos explícitos: gastos de 100 (rebaja de 18,00), sin cargas y límite de 5.752,60. | Prueba independiente. |
+| **Caso 4** | El anexo avisa del devengo (asiento fuera del mes de la nómina) y del pago (saldo por pagar o cuenta no conciliable), además de bloquear diferencias de débitos y créditos. | `_settlement_notes` en el anexo. |
+| **Caso 8** | El cambio salarial actualiza proyección y retenciones futuras (probado). Las ausencias no se modelan: el estado pasa a bloqueo. | Prueba de aumento y de alta tardía. |
+| **Reporte por trabajador (requisito 5)** | El anexo muestra impuesto proyectado, saldo por reliquidar y retención mensual futura sugerida, además de la brecha del ejercicio. | Campos `projected_tax_after_rebate`, `future_monthly_retention`, `months_remaining`. |
+
+La proyección del saldo supone que el último mes se repite durante los meses que faltan; una sobre-retención no genera devolución automática, la deja visible. Ambos criterios salen del texto del pronunciamiento y se ponen a su confirmación.
+
+### Lo que sigue sin poder cerrarse desde el sistema
+
+- **D5 y caso 10:** el catálogo y validador RDEP 2026 y el formato oficial del Formulario 107 los publica el SRI. Mientras tanto el XML es vista previa y no se afirma compatibilidad.
+- **Casos 3 y 9:** matriz de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva. Requieren reglas aprobadas.
+- **Caso 8 (ausencias) y caso 11:** requieren reglas y parametrización aprobadas para cada régimen.
+- **D1:** el sistema exige una acreditación del año para reconocer al adulto mayor aunque la edad se deduzca de la fecha de nacimiento; el pronunciamiento pide reconocerlo por la edad del ejercicio. Se deja como está a la espera de que el responsable confirme.
+- **Consulta a la autoridad y aceptación externa:** la verificación de expedientes y regularizaciones es documental e interna; no sustituye la consulta ni la firma del responsable.
 
 ## Acceso y verificación
 
@@ -71,4 +88,4 @@ La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portle
 
 Se conserva el respaldo previo de base, filestore y módulo. No se reescriben resultados de períodos ni asientos existentes. Para revertir, detener únicamente la demo identificada por su configuración y restaurar conjuntamente base/filestore/módulo del mismo respaldo; no restaurar una base real ni mezclar versiones. Los nuevos campos de huella no se rellenan falsamente para cálculos antiguos: antes de cerrar deben recalcularse las novedades abiertas, o tramitarse una corrección cuando el estado lo requiera.
 
-DI25-03 continúa **observado y parcial**. Tras la segunda ronda quedan por desarrollar, con el criterio del responsable tributario, la regularización D2, la reliquidación mensual acumulada D6, la matriz de incidencias laborales (caso 3) y las reglas de los casos 8 (ausencias) y 11; y por el SRI, el catálogo y validador RDEP 2026. Después se repite la aceptación externa con evidencia del código exacto. DI25-04 no se inicia.
+DI25-03 continúa **observado y no homologado**. Tras la tercera ronda solo quedan abiertas las filas que dependen del SRI (catálogo y validador RDEP 2026, formato del Formulario 107), de reglas aún no aprobadas (casos 3, 8 y 11) y de la confirmación de los criterios adoptados (D1, D2, D6). Después se repite la aceptación externa con evidencia del código exacto. DI25-04 no se inicia.

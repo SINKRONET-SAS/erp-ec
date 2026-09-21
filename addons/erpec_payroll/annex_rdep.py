@@ -59,12 +59,14 @@ este agregador anual la reutilizan sin duplicarla.
 """
 import json
 import unicodedata
+from calendar import monthrange
+from datetime import date
 from pathlib import Path
 from lxml import etree
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from .models import manager
-from .engine import (personal_expense_cap, annual_income_tax, apply_personal_exemption, money, number,
+from .engine import (personal_expense_cap, annual_income_tax, apply_personal_exemption, personal_exemption_amount, money, number,
                      resolve_exemption_claims, resolve_special_expense)
 
 SPECIAL_EXPENSE = [('none', 'General · según cargas'), ('holder', '100 canastas · titular'), ('dependent', '100 canastas · carga familiar')]
@@ -186,13 +188,17 @@ class Employee(models.Model):
     ec_rdep_special_expense_year = fields.Integer('Año del documento del tope especial', groups='erpec_payroll.group_payroll_manager')
     ec_rdep_special_expense_ref = fields.Char('Referencia del documento del tope especial', groups='erpec_payroll.group_payroll_manager')
 
-    def _rdep_personal_status(self, year):
-        """Exenciones y tope especial acreditados para el año, con sus incidencias y avisos."""
+    def _rdep_personal_status(self, year, as_of=None):
+        """Exenciones y tope especial acreditados para el año, con sus incidencias y avisos.
+
+        `as_of` es el fin del período que se calcula; sirve para saber si una regularización verificada (D2) ya surte efecto.
+        Sin fecha rige el cierre del ejercicio."""
         self.ensure_one()
+        regularized = self.env['erpec.payroll.exemption.regularization'].sudo().standing(self, year, as_of)
         claims, issues, notes = resolve_exemption_claims(
             year, self.birthday, self.ec_rdep_disability_type, self.ec_rdep_disability_percentage,
             self.ec_rdep_disability_id_type, self.ec_rdep_disability_id, self.ec_rdep_exemption_year,
-            self.ec_rdep_exemption_ref, self.ec_rdep_exemption_date, self.ec_rdep_exemption_months)
+            self.ec_rdep_exemption_ref, self.ec_rdep_exemption_date, self.ec_rdep_exemption_months, regularized=regularized)
         special, special_issues = resolve_special_expense(
             year, self.ec_rdep_special_expense, self.ec_rdep_special_expense_year,
             self.ec_rdep_special_expense_ref, self.ec_rdep_dependents_count)
@@ -261,7 +267,8 @@ class Line(models.Model):
         data['dependents_count'] = self.employee_id.ec_rdep_dependents_count
         data['galapagos'] = self.employee_id.ec_rdep_ben_galpg or 'NO'
         # Solo lo acreditado para el año del período; lo inconsistente no se aplica y el anexo lo bloquea.
-        status = self.employee_id.sudo()._rdep_personal_status(self.period_id.year)
+        period_end = date(self.period_id.year, self.period_id.month, monthrange(self.period_id.year, self.period_id.month)[1])
+        status = self.employee_id.sudo()._rdep_personal_status(self.period_id.year, period_end)
         data['exemptions'] = status['claims']
         data['special_expense'] = status['special_expense']
         return data
@@ -396,6 +403,7 @@ class RdepAnnex(models.Model):
                 entry = totals.setdefault(line.employee_id.id, dict.fromkeys(
                     RDEP_FLOW_KEYS + RDEP_LINE_INPUT_KEYS + ('bonus_commission',), 0.0))
                 entry['months'] = entry.get('months', 0) + 1
+                entry['last_month_base'] = result.get('base', 0.0) - result.get('personal_iess', 0.0)
                 for key in RDEP_FLOW_KEYS:
                     entry[key] += result.get(key, 0.0)
                 for key in RDEP_LINE_INPUT_KEYS:
@@ -406,8 +414,18 @@ class RdepAnnex(models.Model):
         for employee_id, values in totals.items():
             employee = self.env['hr.employee'].browse(employee_id)
             status = employee.sudo()._rdep_personal_status(self.year)
-            exemption_kind, exemption, annual_base = apply_personal_exemption(
-                max(0, values['base'] - values['personal_iess']), parameters, status['claims'])
+            gross_base = max(0, values['base'] - values['personal_iess'] + values['other_employer_taxable_income'] - values['other_employer_iess'])
+            exemption_kind, exemption, annual_base = apply_personal_exemption(gross_base, parameters, status['claims'])
+            months_reported = int(values.get('months', 0))
+            months_remaining = max(0, 12 - months_reported)
+            # Proyección del saldo (D6): lo acumulado más los meses que faltan al nivel del último mes.
+            projected_base = gross_base + values.get('last_month_base', 0.0) * months_remaining
+            _, _, projected_taxable = apply_personal_exemption(projected_base, parameters, status['claims'])
+            _, _, projected_after = annual_income_tax(projected_taxable, sum(values[key] for key in EXPENSE_CATEGORY_KEYS), parameters,
+                                                      employee.ec_rdep_dependents_count, employee.ec_rdep_ben_galpg or 'NO', special_expense=status['special_expense'])
+            retained_total = number(values['tax']) + number(values['other_employer_withheld_tax'])
+            future_monthly = float(money(max(0, projected_after - retained_total) / months_remaining)) if months_remaining else 0.0
+            options = '; '.join('%s %.2f' % (claim['kind'], personal_exemption_amount(parameters, claim)) for claim in status['claims'])
             actual_expenses = sum(values[key] for key in EXPENSE_CATEGORY_KEYS)
             caused, rebate, after_rebate = annual_income_tax(
                 annual_base, actual_expenses, parameters, employee.ec_rdep_dependents_count,
@@ -419,7 +437,10 @@ class RdepAnnex(models.Model):
                 'annual_tax_caused': float(money(caused)),
                 'personal_expense_rebate': float(money(min(caused, rebate))),
                 'annual_tax_after_rebate': float(money(after_rebate)),
-                'tax_difference': float(money(after_rebate - number(values['tax']))),
+                'tax_difference': float(money(after_rebate - number(values['tax']) - number(values['other_employer_withheld_tax']))),
+                'exemption_comparison': (options + ' → aplicada: ' + exemption_kind) if options else False,
+                'months_reported': months_reported, 'months_remaining': months_remaining,
+                'projected_tax_after_rebate': float(money(projected_after)), 'future_monthly_retention': future_monthly,
             })
         self.line_ids.unlink()
         self.env['erpec.payroll.rdep.line'].create(records)
@@ -552,7 +573,16 @@ class RdepAnnexLine(models.Model):
     personal_exemption_kind = fields.Selection(
         [('none', 'Sin exención'), ('elderly', 'Adulto mayor'), ('disability', 'Discapacidad'), ('substitute', 'Sustituto')],
         string='Tipo de exención aplicada', readonly=True, default='none')
-    tax_difference = fields.Float('Impuesto anual menos retenciones (sin ajuste automático)', readonly=True)
+    tax_difference = fields.Float('Impuesto anual menos retenciones (saldo por reliquidar)', readonly=True)
+    exemption_comparison = fields.Char('Comparación de exenciones acreditadas (D3)', readonly=True,
+                                       help='Importe de cada exención acreditada y la que se aplicó: nunca se suman.')
+    months_reported = fields.Integer('Meses contabilizados', readonly=True)
+    months_remaining = fields.Integer('Meses por retener', readonly=True)
+    last_month_base = fields.Float('Base gravable del último mes (sin IESS)', readonly=True)
+    projected_tax_after_rebate = fields.Float('Impuesto anual proyectado después de la rebaja', readonly=True,
+                                              help='Acumulado efectivo más los meses restantes al nivel del último mes.')
+    future_monthly_retention = fields.Float('Retención mensual futura sugerida', readonly=True, digits=(16, 2),
+                                            help='Impuesto proyectado menos lo retenido, repartido entre los meses que faltan (nunca negativo).')
     annual_tax_caused = fields.Float('Impuesto a la renta causado (impRentCaus)', readonly=True)
     personal_expense_rebate = fields.Float('Rebaja por gastos personales (rebajaGastosPersonales)', readonly=True)
     annual_tax_after_rebate = fields.Float('Impuesto después de la rebaja (impuestoRentaRebajaGastosPersonales)', readonly=True)

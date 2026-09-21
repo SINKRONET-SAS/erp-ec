@@ -17,7 +17,9 @@ from .models import _INTERNAL, manager
 KINDS = [('substitute', 'Sustituto de persona con discapacidad'), ('special_holder', '100 canastas · titular'),
          ('special_dependent', '100 canastas · carga')]
 ID_TYPES = [('C', 'Cédula'), ('P', 'Pasaporte')]
-FROZEN = {'company_id', 'employee_id', 'year', 'kind', 'document_ref', 'authority', 'issue_date', 'valid_from', 'valid_to',
+# El pronunciamiento (D7) exige rutas documentales separadas: cada condición tiene su propia autoridad y documento.
+CONDITIONS = [('disability', 'Discapacidad'), ('catastrophic', 'Enfermedad catastrófica'), ('rare', 'Enfermedad rara'), ('orphan', 'Enfermedad huérfana')]
+FROZEN = {'company_id', 'employee_id', 'year', 'kind', 'condition', 'document_ref', 'authority', 'issue_date', 'valid_from', 'valid_to',
           'person_id_type', 'person_id', 'relationship', 'disability_percentage'}
 
 
@@ -37,6 +39,8 @@ class ExemptionDossier(models.Model):
     issue_date = fields.Date('Fecha de emisión', required=True)
     valid_from = fields.Date('Vigente desde', required=True)
     valid_to = fields.Date('Vigente hasta', required=True)
+    condition = fields.Selection(CONDITIONS, 'Condición acreditada (100 canastas)',
+                                 help='Discapacidad y enfermedad catastrófica, rara o huérfana se acreditan por rutas documentales distintas; no se mezclan.')
     person_id_type = fields.Selection(ID_TYPES, 'Tipo de identificación de la persona')
     person_id = fields.Char('Identificación de la persona sustituida o a cargo')
     relationship = fields.Char('Relación o dependencia económica declarada')
@@ -49,7 +53,7 @@ class ExemptionDossier(models.Model):
     revoked_reason = fields.Text('Motivo de la revocación', copy=False, help='Se captura antes de revocar; queda en la bitácora.')
 
     # ── Validaciones estructurales ─────────────────────────────────────────
-    @api.constrains('year', 'valid_from', 'valid_to', 'issue_date', 'kind', 'person_id', 'person_id_type', 'relationship', 'disability_percentage')
+    @api.constrains('year', 'valid_from', 'valid_to', 'issue_date', 'kind', 'condition', 'person_id', 'person_id_type', 'relationship', 'disability_percentage')
     def _check_dossier(self):
         for dossier in self:
             if not 2000 <= dossier.year <= 2100:
@@ -67,6 +71,13 @@ class ExemptionDossier(models.Model):
                     raise ValidationError('Indica el tipo de identificación de la persona sustituida.')
                 if not DISABILITY_BENEFIT_SCALE[0][0] <= dossier.disability_percentage <= 100:
                     raise ValidationError('El sustituto requiere el grado de discapacidad (desde %s %%) de la persona sustituida.' % DISABILITY_BENEFIT_SCALE[0][0])
+            if dossier.kind in ('special_holder', 'special_dependent'):
+                if not dossier.condition:
+                    raise ValidationError('Indica la condición acreditada: discapacidad, enfermedad catastrófica, rara o huérfana.')
+                if dossier.condition == 'disability' and not DISABILITY_BENEFIT_SCALE[0][0] <= dossier.disability_percentage <= 100:
+                    raise ValidationError('La discapacidad exige el grado (desde %s %%) que consta en el documento.' % DISABILITY_BENEFIT_SCALE[0][0])
+            elif dossier.condition:
+                raise ValidationError('La condición solo aplica a los expedientes de 100 canastas.')
             if dossier.kind == 'special_dependent' and not (dossier.relationship and dossier.relationship.strip()):
                 raise ValidationError('Indica la relación o dependencia económica de la carga.')
             if dossier.employee_id.company_id != dossier.company_id:

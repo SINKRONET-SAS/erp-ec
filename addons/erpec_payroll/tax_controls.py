@@ -1,6 +1,8 @@
 """Controles automáticos DI25-03: bloqueos objetivos, sin homologación implícita."""
 import hashlib
 import json
+from calendar import monthrange
+from datetime import date
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from . import engine, parameters_seal
@@ -24,8 +26,8 @@ class Employee(models.Model):
             employee.ec_rdep_validation_notice = '\n'.join(status['issues'] + status['notes']) or (
                 'Sin incidencias documentales detectadas para %s. Esto no valida la autenticidad del soporte ni homologa el RDEP.' % year)
 
-    def _rdep_personal_status(self, year):
-        status = super()._rdep_personal_status(year)
+    def _rdep_personal_status(self, year, as_of=None):
+        status = super()._rdep_personal_status(year, as_of)
         dossiers = self.env['erpec.payroll.exemption.dossier']
         # Un texto libre no acredita autoridad, vigencia, vínculo ni unicidad (D4/D7): hace falta un expediente verificado.
         if self.ec_rdep_special_expense not in (False, 'none'):
@@ -63,6 +65,35 @@ class Employee(models.Model):
                             'D4 · Conflicto: otra ficha declara a la misma persona sustituida en el ejercicio. '
                             'Debe conciliarse la vigencia sin revelar datos de otras empresas.')
         return status
+
+
+class Line(models.Model):
+    _inherit = 'erpec.payroll.line'
+
+    def _accumulated_history(self):
+        """Meses anteriores contabilizados del mismo ejercicio: base gravable sin IESS y retención ya efectuada (D6)."""
+        self.ensure_one()
+        period = self.period_id
+        prior = self.env['erpec.payroll.line'].sudo().search([
+            ('employee_id', '=', self.employee_id.id), ('period_id.state', '=', 'posted'), ('period_id.company_id', '=', period.company_id.id),
+            ('period_id.year', '=', period.year), ('period_id.month', '<', period.month), ('period_id', '!=', period.id)])
+        base = tax = 0.0
+        for line in prior:
+            result = json.loads(line.result or '{}')
+            base += result.get('base', 0.0) - result.get('personal_iess', 0.0)
+            tax += result.get('tax', 0.0)
+        return {'months': len(prior), 'base': round(base, 2), 'tax': round(tax, 2)}
+
+    def _inputs(self):
+        data = super()._inputs()
+        history = self._accumulated_history()
+        if history['months']:
+            data.update({'prior_months': history['months'], 'prior_base': history['base'], 'prior_tax': history['tax']})
+        period = self.period_id
+        certified = self.env['erpec.payroll.prior.employer'].active_totals(period.company_id, self.employee_id, period.year)
+        if certified['count']:
+            data.update({'other_income': certified['taxable_income'], 'other_iess': certified['iess'], 'other_withheld': certified['withheld_tax']})
+        return data
 
 
 class Period(models.Model):
@@ -108,7 +139,7 @@ class Period(models.Model):
             issues.extend(parameters_seal.year_notice(self.year))
         for line in self.line_ids:
             employee = line.employee_id.sudo()
-            status = employee._rdep_personal_status(self.year)
+            status = employee._rdep_personal_status(self.year, date(self.year, self.month, monthrange(self.year, self.month)[1]))
             issues.extend('%s: %s' % (employee.name, message) for message in status['issues'])
             if line.other_employer_iess > line.other_employer_taxable_income:
                 issues.append('D8 · El IESS de otro empleador supera sus ingresos gravados.')
@@ -224,6 +255,29 @@ class RdepAnnex(models.Model):
                         period.month, period.year, label, actual[side], expected[side]))
         return issues
 
+    def _settlement_notes(self, periods):
+        """Caso 4: devengo y pago de cada período frente a su asiento. Son avisos: la conciliación contable la acepta contabilidad."""
+        notes = []
+        for period in periods:
+            move = period.move_id
+            if not move:
+                continue
+            label = '%s/%s' % (period.month, period.year)
+            if (move.date.year, move.date.month) != (period.year, period.month):
+                notes.append('Aviso de conciliación · devengo %s: el asiento está fechado el %s, fuera del mes de la nómina.' % (label, move.date))
+            account = period.policy_id.mapping_ids.filtered(lambda item: item.concept == 'net').credit_id
+            if not account:
+                continue
+            lines = move.line_ids.filtered(lambda line, account=account: line.account_id == account)
+            payable = sum(lines.mapped('credit'))
+            if not account.reconcile:
+                notes.append('Aviso de conciliación · pago %s: la cuenta %s no es conciliable; no puede verificarse el pago de %.2f.' % (label, account.code, payable))
+                continue
+            pending = abs(sum(lines.mapped('amount_residual')))
+            if pending > 0.005:
+                notes.append('Aviso de conciliación · pago %s: por pagar %.2f, pagado %.2f, pendiente %.2f.' % (label, payable, payable - pending, pending))
+        return notes
+
     def _coverage_issues(self, periods):
         issues = super()._coverage_issues(periods)
         issues.extend(self._ledger_issues(periods))
@@ -232,8 +286,15 @@ class RdepAnnex(models.Model):
     def _compute_review_notice(self):
         super()._compute_review_notice()
         for annex in self:
-            gaps = ['Conciliación D6 · %s: la retención mensual acumulada difiere del impuesto anual en %.2f; falta reliquidar los meses futuros '
-                    '(no se ajusta automáticamente ni se reabren nóminas contabilizadas).' % (line.employee_id.name, line.tax_difference)
-                    for line in annex.line_ids if abs(line.tax_difference) > 0.01]
+            gaps = []
+            for line in annex.line_ids:
+                if line.months_remaining == 0 and abs(line.tax_difference) > 0.01:
+                    gaps.append('Conciliación D6 · %s: el ejercicio cierra con una diferencia de %.2f entre el impuesto anual y lo retenido; '
+                                'requiere regularización en la declaración anual.' % (line.employee_id.name, line.tax_difference))
+                elif line.months_remaining and line.future_monthly_retention > 0.005:
+                    gaps.append('Conciliación D6 · %s: saldo proyectado por retener de %.2f al mes durante los %s meses que faltan; '
+                                'la reliquidación lo aplica en cada cálculo y no reabre nóminas contabilizadas.' % (
+                                    line.employee_id.name, line.future_monthly_retention, line.months_remaining))
+            gaps += annex._settlement_notes(annex._posted_periods())
             if gaps:
                 annex.review_notice = ((annex.review_notice or '') + '\n' + '\n'.join(gaps)).strip()

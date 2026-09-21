@@ -1,0 +1,42 @@
+{
+  "phase": "DI25-03",
+  "task": "DI25-03.5",
+  "moduleVersion": "18.0.1.14.0",
+  "expertAccepted": false,
+  "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
+  "instruction": "Los parciales deben quedar terminados para poder avanzar.",
+  "closedRows": {
+    "D2": "erpec.payroll.exemption.regularization: fundamento registrado, fecha de efecto no retroactiva, verificacion por otra persona",
+    "D3": "comparacion de exenciones acreditadas conservada en el anexo RDEP (exemption_comparison)",
+    "D6": "reliquidacion mensual acumulada en engine.calculate con historial contabilizado y certificados de empleador anterior; anexo con impuesto proyectado y retencion futura",
+    "D7": "condicion acreditada por ruta separada (discapacidad con grado, catastrofica, rara, huerfana) en el expediente",
+    "caso2": "saldo de 5,45 reproducido con supuestos explicitos",
+    "caso4": "avisos de devengo y de pago en el anexo",
+    "caso8": "cambio salarial probado; ausencias no modeladas, marcadas como bloqueo",
+    "caso6_caso7": "pruebas repetidas con D1-D7 y consolidacion idempotente con reliquidacion"
+  },
+  "matrixStates": {"automated": 13, "partial": 2, "blocked": 2, "external": 2},
+  "stillOutsideTheSystem": {
+    "D5_caso10": "catalogo y validador RDEP 2026 y Formulario 107: los publica el SRI",
+    "casos3_9_11_y_ausencias": "reglas aprobadas por el responsable",
+    "confirmaciones": "D1, D2, D4, D6, D7 por el responsable tributario"
+  },
+  "tests": {
+    "windowsIntegrated": {"total": 547, "failed": 0, "errors": 0, "skipped": 5, "skippedReason": "erpec_treasury requiere la demo sembrada", "database": "ec_integrated_test_8df2ed77d0c6"},
+    "payrollModule": {"before": 168, "after": 182}
+  },
+  "demo": {
+    "database": "erpec_demo",
+    "moduleVersionBefore": "18.0.1.13.1",
+    "moduleVersionAfter": "18.0.1.14.0",
+    "backup": ".cache/windows/backups/di25-controles3-20260921T233308Z",
+    "backupDatabaseSha256": "29c43a82735217404559f12613bfee825558b62480d1cb9f0cf0abc4f37db6a7",
+    "auditRunner": {"passed": true, "cases": 32, "problems": []},
+    "newMenu": "Nomina > Regularizacion de documentos tardios"
+  },
+  "limits": [
+    "Nada esta homologado ni presentado al SRI.",
+    "La verificacion de expedientes y regularizaciones es documental interna; no sustituye la consulta a la autoridad ni la firma del responsable.",
+    "Los datos de demo son sinteticos."
+  ]
+}

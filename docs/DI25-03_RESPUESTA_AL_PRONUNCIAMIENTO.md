@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.13.1, commit `a753558` |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.0 (tercera ronda: cierre de las filas parciales) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -40,16 +40,14 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 - **Reliquidación al incorporar el dato tarde:** depende de D6 (ver abajo); las nóminas contabilizadas no se reabren.
 - **Necesitamos de usted:** el sistema exige una acreditación del año (referencia y fecha) para reconocer al adulto mayor, aunque la edad se deduce de la fecha de nacimiento. ¿Debe seguir siendo obligatoria esa acreditación documental, o basta la fecha de nacimiento?
 
-### D2 · Documento entregado después del 15 de enero — CORREGIR → **Parcial**
-- **Respuesta:** se eliminó cualquier decisión discrecional. Un documento de discapacidad o de sustituto entregado después del 15 de enero **no aplica la exención** y bloquea el cierre, la contabilización y el XML. No existe casilla ni excepción manual para saltar el bloqueo, y no se aplica retroactivamente sobre nóminas cerradas.
-- **Evidencia:** prueba de que un documento del 1 de febrero deja la exención en cero y el cierre bloqueado con el mensaje de regularización.
-- **No hecho:** el **procedimiento escrito de regularización** (validación, fecha de efecto, retenciones futuras, conciliación anual). Sin él, cualquier regla que implementáramos sería una decisión nuestra, justo lo que el pronunciamiento prohíbe.
-- **Necesitamos de usted:** la redacción de ese procedimiento (pasos, campos y fecha de efecto). Con eso lo convertimos en un expediente con control.
+### D2 · Documento entregado después del 15 de enero — CORREGIR → **Hecho** (con una confirmación)
+- **Respuesta:** un documento de discapacidad o de sustituto entregado después del 15 de enero **no se aplica ni permite cerrar la nómina** hasta que exista una **regularización verificada**. Es el procedimiento que describe su pronunciamiento, hecho expediente: fundamento registrado (criterio formal del responsable o pronunciamiento del SRI), validación realizada, **fecha de efecto que nunca puede caer en un mes ya contabilizado** y verificación por otra persona. Antes de la fecha de efecto la exención no se aplica (queda un aviso); desde ella entra en la reliquidación acumulada (D6), que recalcula las retenciones futuras. Los meses previos quedan sin exención y cerrados, y la diferencia se ve en la conciliación anual del RDEP. No hay casilla para saltar el control.
+- **Evidencia:** pruebas de que el documento tardío bloquea sin regularización, de que en borrador no cuenta, de que antes de su fecha solo avisa y desde ella aplica, de que la retención del mes 3 se recalcula (2,00 en el ejemplo) sin tocar los meses 1 y 2, de que la fecha retroactiva se rechaza, de la segregación de funciones, de la coincidencia con la ficha y de la inmutabilidad y revocación con motivo.
+- **Necesitamos de usted:** confirmar que este procedimiento —derivado del texto de su pronunciamiento— es el que desea. El sistema **registra** el fundamento; no lo evalúa.
 
-### D3 · Concurrencia de adulto mayor y discapacidad — ACEPTAR → **Hecho** (mejora pendiente)
-- **Respuesta:** se aplica una sola vez la exención más favorable, nunca la suma; el tipo aplicado queda registrado en el anexo RDEP.
-- **Evidencia:** pruebas de «mejor de las dos, nunca la suma» y de límite por la base disponible.
-- **Pendiente propio:** conservar, como evidencia del expediente, el cálculo comparativo de la opción no aplicada. Hoy queda el tipo aplicado, no la comparación.
+### D3 · Concurrencia de adulto mayor y discapacidad — ACEPTAR → **Hecho**
+- **Respuesta:** se aplica una sola vez la exención más favorable, nunca la suma. El anexo RDEP conserva ahora la **comparación**: el importe de cada exención acreditada y la que se aplicó (por ejemplo, «elderly 12000.00; disability 14649.60 → aplicada: disability»).
+- **Evidencia:** pruebas de «mejor de las dos, nunca la suma», de límite por la base disponible y de la comparación en el anexo.
 
 ### D4 · Sustituto y cambio dentro del ejercicio — ACEPTAR CON CONDICIONES → **Hecho** (con una decisión)
 - **Respuesta a sus condiciones:**
@@ -67,16 +65,15 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 - **No hecho:** validar el archivo con el catálogo y el validador oficiales de 2026. Al corte, el portal muestra el programa 2026 pero la ficha y el catálogo visibles son de 2025.
 - **Necesitamos de usted:** avisarnos cuando el SRI publique la ficha técnica y el catálogo 2026; entonces se carga y se valida.
 
-### D6 · Cambios durante el año — ACEPTAR CON CONDICIONES → **Parcial**
-- **Respuesta:** no se reabren nóminas contabilizadas. Una **huella** de datos tributarios, política, líneas e historial impide cerrar o contabilizar si algo cambió después de calcular; hay que recalcular antes. La **brecha** entre la retención mensual acumulada y el impuesto anual se muestra por trabajador en el anexo.
-- **No hecho:** la reliquidación mensual acumulada (recalcular el impuesto causado y la rebaja, restar lo retenido y distribuir el saldo entre los meses futuros). Cambia la retención de cada mes y no la implementamos sin su criterio.
-- **Necesitamos de usted:** el método de distribución (saldo dividido para los meses restantes, con qué redondeo y tratamiento del último mes) y casos de aceptación con resultado esperado.
+### D6 · Cambios durante el año — ACEPTAR CON CONDICIONES → **Hecho** (con una confirmación)
+- **Respuesta:** implementada la **reliquidación mensual acumulada** que su pronunciamiento describe: cada mes se recalculan, sobre lo acumulado, el impuesto causado y la rebaja; se restan las retenciones ya efectuadas (y las certificadas del empleador anterior); y el saldo se reparte entre los meses que faltan. La retención nunca es negativa y no se reabren nóminas contabilizadas. Sin historial del ejercicio rige la proyección anual de siempre, de modo que los cálculos existentes no cambian. Una huella impide cerrar o contabilizar si algo cambió después de calcular.
+- **Evidencia:** un ejercicio de 12 meses con un aumento salarial en el mes 7 retiene 170 durante seis meses y 260 durante los seis restantes, y cierra con diferencia **cero** entre el impuesto anual y lo retenido. Pruebas de sobre-retención (queda en cero, sin negativos), de ingresos certificados del empleador anterior y de alta tardía. El anexo muestra por trabajador el impuesto proyectado, el saldo por reliquidar y la retención mensual futura sugerida.
+- **Necesitamos de usted:** confirmar el método adoptado: **el último mes se repite durante los meses que faltan** y una sobre-retención **no genera devolución automática**, solo queda visible.
 
-### D7 · Límite de 100 canastas — RECHAZAR → **Hecho** (con un vacío señalado)
-- **Respuesta:** aceptamos el rechazo. La referencia aislada ya **no reduce la retención ni habilita el tope** y bloquea el cierre. Solo se aplica con un expediente verificado que cubra **todo el ejercicio**; para una carga exige identificación, relación o dependencia económica, y se rechaza el doble uso de la misma carga. El sistema no emite diagnósticos ni guarda datos de salud: solo referencia, autoridad y vigencia.
-- **Evidencia:** pruebas de referencia aislada sin efecto, vigencia parcial que no aplica, expediente completo que sí aplica y carga usada dos veces.
-- **Vacío que reconocemos:** el pronunciamiento pide **rutas documentales separadas** para discapacidad y para enfermedad catastrófica, rara o huérfana. El expediente hoy distingue titular y carga, pero no esa condición. Está **no hecho**; lo proponemos como campo obligatorio con su propia lista de autoridades y documentos.
-- **Necesitamos de usted:** la lista de autoridades y documentos válidos para cada condición, y confirmar si la verificación documental interna (por otra persona) le parece suficiente como «validación documental» mientras no exista consulta a la fuente oficial.
+### D7 · Límite de 100 canastas — RECHAZAR → **Hecho** (con una consulta externa)
+- **Respuesta:** aceptamos el rechazo. La referencia aislada ya **no reduce la retención ni habilita el tope** y bloquea el cierre. Solo se aplica con un expediente verificado que cubra **todo el ejercicio**, con la **condición acreditada por rutas separadas**: discapacidad (con su grado), enfermedad catastrófica, enfermedad rara y enfermedad huérfana son campos distintos y obligatorios. Para una carga exige identificación, relación o dependencia económica, y se rechaza el doble uso. El sistema no emite diagnósticos ni guarda datos de salud: solo referencia, autoridad, condición y vigencia.
+- **Evidencia:** pruebas de referencia aislada sin efecto, vigencia parcial que no aplica, expediente completo que sí aplica, carga usada dos veces y cada condición como ruta propia.
+- **Necesitamos de usted:** la lista de autoridades válidas por condición (hoy la autoridad se registra como texto libre) y confirmar si la verificación documental interna por otra persona basta como «validación documental» mientras no exista consulta a la fuente oficial.
 
 ### D8 · Ingresos y retenciones del empleador anterior — CORREGIR → **Hecho** (alcance acotado)
 - **Respuesta a sus tres exigencias:**
@@ -92,48 +89,51 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 | Caso | Su decisión | Nuestra respuesta | Estado |
 |---|---|---|---|
 | 1 | Condicionar | Parámetros 2026 sellados con fuente, vigencia y huella; se prohíbe reutilizar valores de otro año | **Hecho** |
-| 2 | Parcial | (12.677 − 12.208) × 5 % = **23,45** verificado con cálculo independiente. El saldo de 5,45 no se declara validado: falta demostrar gastos, cargas, límite y la rebaja de 18,00 | **Parcial**, como usted indica |
+| 2 | Parcial | (12.677 − 12.208) × 5 % = **23,45**; el saldo de **5,45** se reproduce con supuestos explícitos (gastos personales de 100 = rebaja de 18,00, sin cargas, límite de 5.752,60) en una prueba independiente | **Hecho** el cálculo; los soportes reales de gastos y cargas los aporta cada trabajador |
 | 3 | Bloquear | Aviso persistente de que los beneficios propios no tienen matriz de incidencia; hoy es aviso, no bloqueo | **No hecho** |
-| 4 | Condicionar | Cada período contabilizado se concilia con su asiento (débitos y créditos); una diferencia bloquea el XML. Falta conciliar saldos, devengo y pago | **Parcial** |
+| 4 | Condicionar | Cada período se concilia con su asiento (una diferencia bloquea el XML) y el anexo avisa del **devengo** (asiento fuera del mes de la nómina) y del **pago** (saldo por pagar o cuenta no conciliable). Hoy el asiento se fecha el día de contabilización y el aviso lo señala | **Hecho**; falta la aceptación de contabilidad |
 | 5 | Bloquear | D8 implementado: comprobante versionado, conciliación y rectificación sin duplicados; sin conciliación, el cierre se bloquea | **Hecho** (falta probarlo con un comprobante real) |
-| 6 | Bloquear | Pruebas de adulto mayor, discapacidad, sustituto y gastos repetidas con D1–D7 corregidos, además de los ensayos 26–32 en demo | **Parcial** (faltan soportes reales) |
-| 7 | Bloquear | Mismo insumo, mismo resultado (huella); consolidación anual idempotente; bitácora de comprobantes. Falta la reliquidación acumulada | **Parcial** |
-| 8 | Mixto | Cambio salarial: la proyección anual se actualiza y la brecha de retención se muestra. Ausencias: **bloqueadas**, sin reglas definidas | **Parcial** |
+| 6 | Bloquear | Pruebas de adulto mayor, discapacidad, sustituto, regularización y gastos repetidas con D1–D7 corregidos, además de los ensayos 26–32 en demo | **Hecho** con soportes sintéticos; falta repetirlo con soportes reales |
+| 7 | Bloquear | Mismo insumo, mismo resultado (huella); consolidación anual idempotente; bitácora de comprobantes; y la reliquidación acumulada concilia entre períodos (el ejercicio cierra en cero) | **Hecho** |
+| 8 | Mixto | Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras (probado). Ausencias: el módulo **no las modela**; no hay cálculo que aceptar hasta que se definan sus efectos | Salarial **hecho**; ausencias **bloqueadas** |
 | 9 | Bloquear | La base gravable del motor excluye décimos tercero y cuarto (no forman parte de la proyección); no hay prueba dedicada ni reglas de devengo, pago y mapeo RDEP para vacaciones y fondos de reserva | **No hecho** |
-| 10 | Bloquear | Conciliación automática nómina ↔ asiento y retención acumulada ↔ impuesto anual, visible en el anexo. Falta el Formulario 107 y el validador oficial | **Parcial** |
+| 10 | Bloquear | Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con reporte por trabajador (proyectado, saldo y retención futura). Falta el formato oficial del Formulario 107 y el validador RDEP 2026, que publica el SRI | **Parcial**: depende del SRI |
 | 11 | Mixto | Galápagos sin elegibilidad, residencia extranjera, convenio, impuesto asumido y otros ingresos **bloquean el cierre**; el factor 1,803 no se usa sin soporte | **Hecho** como bloqueo; las reglas de cada régimen no existen |
 
 ## 5. Requisitos mínimos para una nueva homologación
 
 | Requisito | Respuesta |
 |---|---|
-| Corregir D1, D2, D5, D7, D8 y documentar D3, D4, D6 | D1, D5 (escala/rebaja), D7 y D8 corregidos; D2 y D6 con bloqueo pero sin el procedimiento; D3 y D4 documentados en este escrito |
+| Corregir D1, D2, D5, D7, D8 y documentar D3, D4, D6 | D1, D2, D3, D4, D6, D7 y D8 corregidos o documentados; D5 (escala y rebaja) corregido, con el catálogo RDEP pendiente del SRI |
 | Tabla de parámetros 2026 inmutable y auditable | **Hecho:** sello con fuentes, vigencia y huella |
-| Reporte reproducible por trabajador (ingresos proyectados, deducciones, exenciones, impuesto causado, rebaja, retenciones previas y saldo por meses) | **Parcial:** el anexo y los ensayos muestran base anual, exención, impuesto causado, rebaja aplicada, retenciones y la brecha; el **saldo distribuido en meses futuros** depende de D6 |
-| Validar RDEP con catálogo y validador oficiales 2026 | **No hecho:** pendiente de la publicación del SRI; la salida se mantiene como vista previa y no afirmamos compatibilidad |
-| Probar altas tardías, cambio de cargas, cambio de empleador, sustitución, rectificación, discapacidad desde 30 %, 100 canastas y duplicidades | **Parcial:** hay pruebas de documento tardío, cambio de cargas, D8, sustitución, revocación y nuevo expediente, escala desde 30 %, 100 canastas y doble uso. No hay prueba específica del alta tardía de un empleado en el año |
-| Conciliar nómina, mayor, Formulario 107 y RDEP | **Parcial:** nómina ↔ asiento y retención ↔ impuesto anual; no existe Formulario 107 |
+| Reporte reproducible por trabajador (ingresos proyectados, deducciones, exenciones, impuesto causado, rebaja, retenciones previas y saldo por meses) | **Hecho:** el anexo muestra base anual, exenciones con su comparación, impuesto causado, rebaja, retenciones, impuesto proyectado, saldo y retención mensual futura sugerida |
+| Validar RDEP con catálogo y validador oficiales 2026 | **No hecho:** pendiente de la publicación del SRI; la salida es vista previa y no afirmamos compatibilidad |
+| Probar altas tardías, cambio de cargas, cambio de empleador, sustitución, rectificación, discapacidad desde 30 %, 100 canastas y duplicidades | **Hecho:** hay pruebas de documento tardío regularizado, alta tardía de un empleado, cambio de cargas, empleador anterior, sustitución, revocación y nuevo expediente, escala desde 30 %, 100 canastas por condición y doble uso |
+| Conciliar nómina, mayor, Formulario 107 y RDEP | **Parcial:** nómina ↔ asiento (con devengo y pago) y retención ↔ impuesto anual; el Formulario 107 oficial depende del SRI |
 | Evidencia con versión, commit, base de pruebas y firma del responsable de ejecución | Versión y commit abajo; **la firma queda en blanco**: no la ponemos por usted ni por nadie |
 
 ## 6. Decisiones que necesitamos de usted
 
-1. **D1:** ¿la acreditación documental del adulto mayor sigue siendo obligatoria?
-2. **D2:** redacción del procedimiento de regularización de un documento tardío.
+Con esta versión ya no hay filas de la matriz que dependan de que nosotros programemos algo más. Lo que sigue depende de su criterio o del SRI:
+
+1. **D1:** ¿la acreditación documental del adulto mayor sigue siendo obligatoria, o basta la fecha de nacimiento?
+2. **D2:** ¿confirma el procedimiento de regularización implementado (fundamento registrado, fecha de efecto no retroactiva, verificación por otra persona)?
 3. **D4:** ¿se acepta la proporción por días redondeada al mes más cercano?
-4. **D6:** método de reliquidación de las retenciones futuras y casos de aceptación.
-5. **D7:** autoridades y documentos de cada condición (discapacidad, catastrófica, rara, huérfana) y si la verificación interna por otra persona basta como validación documental.
-6. **Caso 3:** matriz aprobada de incidencia por concepto (IR, IESS, décimos, vacaciones, reserva, contabilidad y RDEP).
+4. **D6:** ¿confirma el método (último mes repetido durante los meses que faltan; sin devolución automática de sobre-retenciones)?
+5. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental.
+6. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
 7. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
-8. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
+8. **D5 y caso 10:** avisarnos cuando el SRI publique el catálogo y validador RDEP 2026 y el formato del Formulario 107.
+9. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
 ## 7. Evidencia y cómo reproducirla
 
-- **Versión y commit:** `erpec_payroll` 18.0.1.13.1; commit `a753558` en `codex/erpec26-implementacion`.
-- **Pruebas:** 533 en Windows y 533 en Linux (CI 35664339580, cinco trabajos aprobados), 0 fallos y 0 errores; 5 omisiones de tesorería que requieren la demo sembrada. El módulo de nómina pasó de 124 a 168 pruebas.
+- **Versión y commit:** `erpec_payroll` 18.0.1.14.0 en `codex/erpec26-implementacion` (el identificador del commit y de su CI se registran en el commit de evidencia que sigue a esta entrega).
+- **Pruebas:** 547 en Windows, 0 fallos y 0 errores; 5 omisiones de tesorería que requieren la demo sembrada. La ronda anterior (18.0.1.13.1, commit `a753558`) tuvo 533 en Windows y en Linux (CI 35664339580). El módulo de nómina pasó de 124 a 182 pruebas.
 - **Matriz de pendientes:** en la aplicación, **Nómina → Matriz de aceptación DI25-03**; en `docs/DI25-03_MATRIZ_ACEPTACION.md`. Una prueba exige que cada control citado tenga pruebas que existan.
-- **Demo:** base `erpec_demo` actualizada con respaldo previo (base, filestore y módulo); auditoría de solo lectura en verde (32 casos con referencia coincidente y sin problemas).
+- **Demo:** base `erpec_demo` actualizada con respaldo previo (base, filestore y módulo); ahora en 18.0.1.14.0; auditoría de solo lectura en verde (32 casos con referencia coincidente y sin problemas) y matriz visible con 13 controles automáticos, 2 parciales, 2 bloqueos y 2 dependencias de terceros.
 - **Reproducir:** `python scripts/test-integrated.py` (suite completa en base aislada) y `python scripts/verify-di25-demo-runner.py` (auditoría de la demo, solo lectura).
-- **Menús nuevos:** Certificados de otro empleador, Expedientes de exención y Matriz de aceptación DI25-03.
+- **Menús nuevos:** Certificados de otro empleador, Expedientes de exención, Regularización de documentos tardíos y Matriz de aceptación DI25-03.
 
 ## 8. Límites
 

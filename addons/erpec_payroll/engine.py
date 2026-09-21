@@ -127,7 +127,7 @@ def apply_personal_exemption(annual_base, parameters, claims=()):
 
 
 def resolve_exemption_claims(year, birthday, disability_type, disability_percentage, disability_id_type,
-                             disability_id, accreditation_year, accreditation_ref, accreditation_date, months=12):
+                             disability_id, accreditation_year, accreditation_ref, accreditation_date, months=12, regularized=None):
     """Decide qué exenciones están acreditadas para el ejercicio. Función pura.
 
     Devuelve (reclamos aplicables, incidencias que bloquean el anexo, avisos). Sin
@@ -155,7 +155,10 @@ def resolve_exemption_claims(year, birthday, disability_type, disability_percent
         if condition == 'elderly':
             # DI25-03 D1: se reconoce el ejercicio en que cumple 65 años.
             claims.append({'kind': 'elderly'})
-        elif (accreditation_date.year, accreditation_date.month, accreditation_date.day) > (year, *EXEMPTION_DEADLINE):
+        elif regularized != 'effective' and (accreditation_date.year, accreditation_date.month, accreditation_date.day) > (year, *EXEMPTION_DEADLINE):
+            if regularized == 'pending':
+                notes.append('Documento tardío con regularización verificada que aún no surte efecto: la exención no se aplica antes de esa fecha.')
+                continue
             issues.append('Documento tardío: requiere regularización documentada y ajuste de retenciones futuras; no se reabren nóminas contabilizadas.')
         elif condition == '00':
             issues.append('El tipo de discapacidad 00 no tiene descripción en el esquema oficial: no se aplica exención.')
@@ -229,13 +232,20 @@ def calculate(data, parameters, year, month):
     iess = money(base*number(parameters['personal_rate']))
     employer = money(base*number(parameters['employer_rate']))
     employer_other = money(base*number(parameters.get('employer_other_rate',0)))
-    annual_base = max(Decimal(0), (base-iess)*12)
+    # D6 (DI25-03): con meses contabilizados del mismo ejercicio se proyecta sobre lo acumulado, se recalcula el
+    # impuesto causado y la rebaja, se restan las retenciones ya efectuadas y el saldo se reparte entre los meses
+    # que faltan. Sin historial rige la proyección anual de siempre (12 meses, sin retenciones previas).
+    prior_months = int(data.get('prior_months', 0) or 0)
+    remaining_months = max(1, 12-prior_months) if prior_months else 12
+    other_income = number(data.get('other_income', 0))-number(data.get('other_iess', 0))
+    annual_base = max(Decimal(0), number(data.get('prior_base', 0))+(base-iess)*remaining_months+other_income)
     _, exemption, annual_base = apply_personal_exemption(annual_base, parameters, data.get('exemptions', ()))
     annual_tax, rebate, tax_after_rebate = annual_income_tax(
         annual_base, data.get('personal_expenses', 0), parameters,
         data.get('dependents_count', 0), data.get('galapagos', 'NO'),
         special_expense=data.get('special_expense', False))
-    tax = money(tax_after_rebate/12)
+    already_withheld = number(data.get('prior_tax', 0))+number(data.get('other_withheld', 0))
+    tax = money(max(Decimal(0), tax_after_rebate-already_withheld)/remaining_months)
     thirteenth = money(base*number(parameters['thirteenth_rate']))
     fourteenth = money(number(parameters['minimum_salary'])*number(parameters['fourteenth_rate'])*days/30)
     vacation = money(base*number(parameters['vacation_rate']))
