@@ -1,3 +1,9 @@
+# Estado vigente: pronunciamiento observado y controles automáticos
+
+El pronunciamiento técnico recibido devuelve DI25-03 para corrección; no existe homologación. Ver [DI25-03_CONTROLES_AUTOMATICOS.md](DI25-03_CONTROLES_AUTOMATICOS.md) para las correcciones, bloqueos ejecutables y límites. La autenticidad de certificados, la importación versionada de otro empleador, la reliquidación mensual acumulada y la conciliación anual completa permanecen pendientes. Sustitutos y 100 canastas no se habilitan en nómina mediante una referencia aislada; los ensayos sintéticos siguen disponibles. Esta sección prevalece sobre los estados históricos siguientes.
+
+---
+
 # DI25-03 · Paquete para la aceptación del responsable tributario y laboral
 
 Estado: pendiente de revisión. Este documento prepara la decisión; no la registra. Un «continuar» genérico no cuenta como homologación (ver DI25-03_MATRIZ_ACEPTACION.md).

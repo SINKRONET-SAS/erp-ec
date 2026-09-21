@@ -1,0 +1,66 @@
+<odoo>
+<record id="exemption_dossier_company_rule" model="ir.rule">
+  <field name="name">Expedientes de exención por empresa</field><field name="model_id" ref="model_erpec_payroll_exemption_dossier"/>
+  <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+</record>
+<record id="exemption_dossier_list" model="ir.ui.view">
+  <field name="name">erpec.payroll.exemption.dossier.list</field><field name="model">erpec.payroll.exemption.dossier</field>
+  <field name="arch" type="xml"><list decoration-muted="state == 'revoked'">
+    <field name="employee_id"/><field name="kind"/><field name="year" options="{'enable_formatting': False}"/>
+    <field name="valid_from"/><field name="valid_to"/><field name="document_ref"/><field name="authority"/>
+    <field name="state" widget="badge" decoration-success="state == 'verified'" decoration-warning="state == 'draft'" decoration-muted="state == 'revoked'"/>
+    <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+  </list></field>
+</record>
+<record id="exemption_dossier_form" model="ir.ui.view">
+  <field name="name">erpec.payroll.exemption.dossier.form</field><field name="model">erpec.payroll.exemption.dossier</field>
+  <field name="arch" type="xml"><form>
+    <header>
+      <button name="action_verify" type="object" string="Verificar expediente" class="oe_highlight" invisible="state != 'draft'"/>
+      <button name="action_revoke" type="object" string="Revocar" invisible="state != 'verified'"/>
+      <field name="state" widget="statusbar"/>
+    </header>
+    <sheet>
+      <div class="alert alert-warning" role="status">
+        Sin un expediente verificado, el sustituto (D4) y el tope de 100 canastas (D7) no se aplican y bloquean el cierre. La verificación la hace
+        una persona distinta de quien registra el expediente y es una validación documental interna: no reemplaza la consulta a la autoridad
+        competente. No registres diagnósticos ni copias del documento.
+      </div>
+      <group readonly="state != 'draft'">
+        <group string="Beneficiario">
+          <field name="employee_id"/><field name="year" options="{'enable_formatting': False}"/><field name="kind"/>
+          <field name="company_id" groups="base.group_multi_company"/>
+        </group>
+        <group string="Documento y vigencia">
+          <field name="document_ref"/><field name="authority"/><field name="issue_date"/>
+          <field name="valid_from"/><field name="valid_to"/>
+        </group>
+      </group>
+      <group readonly="state != 'draft'" string="Persona sustituida o a cargo" invisible="kind == 'special_holder'">
+        <field name="person_id_type"/><field name="person_id"/>
+        <field name="relationship" invisible="kind != 'special_dependent'"/>
+        <field name="disability_percentage" invisible="kind != 'substitute'"/>
+      </group>
+      <group string="Verificación" invisible="state == 'draft'">
+        <field name="verified_by"/><field name="verified_at"/><field name="verification_scope"/>
+        <field name="revoked_reason" readonly="state == 'revoked'"/>
+      </group>
+    </sheet>
+    <chatter/>
+  </form></field>
+</record>
+<record id="exemption_dossier_search" model="ir.ui.view">
+  <field name="name">erpec.payroll.exemption.dossier.search</field><field name="model">erpec.payroll.exemption.dossier</field>
+  <field name="arch" type="xml"><search>
+    <field name="employee_id"/><field name="document_ref"/><field name="person_id"/>
+    <filter name="draft" string="Por verificar" domain="[('state', '=', 'draft')]"/>
+    <filter name="verified" string="Verificados" domain="[('state', '=', 'verified')]"/>
+  </search></field>
+</record>
+<record id="exemption_dossier_action" model="ir.actions.act_window">
+  <field name="name">Expedientes de exención</field><field name="res_model">erpec.payroll.exemption.dossier</field>
+  <field name="view_mode">list,form</field>
+  <field name="help" type="html"><p class="o_view_nocontent_smiling_face">Registra un expediente de sustituto o de 100 canastas.</p><p>Otra persona con rol de nómina lo verifica antes de que el motor lo aplique.</p></field>
+</record>
+<menuitem id="exemption_dossier_menu" name="Expedientes de exención" parent="payroll_menu" action="exemption_dossier_action" sequence="28" groups="group_payroll_manager"/>
+</odoo>

@@ -55,7 +55,7 @@
           <field name="total_informed"/><field name="exempt_income"/>
           <field name="combined_income"/><field name="combined_iess"/><field name="annual_base"/>
           <field name="personal_exemption"/><field name="taxable_base"/>
-          <field name="tax_caused"/><field name="expense_cap"/><field name="rebate"/><field name="annual_tax"/>
+          <field name="tax_caused"/><field name="expense_cap"/><field name="rebate"/><field name="rebate_applied"/><field name="annual_tax"/>
         </group>
         <group string="Comparación y retenciones">
           <field name="without_other_tax"/><field name="tax_increase"/><field name="total_withheld"/>

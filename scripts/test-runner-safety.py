@@ -10,6 +10,14 @@ spec.loader.exec_module(runner)
 
 
 class RunnerSafety(unittest.TestCase):
+    def test_each_run_gets_its_own_free_http_port(self):
+        ports = {runner.free_port() for _ in range(5)}
+        self.assertTrue(all(1024 < port < 65536 for port in ports))
+        self.assertNotIn(8069, ports)
+        # Dos suites en paralelo no comparten el puerto por defecto de las pruebas HTTP (fallo TestHealth del 21-09-2026).
+        source = Path(__file__).with_name('test-integrated.py').read_text(encoding='utf-8')
+        self.assertIn("'http_port': str(free_port())", source)
+
     def test_foreign_names(self):
         for name in ['erpec_demo', 'postgres', 'ec_integrated_test_', '../ec_integrated_test_a']:
             with self.assertRaises(ValueError):

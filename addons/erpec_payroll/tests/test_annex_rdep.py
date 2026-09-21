@@ -168,14 +168,12 @@ class RdepAnnexCase(TransactionCase):
     def test_employer_assumed_tax_is_blocked_until_independent_validation(self):
         period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'employer_assumed_tax': 50})]})
         period.action_calculate()
-        period.action_close()
-        period.action_post()
-        self._setup_employee_for_xml(self.employee)
-        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        # La observación ahora se detecta antes de generar el asiento.
+        with self.assertRaisesRegex(ValidationError, 'Impuesto asumido'):
+            period.action_close()
+        self.assertFalse(period.move_id)
         annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
-        annex.action_build()
-        with self.assertRaisesRegex(ValidationError, 'XML bloqueado'):
-            annex.action_generate_xml()
+        self.assertTrue(annex._coverage_issues(period))
 
     def test_expense_caps_enforced_as_single_total_by_dependents(self):
         # Boletín NAC-COM-26-006 (SRI): tope único total, sin tope por categoría,
@@ -295,7 +293,7 @@ class RdepAnnexCase(TransactionCase):
                             ec_rdep_disability_type='01', ec_rdep_disability_percentage=40),
                        dict(accreditation, ec_rdep_exemption_date='%s-01-10' % self.policy.year,
                             ec_rdep_disability_type='04', ec_rdep_disability_percentage=0,
-                            birthday='%s-06-01' % (self.policy.year-65)),
+                            birthday='%s-06-01' % (self.policy.year-64)),
                        {'birthday': False, 'ec_rdep_ben_galpg': 'SI', 'ec_rdep_exemption_ref': False, 'ec_rdep_exemption_date': False}]:
             self.employee.write(values)
             annex.action_build()

@@ -133,7 +133,7 @@ def resolve_exemption_claims(year, birthday, disability_type, disability_percent
     Devuelve (reclamos aplicables, incidencias que bloquean el anexo, avisos). Sin
     acreditación del mismo año no se aplica exención: la condición detectada solo genera un
     aviso. Una acreditación incompleta o en un caso no cubierto queda como incidencia y no
-    se aplica. Cubre ejercicios completos; los cambios de condición dentro del año se bloquean."""
+    se aplica. La edad se evalúa al cierre del ejercicio; los soportes tardíos de discapacidad requieren regularización."""
     claims, issues, notes = [], [], []
     conditions = []
     if birthday and year-birthday.year >= ELDERLY_MIN_AGE:
@@ -145,19 +145,18 @@ def resolve_exemption_claims(year, birthday, disability_type, disability_percent
         if conditions:
             notes.append('Condición de edad o discapacidad detectada sin acreditación vigente del año %s: no se aplica exención.' % year)
         return claims, issues, notes
+    if accreditation_date > date(year, 12, 31):
+        issues.append('La fecha de entrega del documento es posterior al ejercicio del cálculo.')
+        return claims, issues, notes
     if not conditions:
         issues.append('Hay una acreditación de exención sin condición de edad o discapacidad registrada en el empleado.')
         return claims, issues, notes
-    if (accreditation_date.year, accreditation_date.month, accreditation_date.day) > (year, *EXEMPTION_DEADLINE):
-        issues.append('El documento se entregó después del 15 de enero: falta criterio del responsable sobre su aplicación retroactiva.')
-        return claims, issues, notes
     for condition in conditions:
         if condition == 'elderly':
-            # Solo ejercicio completo: la mayoría de edad se alcanza el 1 de enero o antes.
-            if (birthday.year+ELDERLY_MIN_AGE, birthday.month, birthday.day) <= (year, 1, 1):
-                claims.append({'kind': 'elderly'})
-            else:
-                issues.append('Cumple 65 años durante el ejercicio: falta criterio del responsable sobre la exención parcial o completa.')
+            # DI25-03 D1: se reconoce el ejercicio en que cumple 65 años.
+            claims.append({'kind': 'elderly'})
+        elif (accreditation_date.year, accreditation_date.month, accreditation_date.day) > (year, *EXEMPTION_DEADLINE):
+            issues.append('Documento tardío: requiere regularización documentada y ajuste de retenciones futuras; no se reabren nóminas contabilizadas.')
         elif condition == '00':
             issues.append('El tipo de discapacidad 00 no tiene descripción en el esquema oficial: no se aplica exención.')
         else:
@@ -256,7 +255,7 @@ def calculate(data, parameters, year, month):
     cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess)
     # Estas magnitudes son proyecciones mensuales; el RDEP aplica la misma tarifa
     # a los acumulados efectivos, sin copiar una proyección de un mes aislado.
-    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption}.items()}
+    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption}.items()}
 
 
 def validate_parameters(parameters):

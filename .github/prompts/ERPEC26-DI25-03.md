@@ -32,3 +32,11 @@ Actualizar sección vigente del contexto conservando historia. Archivar bytes ex
 Guardar UTF-8 sin BOM, verificando `Buffer.from(text, 'utf8').toString('utf8') === text` en cada escritura.
 Actualizar diagnosticImprovement; conservar fases maestras y pendientes externos. Repetir `node scripts/verify-governance.cjs` al cierre.
 Si falta un criterio, registrar fase parcial/bloqueada y causa; no cerrar ficticiamente ni comenzar sucesora. Commits solo autorizados con `phase: DI25-03 task: DI25-03.Y`.
+
+## Pronunciamiento recibido — controles automáticos DI25-03
+
+Leer docs/DI25-03_CONTROLES_AUTOMATICOS.md y su evidencia vigente. El documento recibido observa y devuelve, no acepta. Conservar pruebas negativas de edad al cierre del año, documentos tardíos, sustitutos, 100 canastas, otros empleadores y cambios posteriores al cálculo. No habilitar beneficios mediante una marca o referencia aislada.
+
+Antes de afirmar que la demo coincide, ejecutar .venv/Scripts/python.exe -X utf8 scripts/verify-di25-demo-runner.py en la demo local; este invoca scripts/verify-di25-demo.py mediante Odoo shell en erpec_demo; conservar el JSON y código de salida. No restablecer entradas editadas para forzar coincidencia. Separar compilación de vistas de prueba visual. Los hashes económicos deben registrar consulta y serialización.
+
+La continuación debe implementar regularización con fecha efectiva (D2), expedientes acreditados y vigencia/unicidad (D4/D7), comprobantes anteriores idempotentes y versionados con rectificación sustitutiva (D8), reliquidación acumulada futura (D6) y conciliación integral. Mantener bloqueos hasta probar esas capacidades; no convertir la existencia de un bloqueo en una función completada. La verificación del catálogo/validador RDEP 2026 y la aceptación profesional siguen separadas de las pruebas del motor.

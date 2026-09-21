@@ -1,3 +1,9 @@
+# Estado posterior al pronunciamiento técnico
+
+Documento histórico de la versión 18.0.1.11.0 o anterior. El pronunciamiento devuelve DI25-03 para corrección y prevalece la respuesta en [Controles automáticos](DI25-03_CONTROLES_AUTOMATICOS.md). La referencia aislada ya no habilita sustitutos ni 100 canastas en la nómina operativa; los ensayos aritméticos permanecen separados. Las propuestas del borrador no constituyen decisiones aceptadas. DI25-03 sigue observado.
+
+---
+
 # DI25-03 · Borrador de respuestas para el responsable tributario/contable
 
 **PROPUESTA PARA REVISIÓN. No registra aceptación ni homologación.** Las columnas «Respuesta propuesta» y «Fundamento» las redactó el equipo técnico para acelerar la revisión. Solo el responsable, una vez identificado, puede marcar su decisión, corregirla y firmarla en la última tabla. Hasta entonces DI25-03 permanece parcial y DI25-04 no inicia.

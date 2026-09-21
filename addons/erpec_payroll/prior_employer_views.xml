@@ -1,0 +1,62 @@
+<odoo>
+<record id="prior_employer_company_rule" model="ir.rule">
+  <field name="name">Comprobantes del empleador anterior por empresa</field><field name="model_id" ref="model_erpec_payroll_prior_employer"/>
+  <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+</record>
+<record id="prior_employer_list" model="ir.ui.view">
+  <field name="name">erpec.payroll.prior.employer.list</field><field name="model">erpec.payroll.prior.employer</field>
+  <field name="arch" type="xml"><list decoration-muted="state == 'superseded'">
+    <field name="employee_id"/><field name="year" options="{'enable_formatting': False}"/><field name="origin_ruc"/><field name="document_number"/>
+    <field name="version"/><field name="taxable_income"/><field name="iess"/><field name="withheld_tax"/>
+    <field name="state" widget="badge" decoration-success="state == 'active'" decoration-muted="state == 'superseded'"/>
+    <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+  </list></field>
+</record>
+<record id="prior_employer_form" model="ir.ui.view">
+  <field name="name">erpec.payroll.prior.employer.form</field><field name="model">erpec.payroll.prior.employer</field>
+  <field name="arch" type="xml"><form>
+    <header>
+      <button name="action_new_version" type="object" string="Registrar rectificación" invisible="not id or state != 'active'"/>
+      <field name="state" widget="statusbar"/>
+    </header>
+    <sheet>
+      <div class="alert alert-info" role="status" invisible="id">
+        Registra el comprobante que entregó el empleador anterior (Formulario 107 o certificado de retenciones, dentro de los 30 días de terminada la relación).
+        La clave es trabajador + RUC de origen + ejercicio + documento: registrar de nuevo la misma clave con los mismos datos no duplica nada, y con otros importes crea la versión siguiente.
+      </div>
+      <div class="alert alert-warning" role="status" invisible="not id or state == 'active'">Versión sustituida; consulta la versión vigente en el listado.</div>
+      <group readonly="id">
+        <group string="Clave del comprobante">
+          <field name="employee_id"/><field name="year" options="{'enable_formatting': False}"/>
+          <field name="origin_ruc"/><field name="origin_name"/><field name="document_number"/>
+        </group>
+        <group string="Fechas y archivo">
+          <field name="issued_date"/><field name="received_date"/><field name="document_file"/>
+          <field name="company_id" groups="base.group_multi_company"/>
+        </group>
+      </group>
+      <group readonly="id" string="Importes del comprobante (USD)">
+        <field name="taxable_income"/><field name="iess"/><field name="withheld_tax"/>
+      </group>
+      <group string="Control" invisible="not id">
+        <field name="version"/><field name="hash_origin"/><field name="file_hash"/><field name="supersedes_id"/><field name="change_log"/>
+      </group>
+    </sheet>
+    <chatter/>
+  </form></field>
+</record>
+<record id="prior_employer_action" model="ir.actions.act_window">
+  <field name="name">Certificados de otro empleador</field><field name="res_model">erpec.payroll.prior.employer</field>
+  <field name="view_mode">list,form</field><field name="context">{'search_default_active': 1}</field>
+  <field name="help" type="html"><p class="o_view_nocontent_smiling_face">Registra el comprobante del empleador anterior.</p><p>Las novedades que declaran ingresos o retenciones de otro empleador solo se aceptan si concilian con un comprobante vigente.</p></field>
+</record>
+<record id="prior_employer_search" model="ir.ui.view">
+  <field name="name">erpec.payroll.prior.employer.search</field><field name="model">erpec.payroll.prior.employer</field>
+  <field name="arch" type="xml"><search>
+    <field name="employee_id"/><field name="origin_ruc"/><field name="document_number"/>
+    <filter name="active" string="Vigentes" domain="[('state', '=', 'active')]"/>
+    <filter name="superseded" string="Sustituidos" domain="[('state', '=', 'superseded')]"/>
+  </search></field>
+</record>
+<menuitem id="prior_employer_menu" name="Certificados de otro empleador" parent="payroll_menu" action="prior_employer_action" sequence="27" groups="group_payroll_manager"/>
+</odoo>

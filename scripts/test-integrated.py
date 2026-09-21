@@ -5,6 +5,7 @@ import json
 import os
 import re
 import secrets
+import socket
 import subprocess
 import sys
 from pathlib import Path
@@ -22,6 +23,13 @@ def validate_name(name):
     if not re.fullmatch(r'ec_integrated_test_[a-z0-9_]{1,44}', name):
         raise ValueError('El nombre debe usar el prefijo reservado ec_integrated_test_.')
     return name
+
+
+def free_port():
+    """Puerto HTTP propio para cada ejecución: dos suites simultáneas no pueden compartir el 8069 de las pruebas HTTP."""
+    with socket.socket() as probe:
+        probe.bind(('127.0.0.1', 0))
+        return probe.getsockname()[1]
 
 
 def ensure_absent(cursor, name):
@@ -94,7 +102,7 @@ def main():
         config['options'] = {
             'db_host': '127.0.0.1', 'db_port': '55487', 'db_user': name, 'db_password': role_password, 'db_name': name,
             'addons_path': ADDONS, 'list_db': 'False', 'without_demo': 'all', 'logfile': str(STATE / (name + '.log')),
-            'data_dir': str(data_dir), 'http_interface': '127.0.0.1',
+            'data_dir': str(data_dir), 'http_interface': '127.0.0.1', 'http_port': str(free_port()),
         }
         with open(conf_path, 'x', encoding='utf-8') as handle:
             config_created = True

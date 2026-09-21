@@ -1,3 +1,9 @@
+# Estado posterior al pronunciamiento técnico
+
+Documento histórico de la versión 18.0.1.11.0 o anterior. El pronunciamiento devuelve DI25-03 para corrección y prevalece la respuesta en [Controles automáticos](DI25-03_CONTROLES_AUTOMATICOS.md). La referencia aislada ya no habilita sustitutos ni 100 canastas en la nómina operativa; los ensayos aritméticos permanecen separados. Las propuestas del borrador no constituyen decisiones aceptadas. DI25-03 sigue observado.
+
+---
+
 # DI25-03 · Exenciones personales de la base · 2026
 
 Estado: implementado y ensayado en nómina mensual, anexo RDEP y ensayos de renta. No constituye aceptación del responsable tributario ni cierre de DI25-03. Es distinto del tope de 100 canastas de gastos personales (DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md); ambos pueden coexistir.

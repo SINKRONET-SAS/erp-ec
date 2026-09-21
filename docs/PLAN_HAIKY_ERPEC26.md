@@ -62,3 +62,7 @@ El titular pidió una pasada al funcionamiento, cálculos y reportes de nómina,
 ## Diagnóstico integral DI25 — 20-09-2026
 
 Solicitud de diagnóstico UI/UX, duplicación, errores y cumplimiento Ecuador con despliegue de plan y gobierno. Ver PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md y DIAGNOSTICO_INTEGRAL_DI25.md. DI25-00 es diagnóstico/documentación; DI25-01–07 requieren ejecutar sus prompts conforme a dependencias y autorización. No se cierran fases maestras ni se acredita corrección funcional por esta publicación.
+
+## DI25-03 — pronunciamiento y validaciones automáticas
+
+El pronunciamiento técnico recibido observa y devuelve la versión 18.0.1.11.0. El incremento 18.0.1.12.0 corrige edad y rebaja aplicada, añade bloqueos en servidor y huellas de datos revisados, y automatiza la auditoría de los 32 ejemplos con salida verificable. Alcance, fuentes y desarrollo aún pendiente: [Controles automáticos DI25-03](DI25-03_CONTROLES_AUTOMATICOS.md). Resultados ejecutados: [Evidencia](evidencias/DI25/DI25-03-controles-automaticos.json). No cierra DI25-03 ni habilita DI25-04. No sustituye importación versionada, reliquidación acumulada, expediente acreditado ni conciliación integral por una marca manual.

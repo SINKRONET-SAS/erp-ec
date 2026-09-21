@@ -83,10 +83,10 @@ class PersonalExemptionEngineCase(TransactionCase):
             (date(1990, 5, 1), '02', 50, 'C', '1712345678', 2026, 'DOC-1', january, 6, [{'kind': 'substitute', 'percentage': 50, 'months': 6}], 0, 0),
             (date(1990, 5, 1), '02', 50, 'N', '', 2026, 'DOC-1', january, 6, [], 1, 0),
             (date(1990, 5, 1), '02', 50, 'C', '1712345678', 2026, 'DOC-1', january, 0, [], 1, 0),
-            # Cumple 65 años en el ejercicio: solo se cubre el año completo.
-            (date(1961, 6, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
+            # D1: cumple 65 años en cualquier fecha del ejercicio.
+            (date(1961, 6, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
             (date(1961, 1, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
-            (date(1961, 1, 2), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
+            (date(1961, 1, 2), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
         ]
         for index, (born, kind, percent, id_type, ident, year, ref, delivered, months, claims, issues, notes) in enumerate(cases):
             with self.subTest(case=index):
@@ -181,7 +181,7 @@ class PersonalExemptionIntegrationCase(TransactionCase):
         # 24.000 × 100 % × 6/12 = 12.000; base 20.400 → 840 → 70/mes.
         self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=100, ec_rdep_exemption_months=6,
                        ec_rdep_disability_id_type='C', ec_rdep_disability_id='1799999999')
-        self.assertEqual(self._monthly_tax()['tax'], 70)
+        self.assertEqual(self._monthly_tax()['tax'], 170)  # D4: meses y referencia no acreditan sustitución.
         self.employee.ec_rdep_disability_id = False
         self.assertEqual(self._monthly_tax()['tax'], 170)
         with self.assertRaises(ValidationError), self.cr.savepoint():
@@ -192,13 +192,14 @@ class PersonalExemptionIntegrationCase(TransactionCase):
         self.assertEqual(self._monthly_tax(personal_expenses=6000)['tax'], 95)
         self.employee.write({'ec_rdep_special_expense': 'holder', 'ec_rdep_special_expense_year': self.policy.year,
                              'ec_rdep_special_expense_ref': 'CERT-SINTETICO-1'})
-        self.assertEqual(self._monthly_tax(personal_expenses=6000)['tax'], 80)
+        self.assertEqual(self._monthly_tax(personal_expenses=6000)['tax'], 95)  # D7: referencia aislada bloqueada.
         self.employee.ec_rdep_special_expense_ref = False
         self.assertEqual(self._monthly_tax(personal_expenses=6000)['tax'], 95)
         with self.assertRaises(ValidationError), self.cr.savepoint():
             self._period(3000, expense_food=6000)
         self.employee.ec_rdep_special_expense_ref = 'CERT-SINTETICO-1'
-        self._period(3000, expense_food=6000)
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            self._period(3000, expense_food=6000)
 
     def test_annual_rdep_reports_accredited_exemption_in_the_right_field(self):
         # 40.000 − IESS 4.000 = 36.000. Adulto mayor 12.000 → 24.000 → 1.200. Sin exención, 2.400.
@@ -258,7 +259,8 @@ class PersonalExemptionIntegrationCase(TransactionCase):
             annex.action_generate_xml()
         self.employee.ec_rdep_dependents_count = 1
         annex = self._annex()
-        annex.action_generate_xml()
+        with self.assertRaisesRegex(ValidationError, 'D7'):
+            annex.action_generate_xml()
 
     def test_views_expose_accreditation_fields(self):
         manager = self.env['res.users'].with_context(no_reset_password=True).create({

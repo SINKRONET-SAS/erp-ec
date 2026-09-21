@@ -175,14 +175,14 @@ class Employee(models.Model):
         help='Número o código del documento entregado; no registrar diagnósticos ni copias del documento.')
     ec_rdep_exemption_date = fields.Date(
         'Fecha de entrega al empleador', groups='erpec_payroll.group_payroll_manager',
-        help='El Reglamento LRTI, art. 50, fija el 15 de enero del ejercicio. Una entrega posterior bloquea el anexo hasta criterio del responsable.')
+        help='El Reglamento LRTI, art. 50, fija el 15 de enero del ejercicio. Una entrega posterior requiere regularización documentada y ajuste futuro; no permite reabrir nóminas contabilizadas.')
     ec_rdep_exemption_months = fields.Integer(
         'Meses de ejercicio como sustituto', default=12, groups='erpec_payroll.group_payroll_manager',
         help='Solo para el tipo 02 (sustituto): proporción del año en que ejerció esa calidad.')
     ec_rdep_special_expense = fields.Selection(
         SPECIAL_EXPENSE, string='Tope de gastos personales', default='none',
         groups='erpec_payroll.group_payroll_manager',
-        help='100 canastas por discapacidad o enfermedad catastrófica, rara o huérfana del contribuyente o de una carga. Requiere referencia del documento del año.')
+        help='100 canastas por discapacidad o enfermedad catastrófica, rara o huérfana del contribuyente o de una carga. La referencia aislada no lo habilita: requiere acreditación verificable y validación del vínculo.')
     ec_rdep_special_expense_year = fields.Integer('Año del documento del tope especial', groups='erpec_payroll.group_payroll_manager')
     ec_rdep_special_expense_ref = fields.Char('Referencia del documento del tope especial', groups='erpec_payroll.group_payroll_manager')
 
@@ -326,8 +326,11 @@ class RdepAnnex(models.Model):
         import hashlib
         employees = periods.line_ids.employee_id
         employee_fields = ['birthday', 'identification_id', 'name'] + [
-            key for key in employees._fields if key.startswith('ec_rdep_')]
+            key for key, field in employees._fields.items() if key.startswith('ec_rdep_') and field.store and not field.compute]
         payload = {
+            'calculation_revision': 'DI25-03-controles-18.0.1.13.0',
+            'prior_employer': self.env['erpec.payroll.prior.employer'].sudo().search([
+                ('company_id', '=', self.company_id.id), ('year', '=', self.year), ('state', '=', 'active')]).sorted('id').read(['employee_id', 'version', 'file_hash']),
             'company': [self.company_id.id, self.company_id.vat, self.company_id.ec_rdep_employer_type,
                         self.company_id.ec_rdep_social_security_entity], 'year': self.year,
             'periods': [(period.id, period.month, period.version, period.policy_id.id,
@@ -342,11 +345,11 @@ class RdepAnnex(models.Model):
         """Explicita casos sin oráculo aprobado; no inventa reglas de exención."""
         issues = []
         special_inputs = ('annual_profit_sharing', 'decent_wage_compensation',
-                          'other_employer_taxable_income', 'other_employer_iess',
-                          'other_employer_withheld_tax', 'employer_assumed_tax',
-                          'other_general_interest_income')
+                          'employer_assumed_tax', 'other_general_interest_income')
         if any(any(line[key] for key in special_inputs) for line in periods.line_ids):
-            issues.append('Ingresos especiales, impuesto asumido u otros empleadores: falta conciliación independiente aprobada.')
+            issues.append('Ingresos especiales o impuesto asumido: falta conciliación independiente aprobada.')
+        # D8: otros empleadores se concilian con los comprobantes versionados del empleador anterior.
+        issues.extend(self.env['erpec.payroll.prior.employer'].reconciliation_issues(self.company_id, self.year, periods.line_ids))
         for employee in periods.line_ids.employee_id:
             for message in employee.sudo()._rdep_personal_status(self.year)['issues']:
                 issues.append('Empleado %s: %s' % (employee.name, message))
@@ -364,6 +367,7 @@ class RdepAnnex(models.Model):
         for annex in self:
             periods = annex._posted_periods()
             issues = annex._coverage_issues(periods)
+            issues.append('D5 · Compatibilidad RDEP 2026 pendiente: el portal publica programa 2026, pero ficha y catálogo visibles para 2025. El XML sigue siendo una vista previa interna.')
             issues += ['Aviso, %s: %s' % (employee.name, note) for employee in periods.line_ids.employee_id
                        for note in employee.sudo()._rdep_personal_status(annex.year)['notes']]
             if annex.source_hash and annex.source_hash != annex._source_signature(periods):
@@ -413,7 +417,7 @@ class RdepAnnex(models.Model):
                 'annual_base': float(annual_base),
                 'personal_exemption': float(exemption), 'personal_exemption_kind': exemption_kind,
                 'annual_tax_caused': float(money(caused)),
-                'personal_expense_rebate': float(money(rebate)),
+                'personal_expense_rebate': float(money(min(caused, rebate))),
                 'annual_tax_after_rebate': float(money(after_rebate)),
                 'tax_difference': float(money(after_rebate - number(values['tax']))),
             })

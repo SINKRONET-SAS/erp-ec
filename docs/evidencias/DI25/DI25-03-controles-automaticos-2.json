@@ -1,0 +1,82 @@
+{
+  "phase": "DI25-03",
+  "task": "DI25-03.5",
+  "moduleVersion": "18.0.1.13.1",
+  "expertAccepted": false,
+  "status": "controles-automaticos-desplegados-aceptacion-externa-pendiente",
+  "instruction": "Adjunto pronunciamiento tecnico: los pendientes deben, en lo posible, dejar de ser acciones manuales y pasar a controles de validacion automatizados; verificar cambios del commit; desplegar matriz de pendientes.",
+  "previousIncrementVerified": {
+    "commit": "c47359d8eb9fac9d7132d0a5c53f17f9156e0ce5",
+    "ci": "35645129313",
+    "jobsSucceeded": 5,
+    "note": "CI comprobado en vivo con gh. Parametros 2026 y formulas contrastados con una oraculo independiente: caso 2 = 23,45; discapacidad 30/50/75/85 = 14.649,60/17.091,20/19.532,80/24.416,00; topes 5.752,60/16.436/82.180."
+  },
+  "codexIncompleteRunExplained": "Dos suites lanzadas en paralelo (21:32 y 21:35 UTC) compartian el puerto HTTP 8069: la segunda fallo con 4 errores TestHealth. La primera aprobo 489 pruebas. El ejecutor ahora asigna un puerto propio por corrida (prueba en scripts/test-runner-safety.py).",
+  "controlsAdded": {
+    "sealedParameters": "addons/erpec_payroll/parameters_seal.py",
+    "priorEmployerRegister": "addons/erpec_payroll/prior_employer.py (idempotente, versionado, conciliacion D8)",
+    "exemptionDossier": "addons/erpec_payroll/exemption_dossier.py (D4/D7, verificacion con segregacion de funciones)",
+    "reconciliation": "addons/erpec_payroll/tax_controls.py (asiento vs nomina; retencion acumulada vs impuesto anual)",
+    "acceptanceMatrix": "addons/erpec_payroll/acceptance_matrix.py + acceptance_matrix_data.xml (19 filas)"
+  },
+  "defectFoundByTests": "Al rectificar un comprobante, el UPDATE que marca la version anterior como sustituida no se ejecutaba antes del INSERT de la nueva y el indice de version vigente unica lo rechazaba; corregido con flush explicito.",
+  "tests": {
+    "windowsIntegrated": {
+      "total": 533,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 5,
+      "skippedReason": "erpec_treasury requiere la demo sembrada",
+      "database": "ec_integrated_test_cf94a34a0417"
+    },
+    "payrollModule": {
+      "before": 124,
+      "after": 168,
+      "newTests": 44
+    },
+    "runnerSafety": "8 pruebas",
+    "matrixRender": "render-di25-matrix.py --check"
+  },
+  "demo": {
+    "database": "erpec_demo",
+    "moduleVersionBefore": "18.0.1.11.0",
+    "moduleVersionAfter": "18.0.1.13.1",
+    "backup": ".cache/windows/backups/di25-controles2-20260921T223139Z",
+    "backupDatabaseSha256": "c3c839ecabba1f32bfecf51c3981c9cf5d02b2bcbf8cc63c81962eb2b882a09a",
+    "auditRunner": {
+      "passed": true,
+      "cases": 32,
+      "problems": []
+    },
+    "matrixRowsVisible": 19,
+    "matrixStates": {
+      "automated": 6,
+      "partial": 9,
+      "blocked": 2,
+      "external": 2
+    },
+    "menus": [
+      "Nomina > Matriz de aceptacion DI25-03",
+      "Nomina > Certificados de otro empleador",
+      "Nomina > Expedientes de exencion"
+    ],
+    "viewsCompiled": [
+      "erpec.payroll.acceptance.matrix",
+      "erpec.payroll.prior.employer",
+      "erpec.payroll.exemption.dossier"
+    ]
+  },
+  "notAutomatedAndWhy": {
+    "D2": "el procedimiento de regularizacion lo define por escrito el responsable tributario",
+    "D6": "la reliquidacion mensual cambia cada retencion y necesita su criterio y casos de aceptacion",
+    "caso3_caso8_caso11": "matriz de incidencias, ausencias y regimenes especiales sin reglas aprobadas",
+    "rdep2026": "catalogo y validador oficial del SRI todavia no publicados para el ejercicio",
+    "adultoMayor": "pregunta abierta: acreditacion documental obligatoria vs edad por fecha de nacimiento (D1)"
+  },
+  "limits": [
+    "Nada esta homologado ni presentado al SRI.",
+    "La verificacion de expedientes es documental interna; no sustituye la consulta a la autoridad.",
+    "Los sintéticos de demo no habilitan beneficios operativos."
+  ],
+  "ciLinux": "pendiente hasta el push; se registra en un commit posterior de evidencia"
+}

@@ -9,3 +9,8 @@ from . import test_benefits_advances
 from . import test_move_copy
 from . import test_tax_review
 from . import test_personal_exemptions
+
+from . import test_tax_controls
+from . import test_tax_registers
+from . import test_exemption_dossier
+from . import test_acceptance_matrix

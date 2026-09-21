@@ -14,7 +14,7 @@ INPUTS = ('current_income', 'current_iess', 'current_withheld', 'other_income',
 
 RESULTS = ('exempt_income', 'total_informed', 'combined_income', 'combined_iess', 'annual_base',
            'personal_exemption', 'taxable_base', 'tax_caused',
-           'expense_cap', 'rebate', 'annual_tax', 'without_other_tax', 'tax_increase',
+           'expense_cap', 'rebate', 'rebate_applied', 'annual_tax', 'without_other_tax', 'tax_increase',
            'total_withheld', 'pending_tax', 'excess_withheld', 'monthly_estimate', 'last_estimate')
 
 
@@ -68,7 +68,7 @@ def review_calculation(data, parameters):
                 combined_income=income, combined_iess=iess, annual_base=base,
                 personal_exemption=applied, taxable_base=taxable,
                 tax_caused=money(caused), expense_cap=money(personal_expense_cap(parameters['expense_limit'], int(values['dependents']), region, special_expense=special_expense)),
-                rebate=money(rebate), annual_tax=annual, without_other_tax=without,
+                rebate=money(rebate), rebate_applied=money(min(caused, rebate)), annual_tax=annual, without_other_tax=without,
                 tax_increase=money(annual-without), total_withheld=withheld,
                 pending_tax=money(pending), excess_withheld=money(excess),
                 monthly_estimate=monthly, last_estimate=money(pending-monthly*(months-1)))
@@ -132,6 +132,7 @@ class TaxReview(models.Model):
     annual_base = fields.Float('Base imponible anual', compute='_compute_review', digits=(16, 2))
     tax_caused = fields.Float('IR causado según tabla', compute='_compute_review', digits=(16, 2))
     expense_cap = fields.Float('Tope de gastos del supuesto', compute='_compute_review', digits=(16, 2))
+    rebate_applied = fields.Float('Rebaja aplicada (limitada al impuesto)', compute='_compute_review', digits=(16, 2))
     rebate = fields.Float('Rebaja calculada por gastos', compute='_compute_review', digits=(16, 2))
     annual_tax = fields.Float('IR anual después de rebaja', compute='_compute_review', digits=(16, 2))
     without_other_tax = fields.Float('IR anual sin otro empleador', compute='_compute_review', digits=(16, 2))

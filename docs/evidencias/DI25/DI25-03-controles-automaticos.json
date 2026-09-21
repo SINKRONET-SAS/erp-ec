@@ -1,0 +1,696 @@
+{
+  "phase": "DI25-03",
+  "task": "DI25-03.3",
+  "status": "controles-implementados-validacion-en-curso",
+  "expertAccepted": false,
+  "opinion": {
+    "file": "DI25-03_PRONUCIAMIENTO_TECNICO.pdf",
+    "sha256": "3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722",
+    "pages": 5,
+    "decision": "observar-y-devolver-para-correccion",
+    "identifiedInHeader": "Gonzalo Proaño — coordinador técnico",
+    "signatureFieldsBlank": true,
+    "signatureVerified": false,
+    "embeddedLinks": 0
+  },
+  "previousIncrement": {
+    "codeCommit": "c47359d8eb9fac9d7132d0a5c53f17f9156e0ce5",
+    "evidenceCommit": "61bfdb2bfea60b94dc9fbc0bf92029ab03f8fe92",
+    "evidenceCommitOnlyDocumentation": true,
+    "ci": {
+      "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35645129313",
+      "verifiedLive": true,
+      "conclusion": "success",
+      "jobsSucceeded": 5,
+      "tests": 478,
+      "failed": 0,
+      "errors": 0
+    },
+    "windowsLogHashMatched": true,
+    "windowsLog": "ff100094701cf49a6125809eca1011366892f6c62de59374225ba3b622052be1",
+    "backupHashMatched": true,
+    "backupSha256": "2613d643938045dd3a173183fd99a425b566dc0098c95451081bf3e852546ee2",
+    "originalEconomicHashesIndependentlyReproduced": false,
+    "reason": "La evidencia original no registra consulta ni serialización; la nueva auditoría declara su algoritmo y compara antes/después con él."
+  },
+  "sources": [
+    {
+      "url": "https://www.sri.gob.ec/formularios-e-instructivos1",
+      "finding": "Programa RDEP 2026; ficha y catálogo visibles para ejercicio 2025."
+    },
+    {
+      "url": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/12c884d5-c8d9-4171-becc-1513b990b87a/LEY_DE_REGIMEN_TRIBUTARIO_INTERNO_LRTI.pdf",
+      "finding": "Portada: última reforma 2026-04-01; difiere del 2025-10-24 citado en el pronunciamiento."
+    },
+    {
+      "url": "https://www.sri.gob.ec/detalle-noticias?idnoticia=1324&marquesina=1",
+      "finding": "Actualización de proyección y reliquidación de retenciones futuras 2026."
+    }
+  ],
+  "pending": [
+    "D2: expediente de regularización tardía con efecto futuro",
+    "D4/D7: expediente acreditado, vigencia, vínculo y unicidad; no validación sanitaria automática disponible",
+    "D8: importación idempotente/versionada de comprobantes y rectificaciones sustitutivas",
+    "D6: reliquidación mensual acumulada con retenciones anteriores",
+    "Matriz de incidencias laborales y conciliación nómina/mayor/107/RDEP",
+    "Catálogo y validador oficial RDEP 2026 y aceptación externa"
+  ],
+  "limits": [
+    "Los bloqueos no acreditan implementación de los flujos pendientes.",
+    "No hay cierre DI25-03, inicio DI25-04, homologación ni presentación SRI.",
+    "Los ensayos sintéticos no habilitan beneficios operativos."
+  ],
+  "checkedAt": "2026-09-21T21:36:24.967Z",
+  "demoBefore": {
+    "checkedAt": "2026-09-21T21:26:29.433296+00:00",
+    "database": "erpec_demo",
+    "moduleVersion": "18.0.1.11.0",
+    "cases": [
+      {
+        "case": "baseline",
+        "record": 1,
+        "originalInputs": true,
+        "actual": [
+          16299,
+          242,
+          62,
+          12
+        ],
+        "expected": [
+          16299,
+          242,
+          62,
+          12
+        ],
+        "passed": true
+      },
+      {
+        "case": "previous",
+        "record": 2,
+        "originalInputs": true,
+        "actual": [
+          21732,
+          816.28,
+          636.28,
+          436.28
+        ],
+        "expected": [
+          21732,
+          816.28,
+          636.28,
+          436.28
+        ],
+        "passed": true
+      },
+      {
+        "case": "higher",
+        "record": 3,
+        "originalInputs": true,
+        "actual": [
+          25354,
+          1250.92,
+          1070.92,
+          870.92
+        ],
+        "expected": [
+          25354,
+          1250.92,
+          1070.92,
+          870.92
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary_change",
+        "record": 4,
+        "originalInputs": true,
+        "actual": [
+          19015.5,
+          513.65,
+          333.65,
+          283.65
+        ],
+        "expected": [
+          19015.5,
+          513.65,
+          333.65,
+          283.65
+        ],
+        "passed": true
+      },
+      {
+        "case": "absence",
+        "record": 5,
+        "originalInputs": true,
+        "actual": [
+          15846.25,
+          196.73,
+          16.73,
+          0
+        ],
+        "expected": [
+          15846.25,
+          196.73,
+          16.73,
+          0
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_no_0",
+        "record": 6,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          5868.28,
+          5868.28
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          5868.28,
+          5868.28
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_no_1",
+        "record": 7,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          5572.43,
+          5572.43
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          5572.43,
+          5572.43
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_no_2",
+        "record": 8,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          5276.59,
+          5276.59
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          5276.59,
+          5276.59
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_no_3",
+        "record": 9,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          4832.81,
+          4832.81
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          4832.81,
+          4832.81
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_no_4",
+        "record": 10,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          4389.04,
+          4389.04
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          4389.04,
+          4389.04
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_no_5",
+        "record": 11,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          3945.27,
+          3945.27
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          3945.27,
+          3945.27
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_si_0",
+        "record": 12,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          5036.8,
+          5036.8
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          5036.8,
+          5036.8
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_si_1",
+        "record": 13,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          4503.39,
+          4503.39
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          4503.39,
+          4503.39
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_si_2",
+        "record": 14,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          3969.97,
+          3969.97
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          3969.97,
+          3969.97
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_si_3",
+        "record": 15,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          3169.85,
+          3169.85
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          3169.85,
+          3169.85
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_si_4",
+        "record": 16,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          2369.73,
+          2369.73
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          2369.73,
+          2369.73
+        ],
+        "passed": true
+      },
+      {
+        "case": "salary5000_si_5",
+        "record": 17,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          1569.61,
+          1569.61
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          1569.61,
+          1569.61
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_benefits",
+        "record": 18,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          5868.28,
+          5868.28
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          5868.28,
+          5868.28
+        ],
+        "passed": true
+      },
+      {
+        "case": "annual_close",
+        "record": 19,
+        "originalInputs": true,
+        "actual": [
+          21732,
+          816.28,
+          636.28,
+          0
+        ],
+        "expected": [
+          21732,
+          816.28,
+          636.28,
+          0
+        ],
+        "passed": true
+      },
+      {
+        "case": "special_holder",
+        "record": 20,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          1503.75,
+          1503.75
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          1503.75,
+          1503.75
+        ],
+        "passed": true
+      },
+      {
+        "case": "special_dependent",
+        "record": 21,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          1503.75,
+          1503.75
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          1503.75,
+          1503.75
+        ],
+        "passed": true
+      },
+      {
+        "case": "special_zero",
+        "record": 22,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          0,
+          0
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          0,
+          0
+        ],
+        "passed": true
+      },
+      {
+        "case": "special_cap",
+        "record": 23,
+        "originalInputs": true,
+        "actual": [
+          217320,
+          64296.68,
+          49504.28,
+          49504.28
+        ],
+        "expected": [
+          217320,
+          64296.68,
+          49504.28,
+          49504.28
+        ],
+        "passed": true
+      },
+      {
+        "case": "special_galapagos",
+        "record": 24,
+        "originalInputs": true,
+        "actual": [
+          217320,
+          64296.68,
+          37625.98,
+          37625.98
+        ],
+        "expected": [
+          217320,
+          64296.68,
+          37625.98,
+          37625.98
+        ],
+        "passed": true
+      },
+      {
+        "case": "special_no_expenses",
+        "record": 25,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          6903.75,
+          6903.75,
+          6903.75
+        ],
+        "expected": [
+          54330,
+          6903.75,
+          6903.75,
+          6903.75
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_elderly",
+        "record": 26,
+        "originalInputs": true,
+        "actual": [
+          27165,
+          137.45,
+          137.45,
+          137.45
+        ],
+        "expected": [
+          27165,
+          137.45,
+          137.45,
+          137.45
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_disability_40",
+        "record": 27,
+        "originalInputs": true,
+        "actual": [
+          27165,
+          15.37,
+          15.37,
+          15.37
+        ],
+        "expected": [
+          27165,
+          15.37,
+          15.37,
+          15.37
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_disability_50",
+        "record": 28,
+        "originalInputs": true,
+        "actual": [
+          27165,
+          0,
+          0,
+          0
+        ],
+        "expected": [
+          27165,
+          0,
+          0,
+          0
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_disability_100",
+        "record": 29,
+        "originalInputs": true,
+        "actual": [
+          27165,
+          0,
+          0,
+          0
+        ],
+        "expected": [
+          27165,
+          0,
+          0,
+          0
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_substitute",
+        "record": 30,
+        "originalInputs": true,
+        "actual": [
+          27165,
+          351.96,
+          351.96,
+          351.96
+        ],
+        "expected": [
+          27165,
+          351.96,
+          351.96,
+          351.96
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_capped",
+        "record": 31,
+        "originalInputs": true,
+        "actual": [
+          9055,
+          0,
+          0,
+          0
+        ],
+        "expected": [
+          9055,
+          0,
+          0,
+          0
+        ],
+        "passed": true
+      },
+      {
+        "case": "exempt_with_special",
+        "record": 32,
+        "originalInputs": true,
+        "actual": [
+          54330,
+          1894.1,
+          454.1,
+          454.1
+        ],
+        "expected": [
+          54330,
+          1894.1,
+          454.1,
+          454.1
+        ],
+        "passed": true
+      }
+    ],
+    "viewsCompiled": [
+      "hr.employee",
+      "erpec.payroll.period",
+      "erpec.payroll.tax.review",
+      "erpec.payroll.rdep"
+    ],
+    "economicBefore": {
+      "account_move": {
+        "count": 29,
+        "sha256": "5e89aeb151af1764eec1b8c9c6e143c581fb1f87874ec00a885c1dcd0a9a296e"
+      },
+      "account_move_line": {
+        "count": 134,
+        "sha256": "e907bdb0943492e6c683dbc450e88dd11b28273e297a53184e7ecbdfd413566b"
+      },
+      "payroll_period": {
+        "count": 8,
+        "sha256": "d86f9e92b2700b8ca7e731fa3b4d05ac836e51772a287cc32bdd9ff04e3aecd9"
+      },
+      "payroll_line": {
+        "count": 9,
+        "sha256": "60d1463812ae1ce85d094acc2d12a40dfa3696eab3b5ab7bfdc97355932320db"
+      }
+    },
+    "economicAfter": {
+      "account_move": {
+        "count": 29,
+        "sha256": "5e89aeb151af1764eec1b8c9c6e143c581fb1f87874ec00a885c1dcd0a9a296e"
+      },
+      "account_move_line": {
+        "count": 134,
+        "sha256": "e907bdb0943492e6c683dbc450e88dd11b28273e297a53184e7ecbdfd413566b"
+      },
+      "payroll_period": {
+        "count": 8,
+        "sha256": "d86f9e92b2700b8ca7e731fa3b4d05ac836e51772a287cc32bdd9ff04e3aecd9"
+      },
+      "payroll_line": {
+        "count": 9,
+        "sha256": "60d1463812ae1ce85d094acc2d12a40dfa3696eab3b5ab7bfdc97355932320db"
+      }
+    },
+    "problems": [],
+    "passed": true,
+    "expertAccepted": false,
+    "limits": [
+      "Solo aritmética y carga de vistas; no aceptación legal ni ensayo visual.",
+      "No se valida autenticidad sanitaria ni compatibilidad oficial del RDEP 2026."
+    ]
+  }
+}

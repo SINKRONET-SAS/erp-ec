@@ -193,3 +193,7 @@ No afirmar que el certificado propio falta: contexto OP17 y ensayos posteriores 
 ## Criterio de finalización
 
 Diagnóstico y plan se consideran entregados al existir informe, evidencia, ocho prompts, contexto actualizado y lock válido. Producto corregido/comercializable requiere DI25-01–07 ejecutadas, aceptación del alcance liberado y gates históricos/externos pertinentes; son hitos diferentes.
+
+## DI25-03 — pronunciamiento y validaciones automáticas
+
+El pronunciamiento técnico recibido observa y devuelve la versión 18.0.1.11.0. El incremento 18.0.1.12.0 corrige edad y rebaja aplicada, añade bloqueos en servidor y huellas de datos revisados, y automatiza la auditoría de los 32 ejemplos con salida verificable. Alcance, fuentes y desarrollo aún pendiente: [Controles automáticos DI25-03](DI25-03_CONTROLES_AUTOMATICOS.md). Resultados ejecutados: [Evidencia](evidencias/DI25/DI25-03-controles-automaticos.json). No cierra DI25-03 ni habilita DI25-04. No sustituye importación versionada, reliquidación acumulada, expediente acreditado ni conciliación integral por una marca manual.

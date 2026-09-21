@@ -1,0 +1,46 @@
+<odoo>
+<record id="acceptance_matrix_list" model="ir.ui.view">
+  <field name="name">erpec.payroll.acceptance.matrix.list</field><field name="model">erpec.payroll.acceptance.matrix</field>
+  <field name="arch" type="xml"><list>
+    <field name="code" width="60px"/><field name="item"/><field name="expert_decision" width="110px"/>
+    <field name="control_state" widget="badge" decoration-success="control_state == 'automated'" decoration-info="control_state == 'partial'"
+           decoration-warning="control_state == 'blocked'" decoration-muted="control_state == 'external'"/>
+    <field name="owner"/>
+  </list></field>
+</record>
+<record id="acceptance_matrix_form" model="ir.ui.view">
+  <field name="name">erpec.payroll.acceptance.matrix.form</field><field name="model">erpec.payroll.acceptance.matrix</field>
+  <field name="arch" type="xml"><form create="0" edit="0" delete="0">
+    <sheet>
+      <div class="alert alert-warning" role="status">
+        DI25-03 sigue observado y no homologado. Esta matriz muestra el estado real de cada decisión y caso del pronunciamiento técnico del 21-09-2026;
+        un control automático no equivale a la aceptación del responsable tributario ni a una consulta vinculante al SRI.
+      </div>
+      <h1><field name="code"/> · <field name="item"/></h1>
+      <group>
+        <group><field name="expert_decision"/><field name="control_state"/><field name="owner"/></group>
+        <group><field name="external_acceptance"/><field name="tests"/></group>
+      </group>
+      <group string="Control que existe hoy"><field name="control" nolabel="1"/></group>
+      <group string="Lo que sigue pendiente"><field name="pending" nolabel="1"/></group>
+    </sheet>
+  </form></field>
+</record>
+<record id="acceptance_matrix_search" model="ir.ui.view">
+  <field name="name">erpec.payroll.acceptance.matrix.search</field><field name="model">erpec.payroll.acceptance.matrix</field>
+  <field name="arch" type="xml"><search>
+    <field name="code"/><field name="item"/><field name="owner"/>
+    <filter name="automated" string="Control automático" domain="[('control_state', '=', 'automated')]"/>
+    <filter name="partial" string="Control parcial" domain="[('control_state', '=', 'partial')]"/>
+    <filter name="blocked" string="Bloqueo automático" domain="[('control_state', '=', 'blocked')]"/>
+    <filter name="external" string="Depende de un tercero" domain="[('control_state', '=', 'external')]"/>
+    <group expand="0" string="Agrupar por"><filter name="by_state" string="Estado" context="{'group_by': 'control_state'}"/><filter name="by_owner" string="Quién lo destraba" context="{'group_by': 'owner'}"/></group>
+  </search></field>
+</record>
+<record id="acceptance_matrix_action" model="ir.actions.act_window">
+  <field name="name">Matriz de aceptación DI25-03</field><field name="res_model">erpec.payroll.acceptance.matrix</field>
+  <field name="view_mode">list,form</field><field name="context">{'search_default_by_state': 1}</field>
+  <field name="help" type="html"><p class="o_view_nocontent_smiling_face">La matriz se carga con el módulo.</p></field>
+</record>
+<menuitem id="acceptance_matrix_menu" name="Matriz de aceptación DI25-03" parent="payroll_menu" action="acceptance_matrix_action" sequence="32" groups="group_payroll_manager"/>
+</odoo>
