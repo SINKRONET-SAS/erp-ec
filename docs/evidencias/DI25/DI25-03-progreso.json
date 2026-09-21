@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
-  "status": "parcial-validacion-local-y-aceptacion-tributaria-pendientes",
-  "updatedAt": "2026-09-21T03:51:41.799Z",
+  "status": "parcial-aceptacion-tributaria-y-cobertura-pendientes",
+  "updatedAt": "2026-09-21T11:14:15.814Z",
   "baseline": {
     "tests": 79,
     "failed": 3,
@@ -27,14 +27,15 @@
     "Política, base, diferencia y bloqueos visibles; XML obsoleto requiere reagrupar"
   ],
   "pending": [
-    "Suite Windows completa y CI de ajustes finales de presentación",
-    "DI25-03.3: responsable y oráculos aprobados de otros empleadores, exenciones, acumulados, ausencias, bases diferenciadas y cierre anual"
+    "DI25-03.3: identificar responsable tributario/contable y aprobar oráculos independientes de otros empleadores, exenciones, acumulados, ausencias, bases diferenciadas y cierre anual; después implementar y validar la cobertura faltante"
   ],
   "limits": [
     "No se inicia DI25-04; depende de cierre válido de DI25-03",
     "No se reescriben asientos ni se migra demo del usuario",
     "Motor sigue limitado a DEMO sin RUC",
-    "No homologación, presentación SRI ni pagos/correos reales"
+    "No homologación, presentación SRI ni pagos/correos reales",
+    "Cinco pruebas de Tesorería omitidas por datos demo ausentes en ambos entornos; no equivalen a casos aprobados",
+    "Migración probada con helper aplicar/restaurar; no ensayo integral de actualización desde cada versión histórica"
   ],
   "sourceHashes": {
     "addons/erpec_payroll/__manifest__.py": "d56ec9886ca1d05ab30a70e3f79d13222362c2c53f939549ce3ab4a1f9519d03",
@@ -65,5 +66,57 @@
     "exit": 0,
     "log": ".cache/di25-03-ci-7f.log",
     "sha256": "b3580136edc7f60aba373c4d970673c711ac31d9e2e74ae7609b6553e8931019"
+  },
+  "validatedSourceCommit": "f2366218f5f5e776c956aa5722a7180ee59e35aa",
+  "windowsFinal": {
+    "startedAt": "2026-09-21T11:03:42.471207+00:00",
+    "finishedAt": "2026-09-21T11:14:08.966318+00:00",
+    "commit": "f2366218f5f5e776c956aa5722a7180ee59e35aa",
+    "tests": 448,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "exit": 0,
+    "summary": "448 pruebas reportadas, 0 fallos, 0 errores, 5 omisiones; base ec_integrated_test_0e0d928d95a0; registro ec_integrated_test_0e0d928d95a0.log",
+    "log": ".cache/windows/ec_integrated_test_0e0d928d95a0.log",
+    "sha256": "d3873775c015698624c21a848c018898c35aadf84e072289adfb1a6fadb65b89",
+    "durableResult": ".cache/di25-final-windows/result.json",
+    "resultSha256": "42e08ffd943a92cfe0efe2b5255084b472e073d8f3e7b8ec139a24a042deea4f"
+  },
+  "ciFinal": {
+    "commit": "f2366218f5f5e776c956aa5722a7180ee59e35aa",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35558952932",
+    "conclusion": "success",
+    "tests": 448,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "exit": 0,
+    "controllerImage": "success",
+    "customerImage": "success",
+    "governance": "success",
+    "dependencies": "success",
+    "log": ".cache/di25-03-linux-final.log",
+    "sha256": "0668ee10afe8478a918efd04993c3ac435bcd96f4fc97664707eb53e04a36721"
+  },
+  "interruptedAttempts": [
+    {
+      "log": ".cache/windows/ec_integrated_test_cd6e526faa7d.log",
+      "accepted": false,
+      "reason": "Salida inesperada sin resumen final ni código de salida recuperable"
+    },
+    {
+      "log": ".cache/windows/ec_integrated_test_7b7491618c0d.log",
+      "exit": 1,
+      "accepted": false,
+      "reason": "PostgreSQL terminó por interrupción de consola (0xC000013A); resumen parcial no aceptado",
+      "durableResult": ".cache/di25-final-windows/interrupted-7b7491618c0d.json"
+    }
+  ],
+  "cleanup": {
+    "isolatedUiDatabaseAndRole": "retirados",
+    "interruptedDatabaseAndRole": "retirados tras comprobar propietario y ausencia de conexiones",
+    "finalTestDatabaseAndRole": "retirados por ejecutor al finalizar",
+    "logsAndBackups": "conservados en .cache; no incluyen credenciales en esta evidencia"
   }
 }

@@ -1,6 +1,8 @@
-# Estado vigente: DI25-03 parcial
+# Estado vigente: DI25-03 parcial por cobertura y aceptación tributaria
 
-DI25-00–02 cerradas. DI25-03 reproduce y corrige tres defectos; 83 pruebas del módulo aprobadas. Suite completa y UI en curso. Falta responsable tributario y oráculos aprobados para DI25-03.3; DI25-04–07 no iniciadas por dependencia. Ver docs/DI25-03_NOMINA_RDEP.md y docs/evidencias/DI25/DI25-03-progreso.json. Autorización general de ejecución, commit y push vigente; no repetirla ni simular aceptación legal.
+DI25-00–02 cerradas. DI25-03: correcciones anuales RDEP, beneficios y cuotas implementadas; tres recorridos UI documentados. Código f236621 validado con 448 pruebas en Windows y Linux, 0 fallos/errores y 5 omisiones de Tesorería por entorno, salida 0; ambos perfiles Linux aprobados. Las ejecuciones Windows interrumpidas no cuentan como aprobación. Evidencia: docs/evidencias/DI25/DI25-03-progreso.json; estado de los 20 hallazgos: docs/evidencias/DI25/estado-hallazgos.json.
+
+Pendiente DI25-03.3: responsable tributario/contable, oráculos aprobados y cobertura faltante según docs/DI25-03_MATRIZ_ACEPTACION.md. DI25-04–07 autorizadas, no iniciadas por dependencia; no crear cierre 03 ni iniciar 04 sin satisfacer sus criterios o cambio explícito de orden. Autorización de implementación, commit y push vigente; no repetirla. No homologación, presentación SRI ni despliegue productivo. Bases temporales de esta pasada retiradas; registros y respaldos conservados. Esta sección prevalece sobre la historia inferior.
 
 ---
 

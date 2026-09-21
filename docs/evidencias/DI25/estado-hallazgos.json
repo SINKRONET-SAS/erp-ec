@@ -1,0 +1,168 @@
+{
+  "updatedAt": "2026-09-21T11:14:15.814Z",
+  "historicalDiagnostic": "docs/evidencias/DI25/hallazgos.json",
+  "scope": "Estado técnico; no homologación ni cierre comercial",
+  "findings": [
+    {
+      "id": "DI25-01",
+      "phase": "DI25-02",
+      "title": "Cola fiscal puede dejar emisiones válidas sin procesar",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+    },
+    {
+      "id": "DI25-02",
+      "phase": "DI25-02",
+      "title": "Autoridad fiscal exclusiva no se comprueba en ambos sentidos",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+    },
+    {
+      "id": "DI25-03",
+      "phase": "DI25-02",
+      "title": "Protección del documento nativo firmado incompleta",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+    },
+    {
+      "id": "DI25-04",
+      "phase": "DI25-03",
+      "title": "RDEP mezcla base anual acumulada con impuesto del último registro",
+      "status": "parcial-o-bloqueado",
+      "note": "Corregida la agregación por base efectiva y el orden; pendiente conciliación integral de regímenes y aceptación tributaria.",
+      "evidence": "docs/evidencias/DI25/DI25-03-progreso.json"
+    },
+    {
+      "id": "DI25-05",
+      "phase": "DI25-03",
+      "title": "Corrección de nómina omite beneficios del período y conserva cuotas",
+      "status": "corregido-tecnicamente",
+      "note": "Beneficios copiados, cuotas revertidas excluidas del saldo e historial conservado; fase03 global permanece parcial.",
+      "evidence": "docs/evidencias/DI25/DI25-03-progreso.json"
+    },
+    {
+      "id": "DI25-06",
+      "phase": "DI25-03",
+      "title": "Una bandera grava conjuntamente conceptos laborales diferentes",
+      "status": "parcial-o-bloqueado",
+      "note": "No se amplía nómina real; casos especiales del RDEP bloqueados. Matriz de bases y reliquidación mensual sin aprobación.",
+      "evidence": "docs/evidencias/DI25/DI25-03-progreso.json"
+    },
+    {
+      "id": "DI25-07",
+      "phase": "DI25-04",
+      "title": "ATS incompleto y procedencia de catálogo pendiente de conciliar",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-08",
+      "phase": "DI25-02",
+      "title": "Transmisión inmediata no queda acreditada por cola de un minuto",
+      "status": "parcial-o-bloqueado",
+      "note": "Disparo durable y latencia visibles; no se acredita recepción inmediata real ni cumplimiento jurídico.",
+      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+    },
+    {
+      "id": "DI25-09",
+      "phase": "DI25-05",
+      "title": "Exclusión comercial no integrada a la entrega de campañas",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-10",
+      "phase": "DI25-05",
+      "title": "Clave del conector fiscal sigue como Char sin cifrado propio",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-11",
+      "phase": "DI25-01",
+      "title": "Imagen controller omite dependencia de PayPhone",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-01-cierre.json"
+    },
+    {
+      "id": "DI25-12",
+      "phase": "DI25-01",
+      "title": "Ejecutor Linux puede aceptar resumen verde pese a salida fallida",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-01-cierre.json"
+    },
+    {
+      "id": "DI25-13",
+      "phase": "DI25-01",
+      "title": "Nombre arbitrario del ensayo usado en limpieza privilegiada",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-01-cierre.json"
+    },
+    {
+      "id": "DI25-14",
+      "phase": "DI25-06",
+      "title": "Inicio fiscal comunica capacidades desactualizadas",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-15",
+      "phase": "DI25-06",
+      "title": "Bandeja ofrece creación manual que el servidor prohíbe",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-16",
+      "phase": "DI25-06",
+      "title": "Entrada pública de demo conserva plantilla y enlaces sin destino",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-17",
+      "phase": "DI25-02",
+      "title": "Solapamiento de adaptadores, menús y sustentos",
+      "status": "parcial-o-bloqueado",
+      "note": "Reglas comunes extraídas de adaptadores nativo/SRI; menús y cobertura completa de sustentos mantienen revisión pendiente.",
+      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+    },
+    {
+      "id": "DI25-18",
+      "phase": "DI25-01",
+      "title": "Gobierno valida un eslabón y nueve prompts históricos",
+      "status": "corregido-tecnicamente",
+      "note": "Ver criterios y límites en la evidencia de su fase.",
+      "evidence": "docs/evidencias/DI25/DI25-01-cierre.json"
+    },
+    {
+      "id": "DI25-19",
+      "phase": "DI25-05",
+      "title": "Privacidad requiere operación y aplicabilidad por empresa",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    },
+    {
+      "id": "DI25-20",
+      "phase": "DI25-07",
+      "title": "Aceptación comercial transversal y externa sin cierre integral",
+      "status": "pendiente-por-dependencia",
+      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
+      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+    }
+  ],
+  "validatedSourceCommit": "f2366218f5f5e776c956aa5722a7180ee59e35aa"
+}
