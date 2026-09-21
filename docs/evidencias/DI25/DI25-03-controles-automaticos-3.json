@@ -15,15 +15,30 @@
     "caso8": "cambio salarial probado; ausencias no modeladas, marcadas como bloqueo",
     "caso6_caso7": "pruebas repetidas con D1-D7 y consolidacion idempotente con reliquidacion"
   },
-  "matrixStates": {"automated": 13, "partial": 2, "blocked": 2, "external": 2},
+  "matrixStates": {
+    "automated": 13,
+    "partial": 2,
+    "blocked": 2,
+    "external": 2
+  },
   "stillOutsideTheSystem": {
     "D5_caso10": "catalogo y validador RDEP 2026 y Formulario 107: los publica el SRI",
     "casos3_9_11_y_ausencias": "reglas aprobadas por el responsable",
     "confirmaciones": "D1, D2, D4, D6, D7 por el responsable tributario"
   },
   "tests": {
-    "windowsIntegrated": {"total": 547, "failed": 0, "errors": 0, "skipped": 5, "skippedReason": "erpec_treasury requiere la demo sembrada", "database": "ec_integrated_test_8df2ed77d0c6"},
-    "payrollModule": {"before": 168, "after": 182}
+    "windowsIntegrated": {
+      "total": 547,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 5,
+      "skippedReason": "erpec_treasury requiere la demo sembrada",
+      "database": "ec_integrated_test_8df2ed77d0c6"
+    },
+    "payrollModule": {
+      "before": 168,
+      "after": 182
+    }
   },
   "demo": {
     "database": "erpec_demo",
@@ -31,12 +46,34 @@
     "moduleVersionAfter": "18.0.1.14.0",
     "backup": ".cache/windows/backups/di25-controles3-20260921T233308Z",
     "backupDatabaseSha256": "29c43a82735217404559f12613bfee825558b62480d1cb9f0cf0abc4f37db6a7",
-    "auditRunner": {"passed": true, "cases": 32, "problems": []},
+    "auditRunner": {
+      "passed": true,
+      "cases": 32,
+      "problems": []
+    },
     "newMenu": "Nomina > Regularizacion de documentos tardios"
   },
   "limits": [
     "Nada esta homologado ni presentado al SRI.",
     "La verificacion de expedientes y regularizaciones es documental interna; no sustituye la consulta a la autoridad ni la firma del responsable.",
     "Los datos de demo son sinteticos."
-  ]
+  ],
+  "criteriaConfirmedByProjectOwner": {
+    "date": "2026-09-21",
+    "approved": [
+      "D1",
+      "D2",
+      "D6"
+    ],
+    "note": "Aprobacion comunicada en sesion por el titular del proyecto; no es la firma del responsable tributario. D1 se mantiene con acreditacion documental obligatoria.",
+    "D5": "El titular informa que el SRI no ha publicado cambios al catalogo desde 2024; puede quedar abierto por anos. Se propone validar contra catalogo y ficha 2024 sin afirmar compatibilidad 2026."
+  },
+  "ciLinux": {
+    "commit": "164b8a9",
+    "run": "35668373942",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35668373942",
+    "conclusion": "success",
+    "jobsSucceeded": 5,
+    "note": "El arranque de la imagen controller fallo una vez por un reinicio de Postgres durante su inicializacion en Docker (ajeno a nomina) y aprobo al relanzar solo ese trabajo."
+  }
 }

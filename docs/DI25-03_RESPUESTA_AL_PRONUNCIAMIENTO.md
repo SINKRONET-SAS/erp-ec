@@ -34,16 +34,16 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 ## 3. Decisiones D1 a D8
 
-### D1 · Adulto mayor — CORREGIR → **Hecho** (con una pregunta)
+### D1 · Adulto mayor — CORREGIR → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
 - **Respuesta:** la condición se evalúa para el ejercicio en que la persona cumple 65 años; ya no se exige tenerlos al 1 de enero.
 - **Evidencia:** pruebas con nacimiento el 1 de enero, el 31 de diciembre y un 29 de febrero (todas reconocen el beneficio) y con quien cumple 64 (no lo reconoce). Un documento posterior al ejercicio se rechaza.
 - **Reliquidación al incorporar el dato tarde:** depende de D6 (ver abajo); las nóminas contabilizadas no se reabren.
-- **Necesitamos de usted:** el sistema exige una acreditación del año (referencia y fecha) para reconocer al adulto mayor, aunque la edad se deduce de la fecha de nacimiento. ¿Debe seguir siendo obligatoria esa acreditación documental, o basta la fecha de nacimiento?
+- **Criterio:** el sistema exige una acreditación del año (referencia y fecha) para reconocer al adulto mayor, además de la fecha de nacimiento. El titular del proyecto aprobó D1 el 21-09-2026 y se mantiene tal como está; si su aprobación buscaba prescindir de esa acreditación, avísenos y se ajusta.
 
-### D2 · Documento entregado después del 15 de enero — CORREGIR → **Hecho** (con una confirmación)
+### D2 · Documento entregado después del 15 de enero — CORREGIR → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
 - **Respuesta:** un documento de discapacidad o de sustituto entregado después del 15 de enero **no se aplica ni permite cerrar la nómina** hasta que exista una **regularización verificada**. Es el procedimiento que describe su pronunciamiento, hecho expediente: fundamento registrado (criterio formal del responsable o pronunciamiento del SRI), validación realizada, **fecha de efecto que nunca puede caer en un mes ya contabilizado** y verificación por otra persona. Antes de la fecha de efecto la exención no se aplica (queda un aviso); desde ella entra en la reliquidación acumulada (D6), que recalcula las retenciones futuras. Los meses previos quedan sin exención y cerrados, y la diferencia se ve en la conciliación anual del RDEP. No hay casilla para saltar el control.
 - **Evidencia:** pruebas de que el documento tardío bloquea sin regularización, de que en borrador no cuenta, de que antes de su fecha solo avisa y desde ella aplica, de que la retención del mes 3 se recalcula (2,00 en el ejemplo) sin tocar los meses 1 y 2, de que la fecha retroactiva se rechaza, de la segregación de funciones, de la coincidencia con la ficha y de la inmutabilidad y revocación con motivo.
-- **Necesitamos de usted:** confirmar que este procedimiento —derivado del texto de su pronunciamiento— es el que desea. El sistema **registra** el fundamento; no lo evalúa.
+- **Criterio:** procedimiento derivado del texto del pronunciamiento, aprobado por el titular del proyecto el 21-09-2026. El sistema **registra** el fundamento; no lo evalúa. La firma de aceptación del responsable sigue en blanco.
 
 ### D3 · Concurrencia de adulto mayor y discapacidad — ACEPTAR → **Hecho**
 - **Respuesta:** se aplica una sola vez la exención más favorable, nunca la suma. El anexo RDEP conserva ahora la **comparación**: el importe de cada exención acreditada y la que se aplicó (por ejemplo, «elderly 12000.00; disability 14649.60 → aplicada: disability»).
@@ -63,12 +63,12 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 - **Respuesta:** escala de 30 %–49 % → 60 %; 50 %–74 % → 70 %; 75 %–84 % → 80 %; 85 %–100 % → 100 %, sobre el doble de la fracción básica (24.416,00 al 100 %; 14.649,60 al 30 %). Menos de 30 % se rechaza. La exención de la base y la rebaja por gastos personales van **separadas** en el modelo: la rebaja aplicada nunca supera el impuesto causado y es la que usa el RDEP.
 - **Sobre «tipo 00» y «tipo 03»:** no los homologamos ni fijamos por analogía. El tipo 00 no tiene descripción en el esquema y **no aplica exención**; el anexo declara pendiente la compatibilidad con el catálogo 2026 y el XML permanece como vista previa interna.
 - **No hecho:** validar el archivo con el catálogo y el validador oficiales de 2026. Al corte, el portal muestra el programa 2026 pero la ficha y el catálogo visibles son de 2025.
-- **Necesitamos de usted:** avisarnos cuando el SRI publique la ficha técnica y el catálogo 2026; entonces se carga y se valida.
+- **Actualización del 21-09-2026:** el titular informa que el SRI no ha publicado cambios al catálogo desde 2024, por lo que este punto puede quedar abierto por años. Se propone validar el anexo contra la ficha técnica y el catálogo vigentes (2024, ya recibidos), sin afirmar compatibilidad 2026, y mantener D5 como parcial hasta que el SRI se pronuncie sobre 2026.
 
-### D6 · Cambios durante el año — ACEPTAR CON CONDICIONES → **Hecho** (con una confirmación)
+### D6 · Cambios durante el año — ACEPTAR CON CONDICIONES → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
 - **Respuesta:** implementada la **reliquidación mensual acumulada** que su pronunciamiento describe: cada mes se recalculan, sobre lo acumulado, el impuesto causado y la rebaja; se restan las retenciones ya efectuadas (y las certificadas del empleador anterior); y el saldo se reparte entre los meses que faltan. La retención nunca es negativa y no se reabren nóminas contabilizadas. Sin historial del ejercicio rige la proyección anual de siempre, de modo que los cálculos existentes no cambian. Una huella impide cerrar o contabilizar si algo cambió después de calcular.
 - **Evidencia:** un ejercicio de 12 meses con un aumento salarial en el mes 7 retiene 170 durante seis meses y 260 durante los seis restantes, y cierra con diferencia **cero** entre el impuesto anual y lo retenido. Pruebas de sobre-retención (queda en cero, sin negativos), de ingresos certificados del empleador anterior y de alta tardía. El anexo muestra por trabajador el impuesto proyectado, el saldo por reliquidar y la retención mensual futura sugerida.
-- **Necesitamos de usted:** confirmar el método adoptado: **el último mes se repite durante los meses que faltan** y una sobre-retención **no genera devolución automática**, solo queda visible.
+- **Criterio:** método aprobado por el titular del proyecto el 21-09-2026: **el último mes se repite durante los meses que faltan** y una sobre-retención **no genera devolución automática**, solo queda visible.
 
 ### D7 · Límite de 100 canastas — RECHAZAR → **Hecho** (con una consulta externa)
 - **Respuesta:** aceptamos el rechazo. La referencia aislada ya **no reduce la retención ni habilita el tope** y bloquea el cierre. Solo se aplica con un expediente verificado que cubra **todo el ejercicio**, con la **condición acreditada por rutas separadas**: discapacidad (con su grado), enfermedad catastrófica, enfermedad rara y enfermedad huérfana son campos distintos y obligatorios. Para una carga exige identificación, relación o dependencia económica, y se rechaza el doble uso. El sistema no emite diagnósticos ni guarda datos de salud: solo referencia, autoridad, condición y vigencia.
@@ -116,15 +116,13 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 Con esta versión ya no hay filas de la matriz que dependan de que nosotros programemos algo más. Lo que sigue depende de su criterio o del SRI:
 
-1. **D1:** ¿la acreditación documental del adulto mayor sigue siendo obligatoria, o basta la fecha de nacimiento?
-2. **D2:** ¿confirma el procedimiento de regularización implementado (fundamento registrado, fecha de efecto no retroactiva, verificación por otra persona)?
-3. **D4:** ¿se acepta la proporción por días redondeada al mes más cercano?
-4. **D6:** ¿confirma el método (último mes repetido durante los meses que faltan; sin devolución automática de sobre-retenciones)?
-5. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental.
-6. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
-7. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
-8. **D5 y caso 10:** avisarnos cuando el SRI publique el catálogo y validador RDEP 2026 y el formato del Formulario 107.
-9. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
+1. **D1, D2 y D6:** aprobados por el titular del proyecto el 21-09-2026; queda la firma de aceptación del responsable tributario.
+2. **D4:** ¿se acepta la proporción por días redondeada al mes más cercano?
+3. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental.
+4. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
+5. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
+6. **D5 y caso 10:** avisarnos cuando el SRI publique el catálogo y validador RDEP 2026 y el formato del Formulario 107.
+7. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
 ## 7. Evidencia y cómo reproducirla
 
