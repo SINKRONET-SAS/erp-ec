@@ -243,7 +243,7 @@ class RdepAnnex(models.Model):
     _name = 'erpec.payroll.rdep'
     _description = 'Agregador anual de nómina para el anexo RDEP (vista previa, no presentable)'
     _inherit = ['mail.thread']
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', 'Empresa', required=True, default=lambda self: self.env.company)
     year = fields.Integer('Año fiscal', required=True)
     state = fields.Selection([('draft', 'Borrador'), ('generated', 'XML generado')], default='draft', readonly=True)
     line_ids = fields.One2many('erpec.payroll.rdep.line', 'annex_id', readonly=True)
@@ -264,6 +264,11 @@ class RdepAnnex(models.Model):
     source_hash = fields.Char('Huella de períodos y datos revisados', readonly=True)
     calculation_method = fields.Char('Método del consolidado', readonly=True)
     review_notice = fields.Text('Revisión pendiente', compute='_compute_review_notice')
+
+    @api.depends('year', 'company_id.name')
+    def _compute_display_name(self):
+        for annex in self:
+            annex.display_name = 'RDEP %s · %s' % (annex.year or '', annex.company_id.name or '')
 
     def _posted_periods(self):
         self.ensure_one()
@@ -478,7 +483,7 @@ class RdepAnnexLine(models.Model):
     _description = 'Totales anuales por empleado para el agregador RDEP'
     annex_id = fields.Many2one('erpec.payroll.rdep', required=True, ondelete='cascade')
     company_id = fields.Many2one(related='annex_id.company_id', store=True)
-    employee_id = fields.Many2one('hr.employee', required=True, readonly=True)
+    employee_id = fields.Many2one('hr.employee', 'Empleado', required=True, readonly=True)
     months = fields.Integer('Períodos contabilizados', readonly=True)
     gross = fields.Float('Ingresos gravados acumulados', readonly=True)
     salary = fields.Float('Sueldo/salario acumulado (suelSal)', readonly=True)

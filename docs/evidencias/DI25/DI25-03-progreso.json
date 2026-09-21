@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "status": "parcial-validacion-local-y-aceptacion-tributaria-pendientes",
-  "updatedAt": "2026-09-21T03:42:45.145Z",
+  "updatedAt": "2026-09-21T03:51:41.799Z",
   "baseline": {
     "tests": 79,
     "failed": 3,
@@ -27,8 +27,7 @@
     "Política, base, diferencia y bloqueos visibles; XML obsoleto requiere reagrupar"
   ],
   "pending": [
-    "Suite integrada Windows/Linux del cambio",
-    "Capturas UI final",
+    "Suite Windows completa y CI de ajustes finales de presentación",
     "DI25-03.3: responsable y oráculos aprobados de otros empleadores, exenciones, acumulados, ausencias, bases diferenciadas y cierre anual"
   ],
   "limits": [
@@ -39,13 +38,32 @@
   ],
   "sourceHashes": {
     "addons/erpec_payroll/__manifest__.py": "d56ec9886ca1d05ab30a70e3f79d13222362c2c53f939549ce3ab4a1f9519d03",
-    "addons/erpec_payroll/annex_rdep.py": "93aa16ee566f81c64ac1200d35792062949a20d26d80f1e96bff5c610ea03aa7",
+    "addons/erpec_payroll/annex_rdep.py": "911651e8cddf8d156cb6dd28fd8cda4d6869133457786c334357176f75f3791c",
     "addons/erpec_payroll/engine.py": "53819e1023794a415a4a0ea11a91c9ee0262789f9048cead4ae400906513157e",
     "addons/erpec_payroll/models.py": "e07817122c03d3cf721adf27e32a01c3f26ac1c0f437a4c17a54aec8ee235039",
     "addons/erpec_payroll/tests/test_annex_rdep.py": "5ad16888a0946bbbe0cdaf88f71bed4c2c57bc20d9ec2409583ded5ff794b9d0",
     "addons/erpec_payroll/tests/test_benefits_advances.py": "a4b6bccf89107cee019b2a5234cee479428bee47cdb775dccfb9121af4e239a5",
-    "addons/erpec_payroll/views.xml": "56853d771505799fe18b0c9bf92e08e5b5914dbdacff435e0dbea7445914e250",
+    "addons/erpec_payroll/views.xml": "380752af61b5d91713eb542006ae9724cfe6fcb73f9ababc746003bdf301fd9d",
     "addons/erpec_payroll/balance_migration.py": "02c458f23be65d5e6aaa79bc103a7415cef42d0b031e3847fb16461a4bc97f65",
     "addons/erpec_payroll/migrations/18.0.1.8.0/post-migrate.py": "68f46b8c8c7d4d58fe3e4f2a90b9469fc3a85c5d88a342e61987e41eaa63959f"
+  },
+  "ui": {
+    "report": "docs/evidencias/DI25/DI25-03-UI.md",
+    "manifest": "docs/evidencias/DI25/DI25-03-capturas.json",
+    "screenshots": 3,
+    "passed": true,
+    "limits": "Escritorio sintético; no aceptación integral por roles ni accesibilidad"
+  },
+  "ciIntermediate": {
+    "commit": "7f0d918ce0d1ea8412554af54c5ea3b802d6c730",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35558455232",
+    "conclusion": "success",
+    "tests": 448,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "exit": 0,
+    "log": ".cache/di25-03-ci-7f.log",
+    "sha256": "b3580136edc7f60aba373c4d970673c711ac31d9e2e74ae7609b6553e8931019"
   }
 }

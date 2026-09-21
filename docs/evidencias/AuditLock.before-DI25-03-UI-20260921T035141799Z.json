@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-21T03:51:41.799Z",
+  "updatedAt": "2026-09-21T03:42:45.145Z",
   "filesModified": [
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
@@ -70,19 +70,14 @@
     "addons/erpec_payroll/migrations/18.0.1.8.0/post-migrate.py",
     "docs/DI25-03_NOMINA_RDEP.md",
     "docs/evidencias/DI25/DI25-03-progreso.json",
-    "docs/evidencias/AuditLock.before-DI25-03-PARCIAL-20260921T034245145Z.json",
-    "docs/evidencias/DI25/DI25-03-UI.md",
-    "docs/evidencias/DI25/DI25-03-capturas.json",
-    "docs/DI25-03_MATRIZ_ACEPTACION.md",
-    "docs/evidencias/AuditLock.before-DI25-03-UI-20260921T035141799Z.json"
+    "docs/evidencias/AuditLock.before-DI25-03-PARCIAL-20260921T034245145Z.json"
   ],
   "validationChecks": [
     "DI25-01: suite Windows y Linux 432 pruebas, 0 fallos, 0 errores, 5 omisiones en cada entorno",
     "CI a18b637: gobierno, dependencias y ambos perfiles aprobados",
     "6 pruebas gobierno, 7 seguridad ejecutor Windows y 4 escenarios Bash",
     "DI25-02: 441 pruebas Windows y Linux, 0 fallos/errores, 5 omisiones; CI edf7cee y ambos perfiles aprobados; cuatro capturas inspeccionadas",
-    "DI25-03 parcial: 3 defectos reproducidos; 83 pruebas de módulo aprobadas; no cierre de fase",
-    "DI25-03: CI 7f0d918 aprobado, 448 pruebas Linux, 5 omisiones; tres capturas UI verificadas; sin aceptación tributaria"
+    "DI25-03 parcial: 3 defectos reproducidos; 83 pruebas de módulo aprobadas; no cierre de fase"
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -149,25 +144,21 @@
     "docs/evidencias/DI25/DI25-02-cierre.json": "b05755688cb7e952691c30707be33b7a0c91bb35c49d73ca39c9ad6fe489cd29",
     "docs/evidencias/AuditLock.before-DI25-02-CIERRE-20260921T033240011Z.json": "9c99266e5a62c57217157203c58bb43e83f070efe45448e597d76e9f7754edf2",
     "addons/erpec_payroll/__manifest__.py": "d56ec9886ca1d05ab30a70e3f79d13222362c2c53f939549ce3ab4a1f9519d03",
-    "addons/erpec_payroll/annex_rdep.py": "911651e8cddf8d156cb6dd28fd8cda4d6869133457786c334357176f75f3791c",
+    "addons/erpec_payroll/annex_rdep.py": "93aa16ee566f81c64ac1200d35792062949a20d26d80f1e96bff5c610ea03aa7",
     "addons/erpec_payroll/engine.py": "53819e1023794a415a4a0ea11a91c9ee0262789f9048cead4ae400906513157e",
     "addons/erpec_payroll/models.py": "e07817122c03d3cf721adf27e32a01c3f26ac1c0f437a4c17a54aec8ee235039",
     "addons/erpec_payroll/tests/test_annex_rdep.py": "5ad16888a0946bbbe0cdaf88f71bed4c2c57bc20d9ec2409583ded5ff794b9d0",
     "addons/erpec_payroll/tests/test_benefits_advances.py": "a4b6bccf89107cee019b2a5234cee479428bee47cdb775dccfb9121af4e239a5",
-    "addons/erpec_payroll/views.xml": "380752af61b5d91713eb542006ae9724cfe6fcb73f9ababc746003bdf301fd9d",
+    "addons/erpec_payroll/views.xml": "56853d771505799fe18b0c9bf92e08e5b5914dbdacff435e0dbea7445914e250",
     "addons/erpec_payroll/balance_migration.py": "02c458f23be65d5e6aaa79bc103a7415cef42d0b031e3847fb16461a4bc97f65",
     "addons/erpec_payroll/migrations/18.0.1.8.0/post-migrate.py": "68f46b8c8c7d4d58fe3e4f2a90b9469fc3a85c5d88a342e61987e41eaa63959f",
     "docs/DI25-03_NOMINA_RDEP.md": "945397bd78621f302fee2cddd181aba609ae33bd47380ecffb9e91be30ad72ce",
-    "docs/evidencias/DI25/DI25-03-progreso.json": "82527cd8426974afa7eb81af4b7cf0fc84163c3532f354d2f4d6ad4cdd9075c7",
-    "docs/evidencias/AuditLock.before-DI25-03-PARCIAL-20260921T034245145Z.json": "7d1ca2ab732773e560318a2aab32cea02276ea3de6cb20be19f8163e3ef2a25a",
-    "docs/evidencias/DI25/DI25-03-UI.md": "556acdfbbcc8e89688299de296a5aa3dbb8be9ed6e248ddd19aaaebb78aa5fdf",
-    "docs/evidencias/DI25/DI25-03-capturas.json": "228625c2b1428b9ece614400feb65d89b62d47cb509253314e3edb465bc2c8e2",
-    "docs/DI25-03_MATRIZ_ACEPTACION.md": "81e355d52099e5ad0e3c4cd3be061b0c47f5fadf857c3f5f25c1887618ff393e",
-    "docs/evidencias/AuditLock.before-DI25-03-UI-20260921T035141799Z.json": "0eea4ff065f8a74e5fb949cad7a1d64242c19326adae5c0ebaf36ffc607e7151"
+    "docs/evidencias/DI25/DI25-03-progreso.json": "9d64608c0fc1b7c0165b1951fa8269d9447450dee4114db5192c6e5cd86ddb10",
+    "docs/evidencias/AuditLock.before-DI25-03-PARCIAL-20260921T034245145Z.json": "7d1ca2ab732773e560318a2aab32cea02276ea3de6cb20be19f8163e3ef2a25a"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-UI-20260921T035141799Z.json",
-  "previousAuditLockHash": "0eea4ff065f8a74e5fb949cad7a1d64242c19326adae5c0ebaf36ffc607e7151",
-  "signature": "4109d238bb26650acc20a59211485959fbeae524acb4d8486677339a33a6d008",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-PARCIAL-20260921T034245145Z.json",
+  "previousAuditLockHash": "7d1ca2ab732773e560318a2aab32cea02276ea3de6cb20be19f8163e3ef2a25a",
+  "signature": "631917eb5fe6ab1f2a4fe26f292d65c839c3606c91909792343cda4f64cdfe59",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

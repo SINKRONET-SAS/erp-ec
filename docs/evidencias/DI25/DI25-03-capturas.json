@@ -1,0 +1,26 @@
+{
+  "phase": "DI25-03",
+  "capturedAt": "2026-09-21T03:51:41.799Z",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "synthetic": true,
+  "files": [
+    {
+      "path": "docs/evidencias/DI25/DI25-03-01-anual.png",
+      "sha256": "c711ce14b2c9180b92f6c79d45bf57e9cf1172a86fa8e1dfc488fd922c43d7a0",
+      "inspected": true
+    },
+    {
+      "path": "docs/evidencias/DI25/DI25-03-02-cuotas.png",
+      "sha256": "2ae73db78ea7e254a05a2e9c41bba29fea27363d5b51281de765b33f545d6b44",
+      "inspected": true
+    },
+    {
+      "path": "docs/evidencias/DI25/DI25-03-03-bloqueo.png",
+      "sha256": "4e82d1fd36bc2e3a0a3b888f0c49cdb83ec69d0d066e1fd4300be35b757beff2",
+      "inspected": true
+    }
+  ]
+}
