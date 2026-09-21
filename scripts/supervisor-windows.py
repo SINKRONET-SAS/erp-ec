@@ -30,6 +30,16 @@ LOCK = STATE / 'supervisor.lock'
 FAILURES = {}
 
 
+def spawn(args, flags, **options):
+    """Lanza un proceso que sobrevive al supervisor: Task Scheduler cierra el árbol de la tarea al detenerla
+    (p. ej. al reiniciar el supervisor) y sin esto caerían PostgreSQL y las instancias. Si el trabajo no permite
+    salirse de él, se reintenta sin esa opción."""
+    try:
+        return subprocess.Popen(args, creationflags=flags | subprocess.CREATE_BREAKAWAY_FROM_JOB, **options)
+    except OSError:
+        return subprocess.Popen(args, creationflags=flags, **options)
+
+
 def log(message):
     line = time.strftime('%Y-%m-%d %H:%M:%S ') + message
     print(line, flush=True)
@@ -38,7 +48,8 @@ def log(message):
 
 
 def postgres_up():
-    return subprocess.run([str(PG / 'pg_ctl.exe'), '-D', str(STATE / 'pgdata'), 'status'], capture_output=True).returncode == 0
+    return subprocess.run([str(PG / 'pg_ctl.exe'), '-D', str(STATE / 'pgdata'), 'status'], capture_output=True,
+                          creationflags=subprocess.CREATE_NO_WINDOW).returncode == 0
 
 
 def ensure_postgres(repair):
@@ -47,8 +58,12 @@ def ensure_postgres(repair):
     if not repair:
         return False
     log('PostgreSQL detenido; iniciando')
-    result = subprocess.run([str(PG / 'pg_ctl.exe'), '-D', str(STATE / 'pgdata'), '-l', str(STATE / 'postgres.log'), '-w', 'start'], capture_output=True)
-    return result.returncode == 0
+    # DETACHED_PROCESS: el servidor no hereda ninguna consola (si no, aparece una ventana `pg_ctl.exe` que, al
+    # cerrarla, detiene PostgreSQL). Sin tuberías heredadas, para que pg_ctl no espere al servidor.
+    process = spawn([str(PG / 'pg_ctl.exe'), '-D', str(STATE / 'pgdata'), '-l', str(STATE / 'postgres.log'), '-w', 'start'],
+                    subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+                    stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
+    return process.wait() == 0
 
 
 def instance_processes(name):
@@ -80,8 +95,8 @@ def stop(name):
 
 
 def start(name):
-    process = subprocess.Popen([str(PYTHON), str(ODOO), '-c', str(STATE / name / 'odoo.conf')], cwd=str(ROOT),
-                               creationflags=subprocess.CREATE_NO_WINDOW)
+    process = spawn([str(PYTHON), str(ODOO), '-c', str(STATE / name / 'odoo.conf')], subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP,
+                    cwd=str(ROOT), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     (STATE / name / 'pid').write_text(str(process.pid), encoding='ascii')
     log('instancia %s iniciada (pid %d)' % (name, process.pid))
 
