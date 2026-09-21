@@ -1,3 +1,9 @@
+# Estado vigente: DI25-03 parcial
+
+DI25-00–02 cerradas. DI25-03 reproduce y corrige tres defectos; 83 pruebas del módulo aprobadas. Suite completa y UI en curso. Falta responsable tributario y oráculos aprobados para DI25-03.3; DI25-04–07 no iniciadas por dependencia. Ver docs/DI25-03_NOMINA_RDEP.md y docs/evidencias/DI25/DI25-03-progreso.json. Autorización general de ejecución, commit y push vigente; no repetirla ni simular aceptación legal.
+
+---
+
 # Estado vigente: DI25-02 cerrada; continuar DI25-03
 
 441 pruebas reportadas en Windows y Linux, 0 fallos y 0 errores, 5 omisiones de Tesorería por entorno. CI edf7cee aprobado, ambos perfiles aprobados, cuatro capturas fiscales inspeccionadas. Evidencia: docs/evidencias/DI25/DI25-02-cierre.json. La regresión de cancelación de venta detectada se corrigió y se repitió la suite completa. DI25-03 es la siguiente fase autorizada; no hay cierre comercial ni acreditación legal. Esta sección prevalece sobre la historia inferior.

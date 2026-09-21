@@ -54,6 +54,25 @@ def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO'):
     return cap*number(GALAPAGOS_IPCEG_FACTOR) if galapagos == 'SI' else cap
 
 
+def annual_income_tax(annual_base, personal_expenses, parameters, dependents_count=0, galapagos='NO'):
+    """Una sola tarifa para proyección mensual y consolidación anual efectiva."""
+    validate_parameters(parameters)
+    annual_base = max(Decimal(0), number(annual_base))
+    expenses = number(personal_expenses)
+    if expenses < 0:
+        raise ValueError('Los gastos personales no pueden ser negativos.')
+    annual_tax = None
+    for bracket in parameters['tax_brackets']:
+        if annual_base >= number(bracket['from']) and (bracket['to'] is None or annual_base <= number(bracket['to'])):
+            annual_tax = number(bracket['base'])+(annual_base-number(bracket['from']))*number(bracket['rate'])
+            break
+    if annual_tax is None:
+        raise ValueError('La tabla de renta no cubre la base anual.')
+    cap = personal_expense_cap(parameters['expense_limit'], dependents_count, galapagos)
+    rebate = min(expenses, cap)*number(parameters['rebate_rate'])
+    return annual_tax, rebate, max(Decimal(0), annual_tax-rebate)
+
+
 def calculate(data, parameters, year, month):
     validate_parameters(parameters)
     start = date.fromisoformat(data['start_date'])
@@ -72,19 +91,9 @@ def calculate(data, parameters, year, month):
     employer = money(base*number(parameters['employer_rate']))
     employer_other = money(base*number(parameters.get('employer_other_rate',0)))
     annual_base = max(Decimal(0), (base-iess)*12)
-    annual_tax = None
-    for bracket in parameters['tax_brackets']:
-        if annual_base >= number(bracket['from']) and (bracket['to'] is None or annual_base <= number(bracket['to'])):
-            annual_tax = number(bracket['base'])+(annual_base-number(bracket['from']))*number(bracket['rate'])
-            break
-    if annual_tax is None:
-        raise ValueError('La tabla de renta no cubre la base anual.')
-    # La rebaja reduce el impuesto; no resta gastos personales de la base imponible.
-    # El tope escala por cargas familiares y Galápagos (personal_expense_cap);
-    # sin cargas y fuera de Galápagos el resultado es expense_limit sin cambios.
-    expense_cap = personal_expense_cap(parameters['expense_limit'], data.get('dependents_count', 0), data.get('galapagos', 'NO'))
-    rebate = min(number(data.get('personal_expenses', 0)), expense_cap)*number(parameters['rebate_rate'])
-    tax_after_rebate = max(Decimal(0), annual_tax-rebate)
+    annual_tax, rebate, tax_after_rebate = annual_income_tax(
+        annual_base, data.get('personal_expenses', 0), parameters,
+        data.get('dependents_count', 0), data.get('galapagos', 'NO'))
     tax = money(tax_after_rebate/12)
     thirteenth = money(base*number(parameters['thirteenth_rate']))
     fourteenth = money(number(parameters['minimum_salary'])*number(parameters['fourteenth_rate'])*days/30)
@@ -103,9 +112,8 @@ def calculate(data, parameters, year, month):
         raise ValueError('El neto a recibir no puede ser negativo.')
     accrued13, accrued14, reserve_iess = thirteenth-monthly13, fourteenth-monthly14, reserve-reserve_paid
     cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess)
-    # annual_tax y rebate ya estaban calculados; se exponen sin duplicar el cálculo
-    # para que el agregador RDEP obtenga la base imponible anual y la rebaja de
-    # gastos personales sin recalcularlas por su cuenta (docs/ALCANCE_ATS_RDEP.md).
+    # Estas magnitudes son proyecciones mensuales; el RDEP aplica la misma tarifa
+    # a los acumulados efectivos, sin copiar una proyección de un mes aislado.
     return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'annual_tax_after_rebate':tax_after_rebate}.items()}
 
 

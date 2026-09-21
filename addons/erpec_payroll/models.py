@@ -46,7 +46,7 @@ class Policy(models.Model):
     fourteenth_rate = fields.Float('Décimo cuarto (fracción anual)')
     vacation_rate = fields.Float('Vacaciones (fracción anual)')
     expense_limit = fields.Float('Límite de gastos personales sin cargas (USD)')
-    rebate_rate = fields.Float('Rebaja tercera edad/discapacidad')
+    rebate_rate = fields.Float('Rebaja por gastos personales (tasa)')
     overtime_50 = fields.Float('Recargo hora suplementaria (50%)')
     overtime_100 = fields.Float('Recargo hora extraordinaria (100%)')
     night_rate = fields.Float('Recargo nocturno')
@@ -382,7 +382,7 @@ class Period(models.Model):
             raise ValidationError('Revierte el asiento antes de generar la corrección.')
         existing=self.search([('correction_of_id','=',self.id)],limit=1)
         if not existing:
-            existing=self.with_context(_erpec_payroll_token=_INTERNAL).create({'name':self.name+' / corrección','company_id':self.company_id.id,'policy_id':self.policy_id.id,'month':self.month,'version':self.version+1,'correction_of_id':self.id,'line_ids':[(0,0,{'employee_id':line.employee_id.id,'partner_id':line.partner_id.id,'analytic_id':line.analytic_id.id,**line._copy_inputs()}) for line in self.line_ids]})
+            existing=self.with_context(_erpec_payroll_token=_INTERNAL).create({'name':self.name+' / corrección','company_id':self.company_id.id,'policy_id':self.policy_id.id,'month':self.month,'version':self.version+1,'correction_of_id':self.id,'line_ids':[(0,0,{'employee_id':line.employee_id.id,'partner_id':line.partner_id.id,'analytic_id':line.analytic_id.id,**line._copy_inputs(),'benefit_line_ids':[(0,0,{'benefit_type_id':benefit.benefit_type_id.id,'amount':benefit.amount,'note':benefit.note}) for benefit in line.benefit_line_ids]}) for line in self.line_ids]})
         return {'type':'ir.actions.act_window','res_model':self._name,'res_id':existing.id,'view_mode':'form'}
 
 
@@ -770,6 +770,14 @@ class BenefitType(models.Model):
     note=fields.Text('Descripción y justificación')
     _sql_constraints=[('name_unique','unique(company_id,name)','Ya existe un beneficio con ese nombre en esta empresa.')]
 
+    def write(self, values):
+        if 'taxable' in values:
+            used = self.env['erpec.payroll.benefit.line'].search_count([
+                ('benefit_type_id', 'in', self.ids), ('line_id.period_id.state', '!=', 'draft')])
+            if used and any(item.taxable != values['taxable'] for item in self):
+                raise ValidationError('El tratamiento de un beneficio calculado es inmutable; crea otra versión para períodos futuros.')
+        return super().write(values)
+
 
 class BenefitLine(models.Model):
     _name='erpec.payroll.benefit.line'
@@ -828,10 +836,10 @@ class Advance(models.Model):
     balance=fields.Float('Saldo pendiente',compute='_compute_balance',store=True)
     settled=fields.Boolean('Saldado',compute='_compute_balance',store=True)
 
-    @api.depends('amount_total','deduction_ids.amount')
+    @api.depends('amount_total','deduction_ids.amount','deduction_ids.line_id.period_id.state')
     def _compute_balance(self):
         for advance in self:
-            advance.balance=advance.amount_total-sum(advance.deduction_ids.mapped('amount'))
+            advance.balance=advance.amount_total-sum(advance.deduction_ids.filtered(lambda item:item.line_id.period_id.state!='reversed').mapped('amount'))
             advance.settled=advance.balance<=0
 
     @api.constrains('amount_total','installment_amount')
@@ -891,6 +899,7 @@ class AdvanceDeduction(models.Model):
     advance_id=fields.Many2one('erpec.payroll.advance','Anticipo/préstamo',required=True,ondelete='cascade')
     line_id=fields.Many2one('erpec.payroll.line','Línea de nómina',required=True,ondelete='cascade')
     amount=fields.Float('Monto',required=True)
+    period_state=fields.Selection(related='line_id.period_id.state',string='Estado del período',readonly=True)
     _sql_constraints=[('line_once','unique(advance_id,line_id)','Este período ya tiene una cuota registrada para este anticipo/préstamo.')]
 
     @api.model_create_multi

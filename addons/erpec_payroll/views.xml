@@ -44,13 +44,13 @@
 <record id="rdep_list" model="ir.ui.view"><field name="name">erpec.payroll.rdep.list</field><field name="model">erpec.payroll.rdep</field><field name="arch" type="xml"><list><field name="company_id"/><field name="year"/><field name="state"/></list></field></record>
 <record id="rdep_form" model="ir.ui.view"><field name="name">erpec.payroll.rdep.form</field><field name="model">erpec.payroll.rdep</field><field name="arch" type="xml"><form><header><button name="action_build" type="object" string="Agregar períodos contabilizados" class="oe_highlight"/><button name="action_generate_xml" type="object" string="Generar vista previa XML" class="oe_highlight" invisible="not line_ids"/><field name="state" widget="statusbar"/></header><sheet>
 <div class="alert alert-warning" role="status"><field name="pending_notice" nolabel="1"/></div>
-<group><field name="company_id"/><field name="year"/></group>
+<group><field name="company_id"/><field name="year"/><field name="policy_id"/><field name="calculation_method"/></group><div class="alert alert-warning" role="status"><field name="review_notice" nolabel="1"/></div>
 <group invisible="not xml_file"><field name="filename"/><field name="digest"/><field name="xml_file" filename="filename"/></group>
-<field name="line_ids"><list editable="bottom" create="false" delete="false"><field name="employee_id"/><field name="months"/><field name="salary"/><field name="thirteenth"/><field name="fourteenth"/><field name="reserve_iess"/><field name="personal_iess"/><field name="tax"/></list>
+<field name="line_ids" readonly="1"><list create="false" delete="false"><field name="employee_id"/><field name="months"/><field name="salary"/><field name="thirteenth"/><field name="fourteenth"/><field name="reserve_iess"/><field name="personal_iess"/><field name="annual_base"/><field name="annual_tax_caused"/><field name="tax"/><field name="tax_difference"/></list>
 <form><sheet><group><field name="employee_id" readonly="1"/><field name="months" readonly="1"/></group>
 <group string="Ingresos"><field name="salary" readonly="1"/><field name="bonus_commission" readonly="1"/><field name="overtime" readonly="1"/><field name="annual_profit_sharing" readonly="1"/><field name="decent_wage_compensation" readonly="1"/><field name="other_employer_taxable_income" readonly="1"/><field name="other_general_interest_income" readonly="1"/><field name="thirteenth" readonly="1"/><field name="fourteenth" readonly="1"/><field name="base" readonly="1"/></group>
 <group string="Gastos y aportes"><field name="reserve_iess" readonly="1"/><field name="personal_iess" readonly="1"/><field name="other_employer_iess" readonly="1"/><field name="expense_housing" readonly="1"/><field name="expense_health" readonly="1"/><field name="expense_education" readonly="1"/><field name="expense_food" readonly="1"/><field name="expense_clothing" readonly="1"/><field name="expense_art_culture" readonly="1"/><field name="expense_tourism" readonly="1"/></group>
-<group string="Resumen impositivo"><field name="annual_tax_caused" readonly="1"/><field name="personal_expense_rebate" readonly="1"/><field name="annual_tax_after_rebate" readonly="1"/><field name="other_employer_withheld_tax" readonly="1"/><field name="employer_assumed_tax" readonly="1"/><field name="tax" readonly="1"/></group>
+<group string="Conciliación anual (no ajusta asientos)"><field name="annual_base" readonly="1"/><field name="tax_difference" readonly="1"/><field name="annual_tax_caused" readonly="1"/><field name="personal_expense_rebate" readonly="1"/><field name="annual_tax_after_rebate" readonly="1"/><field name="other_employer_withheld_tax" readonly="1"/><field name="employer_assumed_tax" readonly="1"/><field name="tax" readonly="1"/></group>
 </sheet></form></field>
 </sheet><chatter/></form></field></record>
 <record id="rdep_action" model="ir.actions.act_window"><field name="name">Agregador RDEP</field><field name="res_model">erpec.payroll.rdep</field><field name="view_mode">list,form</field></record>
@@ -89,7 +89,7 @@
 <group><field name="amount_total"/><field name="installment_amount"/><field name="start_year"/><field name="start_month"/></group></group>
 <group readonly="state != 'draft'"><field name="reason"/></group>
 <group><field name="balance" readonly="1"/><field name="settled" readonly="1"/><field name="approved_by" readonly="1"/><field name="approved_at" readonly="1"/></group>
-<field name="deduction_ids" readonly="1"><list><field name="line_id"/><field name="amount"/></list></field>
+<p>Las cuotas de períodos revertidos se conservan como historial y no reducen el saldo. Las cuotas calculadas reservan saldo hasta la reversión.</p><field name="deduction_ids" readonly="1"><list><field name="line_id"/><field name="period_state"/><field name="amount"/></list></field>
 </sheet><chatter/></form></field></record>
 <record id="advance_action" model="ir.actions.act_window"><field name="name">Anticipos y préstamos</field><field name="res_model">erpec.payroll.advance</field><field name="view_mode">list,form</field></record>
 

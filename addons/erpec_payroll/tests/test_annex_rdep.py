@@ -126,6 +126,7 @@ class RdepAnnexCase(TransactionCase):
         with self.assertRaises(ValidationError):
             annex.action_generate_xml()
         self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex.action_build()
         annex.action_generate_xml()
         self.assertEqual(annex.state, 'generated')
         decoded = base64.b64decode(annex.xml_file)
@@ -160,7 +161,7 @@ class RdepAnnexCase(TransactionCase):
         with self.assertRaises(ValidationError):
             annex.action_generate_xml()
 
-    def test_sis_sal_net_reflects_employer_assumed_tax(self):
+    def test_employer_assumed_tax_is_blocked_until_independent_validation(self):
         period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'employer_assumed_tax': 50})]})
         period.action_calculate()
         period.action_close()
@@ -169,9 +170,8 @@ class RdepAnnexCase(TransactionCase):
         self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
         annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
         annex.action_build()
-        annex.action_generate_xml()
-        tree = etree.fromstring(base64.b64decode(annex.xml_file))
-        self.assertEqual(tree.find('retRelDep/datRetRelDep/sisSalNet').text, '2')
+        with self.assertRaisesRegex(ValidationError, 'XML bloqueado'):
+            annex.action_generate_xml()
 
     def test_expense_caps_enforced_as_single_total_by_dependents(self):
         # Boletín NAC-COM-26-006 (SRI): tope único total, sin tope por categoría,
@@ -249,3 +249,79 @@ class RdepAnnexCase(TransactionCase):
         correction = self.env['erpec.payroll.period'].browse(action['res_id'])
         self.assertEqual(correction.line_ids.annual_profit_sharing, 300)
         self.assertEqual(correction.line_ids.expense_health, 20)
+
+    def test_di25_variable_year_uses_actual_accumulated_base(self):
+        # Oráculo aritmético independiente con parámetros sintéticos:
+        # 11*1000+3000=14000; IESS=1400; base=12600; (12600-12000)*10%=60.
+        for month in [12, 3, 1, 9, 2, 7, 11, 5, 6, 4, 10, 8]:
+            period = self.env['erpec.payroll.period'].create({
+                'name': 'DI25 variable %s' % month, 'policy_id': self.policy.id, 'month': month,
+                'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id,
+                    'start_date': '2025-01-01', 'wage': 3000 if month == 12 else 1000, 'approved': True})]})
+            period.action_calculate()
+            period.action_close()
+            period.action_post()
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        self.assertEqual(annex.line_ids.base, 14000)
+        self.assertEqual(annex.line_ids.personal_iess, 1400)
+        self.assertEqual(annex.line_ids.annual_tax_caused, 60)
+        annex.action_build()
+        self.assertEqual(annex.line_ids.annual_tax_caused, 60)
+
+    def test_di25_annual_table_2026_independent_oracle(self):
+        from ..engine import annual_income_tax
+        from ..parameters_ec2026 import PARAMS as params_2026
+        # SRI 2026: (12677 - 12208) * 5% = 23.45; rebaja 100 * 18% = 18.
+        caused, rebate, remaining = annual_income_tax(12677, 100, params_2026)
+        self.assertEqual(float(caused), 23.45)
+        self.assertEqual(float(rebate), 18)
+        self.assertEqual(float(remaining), 5.45)
+
+    def test_di25_rdep_blocks_special_regimes_and_stale_sources(self):
+        period = self._post_period(1)
+        self._setup_employee_for_xml(self.employee)
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        annex.action_generate_xml()
+        for values in [{'ec_rdep_disability_type': '01', 'ec_rdep_disability_percentage': 40},
+                       {'ec_rdep_disability_type': '04', 'ec_rdep_disability_percentage': 0, 'birthday': '2000-01-01'},
+                       {'birthday': False, 'ec_rdep_ben_galpg': 'SI'}]:
+            self.employee.write(values)
+            annex.action_build()
+            self.assertFalse(annex.xml_file)
+            with self.assertRaisesRegex(ValidationError, 'XML bloqueado'):
+                annex.action_generate_xml()
+        self.employee.ec_rdep_ben_galpg = 'NO'
+        annex.action_build()
+        annex.action_generate_xml()
+        period.action_reverse()
+        with self.assertRaisesRegex(ValidationError, 'datos cambiaron'):
+            annex.action_generate_xml()
+
+    def test_di25_actual_expenses_and_benefits_reconcile_xml(self):
+        period = self.env['erpec.payroll.period'].create({
+            'name': 'DI25 beneficios XML', 'policy_id': self.policy.id, 'month': 1,
+            'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id,
+                'start_date': '2025-01-01', 'wage': 15000, 'approved': True,
+                'expense_health': 100, 'personal_expenses': 4000})]})
+        benefit = self.env['erpec.payroll.benefit.type'].create({'name': 'DI25 beneficio gravado', 'taxable': True})
+        period.line_ids.benefit_line_ids = [(0, 0, {'benefit_type_id': benefit.id, 'amount': 1000})]
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        self._setup_employee_for_xml(self.employee)
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        self.assertEqual(annex.line_ids.bonus_commission, 1000)
+        self.assertEqual(annex.line_ids.annual_base, 14400)
+        self.assertEqual(annex.line_ids.annual_tax_caused, 240)
+        self.assertEqual(annex.line_ids.personal_expense_rebate, 18)
+        annex.action_generate_xml()
+        tree = etree.fromstring(base64.b64decode(annex.xml_file))
+        detail = tree.find('retRelDep/datRetRelDep')
+        self.assertEqual(float(detail.find('basImp').text), 14400)
+        self.assertEqual(float(detail.find('impRentCaus').text), 240)
+        self.assertEqual(float(detail.find('sobSuelComRemu').text), 1000)

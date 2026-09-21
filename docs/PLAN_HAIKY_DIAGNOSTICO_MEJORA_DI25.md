@@ -2,7 +2,7 @@
 
 Fecha: 20-09-2026 (Ecuador). Plan complementario al maestro ERPEC26; no renumera ni cierra sus fases.
 Fuente: [Diagnóstico integral DI25](DIAGNOSTICO_INTEGRAL_DI25.md).
-Estado vigente: **DI25-00–02 completadas en sus alcances. DI25-03 siguiente; DI25-03–07 autorizadas por el usuario, pendientes de ejecución y gates.**
+Estado vigente: **DI25-00–02 completadas en sus alcances. DI25-03 parcial en validación; DI25-04–07 autorizadas, no iniciadas por dependencia. Falta aceptación tributaria de DI25-03.3.**
 
 DI25-01: cierre técnico en evidencias/DI25/DI25-01-cierre.json. La solicitud posterior autoriza implementar todos los prompts y publicar los cambios.
 

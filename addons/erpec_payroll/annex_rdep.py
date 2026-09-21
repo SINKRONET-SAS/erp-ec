@@ -9,10 +9,9 @@ dependencia) y (3) el nombre literal del campo cuando ninguna fuente lo
 documenta explícitamente — estos últimos quedan marcados en el código y en
 docs/ALCANCE_ATS_RDEP.md. No se inventan catálogos ni fórmulas legales.
 
-Reutiliza exclusivamente los totales que ya calcula erpec_payroll.engine
-(gross, salary, overtime, thirteenth, fourteenth, reserve_iess, personal_iess,
-tax, annual_tax_caused, personal_expense_rebate, annual_tax_after_rebate); no
-se duplica el motor de cálculo. Los campos que el motor no puede calcular
+Acumula los flujos contabilizados del motor mensual. Aplica annual_income_tax
+a la base efectiva y gastos declarados del año; no copia proyecciones de un mes.
+Las exenciones y regímenes sin oráculo aprobado impiden generar el XML. Los campos que el motor no puede calcular
 (participación de utilidades, salario digno, ingresos/aportes con otros
 empleadores, impuesto asumido por el empleador y deducciones desglosadas de
 gastos personales) se capturan como novedades explícitas del período, igual
@@ -65,7 +64,7 @@ from lxml import etree
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from .models import manager
-from .engine import personal_expense_cap
+from .engine import personal_expense_cap, annual_income_tax, money, number
 
 DISABILITY_TYPES = [
     ('00', '00 (sin descripción en el esquema oficial SRI; confirmar en la ficha técnica antes de usar)'),
@@ -252,13 +251,77 @@ class RdepAnnex(models.Model):
     filename = fields.Char(readonly=True)
     digest = fields.Char('SHA256 del XML', readonly=True)
     pending_notice = fields.Text('Pendiente', readonly=True, default=(
-        'Vista previa interna del anexo RDEP; no se presenta ante el SRI ni se homologa. '
+        'Vista previa interna del RDEP; no se presenta ante el SRI ni se homologa. DI25-03: se aplica la tarifa a acumulados efectivos. '
         'El tope de gastos personales usado aquí es único y total según cargas familiares '
         '(Boletín NAC-COM-26-006 del SRI), con el factor IPCEG 1.803 para empleados de Galápagos '
         '(campo benGalpg); el motor mensual de nómina aplica el mismo tope (erpec_payroll.engine.'
         'personal_expense_cap). '
-        'Revisa docs/ALCANCE_ATS_RDEP.md antes de continuar.'))
+        'El cierre anual, las retenciones mensuales y las bases laborales requieren aceptación tributaria independiente. Revisa los bloqueos antes de generar XML.'))
     _sql_constraints = [('company_year_unique', 'unique(company_id,year)', 'Ya existe un agregador para esta empresa y año.')]
+
+
+    policy_id = fields.Many2one('erpec.payroll.policy', 'Política del cálculo anual', readonly=True)
+    source_hash = fields.Char('Huella de períodos y datos revisados', readonly=True)
+    calculation_method = fields.Char('Método del consolidado', readonly=True)
+    review_notice = fields.Text('Revisión pendiente', compute='_compute_review_notice')
+
+    def _posted_periods(self):
+        self.ensure_one()
+        return self.env['erpec.payroll.period'].search([
+            ('company_id', '=', self.company_id.id), ('year', '=', self.year),
+            ('state', '=', 'posted')], order='month,version,id')
+
+    def _source_signature(self, periods):
+        self.ensure_one()
+        import hashlib
+        employees = periods.line_ids.employee_id
+        employee_fields = ['birthday', 'identification_id', 'name'] + [
+            key for key in employees._fields if key.startswith('ec_rdep_')]
+        payload = {
+            'company': [self.company_id.id, self.company_id.vat, self.company_id.ec_rdep_employer_type,
+                        self.company_id.ec_rdep_social_security_entity], 'year': self.year,
+            'periods': [(period.id, period.month, period.version, period.policy_id.id,
+                         period.policy_id.parameters,
+                         [(line.id, line.employee_id.id, line.result, line._copy_inputs())
+                          for line in period.line_ids.sorted('id')]) for period in periods],
+            'employees': employees.sorted('id').read(sorted(employee_fields)),
+        }
+        return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode('utf-8')).hexdigest()
+
+    def _coverage_issues(self, periods):
+        """Explicita casos sin oráculo aprobado; no inventa reglas de exención."""
+        issues = []
+        special_inputs = ('annual_profit_sharing', 'decent_wage_compensation',
+                          'other_employer_taxable_income', 'other_employer_iess',
+                          'other_employer_withheld_tax', 'employer_assumed_tax',
+                          'other_general_interest_income')
+        if any(any(line[key] for key in special_inputs) for line in periods.line_ids):
+            issues.append('Ingresos especiales, impuesto asumido u otros empleadores: falta conciliación independiente aprobada.')
+        for employee in periods.line_ids.employee_id:
+            if (employee.ec_rdep_disability_type in ('00', '01', '02', '03')
+                    or employee.ec_rdep_disability_percentage
+                    or (employee.birthday and self.year - employee.birthday.year >= 65)):
+                issues.append('Exenciones por edad o discapacidad: falta validar aplicabilidad y fórmula con el responsable tributario.')
+                break
+        if any(employee.ec_rdep_ben_galpg == 'SI' for employee in periods.line_ids.employee_id):
+            issues.append('Galápagos: falta validar el régimen completo, además del tope de gastos.')
+        if any(employee.ec_rdep_treaty_applies == 'SI' or
+               (employee.ec_rdep_residence_country and employee.ec_rdep_residence_country != '593')
+               for employee in periods.line_ids.employee_id):
+            issues.append('Residencia extranjera o convenio: falta oráculo aprobado para este régimen.')
+        if len(periods.policy_id) > 1:
+            issues.append('Hay varias políticas en el año; concilia su equivalencia antes de consolidar.')
+        return issues
+
+    def _compute_review_notice(self):
+        for annex in self:
+            periods = annex._posted_periods()
+            issues = annex._coverage_issues(periods)
+            if annex.source_hash and annex.source_hash != annex._source_signature(periods):
+                issues.insert(0, 'Los datos cambiaron: vuelve a agregar los períodos antes de generar XML.')
+            annex.review_notice = '\n'.join(issues) or (
+                'Vista previa técnica. Pendiente aceptación del responsable tributario; '
+                'el acumulado incluye solo los períodos contabilizados y no regulariza retenciones mensuales.')
 
     def action_build(self):
         self.ensure_one()
@@ -266,36 +329,47 @@ class RdepAnnex(models.Model):
         self.check_access('write')
         if not self.company_id.ec_rdep_employer_type or not self.company_id.ec_rdep_social_security_entity:
             raise ValidationError('Completa el tipo de empleador y el ente de seguridad social de la empresa antes de agregar.')
-        periods = self.env['erpec.payroll.period'].search([
-            ('company_id', '=', self.company_id.id), ('year', '=', self.year), ('state', '=', 'posted')], order='id')
+        periods = self._posted_periods()
         if not periods:
             raise ValidationError('No hay períodos contabilizados de nómina para esta empresa y año.')
+        if len(periods.policy_id) != 1:
+            raise ValidationError('Hay varias políticas en el año; concilia su equivalencia antes de consolidar.')
+        policy = periods.policy_id
+        parameters = json.loads(policy.parameters)
         totals = {}
-        last_result = {}
         for period in periods:
             for line in period.line_ids:
                 result = json.loads(line.result or '{}')
-                entry = totals.setdefault(line.employee_id.id, dict.fromkeys(RDEP_FLOW_KEYS + RDEP_LINE_INPUT_KEYS + ('bonus_commission',), 0.0))
+                entry = totals.setdefault(line.employee_id.id, dict.fromkeys(
+                    RDEP_FLOW_KEYS + RDEP_LINE_INPUT_KEYS + ('bonus_commission',), 0.0))
                 entry['months'] = entry.get('months', 0) + 1
                 for key in RDEP_FLOW_KEYS:
                     entry[key] += result.get(key, 0.0)
                 for key in RDEP_LINE_INPUT_KEYS:
                     entry[key] += line[key]
-                entry['bonus_commission'] += line.bonus + line.commission
-                # annual_tax_caused/rebate/after_rebate son proyecciones anuales, no flujos
-                # mensuales: se toma el último período contabilizado, no se suman.
-                last_result[line.employee_id.id] = result
-        self.line_ids.unlink()
+                # Incluye beneficios gravados que ya están en el resultado inmutable.
+                entry['bonus_commission'] += result.get('base', 0) - result.get('salary', 0) - result.get('overtime', 0)
         records = []
         for employee_id, values in totals.items():
-            result = last_result[employee_id]
+            employee = self.env['hr.employee'].browse(employee_id)
+            annual_base = money(max(0, values['base'] - values['personal_iess']))
+            actual_expenses = sum(values[key] for key in EXPENSE_CATEGORY_KEYS)
+            caused, rebate, after_rebate = annual_income_tax(
+                annual_base, actual_expenses, parameters, employee.ec_rdep_dependents_count,
+                employee.ec_rdep_ben_galpg or 'NO')
             records.append({
                 'annex_id': self.id, 'employee_id': employee_id, **values,
-                'annual_tax_caused': result.get('annual_tax_caused', 0.0),
-                'personal_expense_rebate': result.get('personal_expense_rebate', 0.0),
-                'annual_tax_after_rebate': result.get('annual_tax_after_rebate', 0.0),
+                'annual_base': float(annual_base),
+                'annual_tax_caused': float(money(caused)),
+                'personal_expense_rebate': float(money(rebate)),
+                'annual_tax_after_rebate': float(money(after_rebate)),
+                'tax_difference': float(money(after_rebate - number(values['tax']))),
             })
+        self.line_ids.unlink()
         self.env['erpec.payroll.rdep.line'].create(records)
+        self.write({'policy_id': policy.id, 'source_hash': self._source_signature(periods),
+                    'calculation_method': 'DI25-03 v1 · tarifa sobre acumulados efectivos; vista previa limitada',
+                    'state': 'draft', 'xml_file': False, 'filename': False, 'digest': False})
         return True
 
     def action_generate_xml(self):
@@ -306,6 +380,12 @@ class RdepAnnex(models.Model):
             raise ValidationError('Agrega los períodos contabilizados antes de generar la vista previa XML.')
         if not (self.company_id.vat and len(self.company_id.vat) == 13):
             raise ValidationError('La empresa requiere un RUC real de 13 dígitos para el campo numRuc; no se inventa en la demo.')
+        periods = self._posted_periods()
+        if not self.source_hash or self.source_hash != self._source_signature(periods):
+            raise ValidationError('Los datos cambiaron o proceden de una versión anterior; vuelve a agregar los períodos.')
+        issues = self._coverage_issues(periods)
+        if issues:
+            raise ValidationError('XML bloqueado. ' + ' '.join(issues) + ' Solicita la revisión del responsable tributario.')
         root = etree.Element('rdep')
 
         def add(parent, name, value):
@@ -317,9 +397,6 @@ class RdepAnnex(models.Model):
         add(root, 'tipoEmpleador', self.company_id.ec_rdep_employer_type)
         add(root, 'enteSegSocial', self.company_id.ec_rdep_social_security_entity)
         ret = etree.SubElement(root, 'retRelDep')
-        reference_period = self.env['erpec.payroll.period'].search([
-            ('company_id', '=', self.company_id.id), ('year', '=', self.year), ('state', '=', 'posted')], limit=1)
-        fraction = _basic_fraction(reference_period.policy_id)
         for line in self.line_ids:
             employee = line.employee_id
             missing = [label for field, label in (
@@ -349,8 +426,8 @@ class RdepAnnex(models.Model):
             add(emp, 'tipIdDiscap', employee.ec_rdep_disability_id_type or 'N')
             if employee.ec_rdep_disability_id:
                 add(emp, 'idDiscap', employee.ec_rdep_disability_id)
-            disability_relief = round(3 * fraction, 2) if employee.ec_rdep_disability_percentage >= 30 else 0
-            elderly_relief = round(2 * fraction, 2) if employee.birthday and (self.year - employee.birthday.year) >= 65 else 0
+            # Las exenciones especiales se bloquean arriba hasta aprobar su oráculo.
+            disability_relief = elderly_relief = 0
             add(detail, 'suelSal', round(line.salary, 2))
             add(detail, 'sobSuelComRemu', round(line.overtime + line.bonus_commission, 2))
             add(detail, 'partUtil', round(line.annual_profit_sharing, 2))
@@ -378,7 +455,7 @@ class RdepAnnex(models.Model):
                 add(detail, 'deduccionTurismo', round(line.expense_tourism, 2))
             add(detail, 'exoDiscap', disability_relief)
             add(detail, 'exoTerEd', elderly_relief)
-            add(detail, 'basImp', round(line.base - line.personal_iess, 2))
+            add(detail, 'basImp', round(line.annual_base, 2))
             add(detail, 'impRentCaus', round(line.annual_tax_caused, 2))
             if line.personal_expense_rebate:
                 add(detail, 'rebajaGastosPersonales', round(line.personal_expense_rebate, 2))
@@ -413,6 +490,8 @@ class RdepAnnexLine(models.Model):
     reserve_iess = fields.Float('Fondo de reserva acumulado (fondoReserva)', readonly=True)
     personal_iess = fields.Float('Aporte personal IESS acumulado (apoPerIess)', readonly=True)
     tax = fields.Float('Impuesto a la renta retenido acumulado (valRet)', readonly=True)
+    annual_base = fields.Float('Base imponible anual efectiva', readonly=True)
+    tax_difference = fields.Float('Impuesto anual menos retenciones (sin ajuste automático)', readonly=True)
     annual_tax_caused = fields.Float('Impuesto a la renta causado (impRentCaus)', readonly=True)
     personal_expense_rebate = fields.Float('Rebaja por gastos personales (rebajaGastosPersonales)', readonly=True)
     annual_tax_after_rebate = fields.Float('Impuesto después de la rebaja (impuestoRentaRebajaGastosPersonales)', readonly=True)
