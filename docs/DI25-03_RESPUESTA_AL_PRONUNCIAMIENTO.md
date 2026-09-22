@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.2 (tercera ronda, criterios del titular sobre D1/D2/D6 y catálogo RDEP real para D5) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.3 (tercera ronda, criterios del titular sobre D1/D2/D6, catálogo RDEP real para D5 y edad mínima de D1 confirmada) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -38,7 +38,7 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 - **Respuesta:** la condición se evalúa para el ejercicio en que la persona cumple 65 años; ya no se exige tenerlos al 1 de enero.
 - **Evidencia:** pruebas con nacimiento el 1 de enero, el 31 de diciembre y un 29 de febrero (todas reconocen el beneficio) y con quien cumple 64 (no lo reconoce). Un documento posterior al ejercicio se rechaza.
 - **Reliquidación al incorporar el dato tarde:** depende de D6 (ver abajo); las nóminas contabilizadas no se reabren.
-- **Criterio (titular, 21-09-2026):** el adulto mayor se reconoce **por la edad que resulta de la fecha de nacimiento, sin acreditación documental**. El sistema ya no la exige para este caso; la discapacidad sigue exigiendo su documento. La edad mínima vigente es 65 años (ley y sello de parámetros); el titular mencionó 60 y se espera su aclaración antes de cambiarla.
+- **Criterio (titular, 21-09-2026; edad confirmada 22-09-2026):** el adulto mayor se reconoce **por la edad que resulta de la fecha de nacimiento, sin acreditación documental**. El sistema ya no la exige para este caso; la discapacidad sigue exigiendo su documento. La edad mínima es **65 años**, confirmada por el titular con la Ley Orgánica de las Personas Adultas Mayores art. 5 (Registro Oficial 484, 9-V-2019), coincidente con la ya sellada en parámetros y con la LRTI art. 9 num. 12; queda cerrada la duda por los 60 años planteada antes.
 
 ### D2 · Documento entregado después del 15 de enero — CORREGIR → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
 - **Respuesta:** un documento de discapacidad o de sustituto entregado después del 15 de enero **no se aplica ni permite cerrar la nómina** hasta que exista una **regularización verificada**. Es el procedimiento que describe su pronunciamiento, hecho expediente: fundamento registrado (criterio formal del responsable o pronunciamiento del SRI), validación realizada, **fecha de efecto que nunca puede caer en un mes ya contabilizado** y verificación por otra persona. Antes de la fecha de efecto la exención no se aplica (queda un aviso); desde ella entra en la reliquidación acumulada (D6), que recalcula las retenciones futuras. Los meses previos quedan sin exención y cerrados, y la diferencia se ve en la conciliación anual del RDEP. No hay casilla para saltar el control.
@@ -118,7 +118,7 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 Con esta versión ya no hay filas de la matriz que dependan de que nosotros programemos algo más. Lo que sigue depende de su criterio o del SRI:
 
-1. **D1, D2 y D6:** aprobados por el titular del proyecto el 21-09-2026 (D1: reconocimiento por la edad sin acreditación); queda la firma de aceptación del responsable tributario y aclarar si la edad mínima es 65 o 60 años.
+1. **D1, D2 y D6:** aprobados por el titular del proyecto el 21-09-2026 (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores); queda la firma de aceptación del responsable tributario.
 2. **D4:** ¿se acepta la proporción por días redondeada al mes más cercano?
 3. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental.
 4. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.

@@ -64,6 +64,9 @@ def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO', *, s
 # documento se entrega al empleador hasta el 15 de enero. Reglamento LOD art. 6: solo
 # desde 30 % de discapacidad y en proporción al grado. Única implementación: la reutilizan
 # la nómina mensual, el anexo RDEP y los ensayos tributarios.
+# Edad mínima confirmada además por la Ley Orgánica de las Personas Adultas Mayores, art. 5
+# (Registro Oficial 484, 9-V-2019): "se considera persona adulta mayor aquella que ha
+# cumplido los 65 años de edad" (documento aportado por el titular, 22-09-2026; DI25-03 D1).
 ELDERLY_MIN_AGE = 65
 DISABILITY_BENEFIT_SCALE = ((30, 49, 60), (50, 74, 70), (75, 84, 80), (85, 100, 100))
 EXEMPTION_DEADLINE = (1, 15)  # mes y día del año fiscal para entregar el documento

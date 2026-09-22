@@ -90,6 +90,10 @@ La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portle
 - **D2 y D6:** aprobados por el titular el 21-09-2026, sin la firma del responsable tributario.
 - **D5:** el XSD y el catálogo oficiales del SRI que aportó el titular se guardan sin cambios en `addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd` y `addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, fijados por huella con pruebas. Verificado en vivo en `sri.gob.ec/formularios-e-instructivos1` (21-09-2026): siguen vigentes para 2024/2025, sin versión 2026 publicada. Al leer el catálogo se corrigieron los códigos de discapacidad (01 no aplica, 02 discapacidad, 03 sustituto, 04 cónyuge/pareja/hijo bajo cuidado, derogado desde 2024), que diferían del orden de la anotación del XSD; no se afirma compatibilidad 2026.
 
+## Ajuste 18.0.1.14.3: edad mínima de D1 confirmada
+
+El titular subsanó una mención anterior de 60 años y adjuntó la Ley Orgánica de las Personas Adultas Mayores (Registro Oficial 484, 9-V-2019). Su artículo 5 dice: «se considera persona adulta mayor aquella que ha cumplido los 65 años de edad». Coincide con la edad ya sellada en `parameters_seal.py` y con la LRTI art. 9 num. 12 ya citada en `engine.py`; no hubo cambio de lógica, solo se agregó la cita como segunda fuente legal y se cerró la fila D1 de la matriz sin pendiente técnico.
+
 ## Reversión y continuación
 
 Se conserva el respaldo previo de base, filestore y módulo. No se reescriben resultados de períodos ni asientos existentes. Para revertir, detener únicamente la demo identificada por su configuración y restaurar conjuntamente base/filestore/módulo del mismo respaldo; no restaurar una base real ni mezclar versiones. Los nuevos campos de huella no se rellenan falsamente para cálculos antiguos: antes de cerrar deben recalcularse las novedades abiertas, o tramitarse una corrección cuando el estado lo requiera.

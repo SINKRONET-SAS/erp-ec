@@ -31,7 +31,7 @@ def cell(text):
 def render():
     data = rows()
     counts = {state: sum(1 for row in data if row['control_state'] == state) for state in STATES}
-    lines = ['## Matriz de pendientes vigente (módulo 18.0.1.14.2)', '',
+    lines = ['## Matriz de pendientes vigente (módulo 18.0.1.14.3)', '',
              'Fuente única: `addons/erpec_payroll/acceptance_matrix_data.xml`, visible en **Nómina → Matriz de aceptación DI25-03**. '
              'Este bloque se genera con `scripts/render-di25-matrix.py` y una verificación automática impide que se desactualice. '
              'Una prueba exige que cada fila con control cite pruebas que existan. **Nada aquí es una homologación**: la aceptación externa sigue pendiente.', '',

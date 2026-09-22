@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.2",
+  "moduleVersion": "18.0.1.14.3",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -65,7 +65,7 @@
       "D2",
       "D6"
     ],
-    "note": "Aprobacion comunicada en sesion por el titular del proyecto; no es la firma del responsable tributario. D1 se mantiene con acreditacion documental obligatoria.",
+    "note": "Aprobacion comunicada en sesion por el titular del proyecto; no es la firma del responsable tributario.",
     "D5": "Superado por adjustment_18_0_1_14_2: el titular aporto el catalogo oficial; ya esta en el repositorio y verificado en vivo contra sri.gob.ec."
   },
   "ciLinux": {
@@ -97,5 +97,11 @@
       "conclusion": "success",
       "jobsSucceeded": 5
     }
+  },
+  "adjustment_18_0_1_14_3": {
+    "action": "El titular subsano una mencion anterior de 60 anos y adjunto la Ley Organica de las Personas Adultas Mayores (Registro Oficial 484, 9-V-2019) como fuente legal.",
+    "legalSource": "Art. 5: 'se considera persona adulta mayor aquella que ha cumplido los 65 anos de edad'. Coincide con la edad ya sellada en parameters_seal.py y con la LRTI art. 9 num. 12 ya citada en engine.py; no requirio cambio de codigo, solo se agrego la cita como segunda fuente.",
+    "note": "El documento PDF llego como contenido en la conversacion, no como archivo local; no se pudo guardar el binario como evidencia. La cita textual del articulo 5 queda registrada en engine.py y en esta evidencia.",
+    "closesQuestion": "D1: queda cerrada la duda entre 65 y 60 anos planteada el 21-09-2026."
   }
 }
