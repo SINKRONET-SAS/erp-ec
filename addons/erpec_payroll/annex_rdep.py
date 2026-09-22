@@ -95,7 +95,7 @@ RDEP_FLOW_KEYS = ('gross', 'salary', 'overtime', 'thirteenth', 'fourteenth', 're
 RDEP_LINE_INPUT_KEYS = (
     'annual_profit_sharing', 'decent_wage_compensation', 'other_employer_taxable_income',
     'other_employer_iess', 'other_employer_withheld_tax', 'employer_assumed_tax',
-    'other_general_interest_income', 'expense_housing', 'expense_health', 'expense_education',
+    'other_general_interest_income', 'vacation_payout', 'expense_housing', 'expense_health', 'expense_education',
     'expense_food', 'expense_clothing', 'expense_art_culture', 'expense_tourism',
 )
 EXPENSE_CATEGORY_KEYS = ('expense_housing', 'expense_health', 'expense_education', 'expense_art_culture', 'expense_food', 'expense_clothing', 'expense_tourism')
@@ -421,7 +421,7 @@ class RdepAnnex(models.Model):
         for employee_id, values in totals.items():
             employee = self.env['hr.employee'].browse(employee_id)
             status = employee.sudo()._rdep_personal_status(self.year)
-            gross_base = max(0, values['base'] - values['personal_iess'] + values['other_employer_taxable_income'] - values['other_employer_iess'])
+            gross_base = max(0, values['base'] - values['personal_iess'] + values['other_employer_taxable_income'] - values['other_employer_iess'] + values['vacation_payout'])
             exemption_kind, exemption, annual_base = apply_personal_exemption(gross_base, parameters, status['claims'])
             months_reported = int(values.get('months', 0))
             months_remaining = max(0, 12 - months_reported)
@@ -513,8 +513,15 @@ class RdepAnnex(models.Model):
             # Exención acreditada y aplicada al agregar; el valor coincide con la base imponible.
             disability_relief = line.personal_exemption if line.personal_exemption_kind in ('disability', 'substitute') else 0
             elderly_relief = line.personal_exemption if line.personal_exemption_kind == 'elderly' else 0
-            add(detail, 'suelSal', round(line.salary, 2))
-            add(detail, 'sobSuelComRemu', round(line.overtime + line.bonus_commission, 2))
+            # suelSal es materia gravada de IESS (catálogo RDEP vigente); el motor cobra aporte
+            # personal sobre salario + horas extra + bono/comisión (Line._inputs → engine.base),
+            # así que los tres van aquí, no en sobSuelComRemu (caso 3, DI25-03).
+            taxable_salary = line.salary + line.overtime + line.bonus_commission
+            add(detail, 'suelSal', round(taxable_salary, 2))
+            # sobSuelComRemu es la contraparte gravada de IR pero NO de IESS (catálogo RDEP
+            # vigente); hoy el único concepto así es la liquidación de vacaciones no gozadas
+            # (caso 3, DI25-03: `vacation_payout`).
+            add(detail, 'sobSuelComRemu', round(line.vacation_payout, 2))
             add(detail, 'partUtil', round(line.annual_profit_sharing, 2))
             add(detail, 'intGrabGen', round(line.other_employer_taxable_income, 2))
             add(detail, 'impRentEmpl', round(line.employer_assumed_tax, 2))
@@ -526,7 +533,7 @@ class RdepAnnex(models.Model):
             # ingGravConEsteEmpl es informativo y de cálculo automático por el SRI (catálogo
             # RDEP vigente): suma de suelSal + sobSuelComRemu + partUtil + impRentEmpl + decimTer + decimCuar.
             add(detail, 'ingGravConEsteEmpl', round(
-                line.salary + line.overtime + line.bonus_commission + line.annual_profit_sharing
+                taxable_salary + line.vacation_payout + line.annual_profit_sharing
                 + line.employer_assumed_tax + line.thirteenth + line.fourteenth, 2))
             add(detail, 'sisSalNet', 2 if line.employer_assumed_tax else 1)
             add(detail, 'apoPerIess', round(line.personal_iess, 2))
@@ -604,6 +611,7 @@ class RdepAnnexLine(models.Model):
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (valRetAsuOtrosEmpls)', readonly=True)
     employer_assumed_tax = fields.Float('Impuesto asumido por este empleador (valImpAsuEsteEmpl)', readonly=True)
     other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (otrosIngRenGrav)', readonly=True)
+    vacation_payout = fields.Float('Liquidación de vacaciones no gozadas (sobSuelComRemu)', readonly=True)
     expense_housing = fields.Float('Gastos personales · vivienda (deducVivienda)', readonly=True)
     expense_health = fields.Float('Gastos personales · salud (deducSalud)', readonly=True)
     expense_education = fields.Float('Gastos personales · educación (parte de deducEducartcult)', readonly=True)

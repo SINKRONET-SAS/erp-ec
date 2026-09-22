@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.7",
+  "moduleVersion": "18.0.1.14.8",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -17,9 +17,9 @@
   },
   "matrixStates": {
     "automated": 14,
-    "partial": 2,
+    "partial": 3,
     "blocked": 2,
-    "external": 1
+    "external": 0
   },
   "stillOutsideTheSystem": {
     "D5_caso10": "catalogo y validador RDEP 2026 y Formulario 107: los publica el SRI",
@@ -147,5 +147,12 @@
     "stillOpen": "Liquidacion en dinero de vacaciones no tomadas (sin campo propio hoy); permanece en el caso 3, no en el 9.",
     "userDecision": "El titular eligio (AskUserQuestion): cerrar caso 9 ya, luego implementar caso 3, caso 8 y caso 11 uno por uno, cada uno en su propio commit con pruebas.",
     "payrollModuleTests": 188
+  },
+  "adjustment_18_0_1_14_8": {
+    "trigger": "El titular envio la matriz de incidencia por concepto para el caso 3.",
+    "finding": "suelSal (materia gravada de IESS desde 2023, catalogo RDEP) y sobSuelComRemu (materia NO gravada de IESS) tambien estaban mal usados: horas extra y comision, que si llevan aporte IESS en el motor, se reportaban en sobSuelComRemu.",
+    "fix": "annex_rdep.py: suelSal = salary+overtime+bonus_commission; sobSuelComRemu = vacation_payout (nuevo). engine.py: vacation_payout grava IR (se suma una vez a annual_base, como D8) pero no IESS (no entra a base/iess). models.py/views.xml: campo nuevo vacation_payout en erpec.payroll.line.",
+    "stillOpen": "Beneficios propios de cada empresa (erpec.payroll.benefit.type) siguen sin matriz de incidencia generica; matriz movida a partial (antes external).",
+    "payrollModuleTests": 190
   }
 }

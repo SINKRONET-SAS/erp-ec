@@ -94,6 +94,10 @@ La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portle
 
 El titular envió su especificación del caso 9 (devengo mensual 1/12 sueldo/SBU, 8,33 % desde el segundo año, elección mensualizado/acumulado, mapeo estricto a decimTer/decimCuar/fondoReserva). El motor ya implementaba exactamente esto desde una ronda anterior; no hubo que programar nada nuevo, solo confirmarlo y cerrar la fila C09. Queda fuera: la liquidación en dinero de vacaciones no tomadas, sin campo propio hoy, que sigue en el caso 3.
 
+## Ajuste 18.0.1.14.8: caso 3 (parcial) — matriz de incidencia estatutaria e IESS mal clasificado en horas extra/comisión
+
+El titular envió su matriz de incidencia por concepto. Al contrastarla con el catálogo RDEP se encontró que `suelSal` (materia gravada de IESS, desde 2023) y `sobSuelComRemu` (materia NO gravada de IESS) también estaban mal usados: horas extra y comisión, que sí llevan aporte IESS, se reportaban en `sobSuelComRemu` en vez de `suelSal`. Corregido. Se agregó `vacation_payout` (liquidación de vacaciones no gozadas: grava IR, no IESS, reportado en `sobSuelComRemu`), el único rubro estatutario que faltaba. Los beneficios propios de cada empresa quedan fuera: no pueden clasificarse de forma genérica.
+
 ## Ajuste 18.0.1.14.6: D8 tenía dos campos RDEP intercambiados
 
 Al analizar la matriz de incidencia por concepto que el titular envió para el caso 3, releímos el catálogo RDEP y encontramos que `intGrabGen` («ingresos gravados generados con otros empleadores», el dato real de D8) y `otrosIngRenGrav` («otros ingresos de esta misma relación que no constituyen renta gravada», sin relación con otro empleador) estaban intercambiados en la vista previa XML. El cálculo interno de la base imponible siempre usó el valor correcto; el error era solo la etiqueta XML. También se corrigió `ingGravConEsteEmpl` (informativo, cálculo automático del SRI) para que sume los seis campos que documenta el catálogo, en vez de solo el sueldo base. Ver `docs/ALCANCE_ATS_RDEP.md`.

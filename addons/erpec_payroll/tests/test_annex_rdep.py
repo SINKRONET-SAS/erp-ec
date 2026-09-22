@@ -337,4 +337,28 @@ class RdepAnnexCase(TransactionCase):
         detail = tree.find('retRelDep/datRetRelDep')
         self.assertEqual(float(detail.find('basImp').text), 14400)
         self.assertEqual(float(detail.find('impRentCaus').text), 240)
-        self.assertEqual(float(detail.find('sobSuelComRemu').text), 1000)
+        # Caso 3 (DI25-03): el beneficio gravado (materia de IESS, como bono/comisión) va en
+        # suelSal, no en sobSuelComRemu (reservado a lo gravado de IR pero no de IESS, como la
+        # liquidación de vacaciones no gozadas).
+        self.assertEqual(float(detail.find('sobSuelComRemu').text), 0)
+        self.assertGreaterEqual(float(detail.find('suelSal').text), 1000)
+
+    def test_vacation_payout_reports_in_sobsuelcomremu_not_suelsal(self):
+        # Caso 3 (DI25-03): la liquidación de vacaciones no gozadas grava IR pero no IESS, y se
+        # reporta en sobSuelComRemu, distinto del salario/bono/comisión (que sí gravan IESS).
+        period = self.env['erpec.payroll.period'].create({
+            'name': 'DI25 liquidación vacaciones', 'policy_id': self.policy.id, 'month': 1,
+            'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id,
+                'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'vacation_payout': 500})]})
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        self._setup_employee_for_xml(self.employee)
+        self.company.with_context(no_vat_validation=True).write({'vat': '1790012345001'})
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        self.assertEqual(annex.line_ids.vacation_payout, 500)
+        annex.action_generate_xml()
+        detail = etree.fromstring(base64.b64decode(annex.xml_file)).find('retRelDep/datRetRelDep')
+        self.assertEqual(float(detail.find('sobSuelComRemu').text), 500)
+        self.assertEqual(float(detail.find('suelSal').text), annex.line_ids.gross - 500)

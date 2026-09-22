@@ -399,6 +399,10 @@ class Line(models.Model):
     bonus=fields.Float('Bonificación')
     commission=fields.Float('Comisión')
     non_taxable_income=fields.Float('Ingreso no gravado')
+    vacation_payout=fields.Float('Liquidación de vacaciones no gozadas',
+        help='Caso 3 (DI25-03): pago en dinero de vacaciones acumuladas y no tomadas. Grava impuesto '
+             'a la renta pero no IESS (catálogo RDEP vigente, campo sobSuelComRemu); distinto del '
+             'devengo mensual de vacaciones tomadas, que ya está incluido en el salario.')
     advances=fields.Float('Anticipos')
     loans=fields.Float('Préstamos')
     other_deductions=fields.Float('Otros descuentos')
@@ -461,7 +465,7 @@ class Line(models.Model):
 
     def _copy_inputs(self):
         self.ensure_one()
-        keys=('start_date','wage','bonus','commission','non_taxable_income','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
+        keys=('start_date','wage','bonus','commission','non_taxable_income','vacation_payout','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
         return {key:self[key] for key in keys}
 
     def _inputs(self):

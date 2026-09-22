@@ -81,6 +81,18 @@ class PayrollCase(TransactionCase):
         for values in ({'wage':100},{'wage':float('nan')},{'advances':99999},{'hours_50':-1}):
             with self.assertRaises(ValueError):calculate({'start_date':'2025-01-01','wage':1200,**values},PARAMS,2026,9)
 
+    def test_vacation_payout_is_taxable_but_not_iess_material(self):
+        # Caso 3 (DI25-03): la liquidación de vacaciones no gozadas grava impuesto a la renta
+        # pero no IESS (catálogo RDEP vigente); se suma una sola vez a la base anual, como el
+        # ingreso de otro empleador (D8), no como un devengo mensual recurrente.
+        plain = calculate({'start_date': '2025-01-01', 'wage': 1200}, PARAMS, 2026, 9)
+        paid = calculate({'start_date': '2025-01-01', 'wage': 1200, 'vacation_payout': 500}, PARAMS, 2026, 9)
+        self.assertEqual(paid['gross'] - plain['gross'], 500)
+        self.assertEqual(paid['personal_iess'], plain['personal_iess'])
+        self.assertGreater(paid['tax'], plain['tax'])
+        with self.assertRaises(ValueError):
+            calculate({'start_date': '2025-01-01', 'wage': 1200, 'vacation_payout': -1}, PARAMS, 2026, 9)
+
     def test_company_permissions_and_views(self):
         user=self.env['res.users'].with_context(no_reset_password=True).create({'name':'Operador sin nómina','login':'payroll_no_access','company_id':self.company.id,'company_ids':[(6,0,self.company.ids)],'groups_id':[(6,0,[self.env.ref('base.group_user').id])]})
         with self.assertRaises(AccessError):self.period.with_user(user).action_calculate()

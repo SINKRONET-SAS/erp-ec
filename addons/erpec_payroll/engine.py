@@ -240,7 +240,7 @@ def calculate(data, parameters, year, month):
     if days <= 0 or wage < number(parameters['minimum_salary']) or number(parameters['monthly_hours']) <= 0:
         raise ValueError('Revisa vigencia laboral, salario mínimo y jornada mensual.')
     for key, value in data.items():
-        if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours') and number(value) < 0:
+        if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours', 'vacation_payout') and number(value) < 0:
             raise ValueError('Las novedades y descuentos deben ser no negativos.')
     salary = money(wage*days/30)
     hourly = wage/number(parameters['monthly_hours'])
@@ -255,7 +255,12 @@ def calculate(data, parameters, year, month):
     prior_months = int(data.get('prior_months', 0) or 0)
     remaining_months = max(1, 12-prior_months) if prior_months else 12
     other_income = number(data.get('other_income', 0))-number(data.get('other_iess', 0))
-    annual_base = max(Decimal(0), number(data.get('prior_base', 0))+(base-iess)*remaining_months+other_income)
+    # Liquidación de vacaciones no gozadas (caso 3, DI25-03): gravada de IR, no gravada de IESS
+    # (catálogo RDEP vigente, campo sobSuelComRemu). Es un pago del mes, no una proyección: se
+    # suma una sola vez a la base anual, igual que other_income (D8), sin multiplicarla por los
+    # meses que faltan.
+    vacation_payout = number(data.get('vacation_payout', 0))
+    annual_base = max(Decimal(0), number(data.get('prior_base', 0))+(base-iess)*remaining_months+other_income+vacation_payout)
     _, exemption, annual_base = apply_personal_exemption(annual_base, parameters, data.get('exemptions', ()))
     annual_tax, rebate, tax_after_rebate = annual_income_tax(
         annual_base, data.get('personal_expenses', 0), parameters,
@@ -272,7 +277,7 @@ def calculate(data, parameters, year, month):
     monthly13 = thirteenth if data.get('monthly_thirteenth') else Decimal(0)
     monthly14 = fourteenth if data.get('monthly_fourteenth') else Decimal(0)
     reserve_paid = reserve if data.get('reserve_paid') else Decimal(0)
-    gross = money(base+number(data.get('non_taxable_income', 0))+monthly13+monthly14+reserve_paid)
+    gross = money(base+number(data.get('non_taxable_income', 0))+monthly13+monthly14+reserve_paid+vacation_payout)
     advances, loans, other = [money(data.get(key, 0)) for key in ('advances','loans','other_deductions')]
     deductions = money(iess+tax+advances+loans+other)
     net = money(gross-deductions)
