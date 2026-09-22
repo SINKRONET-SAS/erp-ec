@@ -2,6 +2,8 @@
 
 El pronunciamiento técnico recibido devuelve DI25-03 para corrección; no existe homologación. Ver [DI25-03_CONTROLES_AUTOMATICOS.md](../docs/DI25-03_CONTROLES_AUTOMATICOS.md) para las correcciones, bloqueos ejecutables y límites. La autenticidad de certificados, la importación versionada de otro empleador, la reliquidación mensual acumulada y la conciliación anual completa permanecen pendientes. Sustitutos y 100 canastas no se habilitan en nómina mediante una referencia aislada; los ensayos sintéticos siguen disponibles. Esta sección prevalece sobre los estados históricos siguientes.
 
+Ajuste 18.0.1.14.5 (22-09-2026): el titular aprobó el criterio de redondeo días→meses del sustituto en D4 (días acreditados / 365 x 12, al entero más cercano; decisión de diseño, no legal). Cierra D4 en la matriz.
+
 Ajuste 18.0.1.14.4 (22-09-2026): D7 (100 canastas) queda con su fundamento legal verificado: art. 7 de la Ley Orgánica de Eficiencia Económica y Generación de Empleo (RO 20-12-2023), literal c) del segundo innumerado posterior al art. 10 de la LRTI; confirma que es el tope de la rebaja del 18 %, no una exención de base. Sigue abierta la lista de autoridades por condición. Enlaces oficiales del RDEP y del Formulario 107 verificados en sri.gob.ec.
 
 Ajuste 18.0.1.14.3 (22-09-2026): la edad mínima de D1 (adulto mayor) queda confirmada en 65 años con la Ley Orgánica de las Personas Adultas Mayores art. 5 (Registro Oficial 484, 9-V-2019), aportada por el titular; coincide con la LRTI y con el sello de parámetros. Cierra la duda planteada en el ajuste anterior.

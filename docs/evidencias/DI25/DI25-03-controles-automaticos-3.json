@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.4",
+  "moduleVersion": "18.0.1.14.5",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -125,6 +125,12 @@
       "formulario107formato2023": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/da612388-e7f6-4391-98e2-77f825d1d3a6/Formulario_107%20-%20Formato%202023.xls",
       "paginaFormulariosInstructivos": "https://www.sri.gob.ec/formularios-e-instructivos1"
     },
+    "payrollModuleTests": 187
+  },
+  "adjustment_18_0_1_14_5": {
+    "action": "El titular aprobo el criterio de redondeo dias->meses del sustituto en D4.",
+    "criterion": "dias acreditados / 365 x 12, redondeado al entero mas cercano (181 dias -> 6 meses). Decision de diseno del motor (solo calcula por meses completos), no una regla legal.",
+    "location": "addons/erpec_payroll/exemption_dossier.py (substitution_claim)",
     "payrollModuleTests": 187
   }
 }

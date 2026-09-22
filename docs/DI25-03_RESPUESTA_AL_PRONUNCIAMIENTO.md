@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.4 (tercera ronda; D1/D2/D6/D5 según ajustes previos; D7 con su fundamento legal verificado) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.5 (tercera ronda; D1/D2/D5/D6/D7 según ajustes previos; D4 con su criterio de redondeo aprobado) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -49,14 +49,14 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 - **Respuesta:** se aplica una sola vez la exención más favorable, nunca la suma. El anexo RDEP conserva ahora la **comparación**: el importe de cada exención acreditada y la que se aplicó (por ejemplo, «elderly 12000.00; disability 14649.60 → aplicada: disability»).
 - **Evidencia:** pruebas de «mejor de las dos, nunca la suma», de límite por la base disponible y de la comparación en el anexo.
 
-### D4 · Sustituto y cambio dentro del ejercicio — ACEPTAR CON CONDICIONES → **Hecho** (con una decisión)
+### D4 · Sustituto y cambio dentro del ejercicio — ACEPTAR CON CONDICIONES → **Hecho** (criterio de redondeo aprobado por el titular, 22-09-2026)
 - **Respuesta a sus condiciones:**
   - *Registrar identificación de la persona con discapacidad, del sustituto, porcentaje, documento y fechas:* el expediente verificado exige todos esos datos.
   - *Un solo sustituto por persona y beneficio usado una sola vez:* se rechaza la verificación si otro sustituto ya cubre a la misma persona en fechas que se solapan y si el mismo trabajador ya usa el beneficio para otra persona.
   - *Reemplazo durante 2026:* el beneficio se distribuye proporcional al tiempo acreditado de cada sustituto.
   - Sin expediente verificado, el sustituto no se aplica y bloquea el cierre.
 - **Evidencia:** pruebas de expediente ausente, verificado, período parcial, dos sustitutos consecutivos, solapamiento rechazado, uso único del beneficio y verificación por otra persona.
-- **Necesitamos de usted:** el motor trabaja con meses enteros, así que la proporción se calcula por **días acreditados sobre días del año, redondeada al mes más cercano** (181 días → 6 meses). ¿Acepta ese redondeo o prefiere otra regla?
+- **Criterio (titular, 22-09-2026):** el motor trabaja con meses enteros, así que la proporción se calcula por **días acreditados sobre días del año, redondeada al mes más cercano** (181 días → 6 meses); es una decisión de diseño, no una regla legal, y el titular la aprobó. Queda citada en `exemption_dossier.py`.
 - **Límite:** la verificación es documental e interna, por otra persona con rol de nómina; no sustituye la verificación ante la autoridad competente.
 
 ### D5 · Porcentaje de discapacidad y RDEP — CORREGIR → **Parcial**
@@ -119,13 +119,12 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 Con esta versión ya no hay filas de la matriz que dependan de que nosotros programemos algo más. Lo que sigue depende de su criterio o del SRI:
 
-1. **D1, D2 y D6:** aprobados por el titular del proyecto el 21-09-2026 (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores); queda la firma de aceptación del responsable tributario.
-2. **D4:** ¿se acepta la proporción por días redondeada al mes más cercano?
-3. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental.
-4. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
-5. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
-6. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
-7. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
+1. **D1, D2, D4 y D6:** aprobados por el titular del proyecto (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores; D4: redondeo días→meses del sustituto, aprobado el 22-09-2026); queda la firma de aceptación del responsable tributario.
+2. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental (el fundamento legal del tope ya quedó verificado).
+3. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
+4. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
+5. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
+6. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
 ## 7. Evidencia y cómo reproducirla
 

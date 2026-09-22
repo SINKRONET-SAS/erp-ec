@@ -172,7 +172,10 @@ class ExemptionDossier(models.Model):
 
     @api.model
     def substitution_claim(self, dossiers, year):
-        """Reclamo de sustituto proporcional al tiempo acreditado (días → meses, redondeo al mes más cercano)."""
+        """Reclamo de sustituto proporcional al tiempo acreditado (días → meses, redondeo al mes más
+        cercano: días acreditados / 365 x 12, redondeado al entero más cercano). Criterio aprobado
+        por el titular del proyecto el 22-09-2026 (DI25-03 D4); no proviene de una norma que fije
+        este redondeo, es una decisión de diseño porque el motor solo calcula por meses completos."""
         if not dossiers:
             return None, ['D4 · Sustituto: no existe expediente verificado con vigencia.']
         percentages = set(dossiers.mapped('disability_percentage'))

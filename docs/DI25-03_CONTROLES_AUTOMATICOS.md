@@ -90,6 +90,10 @@ La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portle
 - **D2 y D6:** aprobados por el titular el 21-09-2026, sin la firma del responsable tributario.
 - **D5:** el XSD y el catálogo oficiales del SRI que aportó el titular se guardan sin cambios en `addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd` y `addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, fijados por huella con pruebas. Verificado en vivo en `sri.gob.ec/formularios-e-instructivos1` (21-09-2026): siguen vigentes para 2024/2025, sin versión 2026 publicada. Al leer el catálogo se corrigieron los códigos de discapacidad (01 no aplica, 02 discapacidad, 03 sustituto, 04 cónyuge/pareja/hijo bajo cuidado, derogado desde 2024), que diferían del orden de la anotación del XSD; no se afirma compatibilidad 2026.
 
+## Ajuste 18.0.1.14.5: criterio de redondeo de D4 aprobado
+
+El titular aprobó el criterio de redondeo días→meses para el sustituto (días acreditados / 365 x 12, al entero más cercano). No proviene de una norma: es una decisión de diseño porque el motor solo calcula por meses completos. Queda citada en `exemption_dossier.py`.
+
 ## Ajuste 18.0.1.14.4: fundamento legal de D7 (100 canastas)
 
 El titular aportó el texto de la Ley Orgánica de Eficiencia Económica y Generación de Empleo (Registro Oficial, 20-12-2023). Su art. 7 sustituye el literal c) del segundo innumerado posterior al art. 10 de la LRTI: «el monto de la rebaja por gastos personales será equivalente al 18% del menor valor entre: los gastos personales declarados en el respectivo ejercicio fiscal y, el valor de la canasta familiar básica multiplicado por cien (100)». Confirma que el motor ya lo trataba correctamente como tope de la rebaja del 18 %, no como exención de la base. Se citó en `engine.py` y en la matriz. Sigue abierto: la lista de autoridades válidas por condición y si la verificación interna basta como validación documental.
