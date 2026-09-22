@@ -88,6 +88,14 @@
     "codeCorrection": "Al leer la hoja TABLAS del catalogo se detecto que el orden real de los codigos de discapacidad difiere del que traia la anotacion de texto del XSD: 01 No aplica, 02 Trabajador con discapacidad, 03 Actua como sustituto, 04 Conyuge/pareja/hijo bajo su cuidado (derogado desde el periodo 2024); 00 solo valido antes de 2013. engine.py, annex_rdep.py, tax_controls.py y views.xml se corrigieron a este orden; el motor ahora rechaza el codigo 04 para el periodo 2024 en adelante y el codigo 00 siempre.",
     "newTests": "test_rdep_catalog.py: huella del archivo del catalogo, comparacion de las cinco descripciones de la hoja TABLAS contra el motor, rechazo del codigo 04 desde 2024 y no-condicion del codigo 01.",
     "payrollModuleTests": 187,
-    "fullSuite": "552 pruebas, 0 fallos, 0 errores, 5 omisiones (base ec_integrated_test_2231ceb9cbd1)"
+    "fullSuite": "552 pruebas, 0 fallos, 0 errores, 5 omisiones (base ec_integrated_test_2231ceb9cbd1)",
+    "ciLinux": {
+      "commit": "334706a",
+      "note": "El push de 334706a quedo agrupado con un commit de resello [skip ci] (509a31c) y GitHub omitio la corrida de todo el push por el mensaje del HEAD. Un primer reintento (12f18d9, 2026-09-22T06:03:19Z) tampoco registro corrida en ~6h30 (entrega de webhook perdida, verificado con gh api). Un segundo reintento (commit vacio 5687210) si disparo la corrida.",
+      "run": "35727766006",
+      "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35727766006",
+      "conclusion": "success",
+      "jobsSucceeded": 5
+    }
   }
 }
