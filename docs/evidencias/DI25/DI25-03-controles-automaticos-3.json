@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.5",
+  "moduleVersion": "18.0.1.14.6",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -132,5 +132,13 @@
     "criterion": "dias acreditados / 365 x 12, redondeado al entero mas cercano (181 dias -> 6 meses). Decision de diseno del motor (solo calcula por meses completos), no una regla legal.",
     "location": "addons/erpec_payroll/exemption_dossier.py (substitution_claim)",
     "payrollModuleTests": 187
+  },
+  "adjustment_18_0_1_14_6": {
+    "trigger": "El titular envio una especificacion detallada de los casos 3, 8, 9 y 11 (matriz de incidencia, ausencias, decimos/fondos de reserva, regimenes especiales).",
+    "finding": "Al releer el catalogo RDEP para validar esa especificacion, se encontro que intGrabGen (ingresos gravados con otro empleador, el dato real de D8) y otrosIngRenGrav (otros ingresos de esta relacion que no constituyen renta gravada) estaban intercambiados en la vista previa XML de annex_rdep.py.",
+    "impact": "El calculo interno de la base imponible (annual_base/basImp) siempre uso el valor correcto de D8; el error era solo la etiqueta XML a la que se escribia. Se corrigio tambien ingGravConEsteEmpl (informativo) para sumar los seis campos que documenta el catalogo.",
+    "fix": "addons/erpec_payroll/annex_rdep.py; prueba nueva test_other_employer_income_and_non_taxable_income_map_to_the_right_rdep_fields en test_tax_registers.py.",
+    "caseSpecReceived": "Los casos 3/8/9/11 siguen bloqueados (necesitan reglas aprobadas para ausencias, gross-up de impuesto asumido y regimen Galapagos/no residentes/CDI); se analizaron parcialmente pero no se implementaron en este incremento.",
+    "payrollModuleTests": 188
   }
 }

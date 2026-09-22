@@ -78,7 +78,7 @@ El titular pidió cerrar las dos brechas concretas señaladas arriba: conseguir 
 
 **Fuentes usadas para el significado de cada campo, en orden de confianza**: (1) la documentación `xs:documentation` del propio esquema RDEP (confirmó `discapTyp`, `tipoEmpleadorType`, `enteSegSocialType`, `resciTyp`, `convImposTyp`, `sisSalNetTyp` con sus enumeraciones exactas); (2) el "Instructivo Formulario 107" oficial del SRI, que documenta el mismo concepto de retención por relación de dependencia campo a campo (participación de utilidades, décimo tercero/cuarto y fondo de reserva como ingresos exentos, aportes IESS, topes de gastos personales, rebajas por discapacidad ≥30% CONADIS y tercera edad ≥65 años, impuesto asumido por contrato de ingreso neto); (3) el nombre literal del campo cuando ninguna fuente lo documenta.
 
-**Dos campos quedaron sin resolver en este punto**: `deducEducartcult` y `benGalpg`. `intGrabGen` (otros intereses/ingresos gravados generales) sigue como campo de captura manual con la misma advertencia, ya que ninguna fuente primaria confirmó su significado exacto.
+**Dos campos quedaron sin resolver en este punto**: `deducEducartcult` y `benGalpg`. `intGrabGen` y `otrosIngRenGrav` también quedaron sin resolver aquí (ver la verificación del 22-09-2026 más abajo: se resolvieron y, además, estaban intercambiados en el código).
 
 ## Verificación — 13-09-2026 (misma sesión): deducEducartcult y benGalpg
 
@@ -123,3 +123,14 @@ El titular pidió corregir la brecha documentada arriba: el motor mensual (`erpe
 **Compatibilidad**: `calculate()` usa `data.get('dependents_count', 0)` y `data.get('galapagos', 'NO')` con valores por defecto que reproducen exactamente el comportamiento anterior (0 cargas, fuera de Galápagos → mismo `expense_limit` sin cambios), así que ninguna prueba existente cambió su resultado esperado.
 
 Pruebas nuevas: `personal_expense_cap()` en aislamiento (0/1/4/5/9 cargas, Galápagos, cargas negativas rechazadas); el cálculo mensual real produce menos impuesto con más cargas o en Galápagos, a igualdad de todo lo demás; `action_correct()` sigue funcionando sin intentar escribir los campos derivados del empleado como campos de línea. 40/40 pruebas de erpec_manufacturing+erpec_imports+erpec_payroll aprobadas (4 nuevas), sin cambios en los resultados de las pruebas preexistentes. Instalado y verificado en la demo con respaldo.
+
+## Verificación — 22-09-2026: intGrabGen y otrosIngRenGrav estaban intercambiados
+
+El titular adjuntó el catálogo RDEP oficial vigente (`addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, ya usado para D5). Su hoja TABLAS documenta ambos campos con su nombre exacto, algo que ninguna fuente anterior había confirmado:
+
+- `intGrabGen`: **«Ingresos gravados generados con otros empleadores»**. Es el campo de D8.
+- `otrosIngRenGrav`: **«Otros ingresos en relación de dependencia que no constituyen renta gravada [ni materia gravada de IESS]»**. No tiene relación con otro empleador; es información sobre ingresos de esta misma relación que no tributan.
+
+El código tenía estos dos campos **intercambiados**: `other_employer_taxable_income` (el dato real de D8, usado en la fórmula de la base imponible y en la conciliación con el comprobante del empleador anterior) se escribía en la vista previa XML bajo `otrosIngRenGrav`, y el campo manual sin uso (`other_general_interest_income`, cuyo significado se marcaba como "no confirmado") se escribía bajo `intGrabGen`. La aritmética interna de `annual_base`/`basImp` siempre fue correcta (usa el valor, no la etiqueta); el error estaba solo en a qué etiqueta XML iba cada valor, lo que habría hecho que un validador real del SRI viera el dato de D8 en el campo equivocado. Se corrigió el 22-09-2026 en `annex_rdep.py`, con una prueba que fija el mapeo (`test_other_employer_income_and_non_taxable_income_map_to_the_right_rdep_fields`) y otra que fija por huella las cinco descripciones del catálogo (`test_disability_codes_match_the_catalog_tablas_sheet`, reutilizada de D5).
+
+De paso se corrigió `ingGravConEsteEmpl`, que el catálogo documenta como campo informativo de cálculo automático (suma de `suelSal + sobSuelComRemu + partUtil + impRentEmpl + decimTer + decimCuar`); antes se escribía solo `line.base`, ahora la suma completa.

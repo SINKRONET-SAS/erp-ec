@@ -3,11 +3,17 @@
 Cubre los campos de datRetRelDepTyp del Esquema RDEP 2023.xsd (SRI), fuente
 primaria descargada y leída el 13-09-2026 (addons/erpec_payroll/xsd/
 Esquema_RDEP_2023.xsd). El significado de cada campo proviene, en este orden
-de confianza: (1) la propia documentación XSD, (2) el Instructivo del
-Formulario 107 del SRI (mismo concepto de retención, per relación de
-dependencia) y (3) el nombre literal del campo cuando ninguna fuente lo
-documenta explícitamente — estos últimos quedan marcados en el código y en
-docs/ALCANCE_ATS_RDEP.md. No se inventan catálogos ni fórmulas legales.
+de confianza: (1) la hoja TABLAS del catálogo RDEP vigente (aportado por el
+titular el 22-09-2026, addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx),
+(2) la propia documentación XSD, (3) el Instructivo del Formulario 107 del SRI
+(mismo concepto de retención, per relación de dependencia) y (4) el nombre
+literal del campo cuando ninguna fuente lo documenta explícitamente — estos
+últimos quedan marcados en el código y en docs/ALCANCE_ATS_RDEP.md. El
+catálogo corrigió, el 22-09-2026, un intercambio entre `otrosIngRenGrav`
+(«otros ingresos que no constituyen renta gravada», dentro de esta misma
+relación) e `intGrabGen` («ingresos gravados generados con otros
+empleadores»): el segundo, no el primero, es el que usa D8. No se inventan
+catálogos ni fórmulas legales.
 
 Acumula los flujos contabilizados del motor mensual. Aplica annual_income_tax
 a la base efectiva y gastos declarados del año; no copia proyecciones de un mes.
@@ -240,11 +246,11 @@ class Line(models.Model):
     _inherit = 'erpec.payroll.line'
     annual_profit_sharing = fields.Float('Participación de utilidades del año (RDEP)', help='Campo partUtil. Valor real distribuido, no calculado por este motor: la utilidad depende del resultado anual de la empresa.')
     decent_wage_compensation = fields.Float('Compensación salario digno (RDEP)', help='Campo salarioDigno. Compensación real pagada, no calculada por este motor.')
-    other_employer_taxable_income = fields.Float('Ingresos gravados con otros empleadores (RDEP)', help='Campo otrosIngRenGrav; casillero 307 del Formulario 107. Declarado por el empleado con base en su F107 anterior.')
+    other_employer_taxable_income = fields.Float('Ingresos gravados con otros empleadores (RDEP)', help='Campo intGrabGen (hoja TABLAS del catálogo RDEP vigente: «Ingresos gravados generados con otros empleadores»). Declarado por el empleado con base en su F107 anterior.')
     other_employer_iess = fields.Float('Aporte IESS con otros empleadores (RDEP)', help='Campo aporPerIessConOtrosEmpls.')
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (RDEP)', help='Campo valRetAsuOtrosEmpls.')
     employer_assumed_tax = fields.Float('Impuesto a la renta asumido por este empleador (RDEP)', help='Campos impRentEmpl/valImpAsuEsteEmpl; solo aplica a contratos de ingreso neto (casillero 381 del F107).')
-    other_general_interest_income = fields.Float('Otros intereses/ingresos gravados generales (RDEP)', help='Campo intGrabGen del esquema SRI; su significado no está confirmado por ninguna fuente primaria revisada el 13-09-2026. Completar solo tras validar con el contador o la ficha técnica.')
+    other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (RDEP)', help='Campo otrosIngRenGrav (hoja TABLAS del catálogo RDEP vigente: «Otros ingresos en relación de dependencia que no constituyen renta gravada ni materia gravada de IESS»); no es de otro empleador. Manual: el motor no lo calcula. Completar solo tras validar con el contador o la ficha técnica.')
     expense_housing = fields.Float('Gastos personales · vivienda (RDEP)', help='Campo deducVivienda. No tiene tope individual; el tope es único y total (ver la categoría "Educación, arte y cultura" para la referencia normativa completa).')
     expense_health = fields.Float('Gastos personales · salud (RDEP)', help='Campo deducSalud. No tiene tope individual; comparte el tope único y total con las demás categorías.')
     expense_education = fields.Float('Gastos personales · educación (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_art_culture. Desde la reforma de 2023 no hay tope por categoría: el Boletín NAC-COM-26-006 del SRI fija un tope único anual según cargas familiares (7 a 20 canastas básicas familiares), multiplicado por 1.803 en Galápagos (IPCEG).')
@@ -510,14 +516,18 @@ class RdepAnnex(models.Model):
             add(detail, 'suelSal', round(line.salary, 2))
             add(detail, 'sobSuelComRemu', round(line.overtime + line.bonus_commission, 2))
             add(detail, 'partUtil', round(line.annual_profit_sharing, 2))
-            add(detail, 'intGrabGen', round(line.other_general_interest_income, 2))
+            add(detail, 'intGrabGen', round(line.other_employer_taxable_income, 2))
             add(detail, 'impRentEmpl', round(line.employer_assumed_tax, 2))
             add(detail, 'decimTer', round(line.thirteenth, 2))
             add(detail, 'decimCuar', round(line.fourteenth, 2))
             add(detail, 'fondoReserva', round(line.reserve_iess, 2))
             add(detail, 'salarioDigno', round(line.decent_wage_compensation, 2))
-            add(detail, 'otrosIngRenGrav', round(line.other_employer_taxable_income, 2))
-            add(detail, 'ingGravConEsteEmpl', round(line.base, 2))
+            add(detail, 'otrosIngRenGrav', round(line.other_general_interest_income, 2))
+            # ingGravConEsteEmpl es informativo y de cálculo automático por el SRI (catálogo
+            # RDEP vigente): suma de suelSal + sobSuelComRemu + partUtil + impRentEmpl + decimTer + decimCuar.
+            add(detail, 'ingGravConEsteEmpl', round(
+                line.salary + line.overtime + line.bonus_commission + line.annual_profit_sharing
+                + line.employer_assumed_tax + line.thirteenth + line.fourteenth, 2))
             add(detail, 'sisSalNet', 2 if line.employer_assumed_tax else 1)
             add(detail, 'apoPerIess', round(line.personal_iess, 2))
             add(detail, 'aporPerIessConOtrosEmpls', round(line.other_employer_iess, 2))
@@ -589,11 +599,11 @@ class RdepAnnexLine(models.Model):
     annual_tax_after_rebate = fields.Float('Impuesto después de la rebaja (impuestoRentaRebajaGastosPersonales)', readonly=True)
     annual_profit_sharing = fields.Float('Participación de utilidades (partUtil)', readonly=True)
     decent_wage_compensation = fields.Float('Compensación salario digno (salarioDigno)', readonly=True)
-    other_employer_taxable_income = fields.Float('Ingresos gravados con otros empleadores (otrosIngRenGrav)', readonly=True)
+    other_employer_taxable_income = fields.Float('Ingresos gravados con otros empleadores (intGrabGen)', readonly=True)
     other_employer_iess = fields.Float('Aporte IESS con otros empleadores (aporPerIessConOtrosEmpls)', readonly=True)
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (valRetAsuOtrosEmpls)', readonly=True)
     employer_assumed_tax = fields.Float('Impuesto asumido por este empleador (valImpAsuEsteEmpl)', readonly=True)
-    other_general_interest_income = fields.Float('Otros intereses/ingresos gravados generales (intGrabGen)', readonly=True)
+    other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (otrosIngRenGrav)', readonly=True)
     expense_housing = fields.Float('Gastos personales · vivienda (deducVivienda)', readonly=True)
     expense_health = fields.Float('Gastos personales · salud (deducSalud)', readonly=True)
     expense_education = fields.Float('Gastos personales · educación (parte de deducEducartcult)', readonly=True)

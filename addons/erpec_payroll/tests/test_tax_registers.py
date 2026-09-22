@@ -5,6 +5,7 @@ import json
 from copy import deepcopy
 from datetime import date
 
+from lxml import etree
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
@@ -247,6 +248,23 @@ class TaxRegistersCase(TransactionCase):
         self.assertIn('Los datos cambiaron', annex.review_notice)
         annex.action_build()
         self.assertIn('no concilian', annex.review_notice)
+
+    def test_other_employer_income_and_non_taxable_income_map_to_the_right_rdep_fields(self):
+        # Catálogo RDEP vigente, hoja TABLAS: <intGrabGen> son los ingresos gravados con OTRO
+        # empleador (lo que usa D8); <otrosIngRenGrav> son otros ingresos de ESTA relación que
+        # NO constituyen renta gravada. El código tenía estos dos campos intercambiados; se
+        # corrigió el 22-09-2026 al leer el catálogo que aportó el titular.
+        self.model.create(self.values)
+        period = self._period(3000, **self._declared())
+        period.action_calculate()
+        period.action_close()
+        period.action_post()
+        annex = self._annex()
+        annex.line_ids.other_general_interest_income = 250  # otros ingresos no gravados de esta relación, no de otro empleador.
+        annex.action_generate_xml()
+        detail = etree.fromstring(base64.b64decode(annex.xml_file)).find('retRelDep/datRetRelDep')
+        self.assertEqual(float(detail.find('intGrabGen').text), 10000.0)
+        self.assertEqual(float(detail.find('otrosIngRenGrav').text), 250.0)
 
     def test_case_11_special_regimes_block_the_close(self):
         self.employee.ec_rdep_ben_galpg = 'SI'

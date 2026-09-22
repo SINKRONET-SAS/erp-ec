@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.5 (tercera ronda; D1/D2/D5/D6/D7 según ajustes previos; D4 con su criterio de redondeo aprobado) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.6 (tercera ronda; D1/D2/D4/D5/D6/D7 según ajustes previos; corregido el intercambio D8 intGrabGen/otrosIngRenGrav) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -86,6 +86,7 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 - **Evidencia:** pruebas de idempotencia, rectificación, hash de archivo, repetición mensual, faltante y descuadre.
 - **Alcance real:** es un **registro** idempotente por formulario; no existe importación de archivos estructurados. El Formulario 107 no existe como salida del sistema; el XML del RDEP sigue siendo vista previa.
 - **Pendiente externo:** entrega del comprobante por el trabajador (30 días) y su aceptación tributaria.
+- **Hallazgo del 22-09-2026:** al leer el catálogo RDEP que usted aportó descubrimos que dos campos del esquema estaban **intercambiados** en la vista previa XML: `intGrabGen` (ingresos gravados con otro empleador, el dato de D8) y `otrosIngRenGrav` (otros ingresos de esta misma relación que no tributan, sin relación con otro empleador). El cálculo interno de la base imponible siempre usó el valor correcto; el error era solo la etiqueta XML donde se escribía. Corregido, con una prueba que fija el mapeo.
 
 ## 4. Casos 1 a 11
 

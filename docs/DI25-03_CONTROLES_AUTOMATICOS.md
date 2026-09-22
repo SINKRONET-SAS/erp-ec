@@ -90,6 +90,10 @@ La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portle
 - **D2 y D6:** aprobados por el titular el 21-09-2026, sin la firma del responsable tributario.
 - **D5:** el XSD y el catálogo oficiales del SRI que aportó el titular se guardan sin cambios en `addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd` y `addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, fijados por huella con pruebas. Verificado en vivo en `sri.gob.ec/formularios-e-instructivos1` (21-09-2026): siguen vigentes para 2024/2025, sin versión 2026 publicada. Al leer el catálogo se corrigieron los códigos de discapacidad (01 no aplica, 02 discapacidad, 03 sustituto, 04 cónyuge/pareja/hijo bajo cuidado, derogado desde 2024), que diferían del orden de la anotación del XSD; no se afirma compatibilidad 2026.
 
+## Ajuste 18.0.1.14.6: D8 tenía dos campos RDEP intercambiados
+
+Al analizar la matriz de incidencia por concepto que el titular envió para el caso 3, releímos el catálogo RDEP y encontramos que `intGrabGen` («ingresos gravados generados con otros empleadores», el dato real de D8) y `otrosIngRenGrav` («otros ingresos de esta misma relación que no constituyen renta gravada», sin relación con otro empleador) estaban intercambiados en la vista previa XML. El cálculo interno de la base imponible siempre usó el valor correcto; el error era solo la etiqueta XML. También se corrigió `ingGravConEsteEmpl` (informativo, cálculo automático del SRI) para que sume los seis campos que documenta el catálogo, en vez de solo el sueldo base. Ver `docs/ALCANCE_ATS_RDEP.md`.
+
 ## Ajuste 18.0.1.14.5: criterio de redondeo de D4 aprobado
 
 El titular aprobó el criterio de redondeo días→meses para el sustituto (días acreditados / 365 x 12, al entero más cercano). No proviene de una norma: es una decisión de diseño porque el motor solo calcula por meses completos. Queda citada en `exemption_dossier.py`.
