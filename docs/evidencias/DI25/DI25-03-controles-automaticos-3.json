@@ -102,6 +102,14 @@
     "action": "El titular subsano una mencion anterior de 60 anos y adjunto la Ley Organica de las Personas Adultas Mayores (Registro Oficial 484, 9-V-2019) como fuente legal.",
     "legalSource": "Art. 5: 'se considera persona adulta mayor aquella que ha cumplido los 65 anos de edad'. Coincide con la edad ya sellada en parameters_seal.py y con la LRTI art. 9 num. 12 ya citada en engine.py; no requirio cambio de codigo, solo se agrego la cita como segunda fuente.",
     "note": "El documento PDF llego como contenido en la conversacion, no como archivo local; no se pudo guardar el binario como evidencia. La cita textual del articulo 5 queda registrada en engine.py y en esta evidencia.",
-    "closesQuestion": "D1: queda cerrada la duda entre 65 y 60 anos planteada el 21-09-2026."
+    "closesQuestion": "D1: queda cerrada la duda entre 65 y 60 anos planteada el 21-09-2026.",
+    "ciLinux": {
+      "commit": "a303625",
+      "run": "35729809533",
+      "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35729809533",
+      "conclusion": "success",
+      "jobsSucceeded": 5,
+      "note": "El arranque de la imagen customer fallo una vez por un error transitorio de Postgres en Docker (ajeno a nomina) y aprobo al relanzar solo ese trabajo."
+    }
   }
 }

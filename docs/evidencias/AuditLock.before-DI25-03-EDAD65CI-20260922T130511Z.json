@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-22T13:05:11.291Z",
+  "updatedAt": "2026-09-22T12:51:33.191Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -96,7 +96,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES3-20260921T235123Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES3-20260921T235248Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-EDAD65-20260922T125133Z.json",
-    "docs/evidencias/AuditLock.before-DI25-03-EDAD65CI-20260922T130511Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-EXENCIONES-20260921T190651518Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-EXENCIONES-CI-DEMO-20260921T193650412Z.json",
@@ -172,8 +171,7 @@
     "DI25-03.5 (18.0.1.14.1-18.0.1.14.2): D1 ajustado a que el adulto mayor se reconoce por la edad sin acreditacion documental (criterio del titular, 21-09-2026); XSD oficial del RDEP ubicado en addons/erpec_payroll/xsd.",
     "DI25-03.5 (18.0.1.14.2): catalogo RDEP oficial aportado por el titular, ubicado en addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx y verificado en vivo contra sri.gob.ec/formularios-e-instructivos1 (vigente 2024/2025, sin version 2026). Se corrigieron los codigos de discapacidad del motor y del anexo al orden real del catalogo (01 no aplica, 02 discapacidad, 03 sustituto, 04 conyuge/pareja/hijo derogado desde 2024), que diferia de la anotacion del XSD. Suite Windows 0 fallos, 0 errores, 5 omisiones (552 pruebas, modulo de nomina 187). Demo redesplegada a 18.0.1.14.2, auditoria de solo lectura en verde.",
     "DI25-03.5: CI Linux del commit 5687210 (run 35727766006) aprobado: cinco trabajos, tras dos reintentos por entregas de webhook perdidas en los commits previos (334706a agrupado con un resello [skip ci]; 12f18d9 sin corrida en ~6h30).",
-    "DI25-03.5 (18.0.1.14.3, 22-09-2026): el titular subsano una mencion anterior de 60 anos y aporto la Ley Organica de las Personas Adultas Mayores art. 5 (Registro Oficial 484, 9-V-2019) como fuente legal de los 65 anos de D1; coincide con LRTI y con el sello de parametros. No hubo cambio de logica, solo la cita en engine.py y el cierre de la fila D1 en la matriz. Modulo de nomina 187 pruebas; demo redesplegada.",
-    "DI25-03.5: CI Linux del commit a303625 (run 35729809533) aprobado: cinco trabajos, tras un reintento por un fallo transitorio de Postgres en Docker en el arranque de la imagen customer."
+    "DI25-03.5 (18.0.1.14.3, 22-09-2026): el titular subsano una mencion anterior de 60 anos y aporto la Ley Organica de las Personas Adultas Mayores art. 5 (Registro Oficial 484, 9-V-2019) como fuente legal de los 65 anos de D1; coincide con LRTI y con el sello de parametros. No hubo cambio de logica, solo la cita en engine.py y el cierre de la fila D1 en la matriz. Modulo de nomina 187 pruebas; demo redesplegada."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -277,7 +275,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES3-20260921T235123Z.json": "17cac6fcdcb94271d5c4091a70c53bf13deb6ac0435b0def85bdf321628b637c",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES3-20260921T235248Z.json": "c82b1a0ff81adddbf3c823898e1d6d638866e8ef5052e7de44cdd38c89781fd4",
     "docs/evidencias/AuditLock.before-DI25-03-EDAD65-20260922T125133Z.json": "484c478a89007e325820338e42479d6e82165137b10dbaac8346aaf32341d6d9",
-    "docs/evidencias/AuditLock.before-DI25-03-EDAD65CI-20260922T130511Z.json": "725701b7a64c6577fcb2ef9331237b216392dd052072c08b85161a72a67e0936",
     "docs/evidencias/AuditLock.before-DI25-03-ENSAYOS-20260921T125433339Z.json": "74175aad0e1af8ecae5e66dc3a753ce030c997048a8409e725548f5a5481350d",
     "docs/evidencias/AuditLock.before-DI25-03-EXENCIONES-20260921T190651518Z.json": "bfb26b80183182e6ffef0c0bf684643eee7d80d39e921a3cc0ae3e2b74c0cbf7",
     "docs/evidencias/AuditLock.before-DI25-03-EXENCIONES-CI-DEMO-20260921T193650412Z.json": "669185ba492332e70235227a680e688e603637a0aecc6443e758a6422b851b35",
@@ -296,7 +293,7 @@
     "docs/evidencias/DI25/DI25-03-UI.md": "556acdfbbcc8e89688299de296a5aa3dbb8be9ed6e248ddd19aaaebb78aa5fdf",
     "docs/evidencias/DI25/DI25-03-capturas.json": "228625c2b1428b9ece614400feb65d89b62d47cb509253314e3edb465bc2c8e2",
     "docs/evidencias/DI25/DI25-03-controles-automaticos-2.json": "ec6b0befb123f3b33006c85d9c8f082564e9d52ed5e10418241eb9dea5a5fa2b",
-    "docs/evidencias/DI25/DI25-03-controles-automaticos-3.json": "1d07841051ec26c69ab807cea47016da47ecf8ec5f5f5a92086024c5c3e790ea",
+    "docs/evidencias/DI25/DI25-03-controles-automaticos-3.json": "d36e9a64679b6b1244fb0e9874157212c08ba8f526d2b75123367cb972569968",
     "docs/evidencias/DI25/DI25-03-controles-automaticos.json": "f9f5a3582d03724f06857a00f5cfdb1b6ed9fe8621dd72ab6499b789bed09c82",
     "docs/evidencias/DI25/DI25-03-ensayos-renta.json": "8fe914b524a022db930655031c3f757eb5387e135b9f871f55df0157acaa34ba",
     "docs/evidencias/DI25/DI25-03-exenciones-personales.json": "0c909d7dde88bb7ce222c9965ba58776e2001fac19804f3f732760fc173248a5",
@@ -321,9 +318,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-EDAD65CI-20260922T130511Z.json",
-  "previousAuditLockHash": "725701b7a64c6577fcb2ef9331237b216392dd052072c08b85161a72a67e0936",
-  "signature": "da59b791b44c2f52912777b54c6c587b8c55c73e6c903371c0fa0225dce43643",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-EDAD65-20260922T125133Z.json",
+  "previousAuditLockHash": "484c478a89007e325820338e42479d6e82165137b10dbaac8346aaf32341d6d9",
+  "signature": "315f43ec0041546bd4355d81cf45da389d0efd87d8da34286a521666318518ec",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
