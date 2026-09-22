@@ -90,6 +90,18 @@ La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portle
 - **D2 y D6:** aprobados por el titular el 21-09-2026, sin la firma del responsable tributario.
 - **D5:** el XSD y el catálogo oficiales del SRI que aportó el titular se guardan sin cambios en `addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd` y `addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, fijados por huella con pruebas. Verificado en vivo en `sri.gob.ec/formularios-e-instructivos1` (21-09-2026): siguen vigentes para 2024/2025, sin versión 2026 publicada. Al leer el catálogo se corrigieron los códigos de discapacidad (01 no aplica, 02 discapacidad, 03 sustituto, 04 cónyuge/pareja/hijo bajo cuidado, derogado desde 2024), que diferían del orden de la anotación del XSD; no se afirma compatibilidad 2026.
 
+## Ajuste 18.0.1.14.4: fundamento legal de D7 (100 canastas)
+
+El titular aportó el texto de la Ley Orgánica de Eficiencia Económica y Generación de Empleo (Registro Oficial, 20-12-2023). Su art. 7 sustituye el literal c) del segundo innumerado posterior al art. 10 de la LRTI: «el monto de la rebaja por gastos personales será equivalente al 18% del menor valor entre: los gastos personales declarados en el respectivo ejercicio fiscal y, el valor de la canasta familiar básica multiplicado por cien (100)». Confirma que el motor ya lo trataba correctamente como tope de la rebaja del 18 %, no como exención de la base. Se citó en `engine.py` y en la matriz. Sigue abierto: la lista de autoridades válidas por condición y si la verificación interna basta como validación documental.
+
+Enlaces oficiales verificados el 22-09-2026 en `sri.gob.ec`:
+- Ficha Técnica RDEP 2024 (también válida 2025): https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/b19da703-5b63-4e4b-8222-10d8e3d21c89/Ficha%20Tecnica%20RDEP%202024.pdf
+- Catálogo RDEP vigente 2024 (también válido 2025): https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/df5866ad-80cd-4315-8f9f-da8998dae0d5/Cat%c3%a1logo%20vigente%20para%20el%20ejercicio%20fiscal%202024.xls
+- Esquema RDEP.xsd (2023): https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/62837cc4-2de7-472c-9108-9b61bce8a38e/Esquema%20RDEP%202023.xsd
+- Instructivo del Formulario 107: https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/1e4b0c85-f309-45b0-8a5e-dfd92a8e63d0/INSTRUCTIVO+FORMULARIO+107+COMPROBANTE+DE+RETENCIONES+EN+LA+FUENTE+DEL+IMPUESTO+A+LA+RENTA+POR+INGRESOS+DEL+TRABAJO+EN+RELACI_N+DE+DEPENDENCIA.pdf
+- Formulario 107, formato de ejemplo 2023: https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/da612388-e7f6-4391-98e2-77f825d1d3a6/Formulario_107%20-%20Formato%202023.xls
+- Página de formularios e instructivos (RDEP): https://www.sri.gob.ec/formularios-e-instructivos1
+
 ## Ajuste 18.0.1.14.3: edad mínima de D1 confirmada
 
 El titular subsanó una mención anterior de 60 años y adjuntó la Ley Orgánica de las Personas Adultas Mayores (Registro Oficial 484, 9-V-2019). Su artículo 5 dice: «se considera persona adulta mayor aquella que ha cumplido los 65 años de edad». Coincide con la edad ya sellada en `parameters_seal.py` y con la LRTI art. 9 num. 12 ya citada en `engine.py`; no hubo cambio de lógica, solo se agregó la cita como segunda fuente legal y se cerró la fila D1 de la matriz sin pendiente técnico.

@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.3 (tercera ronda, criterios del titular sobre D1/D2/D6, catálogo RDEP real para D5 y edad mínima de D1 confirmada) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.4 (tercera ronda; D1/D2/D6/D5 según ajustes previos; D7 con su fundamento legal verificado) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -74,8 +74,9 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 ### D7 · Límite de 100 canastas — RECHAZAR → **Hecho** (con una consulta externa)
 - **Respuesta:** aceptamos el rechazo. La referencia aislada ya **no reduce la retención ni habilita el tope** y bloquea el cierre. Solo se aplica con un expediente verificado que cubra **todo el ejercicio**, con la **condición acreditada por rutas separadas**: discapacidad (con su grado), enfermedad catastrófica, enfermedad rara y enfermedad huérfana son campos distintos y obligatorios. Para una carga exige identificación, relación o dependencia económica, y se rechaza el doble uso. El sistema no emite diagnósticos ni guarda datos de salud: solo referencia, autoridad, condición y vigencia.
+- **Fundamento legal (aportado por el titular, 22-09-2026):** verificamos en el texto oficial que el titular adjuntó el art. 7 de la **Ley Orgánica de Eficiencia Económica y Generación de Empleo** (Registro Oficial, 20-12-2023), que sustituye el literal c) del segundo innumerado posterior al art. 10 de la LRTI: «el monto de la rebaja por gastos personales será equivalente al 18% del menor valor entre: los gastos personales declarados en el respectivo ejercicio fiscal y, el valor de la canasta familiar básica multiplicado por cien (100)». Confirma lo que el motor ya calculaba: **no es una exención de la base imponible**, es el tope de la rebaja del 18 %, igual mecanismo que el tope general por cargas familiares. Queda citado en `engine.py`.
 - **Evidencia:** pruebas de referencia aislada sin efecto, vigencia parcial que no aplica, expediente completo que sí aplica, carga usada dos veces y cada condición como ruta propia.
-- **Necesitamos de usted:** la lista de autoridades válidas por condición (hoy la autoridad se registra como texto libre) y confirmar si la verificación documental interna por otra persona basta como «validación documental» mientras no exista consulta a la fuente oficial.
+- **Necesitamos de usted:** la lista de autoridades válidas por condición (hoy la autoridad se registra como texto libre; para discapacidad sería previsiblemente CONADIS y para catastrófica/rara/huérfana la autoridad sanitaria nacional, pero no lo asumimos sin su confirmación) y si la verificación documental interna por otra persona basta como «validación documental» mientras no exista consulta a la fuente oficial.
 
 ### D8 · Ingresos y retenciones del empleador anterior — CORREGIR → **Hecho** (alcance acotado)
 - **Respuesta a sus tres exigencias:**

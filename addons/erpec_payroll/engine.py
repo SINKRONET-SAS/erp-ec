@@ -51,7 +51,14 @@ def personal_expense_cap(expense_limit, dependents_count=0, galapagos='NO', *, s
         raise ValueError('Las cargas familiares no pueden ser negativas.')
     if type(special_expense) is not bool:
         raise ValueError('El supuesto especial requiere un indicador booleano explícito.')
-    # LRTI, segundo innumerado posterior al art. 10, literal c; SRI 2026.
+    # LRTI, segundo innumerado posterior al art. 10, literal c), sustituido por el art. 7 de la
+    # Ley Orgánica de Eficiencia Económica y Generación de Empleo (Registro Oficial, 20-12-2023;
+    # verificado en el texto oficial de la ley, aportado por el titular el 22-09-2026): "Para las
+    # personas naturales con o a cargo de personas con discapacidad, enfermedades catastróficas,
+    # raras y/o huérfanas, el monto de la rebaja por gastos personales será equivalente al 18% del
+    # menor valor entre: los gastos personales declarados en el respectivo ejercicio fiscal y, el
+    # valor de la canasta familiar básica multiplicado por cien (100)". No es una exención de la
+    # base imponible: es el tope de la rebaja del 18 %, igual que el tope general por cargas.
     baskets = 100 if special_expense else DEPENDENTS_BASKETS.get(dependents_count, DEPENDENTS_BASKETS_MAX)
     cap = number(expense_limit)/BASELINE_BASKETS*baskets
     return cap*number(GALAPAGOS_IPCEG_FACTOR) if galapagos == 'SI' else cap

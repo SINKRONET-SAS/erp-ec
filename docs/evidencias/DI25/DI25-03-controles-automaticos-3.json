@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.3",
+  "moduleVersion": "18.0.1.14.4",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -111,5 +111,20 @@
       "jobsSucceeded": 5,
       "note": "El arranque de la imagen customer fallo una vez por un error transitorio de Postgres en Docker (ajeno a nomina) y aprobo al relanzar solo ese trabajo."
     }
+  },
+  "adjustment_18_0_1_14_4": {
+    "action": "El titular aporto el texto de la Ley Organica de Eficiencia Economica y Generacion de Empleo (Registro Oficial, 20-12-2023) para fundamentar D7.",
+    "legalSource": "Art. 7, que sustituye el literal c) del segundo innumerado posterior al art. 10 de la LRTI: rebaja del 18% del menor valor entre gastos personales declarados y el valor de 100 canastas familiares basicas, para personas con o a cargo de discapacidad, enfermedad catastrofica, rara o huerfana. Verificado por Claude leyendo el PDF oficial de la ley (bolsadevaloresguayaquil.com, copia del Registro Oficial).",
+    "confirms": "El motor ya trataba las 100 canastas como tope de la rebaja del 18%, no como exencion de la base imponible; no hubo cambio de logica, solo se agrego la cita en engine.py y en la matriz D7.",
+    "stillOpen": "Lista de autoridades validas por condicion (CONADIS para discapacidad, autoridad sanitaria para catastrofica/rara/huerfana no asumido sin confirmacion) y si la verificacion interna basta como validacion documental.",
+    "officialLinks": {
+      "fichaTecnicaRDEP2024": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/b19da703-5b63-4e4b-8222-10d8e3d21c89/Ficha%20Tecnica%20RDEP%202024.pdf",
+      "catalogoRDEP2024": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/df5866ad-80cd-4315-8f9f-da8998dae0d5/Cat%c3%a1logo%20vigente%20para%20el%20ejercicio%20fiscal%202024.xls",
+      "esquemaRDEP2023xsd": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/62837cc4-2de7-472c-9108-9b61bce8a38e/Esquema%20RDEP%202023.xsd",
+      "instructivoFormulario107": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/1e4b0c85-f309-45b0-8a5e-dfd92a8e63d0/INSTRUCTIVO+FORMULARIO+107+COMPROBANTE+DE+RETENCIONES+EN+LA+FUENTE+DEL+IMPUESTO+A+LA+RENTA+POR+INGRESOS+DEL+TRABAJO+EN+RELACI_N+DE+DEPENDENCIA.pdf",
+      "formulario107formato2023": "https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/da612388-e7f6-4391-98e2-77f825d1d3a6/Formulario_107%20-%20Formato%202023.xls",
+      "paginaFormulariosInstructivos": "https://www.sri.gob.ec/formularios-e-instructivos1"
+    },
+    "payrollModuleTests": 187
   }
 }
