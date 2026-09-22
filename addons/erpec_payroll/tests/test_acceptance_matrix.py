@@ -49,12 +49,13 @@ class AcceptanceMatrixCase(TransactionCase):
 
     def test_states_are_consistent_with_the_documented_limits(self):
         by_code = {row.code: row for row in self.rows}
-        # Lo que depende del SRI o de reglas aún no aprobadas nunca figura como control automático completo.
-        for code in ('D5', 'C03', 'C10'):
+        # Lo que depende del SRI nunca figura como control automático completo.
+        for code in ('D5', 'C10'):
             self.assertNotEqual(by_code[code].control_state, 'automated', code)
-        # C09 (décimos y fondos de reserva) sí es automático: el titular confirmó que el motor ya
-        # cumplía su especificación (18.0.1.14.7); lo que queda pendiente (vacaciones no gozadas)
-        # se tramita en C03, no aquí.
+        # C09 (décimos y fondos de reserva) y C03 (matriz de incidencia estatutaria, con la
+        # decisión explícita de aportabilidad para beneficios propios) sí son automáticos: el
+        # titular confirmó/aportó sus especificaciones (18.0.1.14.7 y 18.0.1.14.9).
+        self.assertEqual(by_code['C03'].control_state, 'automated')
         self.assertEqual(by_code['D8'].control_state, 'automated')
         self.assertEqual(by_code['C09'].control_state, 'automated')
 

@@ -474,9 +474,17 @@ class Line(models.Model):
         _entries,totals=self._resolve_advance_entries()
         data['advances']=data.get('advances',0)+totals['advances']
         data['loans']=data.get('loans',0)+totals['loans']
-        taxable=sum(self.benefit_line_ids.filtered(lambda item:item.benefit_type_id.taxable).mapped('amount'))
+        # Caso 3 (DI25-03): un beneficio propio que grava impuesto a la renta puede o no aportar a
+        # IESS (campo iess_contributable, decisión de la empresa, art. 14 Ley de Seguridad Social).
+        # El que sí aporta se suma como bonus (grava IESS e IR, igual que antes). El que no aporta
+        # sigue el mismo tratamiento que vacation_payout: grava IR, no IESS, una sola vez al año.
+        taxable_iess=sum(self.benefit_line_ids.filtered(
+            lambda item:item.benefit_type_id.taxable and item.benefit_type_id.iess_contributable=='SI').mapped('amount'))
+        taxable_no_iess=sum(self.benefit_line_ids.filtered(
+            lambda item:item.benefit_type_id.taxable and item.benefit_type_id.iess_contributable=='NO').mapped('amount'))
         non_taxable=sum(self.benefit_line_ids.filtered(lambda item:not item.benefit_type_id.taxable).mapped('amount'))
-        data['bonus']=data.get('bonus',0)+taxable
+        data['bonus']=data.get('bonus',0)+taxable_iess
+        data['vacation_payout']=data.get('vacation_payout',0)+taxable_no_iess
         data['non_taxable_income']=data.get('non_taxable_income',0)+non_taxable
         return data
 
@@ -761,24 +769,37 @@ class BenefitType(models.Model):
     name=fields.Char('Nombre',required=True)
     company_id=fields.Many2one('res.company','Empresa',required=True,default=lambda self:self.env.company)
     category=fields.Selection(BENEFIT_CATEGORIES,'Categoría',required=True,default='otro')
-    # taxable determina el único efecto que el motor de cálculo (engine.py) puede aplicar de
-    # forma diferenciada hoy: si el beneficio entra a `base` (grava IESS, impuesto a la renta,
-    # décimos, vacaciones y fondo de reserva, igual que bonus/commission) o si solo entra a
-    # `gross` sin gravar nada (igual que non_taxable_income). El motor no distingue IESS de
-    # impuesto a la renta ni de décimos por separado -- no se ofrecen esas banderas por separado
-    # para no presentar una configuración que el cálculo no puede honrar de verdad.
-    taxable=fields.Boolean('Grava IESS, impuesto a la renta, décimos, vacaciones y reserva',default=True,
-        help='Activado: el beneficio se suma a la base gravable (igual que una bonificación). '
-             'Desactivado: se suma solo al ingreso bruto, sin gravar nada (igual que un ingreso no gravado).')
+    # taxable decide si el beneficio grava impuesto a la renta (se suma a `base`/`gross` según
+    # corresponda) o no grava nada (igual que non_taxable_income). iess_contributable decide,
+    # solo cuando taxable=True, si además grava IESS (entra a `base`, igual que bonus/commission)
+    # o si grava renta pero no IESS (caso 3, DI25-03: mismo tratamiento que vacation_payout;
+    # catálogo RDEP, campo sobSuelComRemu, "materia NO gravada de seguridad social"). Ya no hace
+    # falta tratar "IESS sí/no" como indistinguible del impuesto a la renta: el motor separa
+    # ambos desde que existe vacation_payout.
+    taxable=fields.Boolean('Grava impuesto a la renta',default=True,
+        help='Activado: el beneficio se suma a la base gravable de impuesto a la renta. '
+             'Desactivado: se suma solo al ingreso bruto, sin gravar nada (igual que un ingreso no gravado). '
+             'Este campo ya no decide el aporte a IESS por sí solo: ver "Aportable a IESS".')
+    iess_contributable=fields.Selection([('SI','Sí'),('NO','No')],'Aportable a IESS',default='SI',required=True,
+        help='Solo tiene efecto si el beneficio grava impuesto a la renta. Por defecto SÍ (aporta, '
+             'igual que una bonificación). Elegir NO es una decisión de la empresa, no una verificación '
+             'del sistema: se registra como referencia el art. 14 de la Ley de Seguridad Social (Ley 55, '
+             'Registro Oficial Suplemento 465, 30-11-2001), que exonera de materia gravada IESS conceptos '
+             'como alimentación, atención médica, seguros de vida/accidentes, ropa/herramientas de trabajo '
+             'y beneficios de orden social sin privilegio (tope conjunto del 20 % de la retribución '
+             'monetaria gravada) — no cualquier beneficio califica.')
     active=fields.Boolean('Activo',default=True)
     note=fields.Text('Descripción y justificación')
     _sql_constraints=[('name_unique','unique(company_id,name)','Ya existe un beneficio con ese nombre en esta empresa.')]
 
     def write(self, values):
-        if 'taxable' in values:
+        if 'taxable' in values or 'iess_contributable' in values:
             used = self.env['erpec.payroll.benefit.line'].search_count([
                 ('benefit_type_id', 'in', self.ids), ('line_id.period_id.state', '!=', 'draft')])
-            if used and any(item.taxable != values['taxable'] for item in self):
+            if used and any(
+                    ('taxable' in values and item.taxable != values['taxable'])
+                    or ('iess_contributable' in values and item.iess_contributable != values['iess_contributable'])
+                    for item in self):
                 raise ValidationError('El tratamiento de un beneficio calculado es inmutable; crea otra versión para períodos futuros.')
         return super().write(values)
 

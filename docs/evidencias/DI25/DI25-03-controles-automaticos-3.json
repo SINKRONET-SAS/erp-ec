@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.8",
+  "moduleVersion": "18.0.1.14.9",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -16,8 +16,8 @@
     "caso6_caso7": "pruebas repetidas con D1-D7 y consolidacion idempotente con reliquidacion"
   },
   "matrixStates": {
-    "automated": 14,
-    "partial": 3,
+    "automated": 15,
+    "partial": 2,
     "blocked": 2,
     "external": 0
   },
@@ -154,5 +154,14 @@
     "fix": "annex_rdep.py: suelSal = salary+overtime+bonus_commission; sobSuelComRemu = vacation_payout (nuevo). engine.py: vacation_payout grava IR (se suma una vez a annual_base, como D8) pero no IESS (no entra a base/iess). models.py/views.xml: campo nuevo vacation_payout en erpec.payroll.line.",
     "stillOpen": "Beneficios propios de cada empresa (erpec.payroll.benefit.type) siguen sin matriz de incidencia generica; matriz movida a partial (antes external).",
     "payrollModuleTests": 190
+  },
+  "adjustment_18_0_1_14_9": {
+    "action": "El titular pidio un control de decision para beneficios propios (no solo aviso): aportable a IESS SI/NO, default SI, aviso informativo con art. 14 Ley de Seguridad Social si se elige NO.",
+    "legalSource": "Ley de Seguridad Social (Ley 55, Registro Oficial Suplemento 465, 30-11-2001), art. 14 EXENCIONES, verificado contra el texto oficial (iess.gob.ec): exonera alimentacion, atencion medica/odontologica, seguros de vida/accidentes, ropa/herramientas de trabajo y beneficios de orden social sin privilegio, tope conjunto 20% de la retribucion monetaria gravada. El titular escribio 'Ley de Seguro Social Obligatorio' (nombre de la ley anterior a 2001); se corrigio al nombre vigente en la cita.",
+    "implementation": "Campo iess_contributable en erpec.payroll.benefit.type (SI/NO, default SI, inmutable una vez usado). models.py._inputs() separa beneficios taxable+SI (bonus, como antes) de taxable+NO (mismo tratamiento que vacation_payout: grava IR una vez, no IESS). engine.py devuelve vacation_payout en el resultado inmutable; annex_rdep.py lo acumula desde el resultado (RDEP_FLOW_KEYS), no desde el campo crudo, para incluir tambien los beneficios plegados.",
+    "matrixChange": "C03 (caso 3) pasa de partial a automated. Sin filas 'external' restantes.",
+    "userClarification": "Cuales son los bloqueos (control_state=blocked): C08 (caso 8, cambio salarial hecho / ausencias sin modelar) y C11 (caso 11, Galapagos/no residentes/convenio/impuesto asumido bloquean el cierre siempre que se detectan, sin regla aprobada).",
+    "sequenceChosen": "El titular eligio: primero caso 8 (ausencias, afecta la liquidacion mensual), luego caso 11.",
+    "payrollModuleTests": 192
   }
 }

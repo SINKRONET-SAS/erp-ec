@@ -287,7 +287,7 @@ def calculate(data, parameters, year, month):
     cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess)
     # Estas magnitudes son proyecciones mensuales; el RDEP aplica la misma tarifa
     # a los acumulados efectivos, sin copiar una proyección de un mes aislado.
-    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption}.items()}
+    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'vacation_payout':vacation_payout, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption}.items()}
 
 
 def validate_parameters(parameters):

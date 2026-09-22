@@ -91,13 +91,17 @@ TREATY_APPLIES = [('SI', 'SI'), ('NO', 'NO'), ('NA', 'NA'), ('SD', 'SD · Sin da
 FISCAL_RESIDENCE = [('00', '00'), ('01', '01'), ('02', '02')]
 BEN_GALPG = [('SI', 'SI'), ('NO', 'NO')]
 
-RDEP_FLOW_KEYS = ('gross', 'salary', 'overtime', 'thirteenth', 'fourteenth', 'reserve_iess', 'personal_iess', 'tax', 'base')
+RDEP_FLOW_KEYS = ('gross', 'salary', 'overtime', 'thirteenth', 'fourteenth', 'reserve_iess', 'personal_iess', 'tax', 'base', 'vacation_payout')
 RDEP_LINE_INPUT_KEYS = (
     'annual_profit_sharing', 'decent_wage_compensation', 'other_employer_taxable_income',
     'other_employer_iess', 'other_employer_withheld_tax', 'employer_assumed_tax',
-    'other_general_interest_income', 'vacation_payout', 'expense_housing', 'expense_health', 'expense_education',
+    'other_general_interest_income', 'expense_housing', 'expense_health', 'expense_education',
     'expense_food', 'expense_clothing', 'expense_art_culture', 'expense_tourism',
 )
+# vacation_payout viaja en RDEP_FLOW_KEYS (no en RDEP_LINE_INPUT_KEYS): la novedad que registra
+# el usuario en la línea la complementa engine.calculate() con los beneficios propios sin aporte
+# a IESS (caso 3, DI25-03), y solo el resultado inmutable de cada período (result['vacation_payout'])
+# refleja ese total real; sumar el campo crudo de la línea lo subestimaría.
 EXPENSE_CATEGORY_KEYS = ('expense_housing', 'expense_health', 'expense_education', 'expense_art_culture', 'expense_food', 'expense_clothing', 'expense_tourism')
 # Boletín NAC-COM-26-006 (SRI, 06-02-2026) y fuentes tributarias consistentes con él:
 # desde la reforma de 2023 ya NO hay tope individual por categoría de gasto personal.
@@ -611,7 +615,7 @@ class RdepAnnexLine(models.Model):
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (valRetAsuOtrosEmpls)', readonly=True)
     employer_assumed_tax = fields.Float('Impuesto asumido por este empleador (valImpAsuEsteEmpl)', readonly=True)
     other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (otrosIngRenGrav)', readonly=True)
-    vacation_payout = fields.Float('Liquidación de vacaciones no gozadas (sobSuelComRemu)', readonly=True)
+    vacation_payout = fields.Float('Gravado de IR, no de IESS: vacaciones no gozadas y beneficios propios sin aporte (sobSuelComRemu)', readonly=True)
     expense_housing = fields.Float('Gastos personales · vivienda (deducVivienda)', readonly=True)
     expense_health = fields.Float('Gastos personales · salud (deducSalud)', readonly=True)
     expense_education = fields.Float('Gastos personales · educación (parte de deducEducartcult)', readonly=True)

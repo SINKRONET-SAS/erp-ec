@@ -56,6 +56,38 @@ class BenefitsAdvancesCase(TransactionCase):
         self.assertEqual(period_with_benefit.line_ids.cost, period_manual.line_ids.cost)
         self.assertEqual(period_with_benefit.line_ids.result_personal_iess, period_manual.line_ids.result_personal_iess)
 
+    def test_taxable_non_iess_benefit_equals_manual_vacation_payout(self):
+        # Caso 3 (DI25-03): un beneficio propio con iess_contributable='NO' grava impuesto a la
+        # renta pero no IESS, igual que vacation_payout (art. 14 Ley de Seguridad Social).
+        period_with_benefit = self._make_period(1)
+        benefit_type = self.env['erpec.payroll.benefit.type'].create(
+            {'name': 'Bono sin aporte IESS', 'taxable': True, 'iess_contributable': 'NO'})
+        self.assertEqual(benefit_type.iess_contributable, 'NO')
+        self.env['erpec.payroll.benefit.line'].create(
+            {'line_id': period_with_benefit.line_ids.id, 'benefit_type_id': benefit_type.id, 'amount': 100})
+        period_with_benefit.action_calculate()
+        period_manual = self._make_period(2)
+        period_manual.line_ids.vacation_payout = 100
+        period_manual.action_calculate()
+        self.assertEqual(period_with_benefit.line_ids.net, period_manual.line_ids.net)
+        self.assertEqual(period_with_benefit.line_ids.result_personal_iess, period_manual.line_ids.result_personal_iess)
+        # Ni el beneficio equivalente a bonus (aportable) ni el ingreso no gravado tienen el
+        # mismo neto: los tres tratamientos son distintos entre sí.
+        as_bonus = self._make_period(3)
+        as_bonus.line_ids.bonus = 100
+        as_bonus.action_calculate()
+        self.assertNotEqual(period_with_benefit.line_ids.net, as_bonus.line_ids.net)
+
+    def test_benefit_default_is_iess_contributable_and_immutable_once_used(self):
+        benefit_type = self.env['erpec.payroll.benefit.type'].create({'name': 'Bono por defecto', 'taxable': True})
+        self.assertEqual(benefit_type.iess_contributable, 'SI')
+        period = self._make_period(1)
+        self.env['erpec.payroll.benefit.line'].create(
+            {'line_id': period.line_ids.id, 'benefit_type_id': benefit_type.id, 'amount': 50})
+        period.action_calculate()
+        with self.assertRaisesRegex(ValidationError, 'inmutable'):
+            benefit_type.write({'iess_contributable': 'NO'})
+
     def test_non_taxable_benefit_equals_manual_non_taxable_income(self):
         period_with_benefit = self._make_period(1)
         benefit_type = self.env['erpec.payroll.benefit.type'].create(

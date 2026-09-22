@@ -73,10 +73,11 @@
 </sheet><chatter/></form></field></record>
 <record id="opening_balance_action" model="ir.actions.act_window"><field name="name">Saldos iniciales</field><field name="res_model">erpec.payroll.opening.balance</field><field name="view_mode">list,form</field></record>
 
-<record id="benefit_type_list" model="ir.ui.view"><field name="name">erpec.payroll.benefit.type.list</field><field name="model">erpec.payroll.benefit.type</field><field name="arch" type="xml"><list><field name="name"/><field name="category"/><field name="taxable"/><field name="active"/></list></field></record>
+<record id="benefit_type_list" model="ir.ui.view"><field name="name">erpec.payroll.benefit.type.list</field><field name="model">erpec.payroll.benefit.type</field><field name="arch" type="xml"><list><field name="name"/><field name="category"/><field name="taxable"/><field name="iess_contributable"/><field name="active"/></list></field></record>
 <record id="benefit_type_form" model="ir.ui.view"><field name="name">erpec.payroll.benefit.type.form</field><field name="model">erpec.payroll.benefit.type</field><field name="arch" type="xml"><form><sheet>
 <div class="alert alert-info" role="status">Beneficio propio de la empresa (no un parámetro legal nacional): cada empresa configura los suyos según lo que ofrezca a sus empleados. Se asigna por período y empleado desde la pestaña "Beneficios propios de la empresa" de cada línea de nómina.</div>
-<group><field name="name"/><field name="company_id"/><field name="category"/><field name="taxable"/><field name="active"/></group>
+<group><field name="name"/><field name="company_id"/><field name="category"/><field name="taxable"/><field name="iess_contributable" invisible="not taxable"/><field name="active"/></group>
+<div class="alert alert-warning" role="status" invisible="not taxable or iess_contributable != 'NO'">Marcar «No aportable» es una decisión de la empresa, no una verificación del sistema. El art. 14 de la Ley de Seguridad Social (Ley 55, Registro Oficial Suplemento 465, 30-11-2001) exonera de materia gravada IESS solo: alimentación, atención médica/odontológica, seguros de vida/accidentes, ropa/herramientas de trabajo y beneficios de orden social sin privilegio — con un tope conjunto del 20 % de la retribución monetaria gravada del trabajador. Verifique que el beneficio encaje antes de marcar «No».</div>
 <group><field name="note"/></group>
 </sheet></form></field></record>
 <record id="benefit_type_action" model="ir.actions.act_window"><field name="name">Beneficios propios</field><field name="res_model">erpec.payroll.benefit.type</field><field name="view_mode">list,form</field></record>

@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.8 (tercera ronda; D1/D2/D4/D5/D6/D7, D8 y caso 9 según ajustes previos; caso 3 parcial) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.9 (tercera ronda; D1/D2/D4/D5/D6/D7, D8, caso 9 y caso 3 según ajustes previos; caso 3 cerrado) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -94,7 +94,7 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 |---|---|---|---|
 | 1 | Condicionar | Parámetros 2026 sellados con fuente, vigencia y huella; se prohíbe reutilizar valores de otro año | **Hecho** |
 | 2 | Parcial | (12.677 − 12.208) × 5 % = **23,45**; el saldo de **5,45** se reproduce con supuestos explícitos (gastos personales de 100 = rebaja de 18,00, sin cargas, límite de 5.752,60) en una prueba independiente | **Hecho** el cálculo; los soportes reales de gastos y cargas los aporta cada trabajador |
-| 3 | Bloquear | Matriz confirmada para sueldo/horas extra/comisión (suelSal, gravan IESS e IR), décimos y fondo de reserva (no gravan ninguno), vacaciones tomadas (incluidas en el sueldo) y liquidación de vacaciones no tomadas (sobSuelComRemu, grava IR no IESS, campo nuevo). Los beneficios propios de cada empresa siguen solo con aviso | **Parcial**: estatutarios hechos, beneficios propios pendientes |
+| 3 | Bloquear | Matriz confirmada para los conceptos estatutarios y decisión explícita de aportabilidad IESS por beneficio propio (`iess_contributable`, SÍ por defecto, aviso informativo con el art. 14 de la Ley de Seguridad Social si se elige NO) | **Hecho** |
 | 4 | Condicionar | Cada período se concilia con su asiento (una diferencia bloquea el XML) y el anexo avisa del **devengo** (asiento fuera del mes de la nómina) y del **pago** (saldo por pagar o cuenta no conciliable). Hoy el asiento se fecha el día de contabilización y el aviso lo señala | **Hecho**; falta la aceptación de contabilidad |
 | 5 | Bloquear | D8 implementado: comprobante versionado, conciliación y rectificación sin duplicados; sin conciliación, el cierre se bloquea | **Hecho** (falta probarlo con un comprobante real) |
 | 6 | Bloquear | Pruebas de adulto mayor, discapacidad, sustituto, regularización y gastos repetidas con D1–D7 corregidos, además de los ensayos 26–32 en demo | **Hecho** con soportes sintéticos; falta repetirlo con soportes reales |
@@ -124,7 +124,7 @@ Contrastamos su tabla contra el motor, concepto por concepto:
 
 Al revisar esto encontramos, además, que el propio catálogo RDEP documenta desde 2023 que `suelSal` es la «materia gravada de seguridad social» y `sobSuelComRemu` es la «materia NO gravada de seguridad social» — coincide exactamente con su tabla, y con cómo el motor ya calcula el aporte IESS (sobre sueldo + horas extra + comisión, nunca sobre décimos/reserva/liquidación de vacaciones). Antes de hoy, horas extra y comisión —que sí llevan aporte IESS— se reportaban en el casillero equivocado; ya está corregido. La cuenta contable de cada concepto ya era configurable por separado (menú de mapeo de nómina): décimos y fondo de reserva a una cuenta de pasivo, sueldo/liquidaciones al gasto de nómina.
 
-**Lo que sigue sin poder cerrarse:** los beneficios propios que cada empresa defina libremente (por ejemplo, un bono de transporte con su propio nombre) no tienen —ni pueden tener— una matriz de incidencia genérica: alguien tiene que decidir, beneficio por beneficio, si graban IESS, si graban IR y a qué casillero del RDEP corresponden. Eso sigue como aviso, no como bloqueo, hasta que exista esa clasificación.
+**Actualización del 22-09-2026, caso cerrado:** usted pidió que los beneficios propios tengan un control de decisión, no solo un aviso. Agregamos `iess_contributable` (SÍ/NO) a cada beneficio propio, **SÍ por defecto** (aporta a IESS, igual que antes de este cambio). Elegir NO es una decisión de quien configura el beneficio, no algo que el sistema verifique por sí solo; muestra un aviso informativo con el art. 14 de la Ley de Seguridad Social (Ley 55, Registro Oficial Suplemento 465, 30-11-2001), que en efecto exonera de materia gravada IESS solo alimentación, atención médica/odontológica, seguros de vida/accidentes, ropa/herramientas de trabajo y beneficios de orden social sin privilegio (con un tope conjunto del 20 % de la retribución monetaria gravada) — no cualquier beneficio califica. El tratamiento de un beneficio ya calculado es inmutable. Con esto, **caso 3 queda cerrado** (control_state automated) y **ninguna fila de la matriz depende ya de un tercero** (D5 y caso 10 siguen como control parcial porque el SRI no ha publicado el catálogo 2026 ni el Formulario 107 oficial, no porque nos falte programar algo).
 
 ## 5. Requisitos mínimos para una nueva homologación
 
@@ -144,10 +144,9 @@ Con esta versión ya no hay filas de la matriz que dependan de que nosotros prog
 
 1. **D1, D2, D4 y D6:** aprobados por el titular del proyecto (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores; D4: redondeo días→meses del sustituto, aprobado el 22-09-2026); queda la firma de aceptación del responsable tributario.
 2. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental (el fundamento legal del tope ya quedó verificado).
-3. **Caso 3:** los rubros estatutarios (sueldo, décimos, fondo de reserva, vacaciones tomadas y no tomadas) ya tienen matriz de incidencia; falta la de los beneficios propios que cada empresa defina.
-4. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
-5. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
-6. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
+3. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
+4. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
+5. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
 ## 7. Evidencia y cómo reproducirla
 
