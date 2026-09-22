@@ -1,9 +1,9 @@
 <!-- MATRIZ-PENDIENTES:INICIO -->
-## Matriz de pendientes vigente (módulo 18.0.1.14.6)
+## Matriz de pendientes vigente (módulo 18.0.1.14.7)
 
 Fuente única: `addons/erpec_payroll/acceptance_matrix_data.xml`, visible en **Nómina → Matriz de aceptación DI25-03**. Este bloque se genera con `scripts/render-di25-matrix.py` y una verificación automática impide que se desactualice. Una prueba exige que cada fila con control cite pruebas que existan. **Nada aquí es una homologación**: la aceptación externa sigue pendiente.
 
-Resumen: control automático 13, control parcial 2, bloqueo automático 2, depende de un tercero 2.
+Resumen: control automático 14, control parcial 2, bloqueo automático 2, depende de un tercero 1.
 
 | Código | Decisión o caso | Decisión del responsable | Estado | Control que existe hoy | Lo que sigue pendiente | Quién lo destraba |
 |---|---|---|---|---|---|---|
@@ -23,7 +23,7 @@ Resumen: control automático 13, control parcial 2, bloqueo automático 2, depen
 | C06 | Caso 6 · repetir exenciones y gastos con D1–D7 | Bloquear | Control automático | Las pruebas de adulto mayor, discapacidad, sustituto y gastos personales se repiten con D1–D7 corregidos en nómina, RDEP y ensayos 26–32, con soportes sintéticos. | Repetirlo con soportes reales de un cliente real. | Responsable tributario |
 | C07 | Caso 7 · idempotencia y reliquidación acumulada | Bloquear | Control automático | El mismo insumo produce el mismo resultado (huella), la consolidación anual no se duplica, la reliquidación acumulada concilia entre períodos (el ejercicio cierra en cero) y los comprobantes llevan bitácora de cambios. | Aceptación externa con casos del responsable. | Responsable tributario |
 | C08 | Caso 8 · cambio salarial y ausencias | Mixto | Bloqueo automático | Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras (probado). Ausencias: el módulo no las modela; no existe cálculo que aceptar hasta que se definan sus efectos. | Definir y probar los efectos laborales, IESS, tributarios y contables de las ausencias. | Responsable tributario y laboral |
-| C09 | Caso 9 · décimos, vacaciones y fondos de reserva | Bloquear | Depende de un tercero | Sin regla propia: el décimo tercero y cuarto se tratan como rentas exentas fuera de la proyección del art. 104 y el resto no se acepta como evidencia. | Reglas separadas de devengo y pago, y mapeo RDEP de cada concepto, sin analogías. | Responsable tributario y laboral |
+| C09 | Caso 9 · devengo y pago de décimos y fondos de reserva | Bloquear | Control automático | Devengo mensual: 1/12 del sueldo (décimo tercero), 1/12 del SBU (décimo cuarto) y 8,33 % desde el mes 12 de servicio (fondo de reserva). Elección mensualizado/acumulado por empleado y período: si se paga mensualizado, el neto lo incluye y el pasivo acumulado queda en cero; si se acumula, va al pasivo y no cambia el costo total. Cada uno se mapea a su propio campo del catálogo RDEP (decimTer, decimCuar, fondoReserva) y nunca se agrupan como otros ingresos exentos. | Vacaciones no gozadas (liquidadas en dinero) siguen sin un campo propio: hoy solo se modela el devengo de vacaciones tomadas, no el pago de las no tomadas. Eso permanece dentro del caso 3 (matriz de incidencia completa), no aquí. | Responsable tributario y laboral |
 | C10 | Caso 10 · cierre anual y conciliación | Bloquear | Control parcial | Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con el reporte por trabajador (impuesto proyectado, saldo y retención futura sugerida). El XML sigue siendo vista previa y se bloquea con diferencias. | Formato oficial del Formulario 107 y validador del RDEP 2026: ambos los debe publicar el SRI. | SRI |
 | C11 | Caso 11 · Galápagos, no residentes, convenio e impuesto asumido | Mixto | Bloqueo automático | Galápagos (factor 1,803) sin elegibilidad, residencia extranjera, convenio, impuesto asumido y otros ingresos bloquean el cierre. El factor no se usa sin soporte. | Reglas, parametrización y pruebas independientes aprobadas para cada régimen. | Responsable tributario |
 <!-- MATRIZ-PENDIENTES:FIN -->

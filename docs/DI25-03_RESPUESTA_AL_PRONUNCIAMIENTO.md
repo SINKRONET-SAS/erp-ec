@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.6 (tercera ronda; D1/D2/D4/D5/D6/D7 según ajustes previos; corregido el intercambio D8 intGrabGen/otrosIngRenGrav) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.7 (tercera ronda; D1/D2/D4/D5/D6/D7 y D8 según ajustes previos; caso 9 cerrado) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -100,10 +100,15 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 | 6 | Bloquear | Pruebas de adulto mayor, discapacidad, sustituto, regularización y gastos repetidas con D1–D7 corregidos, además de los ensayos 26–32 en demo | **Hecho** con soportes sintéticos; falta repetirlo con soportes reales |
 | 7 | Bloquear | Mismo insumo, mismo resultado (huella); consolidación anual idempotente; bitácora de comprobantes; y la reliquidación acumulada concilia entre períodos (el ejercicio cierra en cero) | **Hecho** |
 | 8 | Mixto | Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras (probado). Ausencias: el módulo **no las modela**; no hay cálculo que aceptar hasta que se definan sus efectos | Salarial **hecho**; ausencias **bloqueadas** |
-| 9 | Bloquear | La base gravable del motor excluye décimos tercero y cuarto (no forman parte de la proyección); no hay prueba dedicada ni reglas de devengo, pago y mapeo RDEP para vacaciones y fondos de reserva | **No hecho** |
+| 9 | Bloquear | Devengo mensual (1/12 sueldo, 1/12 SBU, 8,33 % desde el mes 12), elección mensualizado/acumulado por trabajador y mapeo estricto a `decimTer`/`decimCuar`/`fondoReserva` del RDEP, nunca agrupados como otros ingresos exentos (ver 4-bis) | **Hecho** para décimos y fondo de reserva; la liquidación de vacaciones no tomadas sigue en el caso 3 |
 | 10 | Bloquear | Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con reporte por trabajador (proyectado, saldo y retención futura). Falta el formato oficial del Formulario 107 y el validador RDEP 2026, que publica el SRI | **Parcial**: depende del SRI |
 | 11 | Mixto | Galápagos sin elegibilidad, residencia extranjera, convenio, impuesto asumido y otros ingresos **bloquean el cierre**; el factor 1,803 no se usa sin soporte | **Hecho** como bloqueo; las reglas de cada régimen no existen |
 
+
+
+## 4-bis. Caso 9 · devengo y pago de décimos y fondos de reserva — recibido el 22-09-2026, ya cubierto
+
+Usted describió: devengo mensual del 1/12 del sueldo (décimo tercero), 1/12 del SBU (décimo cuarto) y 8,33 % desde el segundo año de servicio (fondo de reserva); elección mensualizado/acumulado por trabajador; y mapeo estricto a los casilleros propios del RDEP (`decimTer`, `decimCuar`, `fondoReserva`), nunca agrupados en «otros ingresos exentos». Verificamos que el motor **ya implementaba exactamente esto** desde una ronda anterior: las tasas están selladas (`thirteenth_rate=1/12`, `fourteenth_rate=1/12` sobre el salario mínimo, `reserve_rate=8,33 %` desde el mes 12), la elección mensualizado/acumulado existe por período (`monthly_thirteenth`, `monthly_fourteenth`, `reserve_paid`) y el anexo RDEP los escribe en sus tres campos propios, nunca en uno genérico. No hubo que programar nada nuevo; **cerramos el caso 9** en la matriz. Queda fuera de esta fila, y sigue en el caso 3: la liquidación en dinero de vacaciones no tomadas, que hoy no tiene un campo propio distinto del sueldo.
 ## 5. Requisitos mínimos para una nueva homologación
 
 | Requisito | Respuesta |
@@ -122,7 +127,7 @@ Con esta versión ya no hay filas de la matriz que dependan de que nosotros prog
 
 1. **D1, D2, D4 y D6:** aprobados por el titular del proyecto (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores; D4: redondeo días→meses del sustituto, aprobado el 22-09-2026); queda la firma de aceptación del responsable tributario.
 2. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental (el fundamento legal del tope ya quedó verificado).
-3. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
+3. **Caso 3:** matriz aprobada de incidencia por concepto (IESS, IR, casillero RDEP, cuenta contable) para cada rubro, incluida la liquidación de vacaciones no gozadas, que hoy no tiene campo propio.
 4. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
 5. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
 6. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.

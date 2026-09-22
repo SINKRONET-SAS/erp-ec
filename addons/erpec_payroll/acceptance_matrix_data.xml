@@ -80,9 +80,10 @@
 <field name="tests">test_a_raise_is_recovered_in_the_remaining_months_and_the_year_closes_at_zero,test_late_hire_uses_the_annualised_projection_without_history</field>
 <field name="pending">Definir y probar los efectos laborales, IESS, tributarios y contables de las ausencias.</field><field name="owner">Responsable tributario y laboral</field></record>
 <record id="matrix_c09" model="erpec.payroll.acceptance.matrix"><field name="sequence">19</field><field name="code">C09</field>
-<field name="item">Caso 9 · décimos, vacaciones y fondos de reserva</field><field name="expert_decision">bloquear</field><field name="control_state">external</field>
-<field name="control">Sin regla propia: el décimo tercero y cuarto se tratan como rentas exentas fuera de la proyección del art. 104 y el resto no se acepta como evidencia.</field>
-<field name="pending">Reglas separadas de devengo y pago, y mapeo RDEP de cada concepto, sin analogías.</field><field name="owner">Responsable tributario y laboral</field></record>
+<field name="item">Caso 9 · devengo y pago de décimos y fondos de reserva</field><field name="expert_decision">bloquear</field><field name="control_state">automated</field>
+<field name="control">Devengo mensual: 1/12 del sueldo (décimo tercero), 1/12 del SBU (décimo cuarto) y 8,33 % desde el mes 12 de servicio (fondo de reserva). Elección mensualizado/acumulado por empleado y período: si se paga mensualizado, el neto lo incluye y el pasivo acumulado queda en cero; si se acumula, va al pasivo y no cambia el costo total. Cada uno se mapea a su propio campo del catálogo RDEP (decimTer, decimCuar, fondoReserva) y nunca se agrupan como otros ingresos exentos.</field>
+<field name="tests">test_decimal_proration_benefits_and_tax_rebate,test_official_2026_parameters_and_expense_limit,test_other_employer_income_and_non_taxable_income_map_to_the_right_rdep_fields</field>
+<field name="pending">Vacaciones no gozadas (liquidadas en dinero) siguen sin un campo propio: hoy solo se modela el devengo de vacaciones tomadas, no el pago de las no tomadas. Eso permanece dentro del caso 3 (matriz de incidencia completa), no aquí.</field><field name="owner">Responsable tributario y laboral</field></record>
 <record id="matrix_c10" model="erpec.payroll.acceptance.matrix"><field name="sequence">20</field><field name="code">C10</field>
 <field name="item">Caso 10 · cierre anual y conciliación</field><field name="expert_decision">bloquear</field><field name="control_state">partial</field>
 <field name="control">Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con el reporte por trabajador (impuesto proyectado, saldo y retención futura sugerida). El XML sigue siendo vista previa y se bloquea con diferencias.</field>

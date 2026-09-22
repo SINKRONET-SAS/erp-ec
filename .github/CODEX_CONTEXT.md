@@ -2,6 +2,8 @@
 
 El pronunciamiento técnico recibido devuelve DI25-03 para corrección; no existe homologación. Ver [DI25-03_CONTROLES_AUTOMATICOS.md](../docs/DI25-03_CONTROLES_AUTOMATICOS.md) para las correcciones, bloqueos ejecutables y límites. La autenticidad de certificados, la importación versionada de otro empleador, la reliquidación mensual acumulada y la conciliación anual completa permanecen pendientes. Sustitutos y 100 canastas no se habilitan en nómina mediante una referencia aislada; los ensayos sintéticos siguen disponibles. Esta sección prevalece sobre los estados históricos siguientes.
 
+Ajuste 18.0.1.14.7 (22-09-2026): caso 9 (décimos/fondos de reserva) cerrado; el motor ya cumplía la especificación que envió el titular. Matriz ahora 14 automáticos, 2 parciales, 2 bloqueos, 1 depende de terceros. Sigue pendiente: vacaciones no gozadas (caso 3), caso 8 (ausencias) y caso 11 (regímenes especiales), por decidir su orden.
+
 Ajuste 18.0.1.14.6 (22-09-2026): corregido un intercambio en el anexo RDEP entre intGrabGen (ingresos con otro empleador, D8) y otrosIngRenGrav (otros ingresos no gravados de esta relación); encontrado al releer el catálogo para analizar la matriz de incidencia del caso 3 que envió el titular. Sin cambio en el cálculo interno, solo en la etiqueta XML. Ver docs/ALCANCE_ATS_RDEP.md.
 
 Ajuste 18.0.1.14.5 (22-09-2026): el titular aprobó el criterio de redondeo días→meses del sustituto en D4 (días acreditados / 365 x 12, al entero más cercano; decisión de diseño, no legal). Cierra D4 en la matriz.

@@ -50,9 +50,13 @@ class AcceptanceMatrixCase(TransactionCase):
     def test_states_are_consistent_with_the_documented_limits(self):
         by_code = {row.code: row for row in self.rows}
         # Lo que depende del SRI o de reglas aún no aprobadas nunca figura como control automático completo.
-        for code in ('D5', 'C03', 'C09', 'C10'):
+        for code in ('D5', 'C03', 'C10'):
             self.assertNotEqual(by_code[code].control_state, 'automated', code)
+        # C09 (décimos y fondos de reserva) sí es automático: el titular confirmó que el motor ya
+        # cumplía su especificación (18.0.1.14.7); lo que queda pendiente (vacaciones no gozadas)
+        # se tramita en C03, no aquí.
         self.assertEqual(by_code['D8'].control_state, 'automated')
+        self.assertEqual(by_code['C09'].control_state, 'automated')
 
     def test_the_matrix_is_read_only_for_payroll_managers(self):
         manager = new_test_user(self.env, login='matriz_solo_lectura', groups='base.group_user,erpec_payroll.group_payroll_manager')

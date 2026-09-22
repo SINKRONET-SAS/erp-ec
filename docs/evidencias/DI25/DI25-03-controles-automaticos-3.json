@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.6",
+  "moduleVersion": "18.0.1.14.7",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -16,10 +16,10 @@
     "caso6_caso7": "pruebas repetidas con D1-D7 y consolidacion idempotente con reliquidacion"
   },
   "matrixStates": {
-    "automated": 13,
+    "automated": 14,
     "partial": 2,
     "blocked": 2,
-    "external": 2
+    "external": 1
   },
   "stillOutsideTheSystem": {
     "D5_caso10": "catalogo y validador RDEP 2026 y Formulario 107: los publica el SRI",
@@ -139,6 +139,13 @@
     "impact": "El calculo interno de la base imponible (annual_base/basImp) siempre uso el valor correcto de D8; el error era solo la etiqueta XML a la que se escribia. Se corrigio tambien ingGravConEsteEmpl (informativo) para sumar los seis campos que documenta el catalogo.",
     "fix": "addons/erpec_payroll/annex_rdep.py; prueba nueva test_other_employer_income_and_non_taxable_income_map_to_the_right_rdep_fields en test_tax_registers.py.",
     "caseSpecReceived": "Los casos 3/8/9/11 siguen bloqueados (necesitan reglas aprobadas para ausencias, gross-up de impuesto asumido y regimen Galapagos/no residentes/CDI); se analizaron parcialmente pero no se implementaron en este incremento.",
+    "payrollModuleTests": 188
+  },
+  "adjustment_18_0_1_14_7": {
+    "action": "Se comparo la especificacion del caso 9 que envio el titular contra el motor y coincidia casi exactamente; se cerro la fila C09 sin cambios de codigo.",
+    "confirmed": "thirteenth_rate=1/12, fourteenth_rate=1/12 sobre minimum_salary, reserve_rate=0.0833 desde el mes 12; flags monthly_thirteenth/monthly_fourteenth/reserve_paid para elegir mensualizado vs acumulado; mapeo a decimTer/decimCuar/fondoReserva en el RDEP.",
+    "stillOpen": "Liquidacion en dinero de vacaciones no tomadas (sin campo propio hoy); permanece en el caso 3, no en el 9.",
+    "userDecision": "El titular eligio (AskUserQuestion): cerrar caso 9 ya, luego implementar caso 3, caso 8 y caso 11 uno por uno, cada uno en su propio commit con pruebas.",
     "payrollModuleTests": 188
   }
 }
