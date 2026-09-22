@@ -33,7 +33,7 @@ class ExemptionDossierCase(TransactionCase):
 
     def _as_substitute(self):
         self.employee.write({
-            'ec_rdep_disability_type': '02', 'ec_rdep_disability_percentage': 80, 'ec_rdep_disability_id_type': 'C',
+            'ec_rdep_disability_type': '03', 'ec_rdep_disability_percentage': 80, 'ec_rdep_disability_id_type': 'C',
             'ec_rdep_disability_id': '1712345678', 'ec_rdep_exemption_year': self.year, 'ec_rdep_exemption_ref': 'DOC-SINTETICO-1',
             'ec_rdep_exemption_date': date(self.year, 1, 10), 'ec_rdep_exemption_months': 12})
 

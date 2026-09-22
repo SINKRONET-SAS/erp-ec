@@ -68,25 +68,28 @@ class PersonalExemptionEngineCase(TransactionCase):
         january = date(2026, 1, 10)
         cases = [
             # (nacimiento, tipo, %, tipo id, id, año, ref, fecha, meses) → reclamos, incidencias, avisos
-            (date(1950, 5, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
-            (date(1950, 5, 1), '04', 0, 'N', '', 2025, 'DOC-1', january, 12, [], 0, 1),
-            (date(1950, 5, 1), '04', 0, 'N', '', 2026, '', january, 12, [], 0, 1),
-            (date(1950, 5, 1), '04', 0, 'N', '', 2026, 'DOC-1', False, 12, [], 0, 1),
-            (date(1990, 5, 1), '01', 50, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'disability', 'percentage': 50}], 0, 0),
-            (date(1990, 5, 1), '01', 29, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
-            (date(1990, 5, 1), '01', 0, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
+            (date(1950, 5, 1), '01', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
+            # D1 (titular, 21-09-2026): el adulto mayor se reconoce por la edad, sin acreditación documental.
+            (date(1950, 5, 1), '01', 0, 'N', '', 2025, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1950, 5, 1), '01', 0, 'N', '', 2026, '', january, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1950, 5, 1), '01', 0, 'N', '', 2026, 'DOC-1', False, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1950, 5, 1), '01', 0, 'N', '', None, '', False, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1950, 5, 1), '02', 50, 'N', '', None, '', False, 12, [{'kind': 'elderly'}], 0, 1),
+            (date(1990, 5, 1), '02', 50, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'disability', 'percentage': 50}], 0, 0),
+            (date(1990, 5, 1), '02', 29, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
+            (date(1990, 5, 1), '02', 0, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
             (date(1990, 5, 1), '00', 50, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
-            (date(1990, 5, 1), '03', 50, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
-            (date(1990, 5, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
-            (date(1990, 5, 1), '01', 50, 'N', '', 2026, 'DOC-1', date(2026, 1, 16), 12, [], 1, 0),
-            (date(1990, 5, 1), '01', 50, 'N', '', 2026, 'DOC-1', date(2026, 1, 15), 12, [{'kind': 'disability', 'percentage': 50}], 0, 0),
-            (date(1990, 5, 1), '02', 50, 'C', '1712345678', 2026, 'DOC-1', january, 6, [{'kind': 'substitute', 'percentage': 50, 'months': 6}], 0, 0),
-            (date(1990, 5, 1), '02', 50, 'N', '', 2026, 'DOC-1', january, 6, [], 1, 0),
-            (date(1990, 5, 1), '02', 50, 'C', '1712345678', 2026, 'DOC-1', january, 0, [], 1, 0),
+            (date(1990, 5, 1), '04', 50, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
+            (date(1990, 5, 1), '01', 0, 'N', '', 2026, 'DOC-1', january, 12, [], 1, 0),
+            (date(1990, 5, 1), '02', 50, 'N', '', 2026, 'DOC-1', date(2026, 1, 16), 12, [], 1, 0),
+            (date(1990, 5, 1), '02', 50, 'N', '', 2026, 'DOC-1', date(2026, 1, 15), 12, [{'kind': 'disability', 'percentage': 50}], 0, 0),
+            (date(1990, 5, 1), '03', 50, 'C', '1712345678', 2026, 'DOC-1', january, 6, [{'kind': 'substitute', 'percentage': 50, 'months': 6}], 0, 0),
+            (date(1990, 5, 1), '03', 50, 'N', '', 2026, 'DOC-1', january, 6, [], 1, 0),
+            (date(1990, 5, 1), '03', 50, 'C', '1712345678', 2026, 'DOC-1', january, 0, [], 1, 0),
             # D1: cumple 65 años en cualquier fecha del ejercicio.
-            (date(1961, 6, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
-            (date(1961, 1, 1), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
-            (date(1961, 1, 2), '04', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1961, 6, 1), '01', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1961, 1, 1), '01', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
+            (date(1961, 1, 2), '01', 0, 'N', '', 2026, 'DOC-1', january, 12, [{'kind': 'elderly'}], 0, 0),
         ]
         for index, (born, kind, percent, id_type, ident, year, ref, delivered, months, claims, issues, notes) in enumerate(cases):
             with self.subTest(case=index):
@@ -95,7 +98,7 @@ class PersonalExemptionEngineCase(TransactionCase):
 
     def test_elderly_and_disability_together_keep_both_claims_for_the_best_choice(self):
         claims, issues, _ = resolve_exemption_claims(
-            2026, date(1950, 1, 1), '01', 40, 'N', '', 2026, 'DOC-1', date(2026, 1, 5))
+            2026, date(1950, 1, 1), '02', 40, 'N', '', 2026, 'DOC-1', date(2026, 1, 5))
         self.assertEqual(issues, [])
         self.assertEqual([claim['kind'] for claim in claims], ['elderly', 'disability'])
 
@@ -160,7 +163,7 @@ class PersonalExemptionIntegrationCase(TransactionCase):
         # 3.000 − 10 % = 2.700 × 12 = 32.400. Sin exención: (32.400 − 12.000) × 10 % = 2.040 → 170/mes.
         result = self._monthly_tax()
         self.assertEqual((result['tax'], result['personal_exemption']), (170, 0))
-        self.employee.write({'ec_rdep_disability_type': '01', 'ec_rdep_disability_percentage': 50})
+        self.employee.write({'ec_rdep_disability_type': '02', 'ec_rdep_disability_percentage': 50})
         self.assertEqual(self._monthly_tax()['tax'], 170)  # condición sin acreditación: no se aplica
         # 24.000 × 70 % = 16.800; base 15.600; 3.600 × 10 % = 360 → 30/mes.
         self._accredit()
@@ -173,13 +176,13 @@ class PersonalExemptionIntegrationCase(TransactionCase):
     def test_best_of_elderly_and_disability_never_added(self):
         # Adulto mayor 12.000 frente a discapacidad 40 % = 14.400: rige 14.400; base 18.000 → 600 → 50/mes.
         self.employee.write({'birthday': date(self.policy.year-70, 1, 1)})
-        self._accredit(ec_rdep_disability_type='01', ec_rdep_disability_percentage=40)
+        self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=40)
         result = self._monthly_tax()
         self.assertEqual((result['tax'], result['personal_exemption']), (50, 14400))
 
     def test_substitute_months_and_required_identification(self):
         # 24.000 × 100 % × 6/12 = 12.000; base 20.400 → 840 → 70/mes.
-        self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=100, ec_rdep_exemption_months=6,
+        self._accredit(ec_rdep_disability_type='03', ec_rdep_disability_percentage=100, ec_rdep_exemption_months=6,
                        ec_rdep_disability_id_type='C', ec_rdep_disability_id='1799999999')
         self.assertEqual(self._monthly_tax()['tax'], 170)  # D4: meses y referencia no acreditan sustitución.
         self.employee.ec_rdep_disability_id = False
@@ -215,35 +218,39 @@ class PersonalExemptionIntegrationCase(TransactionCase):
         self.assertEqual([float(detail.find(tag).text) for tag in ('exoTerEd', 'exoDiscap', 'basImp', 'impRentCaus')],
                          [12000, 0, 24000, 1200])
         # Discapacidad 50 %: 16.800 → 19.200 → 720, en exoDiscap.
-        self.employee.write({'birthday': False, 'ec_rdep_disability_type': '01', 'ec_rdep_disability_percentage': 50})
+        self.employee.write({'birthday': False, 'ec_rdep_disability_type': '02', 'ec_rdep_disability_percentage': 50})
         annex = self._annex()
         annex.action_generate_xml()
         detail = etree.fromstring(base64.b64decode(annex.xml_file)).find('retRelDep/datRetRelDep')
         self.assertEqual([float(detail.find(tag).text) for tag in ('exoDiscap', 'exoTerEd', 'basImp', 'impRentCaus')],
                          [16800, 0, 19200, 720])
 
-    def test_detected_condition_without_accreditation_is_a_notice_not_a_silent_exemption(self):
+    def test_elderly_is_recognized_by_age_without_accreditation_but_disability_is_not(self):
+        # D1 (titular, 21-09-2026): 12.000 de exención por la edad, sin documento; 36.000 → 24.000 → 1.200.
         self.employee.write({'birthday': date(self.policy.year-70, 1, 1)})
         self._post(40000)
         annex = self._annex()
+        self.assertEqual((annex.line_ids.personal_exemption_kind, annex.line_ids.personal_exemption, annex.line_ids.annual_tax_caused),
+                         ('elderly', 12000, 1200))
+        self.assertNotIn('sin acreditación', annex.review_notice or '')
+        # La discapacidad detectada sin documento sigue sin aplicarse y avisa.
+        self.employee.write({'birthday': False, 'ec_rdep_disability_type': '02', 'ec_rdep_disability_percentage': 50})
+        annex = self._annex()
         self.assertEqual((annex.line_ids.personal_exemption, annex.line_ids.annual_tax_caused), (0, 2400))
         self.assertIn('sin acreditación', annex.review_notice)
-        annex.action_generate_xml()
-        detail = etree.fromstring(base64.b64decode(annex.xml_file)).find('retRelDep/datRetRelDep')
-        self.assertEqual(float(detail.find('exoTerEd').text), 0)
 
     def test_inconsistent_accreditation_blocks_xml_without_applying_it(self):
-        self.employee.write({'ec_rdep_disability_type': '01', 'ec_rdep_disability_percentage': 50})
+        self.employee.write({'ec_rdep_disability_type': '02', 'ec_rdep_disability_percentage': 50})
         self._post(40000)
         variants = [
             {'ec_rdep_exemption_date': date(self.policy.year, 1, 20)},
             {'ec_rdep_disability_percentage': 29},
             {'ec_rdep_disability_type': '00'},
-            {'ec_rdep_disability_type': '04'},
+            {'ec_rdep_disability_type': '01'},
         ]
         for values in variants:
             with self.subTest(values=values):
-                self._accredit(ec_rdep_disability_type='01', ec_rdep_disability_percentage=50)
+                self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=50)
                 self.employee.write(values)
                 annex = self._annex()
                 self.assertEqual(annex.line_ids.personal_exemption, 0)

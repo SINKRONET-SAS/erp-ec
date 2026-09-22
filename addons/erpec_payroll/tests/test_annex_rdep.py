@@ -38,6 +38,12 @@ class RdepAnnexCase(TransactionCase):
         period.action_post()
         return period
 
+    def test_bundled_schema_is_the_official_sri_rdep_schema(self):
+        # D5: el esquema descargado por el titular de https://www.sri.gob.ec/formularios-e-instructivos1
+        # (addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd, tal como lo publica el SRI) coincide, salvo el fin de línea, con el que valida el anexo.
+        schema = (Path(__file__).resolve().parent.parent / 'xsd/Esquema_RDEP_2023.xsd').read_bytes().replace(b'\r\n', b'\n')
+        self.assertEqual(hashlib.sha256(schema).hexdigest(), '8d595d42c17948ca9f4f5bf5bf4fff18ae9ddac5f3fb1f2a5670ba3ec2783636')
+
     def test_build_consolidates_only_posted_periods(self):
         first = self._post_period(1)
         second = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-DRAFT', 'policy_id': self.policy.id, 'month': 2, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True})]})
@@ -94,7 +100,7 @@ class RdepAnnexCase(TransactionCase):
             self.employee.ec_rdep_disability_percentage = 150
         with self.assertRaises(ValidationError), self.cr.savepoint():
             self.employee.ec_rdep_dependents_count = 6
-        self.employee.write({'ec_rdep_disability_type': '01', 'ec_rdep_disability_percentage': 40, 'ec_rdep_dependents_count': 2})
+        self.employee.write({'ec_rdep_disability_type': '02', 'ec_rdep_disability_percentage': 40, 'ec_rdep_dependents_count': 2})
         self.assertEqual(self.employee.ec_rdep_disability_percentage, 40)
 
     def test_views_compile(self):
@@ -112,7 +118,7 @@ class RdepAnnexCase(TransactionCase):
         employee.write({
             'ec_rdep_id_type': 'C', 'identification_id': '1712345678', 'ec_rdep_establishment': '001',
             'ec_rdep_fiscal_residence': '00', 'ec_rdep_residence_country': '593',
-            'ec_rdep_treaty_applies': 'NO', 'ec_rdep_disability_type': '04',
+            'ec_rdep_treaty_applies': 'NO', 'ec_rdep_disability_type': '01',
         })
 
     def test_engine_exposes_annual_tax_fields_without_duplicating(self):
@@ -290,9 +296,9 @@ class RdepAnnexCase(TransactionCase):
         accreditation = {'ec_rdep_exemption_year': self.policy.year, 'ec_rdep_exemption_ref': 'DOC-SINTETICO-1'}
         # Exenciones acreditadas de forma incompleta o no cubierta bloquean; sin acreditación solo avisan.
         for values in [dict(accreditation, ec_rdep_exemption_date='%s-01-20' % self.policy.year,
-                            ec_rdep_disability_type='01', ec_rdep_disability_percentage=40),
+                            ec_rdep_disability_type='02', ec_rdep_disability_percentage=40),
                        dict(accreditation, ec_rdep_exemption_date='%s-01-10' % self.policy.year,
-                            ec_rdep_disability_type='04', ec_rdep_disability_percentage=0,
+                            ec_rdep_disability_type='01', ec_rdep_disability_percentage=0,
                             birthday='%s-06-01' % (self.policy.year-64)),
                        {'birthday': False, 'ec_rdep_ben_galpg': 'SI', 'ec_rdep_exemption_ref': False, 'ec_rdep_exemption_date': False}]:
             self.employee.write(values)

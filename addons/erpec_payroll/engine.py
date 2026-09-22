@@ -130,41 +130,48 @@ def resolve_exemption_claims(year, birthday, disability_type, disability_percent
                              disability_id, accreditation_year, accreditation_ref, accreditation_date, months=12, regularized=None):
     """Decide qué exenciones están acreditadas para el ejercicio. Función pura.
 
-    Devuelve (reclamos aplicables, incidencias que bloquean el anexo, avisos). Sin
-    acreditación del mismo año no se aplica exención: la condición detectada solo genera un
+    Devuelve (reclamos aplicables, incidencias que bloquean el anexo, avisos). El adulto mayor se reconoce por la edad. Sin
+    acreditación del mismo año no se aplica la exención por discapacidad: la condición detectada solo genera un
     aviso. Una acreditación incompleta o en un caso no cubierto queda como incidencia y no
     se aplica. La edad se evalúa al cierre del ejercicio; los soportes tardíos de discapacidad requieren regularización."""
     claims, issues, notes = [], [], []
     conditions = []
+    # DI25-03 D1 (criterio del titular, 21-09-2026): el adulto mayor se reconoce por la edad que resulta de su fecha de
+    # nacimiento, sin acreditación documental; se evalúa el ejercicio en que cumple 65 años.
     if birthday and year-birthday.year >= ELDERLY_MIN_AGE:
-        conditions.append('elderly')
-    if disability_type in ('00', '01', '02'):
+        claims.append({'kind': 'elderly'})
+    # Códigos del catálogo RDEP vigente (docs/evidencias/Catálogo vigente para el ejercicio fiscal 2024.xlsx,
+    # hoja TABLAS): 01 No aplica, 02 Trabajador con discapacidad, 03 Actúa como sustituto,
+    # 04 Cónyuge/pareja/hijo con discapacidad bajo su cuidado (derogado a partir del período 2024); 00 solo
+    # era válido para períodos anteriores a 2013. Difiere del orden que trae la anotación del XSD 2023.
+    if disability_type in ('00', '02', '03', '04'):
         conditions.append(disability_type)
     accredited = bool(accreditation_ref) and accreditation_year == year and bool(accreditation_date)
     if not accredited:
         if conditions:
-            notes.append('Condición de edad o discapacidad detectada sin acreditación vigente del año %s: no se aplica exención.' % year)
+            notes.append('Discapacidad detectada sin acreditación vigente del año %s: no se aplica exención.' % year)
         return claims, issues, notes
     if accreditation_date > date(year, 12, 31):
         issues.append('La fecha de entrega del documento es posterior al ejercicio del cálculo.')
         return claims, issues, notes
-    if not conditions:
+    if not conditions and not claims:
         issues.append('Hay una acreditación de exención sin condición de edad o discapacidad registrada en el empleado.')
         return claims, issues, notes
     for condition in conditions:
-        if condition == 'elderly':
-            # DI25-03 D1: se reconoce el ejercicio en que cumple 65 años.
-            claims.append({'kind': 'elderly'})
+        if condition == '00':
+            issues.append('El código de discapacidad 00 (catálogo RDEP) solo era válido para períodos anteriores a 2013: no se aplica exención.')
+        elif condition == '04' and year >= 2024:
+            issues.append('El código de discapacidad 04 (cónyuge, pareja o hijo bajo cuidado) quedó derogado a partir del período 2024 según el catálogo RDEP: no se aplica exención.')
+        elif condition == '04':
+            issues.append('El código de discapacidad 04 (cónyuge, pareja o hijo bajo cuidado) no otorga la exención por discapacidad al propio trabajador según el catálogo RDEP.')
         elif regularized != 'effective' and (accreditation_date.year, accreditation_date.month, accreditation_date.day) > (year, *EXEMPTION_DEADLINE):
             if regularized == 'pending':
                 notes.append('Documento tardío con regularización verificada que aún no surte efecto: la exención no se aplica antes de esa fecha.')
                 continue
             issues.append('Documento tardío: requiere regularización documentada y ajuste de retenciones futuras; no se reabren nóminas contabilizadas.')
-        elif condition == '00':
-            issues.append('El tipo de discapacidad 00 no tiene descripción en el esquema oficial: no se aplica exención.')
         else:
-            claim = {'kind': 'disability' if condition == '01' else 'substitute', 'percentage': disability_percentage or 0}
-            if condition == '02':
+            claim = {'kind': 'disability' if condition == '02' else 'substitute', 'percentage': disability_percentage or 0}
+            if condition == '03':
                 if disability_id_type in (None, False, '', 'N') or not disability_id:
                     issues.append('El sustituto requiere identificar a la persona con discapacidad sustituida.')
                     continue

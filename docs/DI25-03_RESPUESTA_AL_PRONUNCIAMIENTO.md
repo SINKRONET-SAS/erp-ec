@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.0 (tercera ronda: cierre de las filas parciales) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.2 (tercera ronda, criterios del titular sobre D1/D2/D6 y catálogo RDEP real para D5) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -34,11 +34,11 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 ## 3. Decisiones D1 a D8
 
-### D1 · Adulto mayor — CORREGIR → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
+### D1 · Adulto mayor — CORREGIR → **Hecho** (criterio del titular: por la edad, sin acreditación)
 - **Respuesta:** la condición se evalúa para el ejercicio en que la persona cumple 65 años; ya no se exige tenerlos al 1 de enero.
 - **Evidencia:** pruebas con nacimiento el 1 de enero, el 31 de diciembre y un 29 de febrero (todas reconocen el beneficio) y con quien cumple 64 (no lo reconoce). Un documento posterior al ejercicio se rechaza.
 - **Reliquidación al incorporar el dato tarde:** depende de D6 (ver abajo); las nóminas contabilizadas no se reabren.
-- **Criterio:** el sistema exige una acreditación del año (referencia y fecha) para reconocer al adulto mayor, además de la fecha de nacimiento. El titular del proyecto aprobó D1 el 21-09-2026 y se mantiene tal como está; si su aprobación buscaba prescindir de esa acreditación, avísenos y se ajusta.
+- **Criterio (titular, 21-09-2026):** el adulto mayor se reconoce **por la edad que resulta de la fecha de nacimiento, sin acreditación documental**. El sistema ya no la exige para este caso; la discapacidad sigue exigiendo su documento. La edad mínima vigente es 65 años (ley y sello de parámetros); el titular mencionó 60 y se espera su aclaración antes de cambiarla.
 
 ### D2 · Documento entregado después del 15 de enero — CORREGIR → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
 - **Respuesta:** un documento de discapacidad o de sustituto entregado después del 15 de enero **no se aplica ni permite cerrar la nómina** hasta que exista una **regularización verificada**. Es el procedimiento que describe su pronunciamiento, hecho expediente: fundamento registrado (criterio formal del responsable o pronunciamiento del SRI), validación realizada, **fecha de efecto que nunca puede caer en un mes ya contabilizado** y verificación por otra persona. Antes de la fecha de efecto la exención no se aplica (queda un aviso); desde ella entra en la reliquidación acumulada (D6), que recalcula las retenciones futuras. Los meses previos quedan sin exención y cerrados, y la diferencia se ve en la conciliación anual del RDEP. No hay casilla para saltar el control.
@@ -61,9 +61,11 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 ### D5 · Porcentaje de discapacidad y RDEP — CORREGIR → **Parcial**
 - **Respuesta:** escala de 30 %–49 % → 60 %; 50 %–74 % → 70 %; 75 %–84 % → 80 %; 85 %–100 % → 100 %, sobre el doble de la fracción básica (24.416,00 al 100 %; 14.649,60 al 30 %). Menos de 30 % se rechaza. La exención de la base y la rebaja por gastos personales van **separadas** en el modelo: la rebaja aplicada nunca supera el impuesto causado y es la que usa el RDEP.
-- **Sobre «tipo 00» y «tipo 03»:** no los homologamos ni fijamos por analogía. El tipo 00 no tiene descripción en el esquema y **no aplica exención**; el anexo declara pendiente la compatibilidad con el catálogo 2026 y el XML permanece como vista previa interna.
-- **No hecho:** validar el archivo con el catálogo y el validador oficiales de 2026. Al corte, el portal muestra el programa 2026 pero la ficha y el catálogo visibles son de 2025.
-- **Actualización del 21-09-2026:** el titular informa que el SRI no ha publicado cambios al catálogo desde 2024, por lo que este punto puede quedar abierto por años. Se propone validar el anexo contra la ficha técnica y el catálogo vigentes (2024, ya recibidos), sin afirmar compatibilidad 2026, y mantener D5 como parcial hasta que el SRI se pronuncie sobre 2026.
+- **Catálogo oficial (21-09-2026):** el titular adjuntó el catálogo RDEP («Catálogo vigente para el ejercicio fiscal 2024») y el esquema XSD, ambos descargados del propio portal del SRI. Verificamos en vivo en `https://www.sri.gob.ec/formularios-e-instructivos1` que la Ficha Técnica y el Catálogo que publica el SRI hoy son, por nombre y tamaño (176 KB), los mismos archivos: siguen vigentes **«para el ejercicio fiscal 2024 (también válido para 2025)»**, sin una versión 2026 publicada, aunque el programa DIMM RDEP sí tiene una compilación de marzo de 2026. El catálogo quedó en `addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, fijado por huella con una prueba.
+- **Corrección de los códigos de discapacidad:** al leer la hoja TABLAS del catálogo encontramos que el orden real es **01 No aplica, 02 Discapacidad, 03 Sustituto, 04 Cónyuge/pareja/hijo bajo su cuidado**, distinto del que traía la anotación de texto del XSD (que usábamos antes). El motor, el formulario del empleado y el anexo ya usan el orden del catálogo. El código 04 aparece «vigente hasta el periodo 2023» en el propio catálogo: el motor lo rechaza para 2024 en adelante. El código 00 solo era válido antes de 2013 y también se rechaza. Cuatro pruebas nuevas fijan esto por huella contra el archivo del titular; si el SRI publica un catálogo distinto, fallarán hasta que se ajuste el código.
+- **Sobre «tipo 00» y «tipo 04»:** no los homologamos ni fijamos por analogía; están explícitamente en el catálogo con las descripciones citadas arriba.
+- **No hecho:** validar los demás campos del anexo (no solo el de discapacidad) contra el catálogo completo, y contra el Formulario 107 oficial; ambos permanecen como vista previa.
+- **Necesitamos de usted:** avisarnos si consigue una versión 2026 distinta a la que verificamos hoy en el portal del SRI.
 
 ### D6 · Cambios durante el año — ACEPTAR CON CONDICIONES → **Hecho** (criterio confirmado por el titular del proyecto el 21-09-2026)
 - **Respuesta:** implementada la **reliquidación mensual acumulada** que su pronunciamiento describe: cada mes se recalculan, sobre lo acumulado, el impuesto causado y la rebaja; se restan las retenciones ya efectuadas (y las certificadas del empleador anterior); y el saldo se reparte entre los meses que faltan. La retención nunca es negativa y no se reabren nóminas contabilizadas. Sin historial del ejercicio rige la proyección anual de siempre, de modo que los cálculos existentes no cambian. Una huella impide cerrar o contabilizar si algo cambió después de calcular.
@@ -116,20 +118,20 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 
 Con esta versión ya no hay filas de la matriz que dependan de que nosotros programemos algo más. Lo que sigue depende de su criterio o del SRI:
 
-1. **D1, D2 y D6:** aprobados por el titular del proyecto el 21-09-2026; queda la firma de aceptación del responsable tributario.
+1. **D1, D2 y D6:** aprobados por el titular del proyecto el 21-09-2026 (D1: reconocimiento por la edad sin acreditación); queda la firma de aceptación del responsable tributario y aclarar si la edad mínima es 65 o 60 años.
 2. **D4:** ¿se acepta la proporción por días redondeada al mes más cercano?
 3. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental.
 4. **Caso 3 y caso 9:** matriz aprobada de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva.
 5. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
-6. **D5 y caso 10:** avisarnos cuando el SRI publique el catálogo y validador RDEP 2026 y el formato del Formulario 107.
+6. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
 7. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
 ## 7. Evidencia y cómo reproducirla
 
-- **Versión y commit:** `erpec_payroll` 18.0.1.14.0 en `codex/erpec26-implementacion` (el identificador del commit y de su CI se registran en el commit de evidencia que sigue a esta entrega).
-- **Pruebas:** 547 en Windows, 0 fallos y 0 errores; 5 omisiones de tesorería que requieren la demo sembrada. La ronda anterior (18.0.1.13.1, commit `a753558`) tuvo 533 en Windows y en Linux (CI 35664339580). El módulo de nómina pasó de 124 a 182 pruebas.
+- **Versión y commit:** `erpec_payroll` 18.0.1.14.2 en `codex/erpec26-implementacion` (el identificador del commit y de su CI se registran en el commit de evidencia que sigue a esta entrega).
+- **Pruebas:** 552 en Windows, 0 fallos y 0 errores; 5 omisiones de tesorería que requieren la demo sembrada. La ronda anterior (18.0.1.13.1, commit `a753558`) tuvo 533 en Windows y en Linux (CI 35664339580). El módulo de nómina pasó de 124 a 187 pruebas.
 - **Matriz de pendientes:** en la aplicación, **Nómina → Matriz de aceptación DI25-03**; en `docs/DI25-03_MATRIZ_ACEPTACION.md`. Una prueba exige que cada control citado tenga pruebas que existan.
-- **Demo:** base `erpec_demo` actualizada con respaldo previo (base, filestore y módulo); ahora en 18.0.1.14.0; auditoría de solo lectura en verde (32 casos con referencia coincidente y sin problemas) y matriz visible con 13 controles automáticos, 2 parciales, 2 bloqueos y 2 dependencias de terceros.
+- **Demo:** base `erpec_demo` actualizada con respaldo previo (base, filestore y módulo); ahora en 18.0.1.14.2; auditoría de solo lectura en verde (32 casos con referencia coincidente y sin problemas) y matriz visible con 13 controles automáticos, 2 parciales, 2 bloqueos y 2 dependencias de terceros.
 - **Reproducir:** `python scripts/test-integrated.py` (suite completa en base aislada) y `python scripts/verify-di25-demo-runner.py` (auditoría de la demo, solo lectura).
 - **Menús nuevos:** Certificados de otro empleador, Expedientes de exención, Regularización de documentos tardíos y Matriz de aceptación DI25-03.
 

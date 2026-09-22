@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.0",
+  "moduleVersion": "18.0.1.14.2",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -28,24 +28,24 @@
   },
   "tests": {
     "windowsIntegrated": {
-      "total": 547,
+      "total": 552,
       "failed": 0,
       "errors": 0,
       "skipped": 5,
       "skippedReason": "erpec_treasury requiere la demo sembrada",
-      "database": "ec_integrated_test_8df2ed77d0c6"
+      "database": "ec_integrated_test_2231ceb9cbd1"
     },
     "payrollModule": {
-      "before": 168,
-      "after": 182
+      "before": 182,
+      "after": 187
     }
   },
   "demo": {
     "database": "erpec_demo",
     "moduleVersionBefore": "18.0.1.13.1",
-    "moduleVersionAfter": "18.0.1.14.0",
-    "backup": ".cache/windows/backups/di25-controles3-20260921T233308Z",
-    "backupDatabaseSha256": "29c43a82735217404559f12613bfee825558b62480d1cb9f0cf0abc4f37db6a7",
+    "moduleVersionAfter": "18.0.1.14.2",
+    "backup": ".cache/windows/backups/di25-catalogo-20260922T055418Z",
+    "backupDatabaseSha256": "9869db41c4b3e053b53109beccbb041a493c78dbf0440a596d12a6c114ecf224",
     "auditRunner": {
       "passed": true,
       "cases": 32,
@@ -66,7 +66,7 @@
       "D6"
     ],
     "note": "Aprobacion comunicada en sesion por el titular del proyecto; no es la firma del responsable tributario. D1 se mantiene con acreditacion documental obligatoria.",
-    "D5": "El titular informa que el SRI no ha publicado cambios al catalogo desde 2024; puede quedar abierto por anos. Se propone validar contra catalogo y ficha 2024 sin afirmar compatibilidad 2026."
+    "D5": "Superado por adjustment_18_0_1_14_2: el titular aporto el catalogo oficial; ya esta en el repositorio y verificado en vivo contra sri.gob.ec."
   },
   "ciLinux": {
     "commit": "164b8a9",
@@ -75,5 +75,19 @@
     "conclusion": "success",
     "jobsSucceeded": 5,
     "note": "El arranque de la imagen controller fallo una vez por un reinicio de Postgres durante su inicializacion en Docker (ajeno a nomina) y aprobo al relanzar solo ese trabajo."
+  },
+  "adjustment_18_0_1_14_1": {
+    "D1": "adulto mayor por edad sin acreditacion documental (criterio del titular); edad minima 65 vigente, mencion de 60 pendiente de aclarar",
+    "D5": "XSD oficial del SRI en addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd, fijado por huella normalizada 8d595d42...; catalogo 2024 no esta en el repositorio",
+    "payrollModuleTests": 183
+  },
+  "adjustment_18_0_1_14_2": {
+    "action": "El titular adjunto el catalogo RDEP oficial (Catalogo vigente para el ejercicio fiscal 2024.xlsx) y pidio ubicarlo en el sitio correcto junto con el XSD.",
+    "location": "addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx (sha256 26230c62...977dc7e), junto a addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd",
+    "liveVerification": "Se verifico en vivo el 21-09-2026 en https://www.sri.gob.ec/formularios-e-instructivos1 (WebFetch): la Ficha Tecnica (701 KB) y el Catalogo (176 KB) publicados por el SRI coinciden en nombre y tamano con los archivos que aporto el titular; ambos siguen vigentes 'para el ejercicio fiscal 2024 (tambien valido para 2025)', sin version 2026 publicada, aunque el programa DIMM RDEP si tiene una compilacion de marzo de 2026. La descarga directa por curl fallo (sandbox sin salida de red directa; http_code=000), asi que la verificacion es por nombre/tamano via WebFetch, no por huella byte a byte contra el servidor.",
+    "codeCorrection": "Al leer la hoja TABLAS del catalogo se detecto que el orden real de los codigos de discapacidad difiere del que traia la anotacion de texto del XSD: 01 No aplica, 02 Trabajador con discapacidad, 03 Actua como sustituto, 04 Conyuge/pareja/hijo bajo su cuidado (derogado desde el periodo 2024); 00 solo valido antes de 2013. engine.py, annex_rdep.py, tax_controls.py y views.xml se corrigieron a este orden; el motor ahora rechaza el codigo 04 para el periodo 2024 en adelante y el codigo 00 siempre.",
+    "newTests": "test_rdep_catalog.py: huella del archivo del catalogo, comparacion de las cinco descripciones de la hoja TABLAS contra el motor, rechazo del codigo 04 desde 2024 y no-condicion del codigo 01.",
+    "payrollModuleTests": 187,
+    "fullSuite": "552 pruebas, 0 fallos, 0 errores, 5 omisiones (base ec_integrated_test_2231ceb9cbd1)"
   }
 }

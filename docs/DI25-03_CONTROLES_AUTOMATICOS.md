@@ -17,7 +17,7 @@ Documento fuente: archivo local DI25-03_PRONUCIAMIENTO_TECNICO.pdf, cinco págin
 
 | Observación | Control o corrección | Límite pendiente |
 |---|---|---|
-| D1: cumplir 65 durante el año | La condición de edad se evalúa para el ejercicio completo; pruebas de enero, diciembre y nacimiento bisiesto. No exige cumplirlos al 1 de enero. Rechaza documento posterior al ejercicio. | La regularización de retenciones futuras requiere completar D6. |
+| D1: cumplir 65 durante el año | La condición de edad se evalúa para el ejercicio completo; pruebas de enero, diciembre y nacimiento bisiesto. No exige cumplirlos al 1 de enero. Rechaza documento posterior al ejercicio. | Desde 18.0.1.14.1 (criterio del titular, 21-09-2026) el adulto mayor se reconoce por la edad, sin acreditación documental. La edad mínima es 65 años (ley y sello); se espera aclaración sobre una mención de 60. |
 | D2: documento tardío | Detecta fecha posterior al 15 de enero para discapacidad/sustitución; no aplica la exención y bloquea cierre/contabilización y XML. Indica regularización documentada. | Falta implementar el expediente de regularización con efecto futuro. No hay casilla para saltar el bloqueo. |
 | D3: concurrencia | Conserva el máximo, nunca la suma, y sus pruebas de importes independientes. | Acreditación auténtica y trazabilidad comparativa completa del expediente. |
 | D4: sustituto | Una referencia y meses ya no habilitan el beneficio. Detecta otra ficha con el mismo titular y año; no revela el nombre de otra empresa/persona. Bloquea hasta acreditar vigencias y unicidad. | Registro temporal de sustitución, reemplazos y verificación ante autoridad. |
@@ -65,7 +65,7 @@ La proyección del saldo supone que el último mes se repite durante los meses q
 - **D5 y caso 10:** el catálogo y validador RDEP 2026 y el formato oficial del Formulario 107 los publica el SRI. Mientras tanto el XML es vista previa y no se afirma compatibilidad.
 - **Casos 3 y 9:** matriz de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva. Requieren reglas aprobadas.
 - **Caso 8 (ausencias) y caso 11:** requieren reglas y parametrización aprobadas para cada régimen.
-- **D1:** el sistema exige una acreditación del año para reconocer al adulto mayor aunque la edad se deduzca de la fecha de nacimiento; el pronunciamiento pide reconocerlo por la edad del ejercicio. Se deja como está a la espera de que el responsable confirme.
+- **D1:** resuelto por el titular el 21-09-2026: el adulto mayor se reconoce por la edad que resulta de la fecha de nacimiento, sin acreditación documental (18.0.1.14.1). Queda por aclarar si la edad mínima es 65 años (vigente) o 60.
 - **Consulta a la autoridad y aceptación externa:** la verificación de expedientes y regularizaciones es documental e interna; no sustituye la consulta ni la firma del responsable.
 
 ## Acceso y verificación
@@ -83,6 +83,12 @@ La suite integrada incluye once pruebas nuevas específicas de estos controles. 
 El [portal oficial RDEP](https://www.sri.gob.ec/formularios-e-instructivos1) muestra el programa 2026, pero ficha y catálogo para el ejercicio 2025. Se conserva el XML como vista previa interna.
 
 La [codificación LRTI publicada por el SRI](https://www.sri.gob.ec/o/sri-portlet-biblioteca-alfresco-internet/descargar/12c884d5-c8d9-4171-becc-1513b990b87a/LEY_DE_REGIMEN_TRIBUTARIO_INTERNO_LRTI.pdf) indica última reforma 01-04-2026; difiere de la fecha 24-10-2025 mencionada en el pronunciamiento. La regla de D1 se implementa conforme al criterio expreso recibido, sin atribuir a la guía enlazada una verificación que el PDF no permite reproducir. El [comunicado SRI de actualización 2026](https://www.sri.gob.ec/detalle-noticias?idnoticia=1324&marquesina=1) confirma la necesidad de reliquidar retenciones futuras por cambios de ingresos, gastos o cargas; D6 sigue abierto.
+
+## Ajuste 18.0.1.14.1: criterios del titular
+
+- **D1:** el adulto mayor se reconoce por la fecha de nacimiento, sin acreditación documental; la discapacidad sigue exigiendo su documento y el aviso cuando falta.
+- **D2 y D6:** aprobados por el titular el 21-09-2026, sin la firma del responsable tributario.
+- **D5:** el XSD y el catálogo oficiales del SRI que aportó el titular se guardan sin cambios en `addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd` y `addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx`, fijados por huella con pruebas. Verificado en vivo en `sri.gob.ec/formularios-e-instructivos1` (21-09-2026): siguen vigentes para 2024/2025, sin versión 2026 publicada. Al leer el catálogo se corrigieron los códigos de discapacidad (01 no aplica, 02 discapacidad, 03 sustituto, 04 cónyuge/pareja/hijo bajo cuidado, derogado desde 2024), que diferían del orden de la anotación del XSD; no se afirma compatibilidad 2026.
 
 ## Reversión y continuación
 

@@ -39,7 +39,7 @@ class Employee(models.Model):
                     'D7 · 100 canastas bloqueadas: falta un expediente verificado que cubra todo el ejercicio '
                     '(autoridad, identidad, vigencia y, para una carga, vínculo y dependencia). '
                     'La referencia aislada no acredita la condición. No registrar diagnósticos.')
-        if self.ec_rdep_disability_type == '02':
+        if self.ec_rdep_disability_type == '03':  # 03 = sustituto en el catálogo RDEP vigente
             accredited = [claim for claim in status['claims'] if claim['kind'] == 'substitute']
             status['claims'] = [claim for claim in status['claims'] if claim['kind'] != 'substitute']
             verified = dossiers.verified_for(self, year, ['substitute'])
@@ -57,7 +57,7 @@ class Employee(models.Model):
                     'solapamientos. El número de meses y una referencia no prueban unicidad.')
                 if self.ec_rdep_disability_id:
                     duplicates = self.sudo().search_count([
-                        ('id', '!=', self.id), ('ec_rdep_disability_type', '=', '02'),
+                        ('id', '!=', self.id), ('ec_rdep_disability_type', '=', '03'),
                         ('ec_rdep_disability_id', '=', self.ec_rdep_disability_id),
                         ('ec_rdep_exemption_year', '=', year)])
                     if duplicates:

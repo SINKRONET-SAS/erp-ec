@@ -86,7 +86,7 @@ class TaxCompletionCase(TransactionCase):
 
     # ── D2 · regularización de un documento tardío ───────────────────────────
     def _late_disability(self):
-        self._accredit(ec_rdep_disability_type='01', ec_rdep_disability_percentage=50, ec_rdep_exemption_date=date(self.year, 2, 1))
+        self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=50, ec_rdep_exemption_date=date(self.year, 2, 1))
 
     def _regularization(self, **values):
         base = {'employee_id': self.employee.id, 'year': self.year, 'document_ref': 'DOC-SINTETICO-1', 'delivered_date': date(self.year, 2, 1),
@@ -163,7 +163,7 @@ class TaxCompletionCase(TransactionCase):
     def test_annex_keeps_the_comparison_of_accredited_exemptions(self):
         self._setup_employee_for_xml(self.employee)  # datos del XML primero: no deben pisar la discapacidad de la prueba
         self.employee.birthday = date(1950, 1, 1)
-        self._accredit(ec_rdep_disability_type='01', ec_rdep_disability_percentage=40)
+        self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=40)
         self._post(3000)
         line = self._annex().line_ids
         self.assertIn('elderly 12000.00', line.exemption_comparison)

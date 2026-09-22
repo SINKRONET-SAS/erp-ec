@@ -71,11 +71,11 @@ from .engine import (personal_expense_cap, annual_income_tax, apply_personal_exe
 
 SPECIAL_EXPENSE = [('none', 'General · según cargas'), ('holder', '100 canastas · titular'), ('dependent', '100 canastas · carga familiar')]
 DISABILITY_TYPES = [
-    ('00', '00 (sin descripción en el esquema oficial SRI; confirmar en la ficha técnica antes de usar)'),
-    ('01', '01 · Trabajador con discapacidad'),
-    ('02', '02 · Actúa como sustituto de una persona con discapacidad'),
-    ('03', '03 · Cónyuge, pareja en unión de hecho o hijo con discapacidad bajo su cuidado'),
-    ('04', '04 · No aplica'),
+    ('00', '00 · Sin dato (solo válido para períodos anteriores a 2013)'),
+    ('01', '01 · No aplica'),
+    ('02', '02 · Trabajador con discapacidad'),
+    ('03', '03 · Actúa como sustituto de una persona con discapacidad'),
+    ('04', '04 · Cónyuge, pareja en unión de hecho o hijo con discapacidad bajo su cuidado (derogado desde el período 2024)'),
 ]
 DISABILITY_ID_TYPES = [('C', 'C · Cédula'), ('P', 'P · Pasaporte'), ('E', 'E · Extranjero'), ('N', 'N · No aplica')]
 ID_TYPES = [('C', 'C · Cédula'), ('P', 'P · Pasaporte'), ('E', 'E · Extranjero')]
@@ -148,7 +148,8 @@ class Employee(models.Model):
     _inherit = 'hr.employee'
     ec_rdep_disability_type = fields.Selection(
         DISABILITY_TYPES, string='Discapacidad (RDEP)',
-        help='Campo discapTyp del Esquema RDEP 2023.xsd; etiquetas 01-04 tomadas de la documentación del propio esquema.')
+        help='Campo discapTyp; códigos y descripciones tomados de la hoja TABLAS del catálogo RDEP vigente '
+             '(docs/evidencias/Catálogo vigente para el ejercicio fiscal 2024.xlsx), no del orden que trae la anotación del XSD.')
     ec_rdep_disability_percentage = fields.Integer('Porcentaje de discapacidad (RDEP)')
     ec_rdep_disability_id_type = fields.Selection(DISABILITY_ID_TYPES, string='Identificación del titular de la discapacidad (RDEP)')
     ec_rdep_disability_id = fields.Char('Número de identificación del titular de la discapacidad (RDEP)')

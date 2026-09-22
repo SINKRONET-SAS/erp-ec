@@ -15,3 +15,4 @@ from . import test_tax_registers
 from . import test_exemption_dossier
 from . import test_acceptance_matrix
 from . import test_tax_completion
+from . import test_rdep_catalog

@@ -24,21 +24,21 @@ class TaxControlsCase(TransactionCase):
     def test_d1_birthday_boundaries_and_late_age_evidence(self):
         for birthday in (date(1961, 1, 1), date(1961, 12, 31), date(1960, 2, 29)):
             claims, issues, _ = resolve_exemption_claims(
-                2026, birthday, '04', 0, 'N', '', 2026, 'EDAD-1', date(2026, 8, 1))
+                2026, birthday, '01', 0, 'N', '', 2026, 'EDAD-1', date(2026, 8, 1))
             self.assertEqual(claims, [{'kind': 'elderly'}])
             self.assertFalse(issues)
         claims, issues, _ = resolve_exemption_claims(
-            2026, date(1962, 1, 1), '04', 0, 'N', '', 2026, 'EDAD-1', date(2026, 1, 1))
+            2026, date(1962, 1, 1), '01', 0, 'N', '', 2026, 'EDAD-1', date(2026, 1, 1))
         self.assertFalse(claims)
         self.assertTrue(issues)
 
     def test_d2_late_disability_cannot_close(self):
         claims, issues, _ = resolve_exemption_claims(
-            2026, date(1961, 12, 31), '01', 80, 'N', '', 2026, 'DOC-1', date(2026, 2, 1))
+            2026, date(1961, 12, 31), '02', 80, 'N', '', 2026, 'DOC-1', date(2026, 2, 1))
         self.assertEqual(claims, [{'kind': 'elderly'}])
         self.assertTrue(issues)
 
-        self._accredit(ec_rdep_disability_type='01', ec_rdep_disability_percentage=50,
+        self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=50,
                        ec_rdep_exemption_date=date(self.policy.year, 2, 1))
         period = self._period(3000)
         period.action_calculate()
@@ -47,11 +47,11 @@ class TaxControlsCase(TransactionCase):
             period.action_close()
 
     def test_d4_duplicate_substitution_is_detected_without_exposing_other_employee(self):
-        self._accredit(ec_rdep_disability_type='02', ec_rdep_disability_percentage=80,
+        self._accredit(ec_rdep_disability_type='03', ec_rdep_disability_percentage=80,
                        ec_rdep_disability_id_type='C', ec_rdep_disability_id='1712345678')
         self.env['hr.employee'].create({
             'name': 'Persona confidencial', 'company_id': self.company.id,
-            'ec_rdep_disability_type': '02', 'ec_rdep_disability_id': '1712345678',
+            'ec_rdep_disability_type': '03', 'ec_rdep_disability_id': '1712345678',
             'ec_rdep_exemption_year': self.policy.year})
         status = self.employee._rdep_personal_status(self.policy.year)
         self.assertFalse(status['claims'])
