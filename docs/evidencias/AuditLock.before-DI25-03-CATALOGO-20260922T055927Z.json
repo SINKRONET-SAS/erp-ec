@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-22T05:59:27.298Z",
+  "updatedAt": "2026-09-22T05:57:46.249Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -87,7 +87,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-100CANASTAS-20260921T180737099Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-100CANASTAS-VERIFICADO-20260921T182009900Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055746Z.json",
-    "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055927Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CI-20260921T141137777Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T224435Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T225450Z.json",
@@ -165,8 +164,6 @@
     "DI25-03.5: normalizado el fin de linea de la evidencia DI25-03-controles-automaticos-3.json para que la huella coincida con el commit.",
     "DI25-03.5: el titular del proyecto aprobo D1, D2 y D6 el 21-09-2026 (sin firma del responsable tributario); D5 queda abierto hasta que el SRI publique cambios al catalogo (sin cambios desde 2024).",
     "DI25-03.5 (18.0.1.14.1-18.0.1.14.2): D1 ajustado a que el adulto mayor se reconoce por la edad sin acreditacion documental (criterio del titular, 21-09-2026); XSD oficial del RDEP ubicado en addons/erpec_payroll/xsd.",
-    "DI25-03.5 (18.0.1.14.2): catalogo RDEP oficial aportado por el titular, ubicado en addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx y verificado en vivo contra sri.gob.ec/formularios-e-instructivos1 (vigente 2024/2025, sin version 2026). Se corrigieron los codigos de discapacidad del motor y del anexo al orden real del catalogo (01 no aplica, 02 discapacidad, 03 sustituto, 04 conyuge/pareja/hijo derogado desde 2024), que diferia de la anotacion del XSD. Suite Windows 0 fallos, 0 errores, 5 omisiones (552 pruebas, modulo de nomina 187). Demo redesplegada a 18.0.1.14.2, auditoria de solo lectura en verde.",
-    "DI25-03.5 (18.0.1.14.1-18.0.1.14.2): D1 ajustado a que el adulto mayor se reconoce por la edad sin acreditacion documental (criterio del titular, 21-09-2026); XSD oficial del RDEP ubicado en addons/erpec_payroll/xsd.",
     "DI25-03.5 (18.0.1.14.2): catalogo RDEP oficial aportado por el titular, ubicado en addons/erpec_payroll/reference/Catalogo_RDEP_2024.xlsx y verificado en vivo contra sri.gob.ec/formularios-e-instructivos1 (vigente 2024/2025, sin version 2026). Se corrigieron los codigos de discapacidad del motor y del anexo al orden real del catalogo (01 no aplica, 02 discapacidad, 03 sustituto, 04 conyuge/pareja/hijo derogado desde 2024), que diferia de la anotacion del XSD. Suite Windows 0 fallos, 0 errores, 5 omisiones (552 pruebas, modulo de nomina 187). Demo redesplegada a 18.0.1.14.2, auditoria de solo lectura en verde."
   ],
   "pendingChecks": [
@@ -235,7 +232,7 @@
     "addons/erpec_payroll/tests/test_tax_registers.py": "803463ea6546cefd26c2ae9ab8798f84c585ebf0b6167c574039eddd7e357ade",
     "addons/erpec_payroll/tests/test_tax_review.py": "3d7ae1824c57544ebca28cf6f901f4b22f8360d3db316cf7c258ba7fee752acf",
     "addons/erpec_payroll/views.xml": "176e4ec1d2631aae39dc07159f56961ea605291f0575184994d84873244bb284",
-    "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd": "8d595d42c17948ca9f4f5bf5bf4fff18ae9ddac5f3fb1f2a5670ba3ec2783636",
+    "addons/erpec_payroll/xsd/Esquema_RDEP_2023.xsd": "9067640f71c4c14549c5376e0f5c357d01f69189b24346ff70408adbb5c68046",
     "deployment/linux/Dockerfile": "839a042fc9c79b7185515883493a5b0a550fc54a3ee92c3c41b78fca7b3676f4",
     "deployment/linux/run-tests.sh": "918f1119a7f42a8f332fd34c00adb300e7255956a25a5d36559b9179fec29f50",
     "deployment/linux/runtime.py": "7541c536962c8cf224a18858c14200fa040c95a14cb15e22b75152a8980b1532",
@@ -263,7 +260,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-100CANASTAS-20260921T180737099Z.json": "0c29c7a345d7de7c3cf7c956425014072895013d91670366af29af5fea6ba7d2",
     "docs/evidencias/AuditLock.before-DI25-03-100CANASTAS-VERIFICADO-20260921T182009900Z.json": "275d404f36d3c600c49a89ad08fdbbabcd09e7f1e91f6669bd0335dd55404c36",
     "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055746Z.json": "48c09b43dab0f9206517e487b1d324ca40b817c665c9cf27f85ca006d49d3677",
-    "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055927Z.json": "215dd13744a77938da95bdc96c520f2022baacf2b49b5fe7b22bd3ab888946d9",
     "docs/evidencias/AuditLock.before-DI25-03-CI-20260921T141137777Z.json": "9c03327bbe4efc55927c39d50a4bf263b4476258f0aa2b2360f8aca8c2b1808c",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T224435Z.json": "309c8d966bdf1968158e5865e6ca637928fc3ae9d64c8ce0e2c5122e66df6692",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T225450Z.json": "d875d892224ce9fcd696f360d979f1e8f20f393c83168076af89728d6ce09c7d",
@@ -313,9 +309,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055927Z.json",
-  "previousAuditLockHash": "215dd13744a77938da95bdc96c520f2022baacf2b49b5fe7b22bd3ab888946d9",
-  "signature": "a6876041fafce658ea252f555b8bb101f8440929c0dc7231ee51bf224576ca00",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055746Z.json",
+  "previousAuditLockHash": "48c09b43dab0f9206517e487b1d324ca40b817c665c9cf27f85ca006d49d3677",
+  "signature": "ffcd90ba25933020e8c9c7700f92ffe409475305a212734d1bd1fb5b6658f56d",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
