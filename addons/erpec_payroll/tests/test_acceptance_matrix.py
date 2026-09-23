@@ -58,6 +58,11 @@ class AcceptanceMatrixCase(TransactionCase):
         self.assertEqual(by_code['C03'].control_state, 'automated')
         self.assertEqual(by_code['D8'].control_state, 'automated')
         self.assertEqual(by_code['C09'].control_state, 'automated')
+        # C11 (Galápagos, no residentes, convenio e impuesto asumido) cierra con la tabla
+        # paramétrica de convenios y el gross-up por bisección (18.0.1.14.13); lo que sigue
+        # bloqueando (convenio sin registrar, otros ingresos no gravados sin oráculo) es
+        # dependiente de datos, no una brecha de implementación.
+        self.assertEqual(by_code['C11'].control_state, 'automated')
 
     def test_the_matrix_is_read_only_for_payroll_managers(self):
         manager = new_test_user(self.env, login='matriz_solo_lectura', groups='base.group_user,erpec_payroll.group_payroll_manager')

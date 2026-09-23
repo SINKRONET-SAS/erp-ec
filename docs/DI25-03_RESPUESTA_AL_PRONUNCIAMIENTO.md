@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.12 (tercera ronda; caso 11 parcial: no residentes y Galápagos resueltos) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.13 (tercera ronda; caso 11 cerrado: convenio parametrizable e impuesto asumido por bisección) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -147,9 +147,13 @@ Verificamos el punto de no residentes contra la LRTI y encontramos que el mecani
 
 **Actualización del 23-09-2026, Galápagos resuelto:** usted aclaró que la Reforma a la Ley Orgánica de Régimen Especial de la Provincia de Galápagos (LOREG) eliminó el incremento fijo "antitécnico" del 75 % (privados) y 100 % (públicos) y lo unificó con el **mismo** Índice de Precios al Consumidor Especial de Galápagos (IPCEG) que el SRI ya usa en D5 — no son dos factores distintos, es el mismo, ya sellado en 1,803. El motor ahora escala el salario de referencia continental (`wage`) por ese factor cuando el empleado está marcado como beneficiario de Galápagos, antes de calcular IESS, décimos, vacaciones y fondo de reserva; el impuesto se calcula con la tabla progresiva normal sobre esa base ya escalada, tal como usted confirmó ("tributan de acuerdo a la legislación ecuatoriana"). No cubrimos el caso de **derechos adquiridos** (empleados anteriores a la reforma que mantienen congelado el 75 %/100 % fijo): para ellos se declara el salario ya congelado directamente, sin activar este factor.
 
-**Lo que sigue bloqueado, sin fuente suficiente todavía:**
-- **Convenio de doble imposición:** necesitamos, por cada país con el que aplique (España, Comunidad Andina, etc.), el tope o mecanismo exacto del tratado.
-- **Impuesto asumido por el empleador (gross-up):** el SRI tiene una fórmula propia para el contrato de ingreso neto; hay que grosificar contra la tabla progresiva, no con una tasa fija.
+**Actualización del 23-09-2026, convenio de doble imposición e impuesto asumido cerrados:** con su guía técnica implementamos ambos mecanismos como controles reales, no como bloqueos permanentes.
+- **Convenio de doble imposición** (`erpec.payroll.tax.treaty`): tabla paramétrica por país, sin tasas precargadas — cada registro exige su propia referencia normativa (no se fabrica ninguna). Mecanismo `exempt` (potestad exclusiva del país de residencia, p. ej. Decisión 578 CAN): no se retiene impuesto en Ecuador. Mecanismo `capped_rate`: el tratado fija una tasa tope sobre la base anual, en vez de la tabla progresiva y la rebaja de gastos personales. Sigue bloqueando el cierre si el empleado declara convenio aplicable y no hay un tratado registrado para su país — eso es correcto: no hay una regla genérica, cada tratado necesita su propio registro con fuente.
+- **Impuesto asumido por el empleador** (contrato de ingreso neto en nómina, casillero 381 F107): la LRTI no fija una tarifa única de "gross-up"; el motor la resuelve por bisección (`engine.gross_up_assumed_tax`) contra la misma tabla progresiva ya vigente, tratándola como caja negra — funciona sea cual sea el tramo en el que caiga la base grosseada, sin inventar una fórmula cerrada. El campo `net_income_target` (neto mensual garantizado) llega íntegro al trabajador (no se le descuenta nada adicional); el impuesto que el empleador asume es informativo y se reporta en el RDEP (`basImp`, `impRentEmpl`, `valImpAsuEsteEmpl`), conforme al catálogo vigente. Ya no bloquea el cierre.
+
+**Lo que sigue dependiendo de datos que solo usted puede proveer (no es una brecha de implementación):**
+- **Convenio de doble imposición:** registrar, por cada país con el que aplique (España, Comunidad Andina, etc.), el tope o mecanismo exacto del tratado con su fuente normativa.
+- **Otros ingresos no gravados de esta relación** (`other_general_interest_income`, campo `otrosIngRenGrav`): sigue siendo manual, sin cálculo del motor; falta su propio oráculo aprobado.
 
 ## 5. Requisitos mínimos para una nueva homologación
 
@@ -169,7 +173,7 @@ Con esta versión ya no hay filas de la matriz que dependan de que nosotros prog
 
 1. **D1, D2, D4 y D6:** aprobados por el titular del proyecto (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores; D4: redondeo días→meses del sustituto, aprobado el 22-09-2026); queda la firma de aceptación del responsable tributario.
 2. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental (el fundamento legal del tope ya quedó verificado).
-3. **Caso 11:** fuentes/reglas exactas para convenio de doble imposición (por país) y la fórmula de grosificación del impuesto asumido.
+3. **Caso 11:** registrar en `erpec.payroll.tax.treaty` los tratados reales que apliquen (por país, con su fuente normativa); el mecanismo de convenio y el gross-up del impuesto asumido ya están implementados y probados.
 4. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
 5. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 

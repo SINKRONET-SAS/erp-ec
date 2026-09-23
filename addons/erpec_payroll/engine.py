@@ -232,6 +232,33 @@ def annual_income_tax(annual_base, personal_expenses, parameters, dependents_cou
     return annual_tax, rebate, max(Decimal(0), annual_tax-rebate)
 
 
+def gross_up_assumed_tax(net_target, base_annual_base, personal_expenses, parameters, dependents_count=0, galapagos='NO', *, special_expense=False):
+    """Caso 11 (DI25-03): impuesto asumido por el empleador en un "contrato de ingreso neto en
+    nómina" (casillero 381 F107). La LRTI no fija una tarifa única de "gross-up"; se resuelve por
+    bisección contra la misma tabla progresiva (annual_income_tax) ya aplicada al resto de la
+    nómina, tratándola como caja negra: dado el neto adicional garantizado (net_target) y la base
+    anual gravable del resto de la nómina (base_annual_base, ya después de la rebaja de gastos
+    personales), busca el impuesto que el empleador debe asumir para que ese neto llegue íntegro
+    al trabajador, sea cual sea el tramo de la tabla en el que caiga."""
+    net_target = number(net_target)
+    if net_target < 0:
+        raise ValueError('El ingreso neto garantizado no puede ser negativo.')
+    if net_target == 0:
+        return Decimal(0)
+    base_annual_base = max(Decimal(0), number(base_annual_base))
+    _, _, base_tax = annual_income_tax(base_annual_base, personal_expenses, parameters, dependents_count, galapagos, special_expense=special_expense)
+    lo, hi = net_target, net_target*Decimal(3)
+    for _ in range(50):
+        mid = (lo+hi)/2
+        _, _, mid_tax = annual_income_tax(base_annual_base+mid, personal_expenses, parameters, dependents_count, galapagos, special_expense=special_expense)
+        net = mid-(mid_tax-base_tax)
+        if net < net_target:
+            lo = mid
+        else:
+            hi = mid
+    return money(hi-net_target)
+
+
 def calculate(data, parameters, year, month):
     validate_parameters(parameters)
     start = date.fromisoformat(data['start_date'])
@@ -252,7 +279,8 @@ def calculate(data, parameters, year, month):
         wage = money(wage*number(GALAPAGOS_IPCEG_FACTOR))
     for key, value in data.items():
         if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours', 'vacation_payout',
-                   'sick_days', 'maternity_days', 'unpaid_leave_days', 'unexcused_absence_days', 'paternity_days') and number(value) < 0:
+                   'sick_days', 'maternity_days', 'unpaid_leave_days', 'unexcused_absence_days', 'paternity_days',
+                   'net_income_target', 'employer_assumed_tax') and number(value) < 0:
             raise ValueError('Las novedades y descuentos deben ser no negativos.')
     # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (17-02-2025, art. 54
     # Código del Trabajo y art. 16 Reglamento General sobre Prestación de Subsidios en Dinero) y
@@ -299,6 +327,36 @@ def calculate(data, parameters, year, month):
         annual_base, data.get('personal_expenses', 0), parameters,
         data.get('dependents_count', 0), data.get('galapagos', 'NO'),
         special_expense=data.get('special_expense', False))
+    # Caso 11 (DI25-03): impuesto asumido por el empleador ("contrato de ingreso neto en nómina",
+    # casillero 381 F107). net_income_target es el neto MENSUAL garantizado por contrato (igual de
+    # recurrente que wage, no un pago único como vacation_payout); se suma íntegro al bruto del
+    # trabajador y NO pasa por el IESS ni por la retención mensual de este período (el empleador lo
+    # paga aparte a la SRI, no se lo descuenta al trabajador). Para el impuesto que el empleador
+    # asume se proyecta el mismo neto a los meses que faltan (igual que la base salarial, arriba),
+    # se resuelve el impuesto ANUAL por bisección (gross_up_assumed_tax) contra la base anual ya
+    # calculada, y se reparte entre los meses que faltan -- mismo patrón que already_withheld/tax
+    # más abajo. Se suma al monto manual del campo, si lo hubiera, para reportarlo en el RDEP
+    # (impRentEmpl/valImpAsuEsteEmpl). No se combina con el convenio de doble imposición: son
+    # mecanismos independientes que no se han visto juntos en un mismo caso real.
+    net_income_target = number(data.get('net_income_target', 0))
+    employer_assumed_tax = number(data.get('employer_assumed_tax', 0))
+    if net_income_target:
+        annual_assumed_tax = gross_up_assumed_tax(
+            net_income_target*remaining_months, annual_base, data.get('personal_expenses', 0), parameters,
+            data.get('dependents_count', 0), data.get('galapagos', 'NO'),
+            special_expense=data.get('special_expense', False))
+        employer_assumed_tax += money(annual_assumed_tax/remaining_months)
+    # Caso 11 (DI25-03): convenio de doble imposición registrado (erpec.payroll.tax.treaty) para
+    # el país de residencia del empleado. "exempt" (potestad exclusiva del país de residencia,
+    # p. ej. Decisión 578 CAN): no se retiene impuesto a la renta en Ecuador por esta relación de
+    # dependencia. "capped_rate": el tratado fija una tasa tope sobre la base anual, en vez de la
+    # tabla progresiva y la rebaja de gastos personales (que no aplican bajo un tope de tratado).
+    treaty_mechanism = data.get('treaty_mechanism')
+    if treaty_mechanism == 'exempt':
+        annual_tax = rebate = tax_after_rebate = Decimal(0)
+    elif treaty_mechanism == 'capped_rate':
+        tax_after_rebate = annual_tax = money(annual_base*number(data.get('treaty_rate', 0))/100)
+        rebate = Decimal(0)
     already_withheld = number(data.get('prior_tax', 0))+number(data.get('other_withheld', 0))
     tax = money(max(Decimal(0), tax_after_rebate-already_withheld)/remaining_months)
     thirteenth = money(base*number(parameters['thirteenth_rate']))
@@ -310,17 +368,17 @@ def calculate(data, parameters, year, month):
     monthly13 = thirteenth if data.get('monthly_thirteenth') else Decimal(0)
     monthly14 = fourteenth if data.get('monthly_fourteenth') else Decimal(0)
     reserve_paid = reserve if data.get('reserve_paid') else Decimal(0)
-    gross = money(base+number(data.get('non_taxable_income', 0))+monthly13+monthly14+reserve_paid+vacation_payout)
+    gross = money(base+number(data.get('non_taxable_income', 0))+monthly13+monthly14+reserve_paid+vacation_payout+net_income_target)
     advances, loans, other = [money(data.get(key, 0)) for key in ('advances','loans','other_deductions')]
     deductions = money(iess+tax+advances+loans+other)
     net = money(gross-deductions)
     if net < 0:
         raise ValueError('El neto a recibir no puede ser negativo.')
     accrued13, accrued14, reserve_iess = thirteenth-monthly13, fourteenth-monthly14, reserve-reserve_paid
-    cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess)
+    cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess+employer_assumed_tax)
     # Estas magnitudes son proyecciones mensuales; el RDEP aplica la misma tarifa
     # a los acumulados efectivos, sin copiar una proyección de un mes aislado.
-    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'vacation_payout':vacation_payout, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption}.items()}
+    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'vacation_payout':vacation_payout, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption, 'employer_assumed_tax':employer_assumed_tax}.items()}
 
 
 def validate_parameters(parameters):

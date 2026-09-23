@@ -91,17 +91,21 @@ TREATY_APPLIES = [('SI', 'SI'), ('NO', 'NO'), ('NA', 'NA'), ('SD', 'SD · Sin da
 FISCAL_RESIDENCE = [('00', '00'), ('01', '01'), ('02', '02')]
 BEN_GALPG = [('SI', 'SI'), ('NO', 'NO')]
 
-RDEP_FLOW_KEYS = ('gross', 'salary', 'overtime', 'thirteenth', 'fourteenth', 'reserve_iess', 'personal_iess', 'tax', 'base', 'vacation_payout')
+RDEP_FLOW_KEYS = ('gross', 'salary', 'overtime', 'thirteenth', 'fourteenth', 'reserve_iess', 'personal_iess', 'tax', 'base', 'vacation_payout', 'employer_assumed_tax')
 RDEP_LINE_INPUT_KEYS = (
     'annual_profit_sharing', 'decent_wage_compensation', 'other_employer_taxable_income',
-    'other_employer_iess', 'other_employer_withheld_tax', 'employer_assumed_tax',
+    'other_employer_iess', 'other_employer_withheld_tax',
     'other_general_interest_income', 'expense_housing', 'expense_health', 'expense_education',
     'expense_food', 'expense_clothing', 'expense_art_culture', 'expense_tourism',
 )
-# vacation_payout viaja en RDEP_FLOW_KEYS (no en RDEP_LINE_INPUT_KEYS): la novedad que registra
-# el usuario en la línea la complementa engine.calculate() con los beneficios propios sin aporte
-# a IESS (caso 3, DI25-03), y solo el resultado inmutable de cada período (result['vacation_payout'])
-# refleja ese total real; sumar el campo crudo de la línea lo subestimaría.
+# vacation_payout y employer_assumed_tax viajan en RDEP_FLOW_KEYS (no en RDEP_LINE_INPUT_KEYS):
+# ambos los completa engine.calculate() más allá de lo que el usuario escribe en la línea (caso 3
+# y caso 11, DI25-03: beneficios propios sin aporte a IESS, e impuesto asumido resuelto por
+# bisección contra la tabla progresiva), así que solo el resultado inmutable de cada período
+# (result['vacation_payout']/result['employer_assumed_tax']) refleja el total real; sumar el
+# campo crudo de la línea lo subestimaría. El campo crudo `employer_assumed_tax` de la línea sigue
+# existiendo como entrada manual (Line._copy_inputs lo agrega aparte) para quien ya conoce el
+# valor exacto sin usar net_income_target.
 EXPENSE_CATEGORY_KEYS = ('expense_housing', 'expense_health', 'expense_education', 'expense_art_culture', 'expense_food', 'expense_clothing', 'expense_tourism')
 # Boletín NAC-COM-26-006 (SRI, 06-02-2026) y fuentes tributarias consistentes con él:
 # desde la reforma de 2023 ya NO hay tope individual por categoría de gasto personal.
@@ -253,7 +257,8 @@ class Line(models.Model):
     other_employer_taxable_income = fields.Float('Ingresos gravados con otros empleadores (RDEP)', help='Campo intGrabGen (hoja TABLAS del catálogo RDEP vigente: «Ingresos gravados generados con otros empleadores»). Declarado por el empleado con base en su F107 anterior.')
     other_employer_iess = fields.Float('Aporte IESS con otros empleadores (RDEP)', help='Campo aporPerIessConOtrosEmpls.')
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (RDEP)', help='Campo valRetAsuOtrosEmpls.')
-    employer_assumed_tax = fields.Float('Impuesto a la renta asumido por este empleador (RDEP)', help='Campos impRentEmpl/valImpAsuEsteEmpl; solo aplica a contratos de ingreso neto (casillero 381 del F107).')
+    employer_assumed_tax = fields.Float('Impuesto a la renta asumido por este empleador (RDEP)', help='Campos impRentEmpl/valImpAsuEsteEmpl; solo aplica a contratos de ingreso neto (casillero 381 del F107). Entrada manual para quien ya conoce el valor exacto; si se usa net_income_target, el motor calcula y suma su propio impuesto asumido por bisección contra la tabla progresiva.')
+    net_income_target = fields.Float('Neto mensual garantizado (contrato de ingreso neto)', help='Caso 11 (DI25-03): neto adicional que el contrato garantiza libre de impuesto a la renta cada mes (casillero 381 F107). El motor resuelve por bisección, contra la tabla progresiva vigente, el impuesto que el empleador debe asumir para que ese neto llegue íntegro al trabajador; no pasa por IESS ni por la retención mensual del trabajador.')
     other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (RDEP)', help='Campo otrosIngRenGrav (hoja TABLAS del catálogo RDEP vigente: «Otros ingresos en relación de dependencia que no constituyen renta gravada ni materia gravada de IESS»); no es de otro empleador. Manual: el motor no lo calcula. Completar solo tras validar con el contador o la ficha técnica.')
     expense_housing = fields.Float('Gastos personales · vivienda (RDEP)', help='Campo deducVivienda. No tiene tope individual; el tope es único y total (ver la categoría "Educación, arte y cultura" para la referencia normativa completa).')
     expense_health = fields.Float('Gastos personales · salud (RDEP)', help='Campo deducSalud. No tiene tope individual; comparte el tope único y total con las demás categorías.')
@@ -266,6 +271,10 @@ class Line(models.Model):
     def _copy_inputs(self):
         values = super()._copy_inputs()
         values.update({key: self[key] for key in RDEP_LINE_INPUT_KEYS})
+        # employer_assumed_tax/net_income_target no van en RDEP_LINE_INPUT_KEYS (ver la nota junto
+        # a esa tupla): igual deben llegar como entrada a engine.calculate(), así que se copian aparte.
+        values['employer_assumed_tax'] = self.employer_assumed_tax
+        values['net_income_target'] = self.net_income_target
         return values
 
     def _inputs(self):
@@ -277,6 +286,14 @@ class Line(models.Model):
         data = super()._inputs()
         data['dependents_count'] = self.employee_id.ec_rdep_dependents_count
         data['galapagos'] = self.employee_id.ec_rdep_ben_galpg or 'NO'
+        # Caso 11 (DI25-03): convenio de doble imposición registrado para el país de residencia
+        # del empleado, si existe (erpec.payroll.tax.treaty). Sin convenio registrado, el motor
+        # no aplica ningún mecanismo especial y tax_controls.py bloquea el cierre.
+        if self.employee_id.ec_rdep_treaty_applies == 'SI':
+            treaty = self.env['erpec.payroll.tax.treaty'].sudo().for_employee(self.employee_id)
+            if treaty:
+                data['treaty_mechanism'] = treaty.mechanism
+                data['treaty_rate'] = treaty.rate
         # Solo lo acreditado para el año del período; lo inconsistente no se aplica y el anexo lo bloquea.
         period_end = date(self.period_id.year, self.period_id.month, monthrange(self.period_id.year, self.period_id.month)[1])
         status = self.employee_id.sudo()._rdep_personal_status(self.period_id.year, period_end)
@@ -363,9 +380,9 @@ class RdepAnnex(models.Model):
         """Explicita casos sin oráculo aprobado; no inventa reglas de exención."""
         issues = []
         special_inputs = ('annual_profit_sharing', 'decent_wage_compensation',
-                          'employer_assumed_tax', 'other_general_interest_income')
+                          'other_general_interest_income')
         if any(any(line[key] for key in special_inputs) for line in periods.line_ids):
-            issues.append('Ingresos especiales o impuesto asumido: falta conciliación independiente aprobada.')
+            issues.append('Ingresos especiales (utilidades, salario digno u otros ingresos no gravados): falta conciliación independiente aprobada.')
         # D8: otros empleadores se concilian con los comprobantes versionados del empleador anterior.
         issues.extend(self.env['erpec.payroll.prior.employer'].reconciliation_issues(self.company_id, self.year, periods.line_ids))
         for employee in periods.line_ids.employee_id:
@@ -425,7 +442,10 @@ class RdepAnnex(models.Model):
         for employee_id, values in totals.items():
             employee = self.env['hr.employee'].browse(employee_id)
             status = employee.sudo()._rdep_personal_status(self.year)
-            gross_base = max(0, values['base'] - values['personal_iess'] + values['other_employer_taxable_income'] - values['other_employer_iess'] + values['vacation_payout'])
+            # impRentEmpl (employer_assumed_tax) suma a basImp per el catálogo RDEP vigente (hoja
+            # TABLAS, fórmula de basImp): el impuesto que el empleador asume se convierte en ingreso
+            # gravado adicional del trabajador (caso 11, DI25-03), igual que en la LRTI.
+            gross_base = max(0, values['base'] - values['personal_iess'] + values['other_employer_taxable_income'] - values['other_employer_iess'] + values['vacation_payout'] + values['employer_assumed_tax'])
             exemption_kind, exemption, annual_base = apply_personal_exemption(gross_base, parameters, status['claims'])
             months_reported = int(values.get('months', 0))
             months_remaining = max(0, 12 - months_reported)

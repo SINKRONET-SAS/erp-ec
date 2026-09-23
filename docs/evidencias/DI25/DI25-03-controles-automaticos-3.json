@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.12",
+  "moduleVersion": "18.0.1.14.13",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -16,9 +16,9 @@
     "caso6_caso7": "pruebas repetidas con D1-D7 y consolidacion idempotente con reliquidacion"
   },
   "matrixStates": {
-    "automated": 16,
+    "automated": 17,
     "partial": 2,
-    "blocked": 1,
+    "blocked": 0,
     "external": 0
   },
   "stillOutsideTheSystem": {
@@ -185,5 +185,13 @@
     "exclusion": "No cubre derechos adquiridos (empleados anteriores a la reforma con 75%/100% fijo congelado); para ellos se declara el salario ya congelado directamente sin activar el factor.",
     "stillBlocked": "Convenio de doble imposicion (por tratado) e impuesto asumido (formula de grosificacion, gross-up, contra la tabla progresiva).",
     "payrollModuleTests": 201
+  },
+  "adjustment_18_0_1_14_13": {
+    "action": "El titular aporto guia tecnica detallada sobre convenios de doble imposicion y la formula de gross-up del impuesto asumido (contrato de ingreso neto en nomina).",
+    "finding": "La LRTI no fija una tarifa unica de gross-up para el impuesto asumido; hay que resolverla contra la tabla progresiva vigente (no una tasa fija). El convenio de doble imposicion no tiene una regla generica: cada tratado tiene su propio tope/mecanismo.",
+    "implementation": "engine.py: nueva funcion gross_up_assumed_tax(net_target, base_annual_base, ...) resuelve por biseccion (50 iteraciones) contra annual_income_tax, tratandola como caja negra. calculate() proyecta net_income_target (neto mensual garantizado) a los meses que faltan, resuelve el impuesto asumido anual y lo reparte igual que already_withheld/tax; net_income_target se suma integro a gross/net sin pasar por IESS ni por la retencion mensual del trabajador. annex_rdep.py: employer_assumed_tax migra de RDEP_LINE_INPUT_KEYS a RDEP_FLOW_KEYS (se lee del resultado inmutable del motor, no del campo crudo, igual que vacation_payout); nuevo campo net_income_target en erpec.payroll.line; se corrigio gross_base en action_build() para sumar employer_assumed_tax a basImp, conforme a la formula del catalogo RDEP vigente (gap encontrado al aplicar esa formula). tax_controls.py: employer_assumed_tax ya no bloquea por si solo (other_general_interest_income sigue bloqueando, sin regla del motor).",
+    "model": "erpec.payroll.tax.treaty (company_id, country_code, mechanism exempt/capped_rate, rate, reference obligatoria, active); manager() guarda create/write/unlink; for_employee() clasmethod. Sin tasas precargadas: cada registro exige su propia referencia normativa.",
+    "stillBlocked": "Convenio de doble imposicion sin tratado registrado para el pais declarado (dato pendiente del responsable, no brecha de codigo); otros ingresos no gravados de esta relacion (other_general_interest_income) siguen sin oraculo del motor.",
+    "payrollModuleTests": 207
   }
 }

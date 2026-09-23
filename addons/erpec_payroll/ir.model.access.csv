@@ -18,3 +18,4 @@ access_payroll_prior_employer,Responsable comprobantes empleador anterior,model_
 access_payroll_exemption_dossier,Responsable expedientes de exencion,model_erpec_payroll_exemption_dossier,group_payroll_manager,1,1,1,1
 access_payroll_acceptance_matrix,Responsable matriz de pendientes,model_erpec_payroll_acceptance_matrix,group_payroll_manager,1,0,0,0
 access_payroll_exemption_regularization,Responsable regularizacion de documentos tardios,model_erpec_payroll_exemption_regularization,group_payroll_manager,1,1,1,1
+access_payroll_tax_treaty,Responsable convenios de doble imposicion,model_erpec_payroll_tax_treaty,group_payroll_manager,1,1,1,1

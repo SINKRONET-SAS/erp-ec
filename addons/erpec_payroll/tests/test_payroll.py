@@ -81,6 +81,45 @@ class PayrollCase(TransactionCase):
         for values in ({'wage':100},{'wage':float('nan')},{'advances':99999},{'hours_50':-1}):
             with self.assertRaises(ValueError):calculate({'start_date':'2025-01-01','wage':1200,**values},PARAMS,2026,9)
 
+    def test_tax_treaty_exempt_and_capped_rate_override_the_progressive_table(self):
+        # Caso 11 (DI25-03): convenio de doble imposición registrado (erpec.payroll.tax.treaty).
+        plain = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 1000}, PARAMS, 2026, 9)
+        self.assertGreater(plain['tax'], 0)
+        exempt = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 1000, 'treaty_mechanism': 'exempt'}, PARAMS, 2026, 9)
+        self.assertEqual(exempt['tax'], 0)
+        self.assertEqual(exempt['annual_tax_caused'], 0)
+        capped = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 1000, 'treaty_mechanism': 'capped_rate', 'treaty_rate': 10}, PARAMS, 2026, 9)
+        self.assertEqual(capped['personal_expense_rebate'], 0)  # la rebaja no aplica bajo un tope de tratado
+        self.assertNotEqual(capped['tax'], plain['tax'])
+
+    def test_gross_up_assumed_tax_resolves_the_net_guarantee_by_bisection(self):
+        # Caso 11 (DI25-03): impuesto asumido por "contrato de ingreso neto en nómina". La LRTI no
+        # fija una tarifa única de gross-up; se resuelve por bisección contra la misma tabla
+        # progresiva (annual_income_tax), tratándola como caja negra.
+        from ..engine import gross_up_assumed_tax, annual_income_tax
+        base_annual_base, net_target = 15000, 1000
+        assumed = gross_up_assumed_tax(net_target, base_annual_base, 0, PARAMS)
+        self.assertGreater(assumed, 0)
+        _, _, base_tax = annual_income_tax(base_annual_base, 0, PARAMS)
+        _, _, with_addition_tax = annual_income_tax(base_annual_base+net_target+assumed, 0, PARAMS)
+        self.assertAlmostEqual(float(with_addition_tax-base_tax), float(assumed), places=2)
+        self.assertEqual(gross_up_assumed_tax(0, base_annual_base, 0, PARAMS), 0)
+        with self.assertRaises(ValueError):
+            gross_up_assumed_tax(-1, base_annual_base, 0, PARAMS)
+
+    def test_net_income_target_grosses_up_and_does_not_add_withholding_to_the_employee(self):
+        # El neto garantizado llega íntegro (gross/net suben exactamente lo pactado); el impuesto
+        # que asume el empleador es informativo y no se descuenta al trabajador (tax no cambia).
+        plain = calculate({'start_date': '2025-01-01', 'wage': 3000}, PARAMS, 2026, 9)
+        assumed = calculate({'start_date': '2025-01-01', 'wage': 3000, 'net_income_target': 500}, PARAMS, 2026, 9)
+        self.assertAlmostEqual(assumed['gross']-plain['gross'], 500, places=2)
+        self.assertAlmostEqual(assumed['net']-plain['net'], 500, places=2)
+        self.assertAlmostEqual(assumed['tax'], plain['tax'], places=2)
+        self.assertGreater(assumed['employer_assumed_tax'], 0)
+        self.assertAlmostEqual(assumed['cost']-plain['cost'], 500+assumed['employer_assumed_tax'], places=2)
+        with self.assertRaises(ValueError):
+            calculate({'start_date': '2025-01-01', 'wage': 3000, 'net_income_target': -1}, PARAMS, 2026, 9)
+
     def test_vacation_payout_is_taxable_but_not_iess_material(self):
         # Caso 3 (DI25-03): la liquidación de vacaciones no gozadas grava impuesto a la renta
         # pero no IESS (catálogo RDEP vigente); se suma una sola vez a la base anual, como el

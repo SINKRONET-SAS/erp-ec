@@ -268,7 +268,9 @@ class TaxRegistersCase(TransactionCase):
 
     def test_case_11_special_regimes_block_the_close(self):
         # Galápagos ya no bloquea por sí solo (18.0.1.14.12): aplica el factor IPCEG y tributa
-        # normalmente. El convenio de doble imposición y el impuesto asumido siguen bloqueando.
+        # normalmente. El impuesto asumido tampoco bloquea desde 18.0.1.14.13 (tiene una regla real
+        # de cálculo, gross_up_assumed_tax). El convenio de doble imposición sin regla y otros
+        # ingresos no gravados sin oráculo siguen bloqueando.
         self.employee.ec_rdep_treaty_applies = 'SI'
         period = self._period(3000)
         period.action_calculate()
@@ -276,10 +278,25 @@ class TaxRegistersCase(TransactionCase):
         with self.assertRaisesRegex(ValidationError, 'Caso 11'):
             period.action_close()
         self.employee.ec_rdep_treaty_applies = 'NO'
-        assumed = self._period(3000, employer_assumed_tax=50)
-        assumed.action_calculate()
+        other_income = self._period(3000, other_general_interest_income=50)
+        other_income.action_calculate()
         with self.assertRaisesRegex(ValidationError, 'Caso 11'):
-            assumed.action_close()
+            other_income.action_close()
+
+    def test_employer_assumed_tax_no_longer_blocks_and_grosses_up_against_the_progressive_table(self):
+        # Caso 11 (DI25-03, 18.0.1.14.13): net_income_target resuelve el impuesto asumido por
+        # bisección; el trabajador recibe exactamente el neto garantizado, sin descuento adicional.
+        plain = self._period(3000)
+        plain.action_calculate()
+        plain_result = json.loads(plain.line_ids.result)
+        assumed = self._period(3000, net_income_target=500)
+        assumed.action_calculate()
+        assumed.action_close()  # ya no bloquea
+        assumed_result = json.loads(assumed.line_ids.result)
+        self.assertGreater(assumed_result['employer_assumed_tax'], 0)
+        self.assertAlmostEqual(assumed_result['gross'], plain_result['gross']+500, places=2)
+        self.assertAlmostEqual(assumed_result['net'], plain_result['net']+500, places=2)
+        self.assertAlmostEqual(assumed_result['tax'], plain_result['tax'], places=2)
 
     def test_galapagos_scales_the_wage_by_the_ipceg_factor_and_no_longer_blocks(self):
         # Caso 11 (criterio del titular, 23-09-2026): la Reforma a la LOREG unificó el incremento
@@ -308,6 +325,25 @@ class TaxRegistersCase(TransactionCase):
         with_treaty.action_calculate()
         with self.assertRaisesRegex(ValidationError, 'Caso 11'):
             with_treaty.action_close()
+
+    def test_registered_treaty_unblocks_and_overrides_the_progressive_tax(self):
+        # Caso 11 (criterio del titular, 23-09-2026): con un convenio registrado y documentado
+        # (erpec.payroll.tax.treaty), el cierre ya no se bloquea y el mecanismo del tratado
+        # sustituye la tabla progresiva.
+        self.employee.write({'ec_rdep_residence_country': '105', 'ec_rdep_fiscal_residence': '02', 'ec_rdep_treaty_applies': 'SI'})  # 105 = Colombia (CAN), catálogo RDEP
+        self.env['erpec.payroll.tax.treaty'].create({
+            'country_code': '105', 'country_name': 'Colombia', 'mechanism': 'exempt',
+            'reference': 'Decisión 578 de la Comunidad Andina, art. 13: potestad exclusiva del país de residencia.'})
+        period = self._period(3000)
+        period.action_calculate()
+        self.assertNotIn('Caso 11', period.tax_validation_notice)
+        period.action_close()
+        self.assertEqual(json.loads(period.line_ids.result)['tax'], 0)
+        with self.assertRaises(ValidationError):
+            self.env['erpec.payroll.tax.treaty'].create({
+                'country_code': '840', 'mechanism': 'capped_rate', 'rate': 0, 'reference': 'x'})
+        with self.assertRaises(ValidationError):
+            self.env['erpec.payroll.tax.treaty'].create({'country_code': '840', 'mechanism': 'exempt', 'reference': ''})
 
     # ── conciliación nómina ↔ mayor ↔ RDEP (caso 10) ─────────────────────────
     def test_ledger_reconciles_and_a_tampered_move_is_detected(self):

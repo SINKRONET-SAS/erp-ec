@@ -171,11 +171,24 @@ class RdepAnnexCase(TransactionCase):
         with self.assertRaises(ValidationError):
             annex.action_generate_xml()
 
-    def test_employer_assumed_tax_is_blocked_until_independent_validation(self):
-        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'employer_assumed_tax': 50})]})
+    def test_employer_assumed_tax_closes_and_reports_in_basimp_and_imprentempl(self):
+        # Caso 11 (DI25-03, 18.0.1.14.13): net_income_target ya tiene una regla real de cálculo
+        # (gross_up_assumed_tax, por bisección contra la tabla progresiva); deja de bloquear.
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'net_income_target': 100})]})
         period.action_calculate()
-        # La observación ahora se detecta antes de generar el asiento.
-        with self.assertRaisesRegex(ValidationError, 'Impuesto asumido'):
+        period.action_close()
+        period.action_post()
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        self.assertFalse(annex._coverage_issues(period))
+        annex.action_build()
+        result = json.loads(period.line_ids.result)
+        self.assertGreater(annex.line_ids.employer_assumed_tax, 0)
+        self.assertAlmostEqual(annex.line_ids.employer_assumed_tax, result['employer_assumed_tax'], places=2)
+
+    def test_other_general_interest_income_still_needs_independent_validation(self):
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8B', 'policy_id': self.policy.id, 'month': 8, 'line_ids': [(0, 0, {'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True, 'other_general_interest_income': 50})]})
+        period.action_calculate()
+        with self.assertRaisesRegex(ValidationError, 'Caso 11'):
             period.action_close()
         self.assertFalse(period.move_id)
         annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
