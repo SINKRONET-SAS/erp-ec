@@ -8,6 +8,9 @@ from urllib.parse import urlsplit, quote
 import requests
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError, UserError
+from odoo.addons.erpec_secrets import secret_store
+
+secret_store.register('erpec.fiscal.connection', 'api_key_encrypted', lambda record: 'fiscal_connector:%d:api_key' % record.id)
 
 _logger = logging.getLogger(__name__)
 _INTERNAL = object()
@@ -42,7 +45,13 @@ class Connection(models.Model):
     empresa_ref = fields.Integer('ID Empresa Facturador', required=True)
     workspace_ref = fields.Integer('ID Workspace Facturador', required=True)
     emission_point_ref = fields.Integer('ID Punto de emisión', required=True)
-    api_key = fields.Char('Clave API de pruebas', groups='base.group_system', copy=False)
+    # DI25-05.1: la clave NUNCA se guarda en claro. `api_key` es solo de entrada (se lee siempre
+    # vacío) y su inverso la cifra con erpec_secrets; solo el servidor la descifra, al llamar al
+    # Facturador (_secret_api_key). Mismo patrón que erpec_payphone.provider.token.
+    api_key = fields.Char('Clave API de pruebas (se guarda cifrada)', compute='_compute_api_key_input', inverse='_inverse_api_key',
+                          groups='base.group_system', copy=False)
+    api_key_encrypted = fields.Char('Clave API cifrada', groups='base.group_system', copy=False, readonly=True)
+    api_key_loaded = fields.Boolean('Clave API cargada (cifrada)', readonly=True, copy=False)
     verified = fields.Boolean('Credencial verificada', readonly=True, copy=False)
     checked_at = fields.Datetime('Última comprobación', readonly=True, copy=False)
     notice = fields.Text('Siguiente acción', readonly=True, default='Completar la vinculación y verificar una clave API de PRUEBAS con permisos de emisión y consulta. La demo no se vincula al emisor Founder.')
@@ -75,9 +84,29 @@ class Connection(models.Model):
             values = dict(values, verified=False)
         return super().write(values)
 
+    def _compute_api_key_input(self):
+        self.api_key = False
+
+    def _inverse_api_key(self):
+        for record in self:
+            value = (record.api_key or '').strip()
+            if value:
+                models.Model.write(record.sudo(), {
+                    'api_key_encrypted': secret_store.encrypt(value.encode('utf-8'), 'fiscal_connector:%d:api_key' % record.id), 'api_key_loaded': True})
+
+    def _secret_api_key(self):
+        self.ensure_one()
+        record = self.sudo()
+        if not record.api_key_encrypted:
+            return False
+        try:
+            return secret_store.decrypt(record.api_key_encrypted, 'fiscal_connector:%d:api_key' % record.id).decode('utf-8')
+        except secret_store.SecretError as error:
+            raise ValidationError(str(error)) from error
+
     def _request(self, method, path, correlation, payload=None, key=None):
         self.ensure_one()
-        token = self.sudo().api_key
+        token = self._secret_api_key()
         if not token or not token.startswith('sk_test_'):
             raise ProtocolError('CLAVE_PRUEBAS_REQUERIDA')
         headers = {'Authorization': 'Bearer ' + token, 'X-Correlation-Id': correlation, 'Accept': 'application/json'}
