@@ -1,0 +1,40 @@
+{
+  "phase": "DI25-04",
+  "item": "DI25-04.3",
+  "description": "Prueba independiente contra el canal/herramienta oficial del SRI (DIMM 1.17 + plug-in ATS 1.18.0, instalados localmente por el titular el 23-09-2026, Java 8 requisito del instalador).",
+  "date": "2026-09-23",
+  "tool": {
+    "name": "DIMM (Declaracion de Informacion en Medio Magnetico)",
+    "vendor": "Servicio de Rentas Internas (SRI)",
+    "installPath": "C:/SRI-DIMM/Dimm",
+    "features": [
+      "ec.gob.sri.dimm.ats (1.18.0)",
+      "ec.gob.sri.dimm.base (1.9.6)",
+      "ec.gov.sri.dimm.feature.core (1.0.1)"
+    ],
+    "installedByUser": true
+  },
+  "method": "El motor de validacion del DIMM (ec.gob.sri.dimm.ats.validacion.ValidacionATS, plugin ec.gob.sri.dimm.ats.validacion_1.2.0) es una API Java normal, no un ejecutable de linea de comandos; no tiene main(). Los plugins del DIMM son bundles OSGi cuyo classpath real esta anidado (Bundle-ClassPath en MANIFEST.MF) en una carpeta lib/ interna de cada jar, asi que un -cp plano sobre los jars de nivel superior no alcanza esas clases; se extrajeron los jars anidados para construir el classpath completo. Sin javac disponible (el JRE de Java 8 instalado es solo runtime, sin compilador), se uso jpype1 (JVM embebida via reflexion) para invocar ValidacionATS.validarEsquema() y ValidacionATS.validarInformacion() directamente desde Python, sin la interfaz grafica del DIMM. Herramienta permanente: scripts/verify-ats-dimm.py.",
+  "cases": [
+    {
+      "file": "addons/erpec_fiscal_native/reference/Ejemplo_ATS.xml",
+      "note": "Ejemplo oficial del SRI (bundleado, sellado por SHA-256 en ats_catalog_seal.py)",
+      "schemaResult": "Sin errores de esquema (motor DIMM, no solo lxml+at.xsd)",
+      "businessRulesResult": "Sin errores de negocio, 0 advertencias",
+      "exitCode": 0
+    },
+    {
+      "file": "Ejemplo_ATS.xml con <IdInformante> eliminado deliberadamente (ensayo negativo)",
+      "note": "Prueba negativa: confirma que el motor real detecta el defecto, no que siempre aprueba",
+      "schemaResult": "ERROR Linea: 5 Columna: 15 Mensaje: Contenido Invalido se encontro 'razonSocial'. cuando se esperaba '{IdInformante}'.",
+      "businessRulesResult": "Sin errores de negocio, 0 advertencias (el esquema ya bloquea antes)",
+      "exitCode": 1
+    }
+  ],
+  "limits": [
+    "No se logro generar el 'talon' (acuse/resumen HTML, TalonResumenATS.generarTalonCompletoDIMM()): lanza NullPointerException en AdministradorCargaCatalogosImpl.inicializarCatalogosPorAnexo, porque ese componente depende del contexto OSGi/Equinox completo del DIMM (carga de catalogos via el framework, no solo las clases Java), que no se replico con una JVM plana. El talon real requiere generarse desde la interfaz grafica del DIMM para una presentacion real.",
+    "Esta validacion confirma estructura (XSD) y reglas de negocio del DIMM contra un archivo XML dado; no sustituye el canal oficial de envio/presentacion ante el SRI ni acredita aceptacion tributaria. No se genero ni envio ningun ATS real de un contribuyente real.",
+    "No se integra a la suite automatica ni a CI: depende de una instalacion local de Java 8 y del DIMM (software de terceros, con su propia licencia) que no forma parte de este repositorio."
+  ],
+  "conclusion": "DI25-04.3 deja de ser 'sin empezar': existe un canal de validacion real y repetible contra el motor oficial del SRI, probado con un caso positivo y uno negativo. La generacion del acuse/talon y el envio/presentacion real siguen fuera de alcance de este incremento."
+}
