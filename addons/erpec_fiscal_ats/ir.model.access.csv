@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+ats_report_manager,ats_report_manager,model_erpec_ats_report,account.group_account_manager,1,1,1,1
+ats_report_user,ats_report_user,model_erpec_ats_report,account.group_account_user,1,0,0,0
+ats_report_compra_manager,ats_report_compra_manager,model_erpec_ats_report_compra,account.group_account_manager,1,1,1,1
+ats_report_compra_user,ats_report_compra_user,model_erpec_ats_report_compra,account.group_account_user,1,0,0,0
+ats_report_venta_manager,ats_report_venta_manager,model_erpec_ats_report_venta,account.group_account_manager,1,1,1,1
+ats_report_venta_user,ats_report_venta_user,model_erpec_ats_report_venta,account.group_account_user,1,0,0,0
+ats_report_anulado_manager,ats_report_anulado_manager,model_erpec_ats_report_anulado,account.group_account_manager,1,1,1,1
+ats_report_anulado_user,ats_report_anulado_user,model_erpec_ats_report_anulado,account.group_account_user,1,0,0,0
+ats_report_missing_manager,ats_report_missing_manager,model_erpec_ats_report_missing,account.group_account_manager,1,1,1,1
+ats_report_missing_user,ats_report_missing_user,model_erpec_ats_report_missing,account.group_account_user,1,0,0,0

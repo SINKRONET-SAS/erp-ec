@@ -1,0 +1,27 @@
+<odoo>
+<record id="ats_report_company" model="ir.rule">
+    <field name="name">Anexo ATS por empresa</field>
+    <field name="model_id" ref="model_erpec_ats_report"/>
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+</record>
+<record id="ats_report_compra_company" model="ir.rule">
+    <field name="name">Compras ATS por empresa</field>
+    <field name="model_id" ref="model_erpec_ats_report_compra"/>
+    <field name="domain_force">[('report_id.company_id','in',company_ids)]</field>
+</record>
+<record id="ats_report_venta_company" model="ir.rule">
+    <field name="name">Ventas ATS por empresa</field>
+    <field name="model_id" ref="model_erpec_ats_report_venta"/>
+    <field name="domain_force">[('report_id.company_id','in',company_ids)]</field>
+</record>
+<record id="ats_report_anulado_company" model="ir.rule">
+    <field name="name">Anulados ATS por empresa</field>
+    <field name="model_id" ref="model_erpec_ats_report_anulado"/>
+    <field name="domain_force">[('report_id.company_id','in',company_ids)]</field>
+</record>
+<record id="ats_report_missing_company" model="ir.rule">
+    <field name="name">Faltantes ATS por empresa</field>
+    <field name="model_id" ref="model_erpec_ats_report_missing"/>
+    <field name="domain_force">[('report_id.company_id','in',company_ids)]</field>
+</record>
+</odoo>

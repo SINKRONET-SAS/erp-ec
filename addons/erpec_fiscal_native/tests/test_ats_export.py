@@ -34,6 +34,23 @@ def _compra(**overrides):
     }, **overrides)
 
 
+def _venta(**overrides):
+    return dict({
+        'tp_id_cliente': '04', 'id_cliente': '0602846586001', 'tipo_comprobante': '1',
+        'tipo_emision': 'E', 'numero_comprobantes': 5, 'base_no_gra_iva': 0,
+        'base_imponible': 0, 'base_imp_grav': 1000.0, 'monto_iva': 150.0,
+        'valor_ret_iva': 0, 'valor_ret_renta': 0,
+    }, **overrides)
+
+
+def _anulado(**overrides):
+    return dict({
+        'tipo_comprobante': '1', 'establecimiento': '001', 'punto_emision': '001',
+        'secuencial_inicio': '000000100', 'secuencial_fin': '000000105',
+        'autorizacion': '1234567890',
+    }, **overrides)
+
+
 @tagged('post_install', '-at_install')
 class AtsExportCase(TransactionCase):
     def test_minimal_purchase_produces_schema_valid_xml(self):
@@ -73,3 +90,51 @@ class AtsExportCase(TransactionCase):
     def test_rejects_empty_purchase_list(self):
         with self.assertRaisesRegex(ValueError, 'al menos una compra'):
             ats_export.build_ats_xml(_header(), [])
+
+    def test_venta_group_produces_schema_valid_xml_with_idcliente(self):
+        # detalleVentasType exige idCliente incluso en un resumen agrupado (confirmado contra el
+        # Ejemplo_ATS.xml oficial bundleado: idCliente aparece junto a numeroComprobantes=145).
+        xml_bytes = ats_export.build_ats_xml(_header(), ventas=[_venta()])
+        schema = etree.XMLSchema(etree.parse(str(XSD_PATH)))
+        doc = etree.fromstring(xml_bytes)
+        self.assertTrue(schema.validate(doc), schema.error_log)
+        self.assertEqual(doc.find('ventas/detalleVentas/idCliente').text, '0602846586001')
+        self.assertEqual(doc.find('ventas/detalleVentas/numeroComprobantes').text, '5')
+
+    def test_venta_rejects_bad_tipo_emision(self):
+        with self.assertRaisesRegex(ValueError, 'tipoEmision'):
+            ats_export.build_ats_xml(_header(), ventas=[_venta(tipo_emision='X')])
+
+    def test_anulado_range_produces_schema_valid_xml(self):
+        xml_bytes = ats_export.build_ats_xml(_header(), anulados=[_anulado()])
+        schema = etree.XMLSchema(etree.parse(str(XSD_PATH)))
+        doc = etree.fromstring(xml_bytes)
+        self.assertTrue(schema.validate(doc), schema.error_log)
+        self.assertEqual(doc.find('anulados/detalleAnulados/secuencialInicio').text, '000000100')
+        self.assertEqual(doc.find('anulados/detalleAnulados/secuencialFin').text, '000000105')
+
+    def test_anulado_rejects_incomplete_range(self):
+        with self.assertRaisesRegex(ValueError, 'rango anulado'):
+            ats_export.build_ats_xml(_header(), anulados=[_anulado(secuencial_fin='')])
+
+    def test_compra_with_air_and_retention_reference_is_schema_valid(self):
+        # Bloque air (retención de renta) y referencia al propio comprobante de retención emitido
+        # (estabRetencion1.../fechaEmiRet1): opcionales en el esquema, poblados aquí porque
+        # erpec.withholding.line ya trae sri_code/base/rate/amount para renta.
+        compra = _compra(
+            air=[{'cod_ret_air': '312', 'base_imp_air': 1000.0, 'porcentaje_air': 2.0, 'val_ret_air': 20.0}],
+            estab_retencion1='001', pto_emi_retencion1='001', sec_retencion1='000000045',
+            aut_retencion1='2222222222', fecha_emi_ret1='11/09/2026',
+        )
+        xml_bytes = ats_export.build_ats_xml(_header(), [compra])
+        schema = etree.XMLSchema(etree.parse(str(XSD_PATH)))
+        doc = etree.fromstring(xml_bytes)
+        self.assertTrue(schema.validate(doc), schema.error_log)
+        self.assertEqual(doc.find('compras/detalleCompras/air/detalleAir/codRetAir').text, '312')
+        self.assertEqual(doc.find('compras/detalleCompras/autRetencion1').text, '2222222222')
+
+    def test_full_report_with_compras_ventas_and_anulados_is_schema_valid(self):
+        xml_bytes = ats_export.build_ats_xml(_header(), compras=[_compra()], ventas=[_venta()], anulados=[_anulado()])
+        schema = etree.XMLSchema(etree.parse(str(XSD_PATH)))
+        doc = etree.fromstring(xml_bytes)
+        self.assertTrue(schema.validate(doc), schema.error_log)

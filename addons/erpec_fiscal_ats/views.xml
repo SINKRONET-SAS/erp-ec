@@ -1,0 +1,26 @@
+<odoo>
+<record id="report_form" model="ir.ui.view"><field name="name">erpec.ats.report.form</field><field name="model">erpec.ats.report</field><field name="arch" type="xml"><form>
+<header><button name="action_build" type="object" string="Construir" class="oe_highlight" groups="account.group_account_manager"/><button name="action_reset" type="object" string="Reiniciar" invisible="state == 'draft'" groups="account.group_account_manager"/><field name="state" widget="statusbar"/></header>
+<sheet>
+<div class="alert alert-warning" invisible="not build_notice">Este anexo es un ensayo construido a partir de los documentos del ERP: no está presentado ante el SRI ni homologado. Revisa la vista de faltantes antes de considerarlo completo.<field name="build_notice" nolabel="1"/></div>
+<group>
+<field name="company_id"/>
+<field name="year"/>
+<field name="month"/>
+</group>
+<notebook>
+<page string="Compras" invisible="compra_count == 0"><field name="compra_ids"><list editable="bottom" create="0" delete="0"><field name="move_id"/><field name="cod_sustento"/><field name="base_no_gra_iva"/><field name="base_imponible"/><field name="base_imp_grav"/><field name="base_imp_exe"/><field name="monto_ice"/><field name="monto_iva"/><field name="val_ret_bien10"/><field name="val_ret_serv20"/><field name="valor_ret_bienes"/><field name="val_ret_serv50"/><field name="valor_ret_servicios"/><field name="val_ret_serv100"/></list></field></page>
+<page string="Ventas" invisible="venta_count == 0"><field name="venta_ids"><list editable="bottom" create="0" delete="0"><field name="tp_id_cliente"/><field name="id_cliente"/><field name="tipo_comprobante"/><field name="tipo_emision"/><field name="numero_comprobantes"/><field name="base_no_gra_iva"/><field name="base_imponible"/><field name="base_imp_grav"/><field name="monto_iva"/><field name="valor_ret_iva"/><field name="valor_ret_renta"/></list></field></page>
+<page string="Anulados" invisible="anulado_count == 0"><field name="anulado_ids"><list editable="bottom" create="0" delete="0"><field name="move_id"/><field name="tipo_comprobante"/><field name="establecimiento"/><field name="punto_emision"/><field name="secuencial_inicio"/><field name="secuencial_fin"/><field name="autorizacion"/></list></field></page>
+<page string="Faltantes" invisible="missing_count == 0"><field name="missing_ids"><list create="0" delete="0"><field name="section"/><field name="move_id"/><field name="reason"/></list></field></page>
+</notebook>
+<group invisible="not xml_filename">
+<field name="xml_filename"/>
+<field name="xml_preview" filename="xml_filename"/>
+</group>
+</sheet>
+</form></field></record>
+<record id="report_list" model="ir.ui.view"><field name="name">erpec.ats.report.list</field><field name="model">erpec.ats.report</field><field name="arch" type="xml"><list><field name="company_id"/><field name="year"/><field name="month"/><field name="state"/><field name="compra_count"/><field name="venta_count"/><field name="anulado_count"/><field name="missing_count"/></list></field></record>
+<record id="report_action" model="ir.actions.act_window"><field name="name">Anexo ATS</field><field name="res_model">erpec.ats.report</field><field name="view_mode">list,form</field></record>
+<menuitem id="report_menu" name="Anexo ATS (agregador)" parent="erpec_fiscal_connector.fiscal_root" action="report_action" sequence="30" groups="account.group_account_user"/>
+</odoo>

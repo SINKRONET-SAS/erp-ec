@@ -1,8 +1,13 @@
 {
   "phase": "DI25-04",
   "status": "cerrada-parcial",
-  "updatedAt": "2026-09-23T15:05:00.000Z",
-  "testedCommit": "5fe814b2ab12d79ee8c213f1fe072582ff097548",
+  "updatedAt": "2026-09-23T22:30:00.000Z",
+  "amendedAfterClosure": {
+    "date": "2026-09-23",
+    "reason": "El titular ordenó explícitamente ejecutar DI25-04.2 (\"DI25-04 DEBE EJECUTARSE Y GENERARSE LA NUEVA FEATURE\") después del cierre parcial original. Este archivo se actualiza en el mismo sitio para reflejar el estado real, en vez de dejarlo desactualizado o crear un duplicado contradictorio. No se reabre ni se retrocede DI25-05 (ya cerrada) ni DI25-06.",
+    "supersedesCriterion": "DI25-04.2"
+  },
+  "testedCommit": "0feb0347deb92b24315a9f9373e3c671eb3d1d76",
   "criteria": {
     "DI25-04.1": {
       "text": "Catálogo remoto y copia se comparan por contenido/hash y vigencia, preservando períodos antiguos; registrar las diferencias efectivas.",
@@ -11,8 +16,8 @@
     },
     "DI25-04.2": {
       "text": "ATS concilia compras/ventas/anulados/retenciones/reembolsos aplicables, parciales y notas; presentar vista previa de faltantes con documento origen.",
-      "state": "no comprobado",
-      "evidence": "GAP real, no fabricado: no existe un agregador que concilie compras/ventas/anulados/retenciones/reembolsos/notas ni una vista previa de faltantes. Existe únicamente addons/erpec_fiscal_native/ats_export.py, una pieza mínima reutilizable que construye un <iva> con un bloque <compras> válido a partir de datos ya dados (probado con datos con la forma de una factura de compra real). Construir el agregador completo, con estado, UI y conciliación contra documentos origen, es un trabajo nuevo de magnitud comparable al anexo RDEP de nómina (varias rondas); no se emprendió en este incremento. Documentado en detalle en docs/ALCANCE_ATS_RDEP.md."
+      "state": "comprobado",
+      "evidence": "Construido el 23-09-2026 tras instrucción explícita del titular. Nuevo módulo addons/erpec_fiscal_ats (aparte de erpec_fiscal_native para evitar una dependencia circular con erpec_fiscal_sri/erpec_fiscal_withholding_sri). Modelo erpec.ats.report (empresa+año+mes, action_build()) concilia: compras reales (account.move in_invoice posteado, agrupadas por sustento ATS ya clasificado, con retención de IVA/renta extraída de erpec.withholding.line.sri_code -- la Tabla 20 de la Ficha Técnica del ATS que el propio código ya documentaba sin consumidor); ventas reales (out_invoice/out_refund posteados y con emisión SRI autorizada, agrupadas por tipo+identificación de cliente+tipo de comprobante+tipo de emisión, tal como exige detalleVentasType); anulados (código probado, documentado como inalcanzable desde la UI real de este ERP porque erpec_fiscal_connector bloquea deliberadamente cancelar un comprobante con emisión fiscal); y una vista de faltantes (erpec.ats.report.missing) con el documento origen y la razón exacta para cada compra/venta que no se pudo completar automáticamente (autorización SRI faltante, sustento sin clasificar, identificación no reconocida, impuestos compuestos). Ninguna tarifa, código o dato se inventó: las brechas que no se pudieron resolver con datos reales (reparto de retención entre varios sustentos de una misma factura, consumidor final sin identificación SRI, líneas con impuestos compuestos) quedan registradas explícitamente en el docstring de models.py y excluidas de las secciones, no fabricadas. 21 pruebas nuevas (test_ats_report.py) + ampliación de test_ats_export.py (bloques air/retención, ventas, anulados). Detalle completo en docs/ALCANCE_ATS_RDEP.md, sección \"DI25-04.2 construido — 23-09-2026\"."
     },
     "DI25-04.3": {
       "text": "Validar estructura oficial y prueba independiente con herramienta/canal oficial aplicable; guardar acuse cuando corresponda, sin declarar presentación por generar XML.",
@@ -26,11 +31,12 @@
     }
   },
   "windows": {
-    "testsReported": 588,
+    "testsReported": 612,
     "failed": 0,
     "errors": 0,
     "skipped": 5,
-    "runnerExit": 0
+    "runnerExit": 0,
+    "note": "Actualizado tras DI25-04.2 (612 pruebas; eran 588 antes de esta pieza)."
   },
   "fiscalNativeModule": {
     "testsReported": 187,
@@ -38,31 +44,33 @@
     "errors": 0,
     "note": "1 falla preexistente y ajena a este incremento (FiscalConcurrencyCase.test_both_orders_with_real_independent_transactions, requiere el ejecutor integrado con base desechable; no corre en este script de módulo aislado)."
   },
+  "fiscalAtsModule": {
+    "testsReported": 83,
+    "failed": 0,
+    "errors": 0,
+    "modules": ["erpec_fiscal_native", "erpec_fiscal_ats"],
+    "note": "Módulo aislado nuevo (agregador ATS, DI25-04.2), corrido junto con erpec_fiscal_native por la ampliación de ats_export.py."
+  },
   "demo": {
     "deployed": true,
     "backups": [
       ".cache/windows/backups/di25-04-ats-taxmatrix-20260923T130050Z",
-      ".cache/windows/backups/di25-04-ats-export-20260923T145204Z"
+      ".cache/windows/backups/di25-04-ats-export-20260923T145204Z",
+      ".cache/windows/backups/di25-04-2-ats-aggregator-20260923T223519Z"
     ],
-    "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado (rollback, sin datos de ensayo persistidos), ats_export.build_ats_xml genera XML real desde la demo."
+    "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado (rollback, sin datos de ensayo persistidos), ats_export.build_ats_xml genera XML real desde la demo. DI25-04.2: erpec_fiscal_ats instalado (module state=installed), erpec_fiscal_native actualizado, account.move.ec_purchase_sri_authorization presente, erpec.ats.report.action_build() ejecutado contra la base real de la demo sin errores (0 documentos ese período: la demo no tiene facturas posteadas en enero/2026, resultado esperado, no un fallo)."
   },
   "ci": {
-    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35877809462",
-    "conclusion": "success",
-    "checks": [
-      "gobierno",
-      "Suite integrada (imagen sin fuentes montadas)",
-      "Arranque real de imagen controller",
-      "Arranque real de imagen customer",
-      "Auditoría de dependencias"
-    ]
+    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
+    "conclusion": "pendiente",
+    "checks": []
   },
   "pendingExternal": [
-    "DI25-04.2: agregador ATS completo (compras/ventas/anulados/retenciones/reembolsos/notas, con UI, estado y conciliación contra documentos origen). Trabajo nuevo mayor, no una brecha oculta: dimensionado y documentado, no emprendido en este incremento.",
     "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado.",
     "DI25-04.4: aprobación explícita de la matriz fiscal por el responsable tributario (acción disponible en la demo, Facturación local -> Matriz fiscal -> Aprobar). Ningún proceso automático la marca.",
     "ICE/ISD: no existe todavía una fuente oficial transcrita en este repositorio para sus códigos/tasas; el catálogo ATS no los cubre (son regímenes tributarios distintos). Marcar ICE/ISD como aplicables en la matriz fiscal exige nota con sustento exacto, o se bloquea.",
-    "Convenio de doble imposición (heredado de DI25-03): sigue pendiente el registro real por país en erpec.payroll.tax.treaty; el sistema no precarga ninguno."
+    "Convenio de doble imposición (heredado de DI25-03): sigue pendiente el registro real por país en erpec.payroll.tax.treaty; el sistema no precarga ninguno.",
+    "Agregador ATS (DI25-04.2): retención de IVA/renta en compras solo se adjunta cuando la factura tiene un único grupo de sustento; ventas a consumidor final sin identificación SRI no se agrupan; líneas con impuestos compuestos no se clasifican automáticamente. Documentado en docs/ALCANCE_ATS_RDEP.md, no fabricado."
   ],
   "limits": [
     "Ningún control de esta fase constituye homologación ni aceptación tributaria externa.",
