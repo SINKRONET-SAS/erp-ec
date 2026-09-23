@@ -61,9 +61,15 @@
     "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado (rollback, sin datos de ensayo persistidos), ats_export.build_ats_xml genera XML real desde la demo. DI25-04.2: erpec_fiscal_ats instalado (module state=installed), erpec_fiscal_native actualizado, account.move.ec_purchase_sri_authorization presente, erpec.ats.report.action_build() ejecutado contra la base real de la demo sin errores (0 documentos ese período: la demo no tiene facturas posteadas en enero/2026, resultado esperado, no un fallo)."
   },
   "ci": {
-    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
-    "conclusion": "pendiente",
-    "checks": []
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35929681190",
+    "conclusion": "success",
+    "checks": [
+      "gobierno",
+      "Suite integrada (imagen sin fuentes montadas)",
+      "Arranque real de imagen controller",
+      "Arranque real de imagen customer",
+      "Auditoría de dependencias"
+    ]
   },
   "pendingExternal": [
     "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado.",
