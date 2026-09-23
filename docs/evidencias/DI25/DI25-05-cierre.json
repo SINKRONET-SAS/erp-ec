@@ -1,0 +1,63 @@
+{
+  "phase": "DI25-05",
+  "status": "cerrada-parcial",
+  "updatedAt": "2026-09-23T16:40:00.000Z",
+  "testedCommit": "229f91f",
+  "criteria": {
+    "DI25-05.1": {
+      "text": "Migración de api_key a erpec_secrets sin valores privados en Git, logs o UI; lectura vacía, uso correcto y rotación/recuperación probadas.",
+      "state": "comprobado",
+      "evidence": "addons/erpec_fiscal_connector.api_key migrado al mismo patrón ya probado en erpec_payphone.provider.token (compute/inverse de solo entrada, cifrado v2: HKDF por registro+campo vía erpec_secrets, descifrado solo al llamar al Facturador). Migración migrations/18.0.1.1.0/post-migration.py cifra cualquier valor heredado en claro y limpia la columna; probada contra una columna legacy simulada y confirmada en la demo real (sin valores en claro, sin conexiones existentes que migrar). 7 pruebas nuevas en test_secret_migration.py, incluida rotación de llave con erpec.secret.rotation."
+    },
+    "DI25-05.2": {
+      "text": "Contacto excluido no recibe campaña, incluso por caminos alternativos; rol de pago y comprobante transaccional se rigen por su finalidad.",
+      "state": "comprobado",
+      "evidence": "res.partner.ec_marketing_email_opt_out ya registra la preferencia y declara honestamente que no hay envío masivo real todavía. Confirmado por búsqueda en el código que no existe ningún addon de mass_mailing/campañas en el repositorio: no hay mecanismo que pudiera ignorar la exclusión. Verificado por búsqueda directa que erpec_payroll (rol de pago) y erpec_fiscal_native/erpec_fiscal_sri (comprobantes) nunca consultan ese campo. No se agregó una prueba automática cruzada entre módulos independientes sin relación de dependencia declarada (evitar acoplamiento oculto)."
+    },
+    "DI25-05.3": {
+      "text": "Solicitudes e incidentes se prueban con roles mínimos, fechas y evidencias; conservación ejecutable respeta obligaciones fiscales y bloqueo legal.",
+      "state": "parcialmente comprobado",
+      "evidence": "erpec.data.subject.request y erpec.data.breach.incident (addons/erpec_data_protection) ya existían y cubren la primera mitad: plazos citados por artículo LOPDP, verificación de identidad obligatoria, motivo de excepción obligatorio, recordatorio interno, marca de vencimiento; el incidente calcula los tres plazos reales del Art. 43/46 y bloquea el cierre sin notificar a la Autoridad. GAP real, no fabricado: ninguna lógica conecta una solicitud de eliminación con las obligaciones de conservación fiscal/contable ni con un posible bloqueo legal antes de marcarla como respondida. No se encontró en esta sesión un plazo de conservación contable/fiscal verificado contra fuente primaria ecuatoriana para citar; construirlo exige esa verificación o que el responsable la aporte con su fuente, igual que cada cifra tributaria de DI25-03/04."
+    },
+    "DI25-05.4": {
+      "text": "Matriz legal de tratamientos, geolocalización, encargados/subencargados, transferencias y DPD tiene fundamento vigente y responsable; canales de derechos visibles.",
+      "state": "estructura parcial, contenido pendiente del responsable",
+      "evidence": "erpec.data.processing.activity (RAT) existe con base legal (Art. 7), transferencias internacionales, mecanismo de transferencia y responsable. docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06, tiene la investigación legal primaria (LOPDP Arts. 7-24, 38-39, 43, 46, 49, con niveles de confianza explícitos) que debe alimentar la matriz. GAP real, no fabricado: no existe modelo de encargados/subencargados de tratamiento; el DPD (Art. 49) solo existe como grupo de seguridad interno, no como designación real -- LEGAL-06 ya documenta que es obligatorio solo caso por caso y que no se evaluó si esta empresa lo requiere (decisión del responsable, no del sistema); el canal de derechos (data_protection_menu) está restringido a group_data_protection_officer, uso interno de caso, no un canal público/portal accesible sin cuenta interna."
+    }
+  },
+  "windows": {
+    "testsReported": 595,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0
+  },
+  "fiscalConnectorModule": {
+    "testsReported": 17,
+    "failed": 0,
+    "errors": 0
+  },
+  "demo": {
+    "deployed": true,
+    "backups": [
+      ".cache/windows/backups/di25-05-secrets-api-key-20260923T162058Z"
+    ],
+    "verified": "erpec_fiscal_connector.api_key sin valores en claro (columna heredada aún presente, Odoo no la elimina automáticamente, pero vacía); 0 conexiones existentes en la demo, nada que migrar."
+  },
+  "ci": {
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35889699499",
+    "note": "Ver también run 35888792989 (DI25-05.1); ambos verdes."
+  },
+  "pendingExternal": [
+    "DI25-05.3: fuente primaria verificada del plazo de conservación fiscal/contable aplicable, o instrucción explícita del responsable de qué se conserva y por cuánto, antes de codificar cualquier bloqueo de eliminación.",
+    "DI25-05.4: modelo de encargados/subencargados de tratamiento real de la empresa (proveedores de hosting, email, pasarelas de pago, etc.) -- trabajo nuevo, no emprendido en este incremento.",
+    "DI25-05.4: decisión del responsable sobre si se requiere un DPD real (LEGAL-06 ya da el criterio legal para decidirlo) y su designación formal si aplica.",
+    "DI25-05.4: decisión sobre si se necesita un canal de derechos público/portal (sin cuenta interna) y su construcción -- trabajo nuevo, security-sensitive, no emprendido en este incremento."
+  ],
+  "limits": [
+    "Ningún control de esta fase constituye homologación ni aceptación legal externa.",
+    "No se enviaron correos reales ni se publicó información sensible para probar riesgos.",
+    "No se modificaron repositorios fuente."
+  ],
+  "rollback": "Respaldo previo de base/filestore/módulo conservado en cada incremento (ver demo.backups); no reescribir asientos ni usar restauración como anulación fiscal; detener únicamente la demo antes de restaurar."
+}

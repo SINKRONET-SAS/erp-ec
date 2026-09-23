@@ -2,6 +2,10 @@
 
 Documento equivalente a `docs/ALCANCE_ATS_RDEP.md` para esta fase: qué existe, qué se corrigió, qué falta y quién lo destraba. No sustituye `.github/prompts/ERPEC26-DI25-05.md` (fuente de los cuatro criterios) ni `docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md` (investigación legal LOPDP primaria, sección LEGAL-06).
 
+## Fase cerrada (parcial) — 23-09-2026
+
+DI25-05.1 y DI25-05.2 comprobados con evidencia real. DI25-05.3 (retención ejecutable) y DI25-05.4 (matriz legal completa) quedan **NO comprobados**, registrados explícitamente como criterios no cumplidos, no fabricados: DI25-05.3 necesita una fuente primaria verificada del plazo de conservación fiscal/contable antes de codificar cualquier bloqueo (no se fabrica un número de años); DI25-05.4 necesita un modelo de encargados/subencargados (trabajo nuevo, no emprendido) y decisiones del responsable (DPD real, canal de derechos público) que el sistema no puede tomar por sí solo. Conforme a la regla de la fase («si falta un criterio, registrar fase parcial/bloqueada y causa; no cerrar ficticiamente ni comenzar sucesora»), la fase se cierra como **parcial** — mismo patrón que DI25-03 y DI25-04. Evidencia de cierre: `docs/evidencias/DI25/DI25-05-cierre.json`.
+
 ## DI25-05.1 — comprobado, 23-09-2026
 
 `addons/erpec_fiscal_connector.api_key` migrado a `erpec_secrets`, mismo patrón ya probado en `erpec_payphone.provider.token`: campo de solo entrada (compute/inverse, se lee siempre vacío), valor real cifrado en `api_key_encrypted` (formato `v2:`, HKDF por registro+campo, llave maestra fuera de la base de datos), descifrado solo al llamar al Facturador (`_secret_api_key`). Migración `migrations/18.0.1.1.0/post-migration.py` cifra cualquier valor heredado en claro y limpia la columna; probada contra una columna legacy simulada (mismo patrón que la prueba de `erpec_payphone`) y confirmada en la demo real (la columna `api_key` sigue existiendo — Odoo no elimina columnas automáticamente al dejar de ser `store=True` — pero sin ningún valor en claro, y sin conexiones existentes que migrar). 7 pruebas nuevas en `test_secret_migration.py`, incluida rotación de llave con `erpec.secret.rotation`.
