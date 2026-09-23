@@ -239,6 +239,17 @@ def calculate(data, parameters, year, month):
     wage = number(data['wage'])
     if days <= 0 or wage < number(parameters['minimum_salary']) or number(parameters['monthly_hours']) <= 0:
         raise ValueError('Revisa vigencia laboral, salario mínimo y jornada mensual.')
+    # Caso 11 (DI25-03, criterio del titular, 23-09-2026): la Reforma a la LOREG unificó el
+    # incremento salarial de Galápagos (antes 75%/100% fijo, "antitécnico") con el mismo índice
+    # técnico que ya usa el SRI para el tope de gastos personales (IPCEG, calculado con el INEC).
+    # `wage` se declara como el salario de referencia continental; para un empleado elegible en
+    # Galápagos el motor lo escala por el mismo GALAPAGOS_IPCEG_FACTOR ya sellado en D5, antes de
+    # calcular salario, horas extra, IESS, décimos, vacaciones y fondo de reserva. Un empleado
+    # tributa igual que en el continente (misma tabla progresiva) sobre esta base ya escalada. No
+    # cubre "derechos adquiridos" de empleados anteriores a la reforma con el 75%/100% fijo: para
+    # ellos se declara directamente el salario congelado como `wage`, sin activar este factor.
+    if data.get('galapagos') == 'SI':
+        wage = money(wage*number(GALAPAGOS_IPCEG_FACTOR))
     for key, value in data.items():
         if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours', 'vacation_payout',
                    'sick_days', 'maternity_days', 'unpaid_leave_days', 'unexcused_absence_days', 'paternity_days') and number(value) < 0:

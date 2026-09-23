@@ -267,17 +267,33 @@ class TaxRegistersCase(TransactionCase):
         self.assertEqual(float(detail.find('otrosIngRenGrav').text), 250.0)
 
     def test_case_11_special_regimes_block_the_close(self):
-        self.employee.ec_rdep_ben_galpg = 'SI'
+        # Galápagos ya no bloquea por sí solo (18.0.1.14.12): aplica el factor IPCEG y tributa
+        # normalmente. El convenio de doble imposición y el impuesto asumido siguen bloqueando.
+        self.employee.ec_rdep_treaty_applies = 'SI'
         period = self._period(3000)
         period.action_calculate()
         self.assertIn('Caso 11', period.tax_validation_notice)
         with self.assertRaisesRegex(ValidationError, 'Caso 11'):
             period.action_close()
-        self.employee.ec_rdep_ben_galpg = 'NO'
+        self.employee.ec_rdep_treaty_applies = 'NO'
         assumed = self._period(3000, employer_assumed_tax=50)
         assumed.action_calculate()
         with self.assertRaisesRegex(ValidationError, 'Caso 11'):
             assumed.action_close()
+
+    def test_galapagos_scales_the_wage_by_the_ipceg_factor_and_no_longer_blocks(self):
+        # Caso 11 (criterio del titular, 23-09-2026): la Reforma a la LOREG unificó el incremento
+        # salarial de Galápagos con el mismo IPCEG que el SRI usa en D5 (1,803, ya sellado).
+        continental = self._period(3000)
+        continental.action_calculate()
+        self.employee.ec_rdep_ben_galpg = 'SI'
+        galapagos = self._period(3000)
+        galapagos.action_calculate()
+        galapagos.action_close()  # ya no bloquea
+        result_continental = json.loads(continental.line_ids.result)
+        result_galapagos = json.loads(galapagos.line_ids.result)
+        self.assertAlmostEqual(result_galapagos['salary'], result_continental['salary']*1.803, places=2)
+        self.assertAlmostEqual(result_galapagos['personal_iess'], result_continental['personal_iess']*1.803, places=2)
 
     def test_case_11_non_resident_alone_no_longer_blocks_but_a_treaty_still_does(self):
         # Caso 11 (criterio del titular, 23-09-2026): un no residente bajo relación de

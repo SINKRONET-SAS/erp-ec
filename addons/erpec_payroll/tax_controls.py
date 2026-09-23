@@ -143,8 +143,9 @@ class Period(models.Model):
             issues.extend('%s: %s' % (employee.name, message) for message in status['issues'])
             if line.other_employer_iess > line.other_employer_taxable_income:
                 issues.append('D8 · El IESS de otro empleador supera sus ingresos gravados.')
-            if employee.ec_rdep_ben_galpg == 'SI':
-                issues.append('Caso 11 · Galápagos requiere elegibilidad acreditada; el factor 1,803 no la demuestra.')
+            # Caso 11 (DI25-03, criterio del titular, 23-09-2026): la Reforma a la LOREG unificó el
+            # incremento salarial de Galápagos con el mismo índice IPCEG que el SRI ya usa en D5;
+            # el motor lo aplica en engine.calculate (galapagos='SI') y ya no bloquea por sí solo.
             # Caso 11 (DI25-03, criterio del titular, 23-09-2026): un empleado no residente bajo
             # relación de dependencia formal tributa igual que un residente (misma tabla, mismas
             # rebajas); la residencia declarada es solo informativa para el RDEP (residenciaTrab/

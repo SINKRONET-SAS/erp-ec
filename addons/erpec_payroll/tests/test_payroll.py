@@ -140,7 +140,13 @@ class PayrollCase(TransactionCase):
         baseline = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500}, official, 2026, 9)
         with_dependents = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'dependents_count': 1}, official, 2026, 9)
         self.assertLess(with_dependents['tax'], baseline['tax'])
+        # Caso 11 (18.0.1.14.12): Galápagos ya no solo escala el tope de gastos personales, sino
+        # también el salario (misma reforma LOREG/IPCEG, ver D5); con el mismo wage de entrada
+        # (salario de referencia continental) el ingreso real es mayor, así que paga más impuesto
+        # pese al tope de gastos más alto. Se aísla el efecto puro del tope en
+        # test_personal_expense_cap_function, que no toca el salario.
         galapagos = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'galapagos': 'SI'}, official, 2026, 9)
-        self.assertLess(galapagos['tax'], baseline['tax'])
+        self.assertGreater(galapagos['tax'], baseline['tax'])
+        self.assertAlmostEqual(galapagos['salary'], baseline['salary']*1.803, places=2)
         explicit_zero = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'dependents_count': 0, 'galapagos': 'NO'}, official, 2026, 9)
         self.assertEqual(explicit_zero['tax'], baseline['tax'])

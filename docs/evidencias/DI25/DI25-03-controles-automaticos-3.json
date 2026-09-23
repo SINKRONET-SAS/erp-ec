@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.11",
+  "moduleVersion": "18.0.1.14.12",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -177,5 +177,13 @@
     "fix": "tax_controls.py: se elimino el bloqueo por ec_rdep_residence_country distinto de 593 por si solo; el convenio (ec_rdep_treaty_applies) sigue bloqueando aparte. Prueba nueva test_case_11_non_resident_alone_no_longer_blocks_but_a_treaty_still_does.",
     "stillBlocked": "Convenio de doble imposicion (cada tratado tiene su propio tope, no hay regla generica sin fabricarla), impuesto asumido (formula de grosificacion del SRI no verificada), Galapagos (tablas salariales del Consejo de Gobierno de Galapagos, distintas del IPCEG del SRI ya usado en D5; sin fuente ni valores).",
     "payrollModuleTests": 200
+  },
+  "adjustment_18_0_1_14_12": {
+    "action": "El titular aporto una aclaracion tecnica (con enlaces al CGREG) sobre las tablas salariales de Galapagos.",
+    "finding": "La Reforma a la LOREG unifico el incremento salarial de Galapagos (antes 75%/100% fijo, antitecnico) con el mismo indice IPCEG que el SRI ya usa para el tope de gastos personales en D5 (1,803, ya sellado). No son dos factores distintos.",
+    "implementation": "engine.py: wage se escala por GALAPAGOS_IPCEG_FACTOR (reutilizado, no un nuevo valor) cuando data.get('galapagos')=='SI', antes de salary/base/iess/decimos/vacaciones/reserva. tax_controls.py: se elimino el bloqueo automatico de Galapagos.",
+    "exclusion": "No cubre derechos adquiridos (empleados anteriores a la reforma con 75%/100% fijo congelado); para ellos se declara el salario ya congelado directamente sin activar el factor.",
+    "stillBlocked": "Convenio de doble imposicion (por tratado) e impuesto asumido (formula de grosificacion, gross-up, contra la tabla progresiva).",
+    "payrollModuleTests": 201
   }
 }
