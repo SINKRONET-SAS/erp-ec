@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-23T13:07:18.058Z",
+  "updatedAt": "2026-09-23T13:04:54.637Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -136,7 +136,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130336Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130454Z.json",
-    "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-FIX-20260923T130718Z.json",
     "docs/evidencias/DI25/DI25-00-cierre.json",
     "docs/evidencias/DI25/DI25-01-cierre.json",
     "docs/evidencias/DI25/DI25-01-progreso.json",
@@ -223,8 +222,7 @@
     "DI25-03 cierre de fase (23-09-2026): los cuatro criterios numerados (DI25-03.1 variable+fuera de orden, DI25-03.2 reversion/correccion idempotente sin duplicar, DI25-03.3 oraculo aprobado para D1-D8/C01-C11, DI25-03.4 frontend con politica/version) quedan comprobados con pruebas existentes (ver docs/evidencias/DI25/DI25-03-cierre.json). Matriz de aceptacion: 17 filas automated, 2 partial (D5, C10, dependientes del SRI), 0 blocked, 0 external. Pendiente externo, no brecha de implementacion: catalogo/validador RDEP 2026 y Formulario 107 (SRI), registro de convenios reales por pais (responsable tributario), firma formal de aceptacion (responsable tributario). Suite integrada 572 pruebas, 0 fallos, 0 errores; CI verde (run 35839164707); demo verificada 32/32. Se cierra como parcial, habilitando DI25-04 sin declarar homologacion.",
     "DI25-03 cierre de fase (23-09-2026): los cuatro criterios numerados (DI25-03.1 variable+fuera de orden, DI25-03.2 reversion/correccion idempotente sin duplicar, DI25-03.3 oraculo aprobado para D1-D8/C01-C11, DI25-03.4 frontend con politica/version) quedan comprobados con pruebas existentes (ver docs/evidencias/DI25/DI25-03-cierre.json). Matriz de aceptacion: 17 filas automated, 2 partial (D5, C10, dependientes del SRI), 0 blocked, 0 external. Pendiente externo, no brecha de implementacion: catalogo/validador RDEP 2026 y Formulario 107 (SRI), registro de convenios reales por pais (responsable tributario), firma formal de aceptacion (responsable tributario). Suite integrada 572 pruebas, 0 fallos, 0 errores; CI verde (run 35839164707); demo verificada 32/32. Se cierra como parcial, habilitando DI25-04 sin declarar homologacion.",
     "DI25-04 primer incremento (23-09-2026): catalogo ATS recontrastado contra descarga fresca del portal del SRI (formularios-e-instructivos1, ficha listada 06-08-2026, posterior a la primera transcripcion del 13-09-2026); corregidos 24 codigos de pais faltantes en COUNTRY_CODES (incluye Argentina 101, Bolivia 102, Brasil 103, Canada 104, Colombia 105) y el codigo de comprobante 374, ambos ausentes desde la primera transcripcion. Bundleados y sellados por SHA-256 (ats_catalog_seal.py) Catalogo_ATS_2026.xls y at.xsd; nuevo scripts/verify-ats-catalog.py compara contra el portal bajo demanda (DI25-04.1). Nuevo modelo erpec.fiscal.tax.matrix (DI25-04.4): matriz IVA/IR/ICE/ISD por empresa, sin codigos ICE/ISD precargados, empieza sin aprobar, solo accion explicita del responsable (action_approve) la aprueba; editar contenido tras aprobar revoca la aprobacion. DI25-04.2 (agregador ATS) y DI25-04.3 (canal oficial SRI) sin empezar, documentados en docs/ALCANCE_ATS_RDEP.md como trabajo nuevo mayor, no brecha de este incremento. Suite integrada 582 pruebas, 0 fallos, 0 errores; modulo erpec_fiscal_native 80 pruebas sin fallos; demo redesplegada y verificada. DI25-04 sigue en progreso, no cerrada (no se crea DI25-04-cierre.json).",
-    "DI25-04 primer incremento (23-09-2026): catalogo ATS recontrastado contra descarga fresca del portal del SRI (formularios-e-instructivos1, ficha listada 06-08-2026, posterior a la primera transcripcion del 13-09-2026); corregidos 24 codigos de pais faltantes en COUNTRY_CODES (incluye Argentina 101, Bolivia 102, Brasil 103, Canada 104, Colombia 105) y el codigo de comprobante 374, ambos ausentes desde la primera transcripcion. Bundleados y sellados por SHA-256 (ats_catalog_seal.py) Catalogo_ATS_2026.xls y at.xsd; nuevo scripts/verify-ats-catalog.py compara contra el portal bajo demanda (DI25-04.1). Nuevo modelo erpec.fiscal.tax.matrix (DI25-04.4): matriz IVA/IR/ICE/ISD por empresa, sin codigos ICE/ISD precargados, empieza sin aprobar, solo accion explicita del responsable (action_approve) la aprueba; editar contenido tras aprobar revoca la aprobacion. DI25-04.2 (agregador ATS) y DI25-04.3 (canal oficial SRI) sin empezar, documentados en docs/ALCANCE_ATS_RDEP.md como trabajo nuevo mayor, no brecha de este incremento. Suite integrada 582 pruebas, 0 fallos, 0 errores; modulo erpec_fiscal_native 80 pruebas sin fallos; demo redesplegada y verificada. DI25-04 sigue en progreso, no cerrada (no se crea DI25-04-cierre.json).",
-    "DI25-04-fix (23-09-2026): correccion de huella. addons/erpec_fiscal_native/views.xml se habia escrito con fin de linea CRLF; git lo normaliza a LF al indexar (.gitattributes text=auto eol=lf), y el hash registrado no coincidia con el blob real. Se reescribio el archivo con LF puro (bytes ya identicos al blob committeado) y se recalcularon los hashes; ningun otro entregable ni contenido cambio."
+    "DI25-04 primer incremento (23-09-2026): catalogo ATS recontrastado contra descarga fresca del portal del SRI (formularios-e-instructivos1, ficha listada 06-08-2026, posterior a la primera transcripcion del 13-09-2026); corregidos 24 codigos de pais faltantes en COUNTRY_CODES (incluye Argentina 101, Bolivia 102, Brasil 103, Canada 104, Colombia 105) y el codigo de comprobante 374, ambos ausentes desde la primera transcripcion. Bundleados y sellados por SHA-256 (ats_catalog_seal.py) Catalogo_ATS_2026.xls y at.xsd; nuevo scripts/verify-ats-catalog.py compara contra el portal bajo demanda (DI25-04.1). Nuevo modelo erpec.fiscal.tax.matrix (DI25-04.4): matriz IVA/IR/ICE/ISD por empresa, sin codigos ICE/ISD precargados, empieza sin aprobar, solo accion explicita del responsable (action_approve) la aprueba; editar contenido tras aprobar revoca la aprobacion. DI25-04.2 (agregador ATS) y DI25-04.3 (canal oficial SRI) sin empezar, documentados en docs/ALCANCE_ATS_RDEP.md como trabajo nuevo mayor, no brecha de este incremento. Suite integrada 582 pruebas, 0 fallos, 0 errores; modulo erpec_fiscal_native 80 pruebas sin fallos; demo redesplegada y verificada. DI25-04 sigue en progreso, no cerrada (no se crea DI25-04-cierre.json)."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -265,7 +263,7 @@
     "addons/erpec_fiscal_native/tests/__init__.py": "3deb4d9b4f0c06736d9de8f9569ce66b49ad257888517bb393cb5d0ca19f9ceb",
     "addons/erpec_fiscal_native/tests/test_ats_catalog.py": "976f76f49f1be8c6c8943f48314d3954879f7ede1953862f98509b66a66e4996",
     "addons/erpec_fiscal_native/tests/test_tax_matrix.py": "e4303359a8140550eab26227c60a5699a1039ab4fe3e0180b7e52330711df5e2",
-    "addons/erpec_fiscal_native/views.xml": "bd048b52543220bbdf53c6ce98661446f3581e6dab551a0cc2e9e4dbbcf9c29a",
+    "addons/erpec_fiscal_native/views.xml": "a42b6a2ae7af8aff33ba67309fd5260be2a127383598cd9502c1a2787f195e69",
     "addons/erpec_fiscal_sri/models.py": "a50f555f9c61f5b41bfe53635f5ebb95f6d4a32c0ac4ea756dd6e1ba2eab13b5",
     "addons/erpec_fiscal_sri/tests/__init__.py": "a368cddf9be82d097705ff4c94c0fceee6030664349155026dd9dfc259296211",
     "addons/erpec_fiscal_sri/tests/di25_concurrency_probe.py": "a9677cf44a6e89add326a83dfb79c1a4d88e7d7b3a8d166286fa823ed473d146",
@@ -371,7 +369,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json": "82c618865aca0ba96f7e98180c6aac59ccf22d9cd19860f9eedcf949811fbf4a",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130336Z.json": "fd8bf5ef824e2ba75dc94b6a2ae33d87a9f077820fdeea492af88adc82d5d942",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130454Z.json": "f80722d63056d330d0b4336405c16799276425cfa661122d8ed20e2ad29f80f0",
-    "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-FIX-20260923T130718Z.json": "5b6a23a0cb5b44a88495df4550da82564a9a2bbd4cd0ffd78acc15a902ea74ca",
     "docs/evidencias/DI25/DI25-00-cierre.json": "b799db9f762677acfd1d630c035f8072b8134e6ff3a4be0432b2ebf986a93b81",
     "docs/evidencias/DI25/DI25-01-cierre.json": "94acb7c59f4820b18bceb3aca824656a479ffbf21281d2b4ffd88f6685f434e1",
     "docs/evidencias/DI25/DI25-01-progreso.json": "9f1123933db9bb4439881cb330e3a38e089f519730ec1aa551a0117e42d58a14",
@@ -410,9 +407,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-FIX-20260923T130718Z.json",
-  "previousAuditLockHash": "5b6a23a0cb5b44a88495df4550da82564a9a2bbd4cd0ffd78acc15a902ea74ca",
-  "signature": "021baf1a132d0353f38fd20be104f0851ab6b8cdbeac6b88da6573f5f6c333b0",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130454Z.json",
+  "previousAuditLockHash": "f80722d63056d330d0b4336405c16799276425cfa661122d8ed20e2ad29f80f0",
+  "signature": "229d8067fb1c64420577039184cea9c21aaabcd8245f6ca1fa8a83901dc7348a",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
