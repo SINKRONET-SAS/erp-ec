@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-23T08:46:13.721Z",
+  "updatedAt": "2026-09-23T08:38:47.575Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -100,7 +100,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055927Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CATALOGOCI-20260922T124020Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-20260923T083847Z.json",
-    "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-FIX-20260923T084613Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CI-20260921T141137777Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T224435Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T225450Z.json",
@@ -199,8 +198,7 @@
     "DI25-03.5 (18.0.1.14.10, 22-09-2026): caso 8 (ausencias) cerrado. Verificadas y corregidas dos precisiones del titular antes de programar: enfermedad dias 1-3 al 100% no 50% (Oficio PGE 10097) sin obligacion de complementar desde el dia 4; paternidad 100% del empleador sin subsidio IESS (no comparte esquema de maternidad, art. 152 Codigo del Trabajo). Matriz 16 automaticos, 2 parciales (D5, caso 10, SRI), 1 bloqueo (caso 11), 0 dependen de terceros por falta de codigo propio. Suite completa 564 pruebas, modulo de nomina 199; demo redesplegada.",
     "DI25-03.5 (18.0.1.14.11, 23-09-2026): caso 11, avance parcial. No residentes bajo relacion de dependencia formal tributan igual que residentes; se elimino el bloqueo que existia solo por residencia extranjera declarada. El caso de tarifa fija por servicios ocasionales de un no residente se aclaro que no es nomina, es proveedor. Convenio, impuesto asumido y tablas Galapagos siguen bloqueando. Suite completa 565 pruebas, modulo de nomina 200; demo redesplegada.",
     "DI25-03.5 (18.0.1.14.12, 23-09-2026): Galapagos resuelto en caso 11. La Reforma a la LOREG unifico el incremento salarial (antes 75%/100% fijo) con el mismo IPCEG (1,803) que el SRI ya usa en D5; el motor escala wage por ese factor y tributa con la tabla progresiva normal. Ya no bloquea por si solo. Siguen bloqueando: convenio de doble imposicion e impuesto asumido (gross-up). Suite completa 566 pruebas, modulo de nomina 201; demo redesplegada.",
-    "DI25-03.6 (18.0.1.14.13, 23-09-2026): caso 11 cerrado. Convenio de doble imposicion (erpec.payroll.tax.treaty, tabla parametrica sin tasas precargadas) e impuesto asumido por gross-up (engine.gross_up_assumed_tax, biseccion contra la tabla progresiva vigente, sin tarifa fija inventada); net_income_target llega integro al trabajador; se reporta en basImp/impRentEmpl/valImpAsuEsteEmpl. Sigue bloqueando: convenio sin tratado registrado, otros ingresos no gravados sin oraculo. Suite completa 572 pruebas, modulo de nomina 207; demo redesplegada.",
-    "DI25-03.6-fix (23-09-2026): correccion de huella. docs/evidencias/DI25/DI25-03-controles-automaticos-3.json se habia escrito con fin de linea CRLF (modo texto de Python en Windows); git lo normaliza a LF al indexar (core.autocrlf/.gitattributes eol=lf), y el hash registrado no coincidia con el blob real, lo que bloqueo el job de gobierno en CI. Se reescribio el archivo con LF puro y se recalcularon los hashes; ningun otro entregable ni contenido cambio."
+    "DI25-03.6 (18.0.1.14.13, 23-09-2026): caso 11 cerrado. Convenio de doble imposicion (erpec.payroll.tax.treaty, tabla parametrica sin tasas precargadas) e impuesto asumido por gross-up (engine.gross_up_assumed_tax, biseccion contra la tabla progresiva vigente, sin tarifa fija inventada); net_income_target llega integro al trabajador; se reporta en basImp/impRentEmpl/valImpAsuEsteEmpl. Sigue bloqueando: convenio sin tratado registrado, otros ingresos no gravados sin oraculo. Suite completa 572 pruebas, modulo de nomina 207; demo redesplegada."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -308,7 +306,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-CATALOGO-20260922T055927Z.json": "215dd13744a77938da95bdc96c520f2022baacf2b49b5fe7b22bd3ab888946d9",
     "docs/evidencias/AuditLock.before-DI25-03-CATALOGOCI-20260922T124020Z.json": "af48ac8fd13a95bb902b83bb78f58cb365287cce9b348ec03317c5a76127df3c",
     "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-20260923T083847Z.json": "b0f5e6c83c81d3bda34db41006bfdc55e0387eddfd10c4ca4084cf65df06c360",
-    "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-FIX-20260923T084613Z.json": "e79cefadde82bdaff686dfa3a1464665375c99281958cf33641ea9decc349e87",
     "docs/evidencias/AuditLock.before-DI25-03-CI-20260921T141137777Z.json": "9c03327bbe4efc55927c39d50a4bf263b4476258f0aa2b2360f8aca8c2b1808c",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T224435Z.json": "309c8d966bdf1968158e5865e6ca637928fc3ae9d64c8ce0e2c5122e66df6692",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T225450Z.json": "d875d892224ce9fcd696f360d979f1e8f20f393c83168076af89728d6ce09c7d",
@@ -339,7 +336,7 @@
     "docs/evidencias/DI25/DI25-03-UI.md": "556acdfbbcc8e89688299de296a5aa3dbb8be9ed6e248ddd19aaaebb78aa5fdf",
     "docs/evidencias/DI25/DI25-03-capturas.json": "228625c2b1428b9ece614400feb65d89b62d47cb509253314e3edb465bc2c8e2",
     "docs/evidencias/DI25/DI25-03-controles-automaticos-2.json": "ec6b0befb123f3b33006c85d9c8f082564e9d52ed5e10418241eb9dea5a5fa2b",
-    "docs/evidencias/DI25/DI25-03-controles-automaticos-3.json": "614d3844de47124b276ed7c4147f6aa031d4e4c859b286bc6d55dea07776ce25",
+    "docs/evidencias/DI25/DI25-03-controles-automaticos-3.json": "24292fb66d0b11afea5e397d4dabddd1fb67a8d935a56c583846c3d48c2112c4",
     "docs/evidencias/DI25/DI25-03-controles-automaticos.json": "f9f5a3582d03724f06857a00f5cfdb1b6ed9fe8621dd72ab6499b789bed09c82",
     "docs/evidencias/DI25/DI25-03-ensayos-renta.json": "8fe914b524a022db930655031c3f757eb5387e135b9f871f55df0157acaa34ba",
     "docs/evidencias/DI25/DI25-03-exenciones-personales.json": "0c909d7dde88bb7ce222c9965ba58776e2001fac19804f3f732760fc173248a5",
@@ -364,9 +361,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-FIX-20260923T084613Z.json",
-  "previousAuditLockHash": "e79cefadde82bdaff686dfa3a1464665375c99281958cf33641ea9decc349e87",
-  "signature": "454a56b8b33d5d4f3acb3d7983dc2dd9f634012caa8224697a4b1627c6c64eb1",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-20260923T083847Z.json",
+  "previousAuditLockHash": "b0f5e6c83c81d3bda34db41006bfdc55e0387eddfd10c4ca4084cf65df06c360",
+  "signature": "3c2bea61ea0b38c7b4da0d20559088738c25897485751fc45055f0ad0b94b8c3",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
