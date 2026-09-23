@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 preview_account,preview_account,model_erpec_fiscal_preview,account.group_account_user,1,0,1,1
+tax_matrix_manager,tax_matrix_manager,model_erpec_fiscal_tax_matrix,account.group_account_manager,1,1,1,1
+tax_matrix_user,tax_matrix_user,model_erpec_fiscal_tax_matrix,account.group_account_user,1,0,0,0

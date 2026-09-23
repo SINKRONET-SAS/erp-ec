@@ -2,7 +2,7 @@
 
 Fecha: 20-09-2026 (Ecuador). Plan complementario al maestro ERPEC26; no renumera ni cierra sus fases.
 Fuente: [Diagnóstico integral DI25](DIAGNOSTICO_INTEGRAL_DI25.md).
-Estado vigente: **DI25-00–02 completadas en sus alcances. DI25-03 parcial: regresión Windows/Linux y UI del incremento verificadas; DI25-04–07 autorizadas, no iniciadas por dependencia. Falta aceptación tributaria de DI25-03.3.**
+Estado vigente (23-09-2026): **DI25-00–02 completadas en sus alcances. DI25-03 cerrada (parcial): los cuatro criterios numerados quedan comprobados con pruebas (docs/evidencias/DI25/DI25-03-cierre.json); pendiente externo (SRI, responsable tributario), no brecha de implementación. DI25-04 en progreso: catálogo ATS recontrastado y corregido, matriz fiscal con andamiaje sin contenido (DI25-04.1/.4); DI25-04.2 (agregador ATS) y DI25-04.3 (canal oficial) sin empezar. DI25-05–07 no iniciadas por dependencia.**
 
 DI25-01: cierre técnico en evidencias/DI25/DI25-01-cierre.json. La solicitud posterior autoriza implementar todos los prompts y publicar los cambios.
 

@@ -5,3 +5,9 @@ docs/evidencias/AuditLock*.json -text
 
 # Conservar espacios del esquema oficial y su copia W3C sin reescribir terceros.
 addons/erpec_fiscal_native/xsd/*.xsd whitespace=-blank-at-eol,-space-before-tab
+
+# Descargas literales del SRI para el ATS (DI25-04.1): bytes exactos, sin normalizar fin de línea;
+# su huella SHA-256 en ats_catalog_seal.py se rompería si git reescribiera CRLF/BOM al commitear.
+addons/erpec_fiscal_native/xsd/at.xsd -text
+addons/erpec_fiscal_native/reference/Catalogo_ATS_2026.xls -text
+addons/erpec_fiscal_native/reference/Ejemplo_ATS.xml -text

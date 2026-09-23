@@ -1,18 +1,28 @@
 """Catálogo oficial del Anexo Transaccional Simplificado (ATS) del SRI.
 
 Transcrito literalmente desde el archivo oficial "Catálogo Anexo Transaccional
-Simplificado ATS.xls" (hoja "TABLAS REFERENCIALES"), descargado el 13-09-2026
-desde https://www.sri.gob.ec/DocumentosAlfrescoPortlet/descargar/e6a826af-b22c-
-40bb-8752-d711f293b8f9/Cat%C3%A1logo%20Anexo%20Transaccional%20Simplificado%20
-ATS.xls (ficha listada como actualizada el 03-03-2026 en la biblioteca de
-anexos de sri.gob.ec). No se completan tramos no verificados; los códigos de
-países cubren la tabla de país de residencia/pago del mismo archivo.
+Simplificado ATS.xls" (hoja "TABLAS REFERENCIALES"). Primera transcripción el
+13-09-2026 (ficha listada como actualizada el 03-03-2026). Recontrastado el
+23-09-2026 contra una descarga fresca del mismo archivo (ficha listada como
+actualizada el 06-08-2026, ya posterior a la primera transcripción): se
+encontraron y corrigieron 24 códigos de país faltantes (incluye Argentina,
+Bolivia, Brasil, Canadá y Colombia, ausentes desde la primera transcripción) y
+el código de comprobante 374 (Nota de débito operadora transporte / socio),
+también faltante. El archivo bundleado en addons/erpec_fiscal_native/
+reference/Catalogo_ATS_2026.xls y el esquema en addons/erpec_fiscal_native/
+xsd/at.xsd son la descarga del 23-09-2026 desde
+https://www.sri.gob.ec/formularios-e-instructivos1 (sección Anexo
+Transaccional Simplificado); su huella se verifica en ats_catalog_seal.py.
+No se completan tramos no verificados (tablas de retenciones históricas,
+esquema RIMPE, reembolso de gastos, clave primaria): quedan fuera de alcance
+hasta que exista una necesidad real de consumirlos.
 
 Este catálogo habilita el mapeo de tpIdProv/tpIdCliente, tipoComprobante y
 codSustento exigidos por ats.xsd. No genera por sí solo el XML del ATS: la
 generación de las secciones de compras, ventas y anulados requiere además una
-clasificación explícita del sustento tributario por documento, que no existe
-todavía en los modelos nativos del ERP (ver docs/ALCANCE_ATS_RDEP.md).
+clasificación explícita del sustento tributario por documento (ver
+addons/erpec_workspace/tax_intersection.py para compras, ya implementado; para
+ventas/notas/anulados/reembolsos no existe todavía — ver docs/ALCANCE_ATS_RDEP.md).
 """
 
 # Tabla 1: PERÍODO - MES
@@ -87,6 +97,7 @@ VOUCHER_TYPES = {
     '371': {'name': 'Comprobante socio a operadora de transporte', 'validSustento': []},
     '372': {'name': 'Nota de crédito operadora transporte / socio', 'validSustento': []},
     '373': {'name': 'Nota de débito operadora transporte / socio', 'validSustento': []},
+    '374': {'name': 'Nota de débito operadora transporte / socio', 'validSustento': []},
     '375': {'name': 'Liquidación de compra RISE de bienes o prestación de servicios', 'validSustento': ['01', '02', '03', '04', '05', '06', '07', '08']},
 }
 
@@ -110,8 +121,18 @@ SUPPORT_CODES = {
     '00': {'name': 'Casos especiales cuyo sustento no aplica en las opciones anteriores', 'validVoucherTypes': ['1', '2', '4', '5', '19', '42']},
 }
 
-# Tabla de países (país de residencia/pago), misma hoja del archivo oficial.
+# Tabla de países (país de residencia/pago), misma hoja del archivo oficial (Tabla 16: PAÍSES).
+# BELARUS (241) y BIELORRUSIA (596) son dos códigos distintos para el mismo país en el archivo
+# oficial; se transcriben ambos tal cual, sin corregir lo que el SRI publica.
 COUNTRY_CODES = {
+    '016': 'AMERICAN SAMOA',
+    '052': 'PRINCIPADO DEL VALLE DE ANDORRA',
+    '074': 'BOUVET ISLAND',
+    '101': 'ARGENTINA',
+    '102': 'BOLIVIA',
+    '103': 'BRASIL',
+    '104': 'CANADA',
+    '105': 'COLOMBIA',
     '106': 'COSTA RICA',
     '107': 'CUBA',
     '108': 'CHILE',
@@ -191,6 +212,14 @@ COUNTRY_CODES = {
     '235': 'MONACO',
     '237': 'SAN MARINO',
     '238': 'VATICANO (SANTA SEDE)',
+    '239': 'GIBRALTAR',
+    '241': 'BELARUS',
+    '242': 'BOSNIA Y HERZEGOVINA',
+    '243': 'CROACIA',
+    '244': 'ESLOVENIA',
+    '245': 'ESTONIA',
+    '246': 'GEORGIA',
+    '247': 'GROENLANDIA',
     '248': 'LETONIA',
     '249': 'LITUANIA',
     '250': 'MOLDOVA',
@@ -270,6 +299,14 @@ COUNTRY_CODES = {
     '422': 'SUDAFRICA  (CISKEI)',
     '423': 'SIERRA LEONA',
     '425': 'TANZANIA',
+    '426': 'UGANDA',
+    '427': 'ZAMBIA',
+    '428': 'ÅLAND ISLANDS',
+    '429': 'BENIN',
+    '430': 'BOTSWANA',
+    '431': 'REPUBLICA CENTROAFRICANA',
+    '432': 'COSTA DE MARFIL',
+    '433': 'CHAD',
     '434': 'EGIPTO',
     '435': 'GABON',
     '436': 'GHANA',
@@ -353,7 +390,11 @@ COUNTRY_CODES = {
 SOURCE = {
     'file': 'Catálogo Anexo Transaccional Simplificado ATS.xls',
     'sheet': 'TABLAS REFERENCIALES',
-    'downloadedAt': '2026-09-13',
-    'listedUpdate': '2026-03-03',
-    'url': 'https://www.sri.gob.ec/DocumentosAlfrescoPortlet/descargar/e6a826af-b22c-40bb-8752-d711f293b8f9/Cat%C3%A1logo%20Anexo%20Transaccional%20Simplificado%20ATS.xls',
+    'downloadedAt': '2026-09-23',
+    'listedUpdate': '2026-08-06',
+    'url': 'https://www.sri.gob.ec/formularios-e-instructivos1',
+    'previousDownload': {'downloadedAt': '2026-09-13', 'listedUpdate': '2026-03-03'},
+    'bundled': 'addons/erpec_fiscal_native/reference/Catalogo_ATS_2026.xls',
+    'schema': 'addons/erpec_fiscal_native/xsd/at.xsd',
+    'schemaUrl': 'https://descargas.sri.gob.ec/download/anexos/ats/ats.xsd',
 }
