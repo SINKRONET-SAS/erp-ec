@@ -1,0 +1,33 @@
+# Alcance — DI25-05 (Privacidad, secretos y correo)
+
+Documento equivalente a `docs/ALCANCE_ATS_RDEP.md` para esta fase: qué existe, qué se corrigió, qué falta y quién lo destraba. No sustituye `.github/prompts/ERPEC26-DI25-05.md` (fuente de los cuatro criterios) ni `docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md` (investigación legal LOPDP primaria, sección LEGAL-06).
+
+## DI25-05.1 — comprobado, 23-09-2026
+
+`addons/erpec_fiscal_connector.api_key` migrado a `erpec_secrets`, mismo patrón ya probado en `erpec_payphone.provider.token`: campo de solo entrada (compute/inverse, se lee siempre vacío), valor real cifrado en `api_key_encrypted` (formato `v2:`, HKDF por registro+campo, llave maestra fuera de la base de datos), descifrado solo al llamar al Facturador (`_secret_api_key`). Migración `migrations/18.0.1.1.0/post-migration.py` cifra cualquier valor heredado en claro y limpia la columna; probada contra una columna legacy simulada (mismo patrón que la prueba de `erpec_payphone`) y confirmada en la demo real (la columna `api_key` sigue existiendo — Odoo no elimina columnas automáticamente al dejar de ser `store=True` — pero sin ningún valor en claro, y sin conexiones existentes que migrar). 7 pruebas nuevas en `test_secret_migration.py`, incluida rotación de llave con `erpec.secret.rotation`.
+
+## DI25-05.2 — comprobado (por ausencia de mecanismo que enforzar), 23-09-2026
+
+`res.partner.ec_marketing_email_opt_out` (`addons/erpec_data_protection/models.py`) ya registra la preferencia del contacto y ya declara honestamente en su propio texto de ayuda: *"Este ERP no envía correos reales todavía; este campo solo registra la preferencia declarada"*. No existe ningún addon de `mass_mailing`/campañas en el repositorio (`grep` sobre `addons/` no encontró ninguno): no hay un camino de envío masivo que pudiera ignorar la exclusión, así que no hay nada que enforzar todavía. Cuando exista un mecanismo de campañas real, deberá consultar este campo antes de encolar cualquier envío.
+
+**Verificado**: el rol de pago (`erpec_payroll`, envío transaccional por obligación laboral) nunca consultó `ec_marketing_email_opt_out` (`grep -r` sobre `addons/erpec_payroll` no encuentra ninguna referencia) — es un camino de código completamente independiente. Los comprobantes electrónicos (facturación local, `erpec_fiscal_native`/`erpec_fiscal_sri`) tampoco lo consultan, por el mismo motivo. No se agregó una prueba automática cruzada: `erpec_payroll` y `erpec_data_protection` son módulos independientes sin relación de dependencia declarada en ninguno de los dos sentidos (ver sus `__manifest__.py`); forzar una prueba que dependa de ambos instalados juntos introduciría un acoplamiento oculto que el propio manifiesto no refleja. La verificación queda como hecho estático documentado aquí, reproducible con el mismo `grep`.
+
+## DI25-05.3 — no emprendido en este incremento
+
+`erpec.data.subject.request` (`addons/erpec_data_protection/models.py`) ya rastrea solicitudes de derechos con plazos citados por artículo (Arts. 13-19 LOPDP), verificación de identidad obligatoria antes de responder/rechazar, motivo de excepción obligatorio para rechazar (Art. 18), recordatorio interno (`mail.activity.mixin`) y marca de vencimiento. `erpec.data.breach.incident` calcula los tres plazos reales del Art. 43/46 LOPDP (2/5/3 días) y bloquea el cierre sin notificar a la Autoridad.
+
+**Falta**: ninguna lógica conecta una solicitud de "eliminación" con las obligaciones de conservación fiscal/contable ni con un posible bloqueo legal (litigio, auditoría) antes de marcarla como respondida. No se encontró en este repositorio, en esta sesión, un plazo de conservación contable/fiscal ya verificado contra fuente primaria ecuatoriana para citar aquí (el Código Tributario y la LORTI fijan plazos de prescripción/conservación, pero no se confirmó un número exacto contra el texto oficial en este incremento) — por lo que no se fabrica un número de años. Construir el bloqueo real exige antes esa verificación normativa, o que el responsable la aporte con su fuente, igual que se hizo con cada cifra tributaria de DI25-03/04.
+
+## DI25-05.4 — estructura parcial, contenido pendiente del responsable
+
+`erpec.data.processing.activity` (RAT) existe con base legal (Art. 7), transferencias internacionales, mecanismo de transferencia y responsable. `docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md`, sección **LEGAL-06**, tiene la investigación legal primaria (LOPDP Arts. 7-24, 38-39, 43, 46, 49, con niveles de confianza explícitos) que debe alimentar esta matriz — no hay que re-derivarla.
+
+**Falta, y no se fabrica en este incremento**:
+- Modelo de encargados/subencargados de tratamiento (data processors/sub-processors): no existe ninguno en el repositorio.
+- Delegado de Protección de Datos (DPD, Art. 49): solo existe un grupo de seguridad interno (`group_data_protection_officer`), que es un rol de acceso, no una designación real. LEGAL-06 ya documenta que el DPD es obligatorio solo caso por caso (entidades públicas, monitoreo sistemático a gran escala, datos sensibles a gran escala, menores en el sector educativo, financiero, aseguros, salud) y que **no se evaluó si esta empresa lo requiere** — eso lo determina el responsable, no el sistema.
+- Canal de derechos visible: el menú `data_protection_menu` está restringido a `group_data_protection_officer` (uso interno de caso, no un canal público/portal donde un titular externo pueda presentar una solicitud). Falta decidir y construir ese canal (portal, formulario público, correo dedicado) si se requiere uno accesible sin cuenta interna.
+
+## Resumen de lo que sigue pendiente del responsable (no del código)
+
+- DI25-05.3: fuente primaria verificada del plazo de conservación fiscal/contable aplicable, o instrucción explícita de qué se conserva y por cuánto.
+- DI25-05.4: aportar o confirmar los encargados/subencargados de tratamiento reales de la empresa (proveedores de hosting, email, pasarelas de pago, etc.), decidir si se requiere un DPD real (LEGAL-06 ya da el criterio legal para decidirlo) y decidir si se necesita un canal de derechos público/portal.
