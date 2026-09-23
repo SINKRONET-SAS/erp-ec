@@ -145,8 +145,13 @@ class Period(models.Model):
                 issues.append('D8 · El IESS de otro empleador supera sus ingresos gravados.')
             if employee.ec_rdep_ben_galpg == 'SI':
                 issues.append('Caso 11 · Galápagos requiere elegibilidad acreditada; el factor 1,803 no la demuestra.')
-            if employee.ec_rdep_treaty_applies == 'SI' or employee.ec_rdep_residence_country not in (False, '593'):
-                issues.append('Caso 11 · Residencia extranjera o convenio sin regla aprobada: cierre bloqueado.')
+            # Caso 11 (DI25-03, criterio del titular, 23-09-2026): un empleado no residente bajo
+            # relación de dependencia formal tributa igual que un residente (misma tabla, mismas
+            # rebajas); la residencia declarada es solo informativa para el RDEP (residenciaTrab/
+            # paisResidencia). Lo que sí bloquea es un convenio de doble imposición sin regla
+            # aprobada por tratado (cada convenio tiene su propio tope, no hay una regla genérica).
+            if employee.ec_rdep_treaty_applies == 'SI':
+                issues.append('Caso 11 · Convenio de doble imposición sin regla aprobada por tratado: cierre bloqueado.')
             if line.employer_assumed_tax or line.other_general_interest_income:
                 issues.append('Caso 11 · Impuesto asumido u otros ingresos sin regla aprobada: cierre bloqueado.')
             if line.benefit_line_ids and not blocking_only:

@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.10",
+  "moduleVersion": "18.0.1.14.11",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -170,5 +170,12 @@
     "implementation": "engine.py: dias de ausencia reducen los dias normales del periodo; enfermedad dias 1-3 se paga aparte, sin IESS (mismo mecanismo que vacation_payout); maternidad se pliega en salary/base (si IESS); permiso no pagado y falta injustificada simplemente reducen dias sin pago. Nuevos campos sick_days/maternity_days/paternity_days/unpaid_leave_days/unexcused_absence_days en erpec.payroll.line.",
     "matrixChange": "C08 (caso 8) pasa de blocked a automated.",
     "payrollModuleTests": 199
+  },
+  "adjustment_18_0_1_14_11": {
+    "action": "Se verifico la pieza de no residentes del caso 11 contra la LRTI antes de programar.",
+    "finding": "El art. 36 literal b) de una codificacion de la LRTI aplica tarifa fija de sociedades a servicios OCASIONALES de un no residente, no a relacion de dependencia formal. El titular confirmo que eso no es nomina (es proveedor en compras) y que un no residente bajo relacion de dependencia formal debe tratarse igual que un residente.",
+    "fix": "tax_controls.py: se elimino el bloqueo por ec_rdep_residence_country distinto de 593 por si solo; el convenio (ec_rdep_treaty_applies) sigue bloqueando aparte. Prueba nueva test_case_11_non_resident_alone_no_longer_blocks_but_a_treaty_still_does.",
+    "stillBlocked": "Convenio de doble imposicion (cada tratado tiene su propio tope, no hay regla generica sin fabricarla), impuesto asumido (formula de grosificacion del SRI no verificada), Galapagos (tablas salariales del Consejo de Gobierno de Galapagos, distintas del IPCEG del SRI ya usado en D5; sin fuente ni valores).",
+    "payrollModuleTests": 200
   }
 }

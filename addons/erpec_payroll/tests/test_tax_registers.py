@@ -279,6 +279,20 @@ class TaxRegistersCase(TransactionCase):
         with self.assertRaisesRegex(ValidationError, 'Caso 11'):
             assumed.action_close()
 
+    def test_case_11_non_resident_alone_no_longer_blocks_but_a_treaty_still_does(self):
+        # Caso 11 (criterio del titular, 23-09-2026): un no residente bajo relación de
+        # dependencia formal tributa igual que un residente; solo el convenio de doble
+        # imposición sin regla aprobada bloquea.
+        self.employee.write({'ec_rdep_residence_country': '110', 'ec_rdep_fiscal_residence': '02', 'ec_rdep_treaty_applies': 'NO'})  # 110 = Estados Unidos, catálogo RDEP
+        period = self._period(3000)
+        period.action_calculate()
+        period.action_close()  # no lanza ValidationError
+        self.employee.ec_rdep_treaty_applies = 'SI'
+        with_treaty = self._period(3000)
+        with_treaty.action_calculate()
+        with self.assertRaisesRegex(ValidationError, 'Caso 11'):
+            with_treaty.action_close()
+
     # ── conciliación nómina ↔ mayor ↔ RDEP (caso 10) ─────────────────────────
     def test_ledger_reconciles_and_a_tampered_move_is_detected(self):
         period = self._period(3000)

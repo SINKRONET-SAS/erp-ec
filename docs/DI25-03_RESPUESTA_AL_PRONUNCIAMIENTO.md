@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.10 (tercera ronda; caso 8/ausencias cerrado) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.11 (tercera ronda; caso 11 parcial: no residentes resuelto) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -102,7 +102,7 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 | 8 | Mixto | Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras. Ausencias: enfermedad (días 1-3 al 100 % sin IESS, desde el día 4 sin pago), maternidad (25 %, sí IESS), paternidad (100 %, sí IESS, sin cambio de cálculo), permiso no pagado y falta injustificada (0 %, reducen IESS e IR) | **Hecho** |
 | 9 | Bloquear | Devengo mensual (1/12 sueldo, 1/12 SBU, 8,33 % desde el mes 12), elección mensualizado/acumulado por trabajador y mapeo estricto a `decimTer`/`decimCuar`/`fondoReserva` del RDEP, nunca agrupados como otros ingresos exentos (ver 4-bis) | **Hecho** para décimos y fondo de reserva; la liquidación de vacaciones no tomadas sigue en el caso 3 |
 | 10 | Bloquear | Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con reporte por trabajador (proyectado, saldo y retención futura). Falta el formato oficial del Formulario 107 y el validador RDEP 2026, que publica el SRI | **Parcial**: depende del SRI |
-| 11 | Mixto | Galápagos sin elegibilidad, residencia extranjera, convenio, impuesto asumido y otros ingresos **bloquean el cierre**; el factor 1,803 no se usa sin soporte | **Hecho** como bloqueo; las reglas de cada régimen no existen |
+| 11 | Mixto | Un no residente bajo relación de dependencia formal tributa igual que un residente (ya no bloquea solo por la residencia); Galápagos sin elegibilidad, convenio y impuesto asumido **siguen bloqueando el cierre** | **Parcial**: no residentes resuelto, tres regímenes siguen sin regla |
 
 
 
@@ -141,6 +141,15 @@ Con esas correcciones, el motor ya implementa: días de enfermedad 1-3 pagados a
 
 **Lo que sigue fuera de nuestro alcance:** el envío de la novedad "Subsidiado" a la plataforma del IESS es un trámite administrativo aparte, no un cálculo; el sistema no lo automatiza.
 
+## 4-quinquies. Caso 11 · regímenes especiales — avance parcial el 23-09-2026
+
+Verificamos el punto de no residentes contra la LRTI y encontramos que el mecanismo de tarifa fija que describimos aplica a **servicios ocasionales** de un no residente, no a una relación de dependencia formal. Usted confirmó: eso no es nómina, se trata como proveedor en compras (fuera de este módulo); y que un empleado no residente bajo relación de dependencia formal **debe tratarse igual que un residente** (misma tabla, mismas rebajas). Quitamos el bloqueo que existía solo por tener una residencia extranjera declarada; la residencia queda como dato informativo para el RDEP. El **convenio de doble imposición** sigue bloqueando aparte, porque cada tratado tiene su propio tope y no hay una regla genérica que podamos programar sin fabricarla.
+
+**Lo que sigue bloqueado, sin fuente suficiente todavía:**
+- **Convenio de doble imposición:** necesitamos, por cada país con el que aplique (España, Comunidad Andina, etc.), el tope o mecanismo exacto del tratado.
+- **Impuesto asumido por el empleador (gross-up):** el SRI tiene una fórmula propia para esto; no la hemos verificado contra una fuente primaria.
+- **Galápagos:** usted describe un factor de las tablas del **Consejo de Gobierno de Galápagos** sobre el salario básico y la base de IESS. Eso es distinto del IPCEG del SRI que ya aplicamos al tope de gastos personales (D5); no tenemos la fuente ni los valores vigentes de esas tablas salariales.
+
 ## 5. Requisitos mínimos para una nueva homologación
 
 | Requisito | Respuesta |
@@ -159,7 +168,7 @@ Con esta versión ya no hay filas de la matriz que dependan de que nosotros prog
 
 1. **D1, D2, D4 y D6:** aprobados por el titular del proyecto (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores; D4: redondeo días→meses del sustituto, aprobado el 22-09-2026); queda la firma de aceptación del responsable tributario.
 2. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental (el fundamento legal del tope ya quedó verificado).
-3. **Caso 11:** reglas para cada régimen especial (Galápagos, no residentes, convenio, impuesto asumido).
+3. **Caso 11:** fuentes/reglas exactas para convenio de doble imposición (por país), la fórmula de grosificación del impuesto asumido, y la fuente de las tablas salariales de Galápagos del Consejo de Gobierno.
 4. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
 5. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
