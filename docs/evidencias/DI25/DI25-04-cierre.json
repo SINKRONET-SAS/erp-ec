@@ -1,0 +1,74 @@
+{
+  "phase": "DI25-04",
+  "status": "cerrada-parcial",
+  "updatedAt": "2026-09-23T15:05:00.000Z",
+  "testedCommit": "5fe814b2ab12d79ee8c213f1fe072582ff097548",
+  "criteria": {
+    "DI25-04.1": {
+      "text": "Catálogo remoto y copia se comparan por contenido/hash y vigencia, preservando períodos antiguos; registrar las diferencias efectivas.",
+      "state": "comprobado",
+      "evidence": "Catálogo ATS y esquema at.xsd descargados de nuevo del portal del SRI (23-09-2026) y recontrastados contra la transcripción anterior (13-09-2026): 24 códigos de país faltantes (incluye Argentina, Bolivia, Brasil, Canadá, Colombia) y el código de comprobante 374, corregidos. Bundleados y sellados por SHA-256 (ats_catalog_seal.py). scripts/verify-ats-catalog.py compara contra el portal bajo demanda y registra diferencias efectivas sin sobrescribir nada automáticamente."
+    },
+    "DI25-04.2": {
+      "text": "ATS concilia compras/ventas/anulados/retenciones/reembolsos aplicables, parciales y notas; presentar vista previa de faltantes con documento origen.",
+      "state": "no comprobado",
+      "evidence": "GAP real, no fabricado: no existe un agregador que concilie compras/ventas/anulados/retenciones/reembolsos/notas ni una vista previa de faltantes. Existe únicamente addons/erpec_fiscal_native/ats_export.py, una pieza mínima reutilizable que construye un <iva> con un bloque <compras> válido a partir de datos ya dados (probado con datos con la forma de una factura de compra real). Construir el agregador completo, con estado, UI y conciliación contra documentos origen, es un trabajo nuevo de magnitud comparable al anexo RDEP de nómina (varias rondas); no se emprendió en este incremento. Documentado en detalle en docs/ALCANCE_ATS_RDEP.md."
+    },
+    "DI25-04.3": {
+      "text": "Validar estructura oficial y prueba independiente con herramienta/canal oficial aplicable; guardar acuse cuando corresponda, sin declarar presentación por generar XML.",
+      "state": "parcialmente comprobado",
+      "evidence": "El titular instaló localmente Java 8, DIMM base 1.17, plug-in ATS 1.18.0 y plug-in RDEP v3.19.0 (software oficial del SRI). Se conectó el motor real de validación (ec.gob.sri.dimm.ats.validacion.ValidacionATS) vía jpype1, sin interfaz gráfica; scripts/verify-ats-dimm.py, probado con el ejemplo oficial del SRI (positivo y negativo) y con un XML generado desde datos del ERP (rechazado primero por 6 errores reales de negocio del DIMM, corregido, luego aprobado). Se investigó a fondo arrancar el framework OSGi real (EclipseStarter.startup) para destrabar el talón/acuse: el framework arranca y activa los bundles de ATS correctamente, pero el talón y la revalidación de reglas de negocio vía activación OSGi completa quedan bloqueados por una dependencia nativa real de SWT de 32 bits (ec.gov.sri.dimm.core -> org.eclipse.ui.workbench -> SWT win32.x86), incompatible con cualquier proceso de 64 bits que lo invoque por reflexión sin lanzar la GUI real. El plug-in RDEP v3.19.0 tiene la misma dependencia (confirmada por su MANIFEST.MF, sin repetir el experimento). El acuse real y la presentación/envío oficial siguen sin resolverse: requieren la interfaz gráfica real del DIMM. Evidencia completa en docs/evidencias/DI25/DI25-04-dimm-validacion.json."
+    },
+    "DI25-04.4": {
+      "text": "Matriz fiscal aprobada por responsable: tipo de contribuyente, obligación contable, IVA/IR/ICE/ISD y exclusiones; sin códigos ni reglas inventados.",
+      "state": "andamiaje comprobado, aprobación pendiente del responsable",
+      "evidence": "Nuevo modelo erpec.fiscal.tax.matrix (un registro por empresa): declara aplicabilidad de IVA/IR/ICE/ISD y exclusiones, con fuente normativa obligatoria; no precarga ningún código ni tasa de ICE/ISD (no existe todavía una fuente transcrita para ellos en este repositorio). Empieza sin aprobar (approved=False); solo una acción explícita del responsable tributario (botón Aprobar, grupo account.group_account_manager, visible en la demo bajo Facturación local -> Matriz fiscal) la aprueba -- nunca un proceso automático. Editar el contenido después de aprobar revoca la aprobación. La aprobación en sí misma queda, correctamente, sin marcar: es una decisión del responsable, no del sistema."
+    }
+  },
+  "windows": {
+    "testsReported": 588,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0
+  },
+  "fiscalNativeModule": {
+    "testsReported": 187,
+    "failed": 0,
+    "errors": 0,
+    "note": "1 falla preexistente y ajena a este incremento (FiscalConcurrencyCase.test_both_orders_with_real_independent_transactions, requiere el ejecutor integrado con base desechable; no corre en este script de módulo aislado)."
+  },
+  "demo": {
+    "deployed": true,
+    "backups": [
+      ".cache/windows/backups/di25-04-ats-taxmatrix-20260923T130050Z",
+      ".cache/windows/backups/di25-04-ats-export-20260923T145204Z"
+    ],
+    "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado (rollback, sin datos de ensayo persistidos), ats_export.build_ats_xml genera XML real desde la demo."
+  },
+  "ci": {
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35877809462",
+    "conclusion": "success",
+    "checks": [
+      "gobierno",
+      "Suite integrada (imagen sin fuentes montadas)",
+      "Arranque real de imagen controller",
+      "Arranque real de imagen customer",
+      "Auditoría de dependencias"
+    ]
+  },
+  "pendingExternal": [
+    "DI25-04.2: agregador ATS completo (compras/ventas/anulados/retenciones/reembolsos/notas, con UI, estado y conciliación contra documentos origen). Trabajo nuevo mayor, no una brecha oculta: dimensionado y documentado, no emprendido en este incremento.",
+    "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado.",
+    "DI25-04.4: aprobación explícita de la matriz fiscal por el responsable tributario (acción disponible en la demo, Facturación local -> Matriz fiscal -> Aprobar). Ningún proceso automático la marca.",
+    "ICE/ISD: no existe todavía una fuente oficial transcrita en este repositorio para sus códigos/tasas; el catálogo ATS no los cubre (son regímenes tributarios distintos). Marcar ICE/ISD como aplicables en la matriz fiscal exige nota con sustento exacto, o se bloquea.",
+    "Convenio de doble imposición (heredado de DI25-03): sigue pendiente el registro real por país en erpec.payroll.tax.treaty; el sistema no precarga ninguno."
+  ],
+  "limits": [
+    "Ningún control de esta fase constituye homologación ni aceptación tributaria externa.",
+    "La validación contra el DIMM no sustituye el canal oficial de envío/presentación ante el SRI ni acredita aceptación tributaria; no se generó ni envió ningún ATS real de un contribuyente real.",
+    "Las herramientas que dependen del DIMM (scripts/verify-ats-dimm.py, scripts/verify-ats-catalog.py) no corren en CI: dependen de instalaciones locales de terceros (Java 8, DIMM) específicas de cada máquina.",
+    "No se modificaron repositorios fuente ni se enviaron comprobantes/correos/fondos reales."
+  ],
+  "rollback": "Respaldo previo de base/filestore/módulo conservado en cada incremento (ver demo.backups); no reescribir asientos ni usar restauración como anulación fiscal; detener únicamente la demo antes de restaurar."
+}
