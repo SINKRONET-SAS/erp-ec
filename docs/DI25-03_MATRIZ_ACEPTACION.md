@@ -30,6 +30,14 @@ Resumen: control automático 17, control parcial 2, bloqueo automático 0, depen
 
 ---
 
+# Estado vigente: DI25-03 cerrada (parcial), DI25-04 en progreso — 23-09-2026
+
+Los cuatro criterios de aceptación de la fase (DI25-03.1 a DI25-03.4, ver `.github/prompts/ERPEC26-DI25-03.md`) quedan comprobados con pruebas existentes: caso salarial variable conciliado contra cálculo independiente con creación fuera de orden, reversión/corrección idempotente que conserva beneficios y saldo de préstamo sin duplicar cuotas, oráculo aprobado para D1-D8 y C01-C11 (17 filas `automated`, 2 `partial` únicamente por dependencia del SRI, 0 `blocked`, 0 `external`), y frontend con revisión de bases/acumulados/ajustes/diferencias más política/versionado. Evidencia consolidada: `docs/evidencias/DI25/DI25-03-cierre.json`. Suite integrada: 572 pruebas, 0 fallos, 0 errores; CI verde (run 35839164707); demo redesplegada y verificada (32/32 casos).
+
+**Esto no es una homologación.** Sigue pendiente, sin ser una brecha de implementación: el catálogo/validador RDEP 2026 y el Formulario 107 oficial (dependen del SRI); el registro de convenios de doble imposición reales por país en `erpec.payroll.tax.treaty` (depende del responsable tributario, el sistema no precarga ninguno); la firma formal de aceptación del responsable tributario (los campos `expertAccepted`/firma de la matriz permanecen en `false`); y la lista de autoridades válidas para D7/D4. Por eso la fase se cierra como **parcial**, no como completada, conforme lo permite el gobierno de esta fase («si falta un criterio, registrar fase parcial/bloqueada y causa; no cerrar ficticiamente ni comenzar sucesora» — los cuatro criterios SÍ están comprobados, lo que falta es aceptación externa, no código). Esta sección prevalece sobre los estados históricos siguientes; DI25-04 (cobertura tributaria y ATS) queda habilitada en `diagnosticImprovement` del AuditLock.
+
+---
+
 # Estado vigente: pronunciamiento observado y controles automáticos
 
 El pronunciamiento técnico recibido devuelve DI25-03 para corrección; no existe homologación. Ver [DI25-03_CONTROLES_AUTOMATICOS.md](DI25-03_CONTROLES_AUTOMATICOS.md) para las correcciones, bloqueos ejecutables y límites. La autenticidad de certificados, la importación versionada de otro empleador, la reliquidación mensual acumulada y la conciliación anual completa permanecen pendientes. Sustitutos y 100 canastas no se habilitan en nómina mediante una referencia aislada; los ensayos sintéticos siguen disponibles. Esta sección prevalece sobre los estados históricos siguientes.

@@ -1,0 +1,86 @@
+{
+  "phase": "DI25-03",
+  "status": "cerrada-parcial",
+  "updatedAt": "2026-09-23T08:52:00.000Z",
+  "testedCommit": "7808bd7e39b021bf877a629db1cdb1f9b94aa190",
+  "criteria": {
+    "DI25-03.1": {
+      "text": "Caso salarial variable reproduce la diferencia actual y queda conciliado contra calculo independiente; creacion fuera de orden no altera el ano.",
+      "state": "comprobado",
+      "evidence": "test_di25_variable_year_uses_actual_accumulated_base (addons/erpec_payroll/tests/test_annex_rdep.py): 12 periodos con salario variable (1000/3000), creados en orden desordenado [12,3,1,9,2,7,11,5,6,4,10,8]; se concilia contra calculo independiente (11*1000+3000=14000; IESS=1400; base=12600; impuesto=60) y se repite action_build() verificando estabilidad. test_di25_annual_table_2026_independent_oracle refuerza la reconciliacion contra engine.annual_income_tax."
+    },
+    "DI25-03.2": {
+      "text": "Reversion/correccion conserva beneficios y saldo de prestamo; no duplica cuotas ni gastos; repetir accion es idempotente.",
+      "state": "comprobado",
+      "evidence": "test_di25_correction_preserves_benefits y test_di25_reversal_restores_loan_without_deleting_history (addons/erpec_payroll/tests/test_benefits_advances.py): beneficios preservados tras reversion/correccion; action_correct() llamado dos veces devuelve el mismo registro; action_reverse() llamado dos veces no duplica la restitucion del saldo; action_calculate() repetido no duplica cuotas (len(advance.deduction_ids)==2, no 3)."
+    },
+    "DI25-03.3": {
+      "text": "Casos de otros empleadores, exenciones, acumulados, cambio de sueldo, ausencias y cierre anual tienen oraculo aprobado; bloquear regimenes no cubiertos.",
+      "state": "comprobado",
+      "evidence": "addons/erpec_payroll/acceptance_matrix_data.xml: 17 filas en control_state=automated (D1-D4,D6-D8,C01-C09,C11), 2 en partial (D5, C10, ambas dependientes del SRI: catalogo/validador RDEP 2026 y Formulario 107, no brechas de implementacion), 0 en blocked, 0 en external. Cada fila cita pruebas existentes (test_every_claimed_control_cites_tests_that_exist en test_acceptance_matrix.py)."
+    },
+    "DI25-03.4": {
+      "text": "Frontend permite revisar bases, acumulados, ajustes y diferencias, con politica/versionado; XSD RDEP y contenido economico se verifican por separado.",
+      "state": "comprobado",
+      "evidence": "addons/erpec_payroll/views.xml: rdep_form/rdep_list exponen annual_base, tax_difference, annual_tax_caused, personal_exemption(_kind), personal_expense_rebate, annual_tax_after_rebate por empleado, agrupados bajo 'Conciliacion anual (no ajusta asientos)'; period_form expone policy_id y version (solo lectura); action_generate_xml declara explicitamente que el XML es vista previa, separado de la validacion XSD/legal."
+    }
+  },
+  "windows": {
+    "testsReported": 572,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "log": ".cache/windows/ec_integrated_test_a8eecf6707e5.log",
+    "sha256": "bcdb50432f555b056cbeb5bdd7d9ef9db4edc5e985fb43aaf5d3244ec7452ffd"
+  },
+  "payrollModule": {
+    "testsReported": 207,
+    "failed": 0,
+    "errors": 0
+  },
+  "demo": {
+    "runner": "scripts/verify-di25-demo-runner.py",
+    "passed": true,
+    "cases": 32,
+    "moduleVersion": "18.0.1.14.13",
+    "problems": [],
+    "report": ".cache/di25-demo-audit.json"
+  },
+  "ci": {
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35839164707",
+    "conclusion": "success",
+    "checks": [
+      "gobierno",
+      "Suite integrada (imagen sin fuentes montadas)",
+      "Arranque real de imagen controller",
+      "Arranque real de imagen customer",
+      "Auditoria de dependencias"
+    ]
+  },
+  "governance": {
+    "verifyGovernanceGit": "Gobierno valido: 126 eslabones hasta genesis, entregables UTF-8 y 17 prompts.",
+    "note": "verify-governance.cjs no valida funcionamiento, solo la cadena de evidencia."
+  },
+  "ui": {
+    "report": "docs/evidencias/DI25/DI25-03-UI.md",
+    "manifest": "docs/evidencias/DI25/DI25-03-capturas.json"
+  },
+  "pendingExternal": [
+    "D5/C10: catalogo y validador oficial RDEP 2026 y Formulario 107 no publicados por el SRI; el XML sigue siendo vista previa interna.",
+    "C11: convenio de doble imposicion requiere que el responsable tributario registre, por pais, la tasa/mecanismo real con su referencia normativa (erpec.payroll.tax.treaty no trae ninguno precargado); sin registro, el cierre sigue bloqueado para ese empleado.",
+    "C11: otros ingresos no gravados de esta relacion (other_general_interest_income, campo otrosIngRenGrav) siguen siendo un campo manual sin calculo del motor.",
+    "D1,D2,D3,D4,D6,C01-C09,C11: criterios confirmados por el titular del proyecto en sesion; falta la firma formal de aceptacion del responsable tributario (los campos expertAccepted/signature de la matriz permanecen en false).",
+    "D7: falta la lista de autoridades validas por condicion (CONADIS, autoridad sanitaria) y si la verificacion documental interna basta sin consulta a la fuente oficial.",
+    "D8: depende de que el trabajador entregue el comprobante del empleador anterior (30 dias) y de su aceptacion tributaria.",
+    "C02,C06,C07: las pruebas usan supuestos/soportes sinteticos; falta repetirlas con casos y soportes reales de un cliente real.",
+    "C04: el asiento se fecha el dia de contabilizacion, no el mes de la nomina; pendiente de aceptacion de contabilidad."
+  ],
+  "limits": [
+    "Ningun control de esta fase constituye homologacion ni aceptacion tributaria externa; expertAccepted y las firmas de la matriz permanecen en false.",
+    "La retencion mensual sigue siendo una proyeccion (D6): reliquidacion acumulada implementada, pero sin devolucion automatica de sobre-retenciones.",
+    "El anexo RDEP es una vista previa interna; no se presenta ante el SRI.",
+    "No se modificaron repositorios fuente ni se enviaron comprobantes/correos/fondos reales."
+  ],
+  "rollback": "docs/DI25-03_CONTROLES_AUTOMATICOS.md (seccion 'Reversion y continuacion'): conservar el respaldo previo de base/filestore/modulo (.cache/windows/backups/di25-cdi-grossup-20260923T083603Z); no reescribir asientos ni usar restauracion como anulacion fiscal; detener unicamente la demo antes de restaurar."
+}

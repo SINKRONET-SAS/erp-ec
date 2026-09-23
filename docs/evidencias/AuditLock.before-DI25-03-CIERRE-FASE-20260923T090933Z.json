@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-23T09:09:33.604Z",
+  "updatedAt": "2026-09-23T09:07:44.660Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -103,7 +103,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-FIX-20260923T084613Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CI-20260921T141137777Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CIERRE-FASE-20260923T090744Z.json",
-    "docs/evidencias/AuditLock.before-DI25-03-CIERRE-FASE-20260923T090933Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T224435Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T225450Z.json",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES3-20260921T233543Z.json",
@@ -204,7 +203,6 @@
     "DI25-03.5 (18.0.1.14.12, 23-09-2026): Galapagos resuelto en caso 11. La Reforma a la LOREG unifico el incremento salarial (antes 75%/100% fijo) con el mismo IPCEG (1,803) que el SRI ya usa en D5; el motor escala wage por ese factor y tributa con la tabla progresiva normal. Ya no bloquea por si solo. Siguen bloqueando: convenio de doble imposicion e impuesto asumido (gross-up). Suite completa 566 pruebas, modulo de nomina 201; demo redesplegada.",
     "DI25-03.6 (18.0.1.14.13, 23-09-2026): caso 11 cerrado. Convenio de doble imposicion (erpec.payroll.tax.treaty, tabla parametrica sin tasas precargadas) e impuesto asumido por gross-up (engine.gross_up_assumed_tax, biseccion contra la tabla progresiva vigente, sin tarifa fija inventada); net_income_target llega integro al trabajador; se reporta en basImp/impRentEmpl/valImpAsuEsteEmpl. Sigue bloqueando: convenio sin tratado registrado, otros ingresos no gravados sin oraculo. Suite completa 572 pruebas, modulo de nomina 207; demo redesplegada.",
     "DI25-03.6-fix (23-09-2026): correccion de huella. docs/evidencias/DI25/DI25-03-controles-automaticos-3.json se habia escrito con fin de linea CRLF (modo texto de Python en Windows); git lo normaliza a LF al indexar (core.autocrlf/.gitattributes eol=lf), y el hash registrado no coincidia con el blob real, lo que bloqueo el job de gobierno en CI. Se reescribio el archivo con LF puro y se recalcularon los hashes; ningun otro entregable ni contenido cambio.",
-    "DI25-03 cierre de fase (23-09-2026): los cuatro criterios numerados (DI25-03.1 variable+fuera de orden, DI25-03.2 reversion/correccion idempotente sin duplicar, DI25-03.3 oraculo aprobado para D1-D8/C01-C11, DI25-03.4 frontend con politica/version) quedan comprobados con pruebas existentes (ver docs/evidencias/DI25/DI25-03-cierre.json). Matriz de aceptacion: 17 filas automated, 2 partial (D5, C10, dependientes del SRI), 0 blocked, 0 external. Pendiente externo, no brecha de implementacion: catalogo/validador RDEP 2026 y Formulario 107 (SRI), registro de convenios reales por pais (responsable tributario), firma formal de aceptacion (responsable tributario). Suite integrada 572 pruebas, 0 fallos, 0 errores; CI verde (run 35839164707); demo verificada 32/32. Se cierra como parcial, habilitando DI25-04 sin declarar homologacion.",
     "DI25-03 cierre de fase (23-09-2026): los cuatro criterios numerados (DI25-03.1 variable+fuera de orden, DI25-03.2 reversion/correccion idempotente sin duplicar, DI25-03.3 oraculo aprobado para D1-D8/C01-C11, DI25-03.4 frontend con politica/version) quedan comprobados con pruebas existentes (ver docs/evidencias/DI25/DI25-03-cierre.json). Matriz de aceptacion: 17 filas automated, 2 partial (D5, C10, dependientes del SRI), 0 blocked, 0 external. Pendiente externo, no brecha de implementacion: catalogo/validador RDEP 2026 y Formulario 107 (SRI), registro de convenios reales por pais (responsable tributario), firma formal de aceptacion (responsable tributario). Suite integrada 572 pruebas, 0 fallos, 0 errores; CI verde (run 35839164707); demo verificada 32/32. Se cierra como parcial, habilitando DI25-04 sin declarar homologacion."
   ],
   "pendingChecks": [
@@ -216,12 +214,11 @@
     "OP24: retirar claves anteriores (erpec_secret.previous) tras un periodo de confianza",
     "DI25: completar hallazgos restantes conforme a docs/evidencias/DI25/estado-hallazgos.json; DI25-03 parcial y DI25-04–07 sin iniciar por dependencia.",
     "DI25: aceptación visual integral por roles, alcance legal y homologación bancaria según servicio; ver plan",
-    "DI25-03 (cerrada parcial): catalogo/validador RDEP 2026 y Formulario 107 dependen del SRI; convenios de doble imposicion reales y firma de aceptacion dependen del responsable tributario; ver docs/evidencias/DI25/DI25-03-cierre.json.",
     "DI25-03 (cerrada parcial): catalogo/validador RDEP 2026 y Formulario 107 dependen del SRI; convenios de doble imposicion reales y firma de aceptacion dependen del responsable tributario; ver docs/evidencias/DI25/DI25-03-cierre.json."
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "6c7c840a50ebf4f2dc2c24020406f514f4b06aa9746f9d1a1192f91f639d0d84",
+    ".github/CODEX_CONTEXT.md": "44b9f3694ebdf48434eb0853f4e33d92d0d652dc7d8dcf6cd70045ed81dfae9b",
     ".github/prompts/ERPEC26-DI25-00.md": "6dedd464202df5529d7b477d00a194decf23aa63d00987baed84c8448cea0c31",
     ".github/prompts/ERPEC26-DI25-01.md": "4e54396b755f8223202c151c1d5c1a577521aa07fe0299c3275797cba190acb1",
     ".github/prompts/ERPEC26-DI25-02.md": "fa69838d8929e0e6cfe3b19aa5eadac18aa6ccfa38cf477632058a8af978f5ae",
@@ -287,7 +284,7 @@
     "docs/DI25-03_CONTROLES_AUTOMATICOS.md": "2a64a0b69a6a2ba193fad8ffff49a5c996424f94556c5879f9c53b5f83e3ce27",
     "docs/DI25-03_ENSAYOS_RENTA_DEMO.md": "90d01f5efa68741a40a7d31e8572753a67f33c78d5e1488d1df7fb77f9a21937",
     "docs/DI25-03_EXENCIONES_PERSONALES.md": "4f0db3fabe90de1dd29d395cf00e214db3f8d95aa2828bd989b8233596ddd284",
-    "docs/DI25-03_MATRIZ_ACEPTACION.md": "d49cdd653a004178567f34082e2195cf96a844414ae7c6ef958f3c7c43a473db",
+    "docs/DI25-03_MATRIZ_ACEPTACION.md": "a597e55e597db6ab1d1349c4b4c2f3f1b295c75637fda5587a08240d261d43b9",
     "docs/DI25-03_NOMINA_RDEP.md": "945397bd78621f302fee2cddd181aba609ae33bd47380ecffb9e91be30ad72ce",
     "docs/DI25-03_PAQUETE_ACEPTACION.md": "88c6fdd6c39dfd7cc2c40a807894d915682182925ab0cfd59231de00e6dfd9c0",
     "docs/DI25-03_RESPUESTA_AL_PRONUNCIAMIENTO.md": "2c21c57920816f3a5b5aef4939c091198f2b4d74304681ae4dfbebb70d992720",
@@ -317,7 +314,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-CDI-GROSSUP-FIX-20260923T084613Z.json": "e79cefadde82bdaff686dfa3a1464665375c99281958cf33641ea9decc349e87",
     "docs/evidencias/AuditLock.before-DI25-03-CI-20260921T141137777Z.json": "9c03327bbe4efc55927c39d50a4bf263b4476258f0aa2b2360f8aca8c2b1808c",
     "docs/evidencias/AuditLock.before-DI25-03-CIERRE-FASE-20260923T090744Z.json": "648371a33de1e664bb36f30d6176e7cdb255bace20db2826eb78c9bf94cc658f",
-    "docs/evidencias/AuditLock.before-DI25-03-CIERRE-FASE-20260923T090933Z.json": "60378e63a27ccde36d219dd8922b2bddf24473740a3b16fa43efa92a1c0fb551",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T224435Z.json": "309c8d966bdf1968158e5865e6ca637928fc3ae9d64c8ce0e2c5122e66df6692",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES2-20260921T225450Z.json": "d875d892224ce9fcd696f360d979f1e8f20f393c83168076af89728d6ce09c7d",
     "docs/evidencias/AuditLock.before-DI25-03-CONTROLES3-20260921T233543Z.json": "ef017b70b6334c48ffc33f1070e70a8013499faa81ea1d4113eb8fcf029bcb90",
@@ -373,9 +369,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-CIERRE-FASE-20260923T090933Z.json",
-  "previousAuditLockHash": "60378e63a27ccde36d219dd8922b2bddf24473740a3b16fa43efa92a1c0fb551",
-  "signature": "ea42020b888ccee7ccd8df9eb37e76883e6a12ecfcba19f43ab2458a77665c0e",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-CIERRE-FASE-20260923T090744Z.json",
+  "previousAuditLockHash": "648371a33de1e664bb36f30d6176e7cdb255bace20db2826eb78c9bf94cc658f",
+  "signature": "d207b0b83e0293eb162f79e195f1143a074740b26858564a237720c9e97bf6d7",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
