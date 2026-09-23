@@ -1,7 +1,7 @@
 {
   "phase": "DI25-04",
-  "item": "DI25-04.3",
-  "description": "Prueba independiente contra el canal/herramienta oficial del SRI (DIMM 1.17 + plug-in ATS 1.18.0, instalados localmente por el titular el 23-09-2026, Java 8 requisito del instalador).",
+  "item": "DI25-04.2 y DI25-04.3",
+  "description": "Prueba independiente contra el canal/herramienta oficial del SRI (DIMM 1.17 + plug-in ATS 1.18.0 + plug-in RDEP 3.19.0, instalados localmente por el titular el 23-09-2026, Java 8 requisito del instalador), y generacion de un XML del ATS real a partir de datos con la misma forma que las facturas de compra del ERP.",
   "date": "2026-09-23",
   "tool": {
     "name": "DIMM (Declaracion de Informacion en Medio Magnetico)",
@@ -10,11 +10,18 @@
     "features": [
       "ec.gob.sri.dimm.ats (1.18.0)",
       "ec.gob.sri.dimm.base (1.9.6)",
-      "ec.gov.sri.dimm.feature.core (1.0.1)"
+      "ec.gov.sri.dimm.feature.core (1.0.1)",
+      "ec.gov.sri.dimm.rdep (3.12.0) / rdep.validacion (3.13.0) / rdep.ayuda (3.10.0), instalado por el titular como RDEP v3.19.0"
     ],
     "installedByUser": true
   },
-  "method": "El motor de validacion del DIMM (ec.gob.sri.dimm.ats.validacion.ValidacionATS, plugin ec.gob.sri.dimm.ats.validacion_1.2.0) es una API Java normal, no un ejecutable de linea de comandos; no tiene main(). Los plugins del DIMM son bundles OSGi cuyo classpath real esta anidado (Bundle-ClassPath en MANIFEST.MF) en una carpeta lib/ interna de cada jar, asi que un -cp plano sobre los jars de nivel superior no alcanza esas clases; se extrajeron los jars anidados para construir el classpath completo. Sin javac disponible (el JRE de Java 8 instalado es solo runtime, sin compilador), se uso jpype1 (JVM embebida via reflexion) para invocar ValidacionATS.validarEsquema() y ValidacionATS.validarInformacion() directamente desde Python, sin la interfaz grafica del DIMM. Herramienta permanente: scripts/verify-ats-dimm.py.",
+  "method": "El motor de validacion del DIMM (ec.gob.sri.dimm.ats.validacion.ValidacionATS, plugin ec.gob.sri.dimm.ats.validacion_1.2.0) es una API Java normal, no un ejecutable de linea de comandos; no tiene main(). Los plugins del DIMM son bundles OSGi cuyo classpath real esta anidado (Bundle-ClassPath en MANIFEST.MF) en una carpeta lib/ interna de cada jar, asi que un -cp plano sobre los jars de nivel superior no alcanza esas clases; se extrajeron los jars anidados para construir el classpath completo. Sin javac disponible (el JRE de Java 8 instalado es solo runtime, sin compilador), se uso jpype1 (JVM embebida via reflexion, jpype1<1.6 por el limite de Java 8) para invocar ValidacionATS.validarEsquema() y ValidacionATS.validarInformacion() directamente desde Python, sin la interfaz grafica del DIMM. Herramienta permanente: scripts/verify-ats-dimm.py.",
+  "equinoxAttempt": {
+    "goal": "Arrancar el framework OSGi real del DIMM (org.eclipse.core.runtime.adaptor.EclipseStarter.startup) para que Platform/BundleContext esten vivos al invocar la validacion, e intentar generar el talon/acuse (TalonResumenATS.generarTalonCompletoDIMM()), que via classpath plano fallaba con NullPointerException al cargar catalogos.",
+    "result": "El framework Equinox arranca limpio (sin GUI, sin colgarse) y activa correctamente los bundles ec.gob.sri.dimm.ats.validacion y ec.gob.sri.dimm.ats.modelo; validarEsquema() funciona igual que con classpath plano. Pero validarInformacion() y el talon, al pasar por la activacion perezosa real de OSGi (Eclipse-LazyStart), disparan la activacion de ec.gov.sri.dimm.core, cuyo Activator requiere org.eclipse.ui.workbench, que a su vez requiere las clases nativas de SWT (org.eclipse.swt.win32.win32.x86, fragmento de 32 bits). Esa libreria nativa de 32 bits no puede cargarse dentro de un proceso de 64 bits (jpype1/Python son de 64 bits en esta maquina), y el JRE de 32 bits que trae el propio DIMM no lo puede cargar el puente nativo de jpype1 (tambien de 64 bits). No es un problema de configuracion: es una incompatibilidad de arquitectura real entre el runtime de 32 bits del DIMM (2007-2021, Eclipse RCP con SWT nativo) y cualquier proceso de 64 bits que lo invoque por reflexion sin lanzar la GUI real.",
+    "conclusion": "El motor de validacion (schema + reglas de negocio) via classpath plano -- ya en produccion en scripts/verify-ats-dimm.py -- sigue siendo la via confiable. El talon/acuse y la revalidacion de reglas de negocio con activacion OSGi completa quedan fuera de alcance sin lanzar la interfaz grafica real del DIMM (fuera del alcance de este incremento: riesgo de bloqueo del proceso, sin automatizacion posible).",
+    "rdepNote": "El titular tambien instalo el plug-in RDEP v3.19.0. Su bundle de validacion (ec.gov.sri.dimm.rdep.validacion_3.13.0) declara Require-Bundle: org.eclipse.ui explicitamente en su MANIFEST.MF -- la misma dependencia de UI/SWT que bloqueo el talon del ATS. Se documenta la conclusion sin repetir el experimento de arranque, ya que el manifiesto por si solo confirma el mismo limite de arquitectura de 32/64 bits."
+  },
   "cases": [
     {
       "file": "addons/erpec_fiscal_native/reference/Ejemplo_ATS.xml",
@@ -29,12 +36,26 @@
       "schemaResult": "ERROR Linea: 5 Columna: 15 Mensaje: Contenido Invalido se encontro 'razonSocial'. cuando se esperaba '{IdInformante}'.",
       "businessRulesResult": "Sin errores de negocio, 0 advertencias (el esquema ya bloquea antes)",
       "exitCode": 1
+    },
+    {
+      "file": "XML generado por addons/erpec_fiscal_native/ats_export.py (nuevo), a partir de datos con la misma forma que una factura de compra real de la demo (RUC sintetico 1790012345001, ya usado en todo el resto de pruebas del proyecto)",
+      "note": "Primer intento: solo los campos requeridos por el esquema XSD (minOccurs=1). El motor DIMM (validarInformacion, no el esquema) rechazo con 6 errores reales de negocio: exige totbasesImpReemb desde 03/2015, valRetBien10/valRetServ20 desde 06/2015, valRetServ50 desde enero/2016, y el bloque pagoExterior completo -- todos opcionales (minOccurs=0) en el esquema XSD pero obligatorios en la practica segun el DIMM. Se corrigio ats_export.py para incluirlos siempre.",
+      "schemaResult": "Sin errores de esquema en ambos intentos",
+      "businessRulesResult": "Primer intento: 6 errores reales (citados arriba). Segundo intento, ya corregido: sin errores de negocio, 0 advertencias.",
+      "exitCode": "1 (primer intento) -> 0 (corregido)"
     }
   ],
+  "atsExportModule": {
+    "file": "addons/erpec_fiscal_native/ats_export.py",
+    "scope": "Pieza minima reutilizable (build_ats_xml/build_compra_element): construye un <iva> con un bloque <compras> valido, en el orden exacto que exige xsd/at.xsd. No es el agregador completo (compras/ventas/anulados/retenciones/reembolsos/notas, con UI y conciliacion contra documentos origen) que sigue fuera de alcance como DI25-04.2 mayor; ver docs/ALCANCE_ATS_RDEP.md.",
+    "noInventedCodes": "codSustento y tipoComprobante se validan contra ats_catalog.py (SUPPORT_CODES/VOUCHER_TYPES, el catalogo oficial ya corregido); build_ats_xml rechaza combinaciones no declaradas por el catalogo en vez de aceptarlas.",
+    "tests": "addons/erpec_fiscal_native/tests/test_ats_export.py (6 pruebas: XML valido contra el esquema, relleno de tipoComprobante a 2 digitos, rechazo de sustento no catalogado, rechazo de sustento invalido para el tipo de comprobante, encabezado/compra incompletos, lista de compras vacia)."
+  },
   "limits": [
-    "No se logro generar el 'talon' (acuse/resumen HTML, TalonResumenATS.generarTalonCompletoDIMM()): lanza NullPointerException en AdministradorCargaCatalogosImpl.inicializarCatalogosPorAnexo, porque ese componente depende del contexto OSGi/Equinox completo del DIMM (carga de catalogos via el framework, no solo las clases Java), que no se replico con una JVM plana. El talon real requiere generarse desde la interfaz grafica del DIMM para una presentacion real.",
-    "Esta validacion confirma estructura (XSD) y reglas de negocio del DIMM contra un archivo XML dado; no sustituye el canal oficial de envio/presentacion ante el SRI ni acredita aceptacion tributaria. No se genero ni envio ningun ATS real de un contribuyente real.",
-    "No se integra a la suite automatica ni a CI: depende de una instalacion local de Java 8 y del DIMM (software de terceros, con su propia licencia) que no forma parte de este repositorio."
+    "No se logro generar el 'talon' (acuse/resumen HTML) ni revalidar reglas de negocio con activacion OSGi completa: ambos requieren la interfaz grafica real del DIMM por la dependencia nativa de SWT de 32 bits (ver equinoxAttempt). El acuse real requiere generarse desde esa interfaz.",
+    "Esta validacion confirma estructura (XSD) y reglas de negocio del DIMM contra un archivo XML dado, incluido uno generado desde datos con la forma de datos reales del ERP; no sustituye el canal oficial de envio/presentacion ante el SRI ni acredita aceptacion tributaria. No se genero ni envio ningun ATS real de un contribuyente real; el RUC usado (1790012345001) es el mismo sintetico usado en el resto de pruebas del proyecto.",
+    "ats_export.py es una pieza minima (un tipo de comprobante, una linea de compra), no el agregador completo con UI, estado y conciliacion; construir eso sigue siendo DI25-04.2 mayor.",
+    "No se integra a la suite automatica ni a CI: la validacion contra el DIMM depende de una instalacion local de Java 8 y del DIMM (software de terceros, con su propia licencia) que no forma parte de este repositorio."
   ],
-  "conclusion": "DI25-04.3 deja de ser 'sin empezar': existe un canal de validacion real y repetible contra el motor oficial del SRI, probado con un caso positivo y uno negativo. La generacion del acuse/talon y el envio/presentacion real siguen fuera de alcance de este incremento."
+  "conclusion": "DI25-04.3 avanza mas alla del primer incremento: ademas del motor de validacion conectado, se genero y valido un XML real (no solo el ejemplo del SRI) a partir de datos con la forma de una factura de compra real, refinado iterativamente contra los errores reales que devolvio el DIMM hasta pasar limpio. Se investigo a fondo si era posible generar el talon/ acuse arrancando el framework OSGi real (Equinox) en vez de un classpath plano: el framework arranca y activa los bundles de ATS correctamente, pero el talon y la revalidacion de reglas de negocio via activacion OSGi completa quedan bloqueados por una dependencia nativa real (SWT de 32 bits) del componente ec.gov.sri.dimm.core, no por falta de intento. La misma limitacion aplica al plug-in RDEP v3.19.0 tambien instalado (su bundle de validacion declara la misma dependencia de UI). DI25-04.2 sigue sin el agregador completo, pero ahora existe una pieza real y probada (ats_export.py) que genera XML valido del ATS desde datos del ERP."
 }

@@ -122,7 +122,14 @@ def main():
                 entries = contexto.getErroresAcumulados().entrySet().iterator()
                 while entries.hasNext():
                     entry = entries.next()
-                    print(' - %s: %s' % (entry.getKey(), entry.getValue()))
+                    print(' - %s' % entry.getKey())
+                    # entry.getValue() es un ErrorDetalleAnexoValidacion; su mensaje real vive en
+                    # getListaErrores() (lista de ErrorValidacion), no en su toString().
+                    detalle = entry.getValue()
+                    errores = detalle.getListaErrores().iterator()
+                    while errores.hasNext():
+                        item = errores.next()
+                        print('    [%s] %s' % (item.getSeveridad(), item.getDescripcion()))
         except jpype.JException as error:
             failed = True
             print('EXCEPCIÓN:', error.message())
