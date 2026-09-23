@@ -1,7 +1,7 @@
 {
   "phase": "DI25-03",
   "task": "DI25-03.5",
-  "moduleVersion": "18.0.1.14.9",
+  "moduleVersion": "18.0.1.14.10",
   "expertAccepted": false,
   "status": "filas-parciales-cerradas-desplegado-en-demo-aceptacion-externa-pendiente",
   "instruction": "Los parciales deben quedar terminados para poder avanzar.",
@@ -16,9 +16,9 @@
     "caso6_caso7": "pruebas repetidas con D1-D7 y consolidacion idempotente con reliquidacion"
   },
   "matrixStates": {
-    "automated": 15,
+    "automated": 16,
     "partial": 2,
-    "blocked": 2,
+    "blocked": 1,
     "external": 0
   },
   "stillOutsideTheSystem": {
@@ -163,5 +163,12 @@
     "userClarification": "Cuales son los bloqueos (control_state=blocked): C08 (caso 8, cambio salarial hecho / ausencias sin modelar) y C11 (caso 11, Galapagos/no residentes/convenio/impuesto asumido bloquean el cierre siempre que se detectan, sin regla aprobada).",
     "sequenceChosen": "El titular eligio: primero caso 8 (ausencias, afecta la liquidacion mensual), luego caso 11.",
     "payrollModuleTests": 192
+  },
+  "adjustment_18_0_1_14_10": {
+    "action": "El titular especifico las reglas del caso 8 (ausencias): enfermedad, maternidad, paternidad, permiso no pagado, falta injustificada.",
+    "verification": "Se verificaron las 4 reglas contra fuentes oficiales antes de programar; se encontraron 2 discrepancias que el titular confirmo y corrigio: enfermedad dias 1-3 al 100% no 50% (Oficio PGE No. 10097, 17-02-2025, art. 54 Codigo del Trabajo, art. 16 Reglamento General sobre Prestacion de Subsidios en Dinero); paternidad 100% del empleador sin subsidio IESS, no comparte el esquema 75/25 de maternidad (art. 152 Codigo del Trabajo, reforma 2023). El titular tambien precizo que el 25% de maternidad si aporta IESS.",
+    "implementation": "engine.py: dias de ausencia reducen los dias normales del periodo; enfermedad dias 1-3 se paga aparte, sin IESS (mismo mecanismo que vacation_payout); maternidad se pliega en salary/base (si IESS); permiso no pagado y falta injustificada simplemente reducen dias sin pago. Nuevos campos sick_days/maternity_days/paternity_days/unpaid_leave_days/unexcused_absence_days en erpec.payroll.line.",
+    "matrixChange": "C08 (caso 8) pasa de blocked a automated.",
+    "payrollModuleTests": 199
   }
 }

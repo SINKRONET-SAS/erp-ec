@@ -403,6 +403,29 @@ class Line(models.Model):
         help='Caso 3 (DI25-03): pago en dinero de vacaciones acumuladas y no tomadas. Grava impuesto '
              'a la renta pero no IESS (catálogo RDEP vigente, campo sobSuelComRemu); distinto del '
              'devengo mensual de vacaciones tomadas, que ya está incluido en el salario.')
+    # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (17-02-2025) y el
+    # art. 152 del Código del Trabajo (reforma 2023). Días de calendario, no laborables; el motor
+    # los descuenta de los días normales del período (engine.calculate).
+    sick_days=fields.Float('Días de enfermedad (con certificado IESS)',
+        help='Los primeros 3 días los paga el empleador al 100 %, sin aporte a IESS (grava impuesto '
+             'a la renta). Desde el día 4 el empleador no paga nada: el subsidio lo desembolsa el '
+             'IESS directamente; repórtelo como novedad "Subsidiado" en la plataforma del IESS, no '
+             'se calcula aquí.')
+    maternity_days=fields.Float('Días de licencia de maternidad',
+        help='El empleador paga el 25 % de todos los días de licencia; ese 25 % sí aporta a IESS '
+             '(continuidad de aportación). El 75 % restante lo paga el IESS directamente.')
+    paternity_days=fields.Float('Días de licencia de paternidad',
+        help='El empleador paga el 100 % y aporta IESS normalmente (art. 152 Código del Trabajo): '
+             'no cambia ningún cálculo frente a un día trabajado. Se registra solo para control de '
+             'asistencia y para el expediente laboral.')
+    unpaid_leave_days=fields.Float('Días de permiso no pagado',
+        help='0 % de pago; no genera base imponible de impuesto a la renta ni aporte a IESS. '
+             'Repórtelo como novedad al IESS para suspender la proporcionalidad de días de '
+             'aportación del mes.')
+    unexcused_absence_days=fields.Float('Días de falta injustificada',
+        help='0 % de pago; reduce la base de aportación al IESS y la base gravable de impuesto a '
+             'la renta, igual que un permiso no pagado. Se mantiene como campo separado por su '
+             'distinto efecto disciplinario/laboral, no por un cálculo distinto.')
     advances=fields.Float('Anticipos')
     loans=fields.Float('Préstamos')
     other_deductions=fields.Float('Otros descuentos')
@@ -465,7 +488,7 @@ class Line(models.Model):
 
     def _copy_inputs(self):
         self.ensure_one()
-        keys=('start_date','wage','bonus','commission','non_taxable_income','vacation_payout','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
+        keys=('start_date','wage','bonus','commission','non_taxable_income','vacation_payout','sick_days','maternity_days','paternity_days','unpaid_leave_days','unexcused_absence_days','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
         return {key:self[key] for key in keys}
 
     def _inputs(self):

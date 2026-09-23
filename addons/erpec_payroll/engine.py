@@ -240,12 +240,34 @@ def calculate(data, parameters, year, month):
     if days <= 0 or wage < number(parameters['minimum_salary']) or number(parameters['monthly_hours']) <= 0:
         raise ValueError('Revisa vigencia laboral, salario mínimo y jornada mensual.')
     for key, value in data.items():
-        if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours', 'vacation_payout') and number(value) < 0:
+        if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours', 'vacation_payout',
+                   'sick_days', 'maternity_days', 'unpaid_leave_days', 'unexcused_absence_days', 'paternity_days') and number(value) < 0:
             raise ValueError('Las novedades y descuentos deben ser no negativos.')
-    salary = money(wage*days/30)
+    # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (17-02-2025, art. 54
+    # Código del Trabajo y art. 16 Reglamento General sobre Prestación de Subsidios en Dinero) y
+    # contra el art. 152 del Código del Trabajo (reforma 2023). Días 1-3 de enfermedad: el
+    # empleador paga el 100 %, pero esos días no son materia gravada de IESS (sí de IR); desde el
+    # día 4 el empleador no paga nada (subsidio directo del IESS, ajeno a esta nómina; se reporta
+    # como novedad "Subsidiado", no se calcula aquí). Maternidad: el empleador paga el 25 % de
+    # todos los días de licencia y ese 25 % sí es materia gravada de IESS (continuidad de
+    # aportación). Permiso no pagado y falta injustificada: 0 % de pago, reducen tanto IESS como
+    # IR. Paternidad: el empleador paga el 100 % y es materia gravada de IESS, igual que un día
+    # trabajado normal — no cambia ningún cálculo, solo se registra para control de asistencia.
+    sick_days = number(data.get('sick_days', 0))
+    sick_days_paid = min(sick_days, Decimal(3))
+    maternity_days = number(data.get('maternity_days', 0))
+    unpaid_leave_days = number(data.get('unpaid_leave_days', 0))
+    unexcused_absence_days = number(data.get('unexcused_absence_days', 0))
+    absence_days = sick_days+maternity_days+unpaid_leave_days+unexcused_absence_days
+    if absence_days > days:
+        raise ValueError('Los días de ausencia no pueden superar los días del período.')
+    normal_days = days-absence_days
+    salary = money(wage*normal_days/30)
+    maternity_pay = money(wage*maternity_days/30*Decimal('0.25'))
+    sick_pay = money(wage*sick_days_paid/30)
     hourly = wage/number(parameters['monthly_hours'])
     overtime = sum(money(hourly*number(data.get(key, 0))*number(parameters[factor])) for key, factor in [('hours_50','overtime_50'), ('hours_100','overtime_100'), ('night_hours','night_rate')])
-    base = money(salary+overtime+number(data.get('bonus', 0))+number(data.get('commission', 0)))
+    base = money(salary+maternity_pay+overtime+number(data.get('bonus', 0))+number(data.get('commission', 0)))
     iess = money(base*number(parameters['personal_rate']))
     employer = money(base*number(parameters['employer_rate']))
     employer_other = money(base*number(parameters.get('employer_other_rate',0)))
@@ -255,11 +277,11 @@ def calculate(data, parameters, year, month):
     prior_months = int(data.get('prior_months', 0) or 0)
     remaining_months = max(1, 12-prior_months) if prior_months else 12
     other_income = number(data.get('other_income', 0))-number(data.get('other_iess', 0))
-    # Liquidación de vacaciones no gozadas (caso 3, DI25-03): gravada de IR, no gravada de IESS
-    # (catálogo RDEP vigente, campo sobSuelComRemu). Es un pago del mes, no una proyección: se
-    # suma una sola vez a la base anual, igual que other_income (D8), sin multiplicarla por los
-    # meses que faltan.
-    vacation_payout = number(data.get('vacation_payout', 0))
+    # Gravado de IR, no de IESS (caso 3/caso 8, DI25-03): liquidación de vacaciones no gozadas,
+    # beneficios propios sin aporte y el pago de los días 1-3 de enfermedad (catálogo RDEP
+    # vigente, campo sobSuelComRemu). Es un pago del mes, no una proyección: se suma una sola vez
+    # a la base anual, igual que other_income (D8), sin multiplicarla por los meses que faltan.
+    vacation_payout = number(data.get('vacation_payout', 0))+sick_pay
     annual_base = max(Decimal(0), number(data.get('prior_base', 0))+(base-iess)*remaining_months+other_income+vacation_payout)
     _, exemption, annual_base = apply_personal_exemption(annual_base, parameters, data.get('exemptions', ()))
     annual_tax, rebate, tax_after_rebate = annual_income_tax(

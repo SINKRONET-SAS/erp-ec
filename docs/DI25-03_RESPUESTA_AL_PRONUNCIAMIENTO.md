@@ -6,7 +6,7 @@
 | **De** | Equipo técnico del proyecto |
 | **Fecha** | 21 de septiembre de 2026 |
 | **Documento que se responde** | DI25-03_PRONUCIAMIENTO_TECNICO.pdf (5 páginas, SHA-256 `3f56196745924b1cf3600f842116a04b8e24ed091131d59f4ec3f451915b2722`) |
-| **Versión que responde** | `erpec_payroll` 18.0.1.14.9 (tercera ronda; D1/D2/D4/D5/D6/D7, D8, caso 9 y caso 3 según ajustes previos; caso 3 cerrado) |
+| **Versión que responde** | `erpec_payroll` 18.0.1.14.10 (tercera ronda; caso 8/ausencias cerrado) |
 | **Estado** | DI25-03 sigue **observado y no homologado**. No solicitamos firma: solicitamos revisar los puntos marcados «Necesitamos de usted». |
 
 ## 1. Pronunciamiento
@@ -99,7 +99,7 @@ Contrastamos cada cifra del pronunciamiento con el motor de cálculo, con cálcu
 | 5 | Bloquear | D8 implementado: comprobante versionado, conciliación y rectificación sin duplicados; sin conciliación, el cierre se bloquea | **Hecho** (falta probarlo con un comprobante real) |
 | 6 | Bloquear | Pruebas de adulto mayor, discapacidad, sustituto, regularización y gastos repetidas con D1–D7 corregidos, además de los ensayos 26–32 en demo | **Hecho** con soportes sintéticos; falta repetirlo con soportes reales |
 | 7 | Bloquear | Mismo insumo, mismo resultado (huella); consolidación anual idempotente; bitácora de comprobantes; y la reliquidación acumulada concilia entre períodos (el ejercicio cierra en cero) | **Hecho** |
-| 8 | Mixto | Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras (probado). Ausencias: el módulo **no las modela**; no hay cálculo que aceptar hasta que se definan sus efectos | Salarial **hecho**; ausencias **bloqueadas** |
+| 8 | Mixto | Cambio salarial: la reliquidación actualiza la proyección anual y las retenciones futuras. Ausencias: enfermedad (días 1-3 al 100 % sin IESS, desde el día 4 sin pago), maternidad (25 %, sí IESS), paternidad (100 %, sí IESS, sin cambio de cálculo), permiso no pagado y falta injustificada (0 %, reducen IESS e IR) | **Hecho** |
 | 9 | Bloquear | Devengo mensual (1/12 sueldo, 1/12 SBU, 8,33 % desde el mes 12), elección mensualizado/acumulado por trabajador y mapeo estricto a `decimTer`/`decimCuar`/`fondoReserva` del RDEP, nunca agrupados como otros ingresos exentos (ver 4-bis) | **Hecho** para décimos y fondo de reserva; la liquidación de vacaciones no tomadas sigue en el caso 3 |
 | 10 | Bloquear | Conciliación automática nómina ↔ asiento y retención ↔ impuesto anual, con reporte por trabajador (proyectado, saldo y retención futura). Falta el formato oficial del Formulario 107 y el validador RDEP 2026, que publica el SRI | **Parcial**: depende del SRI |
 | 11 | Mixto | Galápagos sin elegibilidad, residencia extranjera, convenio, impuesto asumido y otros ingresos **bloquean el cierre**; el factor 1,803 no se usa sin soporte | **Hecho** como bloqueo; las reglas de cada régimen no existen |
@@ -126,6 +126,21 @@ Al revisar esto encontramos, además, que el propio catálogo RDEP documenta des
 
 **Actualización del 22-09-2026, caso cerrado:** usted pidió que los beneficios propios tengan un control de decisión, no solo un aviso. Agregamos `iess_contributable` (SÍ/NO) a cada beneficio propio, **SÍ por defecto** (aporta a IESS, igual que antes de este cambio). Elegir NO es una decisión de quien configura el beneficio, no algo que el sistema verifique por sí solo; muestra un aviso informativo con el art. 14 de la Ley de Seguridad Social (Ley 55, Registro Oficial Suplemento 465, 30-11-2001), que en efecto exonera de materia gravada IESS solo alimentación, atención médica/odontológica, seguros de vida/accidentes, ropa/herramientas de trabajo y beneficios de orden social sin privilegio (con un tope conjunto del 20 % de la retribución monetaria gravada) — no cualquier beneficio califica. El tratamiento de un beneficio ya calculado es inmutable. Con esto, **caso 3 queda cerrado** (control_state automated) y **ninguna fila de la matriz depende ya de un tercero** (D5 y caso 10 siguen como control parcial porque el SRI no ha publicado el catálogo 2026 ni el Formulario 107 oficial, no porque nos falte programar algo).
 
+## 4-quater. Caso 8 · ausencias — recibido el 22-09-2026, cerrado
+
+Usted describió las reglas y, al verificarlas contra fuentes oficiales, encontramos dos correcciones que usted mismo validó antes de que programáramos nada:
+
+| Ausencia | Su especificación original | Corrección verificada | Fuente |
+|---|---|---|---|
+| Enfermedad, días 1-3 | Empleador paga 50 % | **Empleador paga 100 %** | Oficio PGE No. 10097 (17-02-2025), art. 54 Código del Trabajo, art. 16 Reglamento General sobre Prestación de Subsidios en Dinero |
+| Enfermedad, día 4 en adelante | — | El empleador **no tiene obligación legal de complementar**; el subsidio lo paga el IESS directamente | Mismo oficio |
+| Paternidad | Agrupada con maternidad (75 % IESS / 25 % empleador) | **100 % empleador, sin subsidio del IESS** | Art. 152 Código del Trabajo (reforma 2023) |
+| Maternidad | 75 % IESS / 25 % empleador | Confirmado; usted precisó además que el 25 % del empleador **sí aporta a IESS** (continuidad de aportación) | — |
+
+Con esas correcciones, el motor ya implementa: días de enfermedad 1-3 pagados al 100 % pero excluidos de la base de IESS (gravan impuesto a la renta, igual que una liquidación de vacaciones); desde el día 4, esos días simplemente no se pagan (el empleador no paga nada, el IESS paga su subsidio fuera de esta nómina); maternidad al 25 %, incluida en la base de IESS e impuesto a la renta; paternidad sin ningún efecto en el cálculo (se paga y se aporta igual que un día trabajado, solo se registra para el expediente); permiso no pagado y falta injustificada al 0 %, reduciendo ambas bases por igual. Los días de ausencia no pueden superar los días del período.
+
+**Lo que sigue fuera de nuestro alcance:** el envío de la novedad "Subsidiado" a la plataforma del IESS es un trámite administrativo aparte, no un cálculo; el sistema no lo automatiza.
+
 ## 5. Requisitos mínimos para una nueva homologación
 
 | Requisito | Respuesta |
@@ -144,7 +159,7 @@ Con esta versión ya no hay filas de la matriz que dependan de que nosotros prog
 
 1. **D1, D2, D4 y D6:** aprobados por el titular del proyecto (D1: reconocimiento por la edad sin acreditación, a los 65 años, confirmado el 22-09-2026 con la Ley Orgánica de las Personas Adultas Mayores; D4: redondeo días→meses del sustituto, aprobado el 22-09-2026); queda la firma de aceptación del responsable tributario.
 2. **D7:** lista de autoridades válidas por condición y si la verificación interna por otra persona basta como validación documental (el fundamento legal del tope ya quedó verificado).
-3. **Caso 8 (ausencias) y caso 11:** reglas para cada régimen y para las ausencias.
+3. **Caso 11:** reglas para cada régimen especial (Galápagos, no residentes, convenio, impuesto asumido).
 4. **D5 y caso 10:** verificamos hoy en `sri.gob.ec` que el catálogo y la ficha siguen vigentes para 2024/2025, sin versión 2026 ni Formulario 107 publicados; avísenos si consigue una versión distinta.
 5. **Fuente normativa:** confirmar la fecha de la última reforma de la LRTI que debe citarse.
 
