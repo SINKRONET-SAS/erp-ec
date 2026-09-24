@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-24T19:58:47.509Z",
+  "updatedAt": "2026-09-24T19:48:04.263Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -210,7 +210,6 @@
     "docs/evidencias/AuditLock.before-DI25-06-CI-20260924T144519Z.json",
     "docs/evidencias/AuditLock.before-DI25-06-CIERRE-FASE-20260924T143043Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-20260924T194804Z.json",
-    "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-CI-20260924T195847Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-CI-FIX-20260924T172644Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-CI-URL-20260924T173601Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-CIERRE-FASE-20260924T171635Z.json",
@@ -345,8 +344,7 @@
     "DI25-07 CI verde del commit a77c322 registrado en la evidencia (run 36034527612).",
     "DI25-07 re-auditoria de exclusiones (24-09-2026): corregidos falsos positivos sobre RDEP (catalogo 2026 y validador de esquema del DIMM), Formulario 107, talon del DIMM y certificado SRI; nueva evidencia DI25-07/validacion-rdep-dimm.json y scripts/verify-rdep-dimm.py.",
     "DI25-07 re-auditoria de exclusiones (24-09-2026): corregidos falsos positivos sobre RDEP (catalogo 2026 y validador de esquema del DIMM), Formulario 107, talon del DIMM y certificado SRI; nueva evidencia DI25-07/validacion-rdep-dimm.json y scripts/verify-rdep-dimm.py.",
-    "Homologacion bancaria (nomina) 24-09-2026: fichas tecnicas oficiales verificadas de fuente primaria (Pichincha, Produbanco, Banco General Ruminahui; docs/evidencias/DI25/bancario/, SHA-256 en su manifiesto) e implementadas en addons/erpec_treasury/bank_export.py (lote congelado inmutable, restringido al mismo banco del beneficiario, sin ejecutar ningun pago). Verificado campo a campo contra el ejemplo numerico oficial de Produbanco. Se descarto explicitamente la plantilla generica de nuevo_nomina (10 campos identicos para 3 bancos distintos) como fuente de campos reales; solo se tomo su arquitectura de referencia. Guayaquil identificado (20 campos) pero bloqueado porque esa fuente no declara el delimitador; Pacifico/Internacional/Bolivariano y proveedores siguen sin ficha tecnica suficiente. 19 pruebas nuevas (tests/test_bank_export.py): 7 en base limpia y 12 sobre copia sembrada de la demo, 0 fallos. Suite integrada completa: 646 pruebas, 0 fallos, 0 errores, 12 omisiones.",
-    "DI25-07 CI verde del commit a3dbba3 (homologacion bancaria) registrado en la evidencia (run 36050867808)."
+    "Homologacion bancaria (nomina) 24-09-2026: fichas tecnicas oficiales verificadas de fuente primaria (Pichincha, Produbanco, Banco General Ruminahui; docs/evidencias/DI25/bancario/, SHA-256 en su manifiesto) e implementadas en addons/erpec_treasury/bank_export.py (lote congelado inmutable, restringido al mismo banco del beneficiario, sin ejecutar ningun pago). Verificado campo a campo contra el ejemplo numerico oficial de Produbanco. Se descarto explicitamente la plantilla generica de nuevo_nomina (10 campos identicos para 3 bancos distintos) como fuente de campos reales; solo se tomo su arquitectura de referencia. Guayaquil identificado (20 campos) pero bloqueado porque esa fuente no declara el delimitador; Pacifico/Internacional/Bolivariano y proveedores siguen sin ficha tecnica suficiente. 19 pruebas nuevas (tests/test_bank_export.py): 7 en base limpia y 12 sobre copia sembrada de la demo, 0 fallos. Suite integrada completa: 646 pruebas, 0 fallos, 0 errores, 12 omisiones."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -576,7 +574,6 @@
     "docs/evidencias/AuditLock.before-DI25-06-CI-20260924T144519Z.json": "c3beb80753616f265133a5e5e4dc7f703c7ceda7420bc116bd58277523b6cf4c",
     "docs/evidencias/AuditLock.before-DI25-06-CIERRE-FASE-20260924T143043Z.json": "8872001452f0b123745bd0335e0e4215a4586c82686ae654329ccc32d1fdd675",
     "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-20260924T194804Z.json": "e770efd148fb4e4166b254334110c6706449023b4f747f41adcde07b4c28d3c6",
-    "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-CI-20260924T195847Z.json": "789b0521749677b86a5ed74ccbc772c5941182f40f9add2eceae70baaa60fd80",
     "docs/evidencias/AuditLock.before-DI25-07-CI-FIX-20260924T172644Z.json": "429e674091d7348469faa208bbb2133c3f8e04a6cd1207532d845feceeb07fc5",
     "docs/evidencias/AuditLock.before-DI25-07-CI-URL-20260924T173601Z.json": "5018acbdfaff045037a5043e78f698a5a838133284b5dbfb78bd8bae7b896567",
     "docs/evidencias/AuditLock.before-DI25-07-CIERRE-FASE-20260924T171635Z.json": "9b5b5143510b2ad15d8d0538221edc68073470c472fa06ddf22ab9d06e2fd989",
@@ -607,7 +604,7 @@
     "docs/evidencias/DI25/DI25-06/recorrido-navegacion.json": "73c52c3100adec01a26a558239b554e92752394bebd6b6a6151027bde59418a4",
     "docs/evidencias/DI25/DI25-06/recorrido-roles-9.json": "37327d6e5a3c30919f3088da1b2a9d18d9f7091423cd5ccb3b8ca35880adb424",
     "docs/evidencias/DI25/DI25-06/recorrido-ui-despues.json": "5402a3c0cec126ab9056ce7263d736d0987e3436f8fd9c0b0b6f1ade8b7c51f2",
-    "docs/evidencias/DI25/DI25-07-cierre.json": "4f7d6797d6ac5c3e62e89d1f4d10ce2ba5ccdf216c0d9707d0c37d3cbb30d03d",
+    "docs/evidencias/DI25/DI25-07-cierre.json": "53587bc9cde70b417a6261c638bf93344b46140dfbadcf03981ebafd2fbd69de",
     "docs/evidencias/DI25/DI25-07/canal-publico-derechos-navegador.json": "af21d79f86c232a37942a84fbe23a5c368d249dc856a24d05f95a20e16bd0355",
     "docs/evidencias/DI25/DI25-07/manifiesto-capturas.json": "43a110f12cc06eb990d3d95a2923e33df9d69ae2af52eed8ae1943bb40218c97",
     "docs/evidencias/DI25/DI25-07/simulacro-respaldo-restauracion-demo.json": "62077ecc8cd26889cd7fedd415573b40e6dc93af8d21f49ff571db5939f00638",
@@ -641,9 +638,9 @@
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-CI-20260924T195847Z.json",
-  "previousAuditLockHash": "789b0521749677b86a5ed74ccbc772c5941182f40f9add2eceae70baaa60fd80",
-  "signature": "482f45c267be7800b100066e6ab4b249389a61a72b9c160f4cc02ed5d0593b1e",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-20260924T194804Z.json",
+  "previousAuditLockHash": "e770efd148fb4e4166b254334110c6706449023b4f747f41adcde07b4c28d3c6",
+  "signature": "7f57c3f1244fdd506b46ac7a0f1fad3a923867b28593a04739b29aa034ee73be",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

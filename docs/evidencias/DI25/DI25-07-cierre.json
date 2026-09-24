@@ -49,10 +49,10 @@
   "newModules": ["erpec_acceptance (matriz y pruebas de aceptación, sin modelos)", "erpec_website_entry (entrada pública y canal de derechos)"],
   "newTools": ["scripts/backup-restore-drill.py", "scripts/test-seeded-copy.py"],
   "ci": {
-    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36034527612",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36050867808",
     "conclusion": "success",
     "checks": ["gobierno", "Suite integrada (imagen sin fuentes montadas)", "Auditoría de dependencias", "Arranque real de imagen customer", "Arranque real de imagen controller"],
-    "note": "Commit a77c322. El run anterior (348c9b1) falló solo en gobierno porque la matriz generada no coincidía con su fuente; corregido en a77c322."
+    "note": "Commit a3dbba3 (homologación bancaria de nómina, DI25-07.6). Runs previos también verdes: a77c322 (36034527612), 8123735 (36037676098), 33cfbe2 (36045596773)."
   },
   "demo": {
     "deployed": true,
