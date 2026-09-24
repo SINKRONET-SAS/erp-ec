@@ -34,6 +34,20 @@ encargado→responsable) y 46 (3 días al titular si hay riesgo para sus derecho
 fundamentales, salvo una de las tres excepciones tasadas del propio Art. 46).
 Ningún correo real se envía: los recordatorios usan `mail.activity.mixin`
 (tareas internas visibles en Actividades), no el servidor de correo.
+
+Responsable del tratamiento: verificado el 24-09-2026 a instancia del titular. Cada modelo de este
+módulo exige `company_id` (por defecto la empresa activa de quien opera el registro, nunca una empresa
+fija) y sus propios campos de responsable (`responsible_id`, `assessed_by`,
+`res.company.ec_dp_public_responsible_id`) también quedan sin valor por defecto salvo el usuario que
+actúa. Bajo el modelo de OP08 (base de datos separada por cliente) esto significa que el Responsable del
+Tratamiento — y quien responde por la conservación fiscal de 7 años (Art. 41 del Reglamento de
+Comprobantes de Venta) de sus propios comprobantes — es siempre el Cliente (el titular del RUC que emite
+esos comprobantes, dueño de su propia base de datos), nunca SINKRONET/Fundador. SINKRONET solo provee el
+software y el hospedaje (rol de Encargado del Tratamiento sobre la infraestructura, no sobre las
+decisiones de retención o respuesta a los titulares) salvo que un contrato de tratamiento de datos diga
+lo contrario. La instancia "fundador" seeded en este proyecto es la propia empresa de SINKRONET
+operando su propio negocio (con sus propios registros de este módulo, legítimamente); no representa ni
+sustituye la responsabilidad de ningún cliente real.
 """
 from datetime import timedelta
 
