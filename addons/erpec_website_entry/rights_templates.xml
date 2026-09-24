@@ -1,0 +1,47 @@
+<odoo>
+<template id="rights_form" name="Derechos sobre tus datos personales">
+  <t t-call="website.layout">
+    <t t-set="pageName" t-value="'derechos-datos'"/>
+    <div id="wrap" class="oe_structure">
+      <section class="pt48 pb48"><div class="container" style="max-width: 720px;">
+        <h1>Derechos sobre tus datos personales</h1>
+        <p>Puedes pedir acceso, rectificación, eliminación, oposición, portabilidad o suspensión del tratamiento de tus datos (Ley Orgánica de Protección de Datos Personales). Respondemos en <t t-esc="days"/> días.</p>
+        <p>Antes de responder verificaremos tu identidad. Algunos datos, como los comprobantes tributarios, deben conservarse por obligación legal durante el plazo mínimo que fija la normativa; te indicaremos cuáles.</p>
+        <div t-if="not enabled" class="alert alert-warning" role="status">Este canal no está habilitado en este momento.<t t-if="rights_email"> Escribe a <a t-att-href="'mailto:' + rights_email" t-esc="rights_email"/>.</t></div>
+        <div t-if="errors" class="alert alert-danger" role="alert"><ul class="mb-0"><li t-foreach="errors" t-as="error" t-esc="error"/></ul></div>
+        <form t-if="enabled" action="/derechos-datos/enviar" method="post" class="mt-3">
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+          <div class="d-none" aria-hidden="true"><label for="website_url">No completar</label><input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off"/></div>
+          <div class="mb-3"><label for="request_type" class="form-label">Derecho que quieres ejercer</label>
+            <select id="request_type" name="request_type" class="form-select" required="required"><option value="">Elige una opción</option>
+              <option t-foreach="types" t-as="kind" t-att-value="kind[0]" t-att-selected="'selected' if form.get('request_type') == kind[0] else None" t-esc="kind[1]"/></select></div>
+          <div class="mb-3"><label for="requester_name" class="form-label">Nombre completo</label>
+            <input type="text" id="requester_name" name="requester_name" class="form-control" required="required" maxlength="120" autocomplete="name" t-att-value="form.get('requester_name')"/></div>
+          <div class="mb-3"><label for="requester_identification" class="form-label">Cédula, RUC o pasaporte</label>
+            <input type="text" id="requester_identification" name="requester_identification" class="form-control" required="required" maxlength="30" t-att-value="form.get('requester_identification')"/></div>
+          <div class="mb-3"><label for="requester_email" class="form-label">Correo para responderte</label>
+            <input type="email" id="requester_email" name="requester_email" class="form-control" required="required" maxlength="160" autocomplete="email" t-att-value="form.get('requester_email')"/></div>
+          <div class="mb-3"><label for="description" class="form-label">Detalle de tu solicitud (opcional)</label>
+            <textarea id="description" name="description" class="form-control" rows="4" maxlength="2000"><t t-esc="form.get('description')"/></textarea></div>
+          <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+        </form>
+        <p t-if="enabled and rights_email" class="mt-4 text-muted">También puedes escribir a <a t-att-href="'mailto:' + rights_email" t-esc="rights_email"/>.</p>
+      </div></section>
+    </div>
+  </t>
+</template>
+<template id="rights_done" name="Solicitud de derechos recibida">
+  <t t-call="website.layout">
+    <t t-set="pageName" t-value="'derechos-datos-recibida'"/>
+    <div id="wrap" class="oe_structure">
+      <section class="pt48 pb48"><div class="container" style="max-width: 720px;">
+        <h1>Recibimos tu solicitud</h1>
+        <p>Referencia: <strong t-esc="reference"/>.</p>
+        <p>Verificaremos tu identidad y te responderemos a más tardar el <strong t-esc="deadline"/> (<t t-esc="days"/> días desde hoy).</p>
+        <p t-if="rights_email">Si necesitas ayuda, escribe a <a t-att-href="'mailto:' + rights_email" t-esc="rights_email"/>.</p>
+        <p><a href="/" class="btn btn-outline-primary">Volver al inicio</a></p>
+      </div></section>
+    </div>
+  </t>
+</template>
+</odoo>

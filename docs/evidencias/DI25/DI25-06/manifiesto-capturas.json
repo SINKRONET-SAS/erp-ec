@@ -5,6 +5,7 @@
     "antes-1-entrada.png": "9a22d6a841b94fc7ea429fd84eb5e5f4401d8aac9977274897820cb1217503c9",
     "antes-2-inicio.png": "0dc91d327dd36d6a2b8b7f5036512cca243c2d6934c8f7472b23688b0651495d",
     "antes-4-emisiones.png": "cd2a1cfb24b76dd9973580116b7504b95c71b6cd8629125e6b319bc4f445f0fa",
+    "cambio-empresa-despues.png": "6671a67e4b3ec3f6221d858f21adeae5425a750ce6e6b7ce0949f1a17d3803bd",
     "despues-1-entrada-1280.png": "acbd606ca4f9da9412ffa9ea6716f0b263329aadf06f16270ade3b580f78d5b6",
     "despues-1-entrada-360.png": "c29afdcf81595c492daae55574ee35f5e78a7033ae166a7e5bbbce3b7a03c869",
     "despues-1-entrada-768.png": "8b393180886de0480a741abad75e945dac0ad11cd1a661a92251c5692070daab",
@@ -15,6 +16,15 @@
     "despues-2-inicio-qa_basic-1280.png": "d4c316df848c61e2781acf3f06a1211edec4ab2a396b19bc229f02fd4cdb6181",
     "despues-3-area-fiscal-qa_admin.png": "a72e3a44a36d766477d5babaf5fbbebc6d638d1570fa5ab80b39a3ef308c7220",
     "despues-4-emisiones-qa_admin.png": "1b1eff17693fbe7f35cb315e60f2fa709dea1ae811fa30bdd4b7980d45464a47",
-    "despues-4-emisiones-qa_basic.png": "65a425a537df231ff6a1130cffa76d3291f9c92640eef00be4871e35fac4d6e8"
+    "despues-4-emisiones-qa_basic.png": "65a425a537df231ff6a1130cffa76d3291f9c92640eef00be4871e35fac4d6e8",
+    "roles-qa_admin.png": "f7d9badc280fc06fc6148893fe9c55ed2ba0c4371be343544a17d5f54e9c85d3",
+    "roles-qa_basic.png": "18b6786d2a565ca41215a42ce90a1fde23f177e64e1bb228687928adce82afa9",
+    "roles-qa_bodega.png": "39e20ac2285d138563cae3bb3f2042a9b6d4c3592117e9029a5ab87439aff4af",
+    "roles-qa_comprador.png": "e627015fef23031b9712c19e728ea983f359e2d11d111a4d6c2104d2e5beb51f",
+    "roles-qa_contador.png": "1039b330179e74ce7c0b584a7c06ae6c68901aa24da2b1385e674fb73eb87b5a",
+    "roles-qa_nomina.png": "c3f7673eb0062f317305f801ef242db079f2e5933007d3efaa049bb66375ab92",
+    "roles-qa_operario.png": "8f815e14609331383b651bbd4a062f0c8a8972540044794e3930b0c7a663821d",
+    "roles-qa_supervisor.png": "06f99bb722924943ba2a6a8918fb7fe0433693b31fa4e24c5c638df674f4abb2",
+    "roles-qa_vendedor.png": "7660a2a682c0d926d5a7b502175b2f00108d54daedac8cac6f4e12dcc85c371a"
   }
 }

@@ -28,4 +28,6 @@
     <xpath expr="//a[contains(@t-attf-href, '/web/signup')]" position="replace"><a t-if="signup_enabled" class="btn btn-link btn-sm" t-attf-href="/web/signup?{{ keep_query() }}">Crear una cuenta</a></xpath>
     <xpath expr="//input[@name='password']" position="after"><a t-if="reset_password_enabled" class="erpec_login_reset" t-attf-href="/web/reset_password?{{ keep_query() }}">Recuperar contraseña</a></xpath>
   </template>
+  <!-- DI25-06.3: el meta viewport del núcleo incluye user-scalable=no, que impide ampliar en móvil (WCAG 1.4.4). -->
+  <template id="viewport_allows_zoom" inherit_id="web.webclient_bootstrap" priority="20"><xpath expr="//meta[@name='viewport']" position="attributes"><attribute name="content">width=device-width, initial-scale=1</attribute></xpath></template>
 </odoo>

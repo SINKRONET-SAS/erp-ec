@@ -1,0 +1,8 @@
+{
+  "phase": "DI25-07",
+  "nota": "Manifiesto de capturas binarias (PNG); el gobierno no hashea binarios, se registran aquí con SHA-256.",
+  "archivos": {
+    "canal-derechos-formulario.png": "1cca9706f66af3d92c017cb97257f70a0eebaa9cc49b663591e8b67afe62eafe",
+    "canal-derechos-recibida.png": "9a45dcd487a43bce2019637256be589da58c66149a0306aa80a96d5b183969db"
+  }
+}

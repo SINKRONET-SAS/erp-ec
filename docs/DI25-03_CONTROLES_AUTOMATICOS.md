@@ -62,7 +62,7 @@ La proyección del saldo supone que el último mes se repite durante los meses q
 
 ### Lo que sigue sin poder cerrarse desde el sistema
 
-- **D5 y caso 10:** el catálogo y validador RDEP 2026 y el formato oficial del Formulario 107 los publica el SRI. Mientras tanto el XML es vista previa y no se afirma compatibilidad.
+- **D5 y caso 10:** el catálogo RDEP 2026 ya lo entregó el SRI (en el DIMM instalado; sus tablas de renta y canasta coinciden con los parámetros de nómina). Falta ejecutar el validador del plugin sobre el XML y confirmar el formato del Formulario 107. Mientras tanto el XML es vista previa y no se afirma compatibilidad.
 - **Casos 3 y 9:** matriz de incidencia por concepto y reglas de devengo y pago de décimos, vacaciones y fondos de reserva. Requieren reglas aprobadas.
 - **Caso 8 (ausencias) y caso 11:** requieren reglas y parametrización aprobadas para cada régimen.
 - **D1:** resuelto por el titular el 21-09-2026: el adulto mayor se reconoce por la edad que resulta de la fecha de nacimiento, sin acreditación documental (18.0.1.14.1). Queda por aclarar si la edad mínima es 65 años (vigente) o 60.

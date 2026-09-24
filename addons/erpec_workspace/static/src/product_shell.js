@@ -2,11 +2,14 @@
 import { patch } from "@web/core/utils/patch";
 import { WebClient } from "@web/webclient/webclient";
 import { NavBar } from "@web/webclient/navbar/navbar";
+import { user } from "@web/core/user";
 
 patch(WebClient.prototype, {
     setup() {
         super.setup(...arguments);
         this.title.setParts({ erpec: "ERP EC" });
+        // DI25-06.3: el <html> del cliente web no declara idioma (WCAG 3.1.1); se toma del usuario.
+        document.documentElement.setAttribute("lang", (user.lang || user.context.lang || "es").replace("_", "-"));
     },
 });
 

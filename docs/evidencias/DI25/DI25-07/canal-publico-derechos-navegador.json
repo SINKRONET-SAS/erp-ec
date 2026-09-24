@@ -1,0 +1,34 @@
+{
+ "formulario_360": {
+  "axe": {
+   "ok": 32,
+   "violaciones": []
+  },
+  "overflow": false,
+  "tiene_formulario": false
+ },
+ "formulario_1280": {
+  "axe": {
+   "ok": 32,
+   "violaciones": []
+  },
+  "overflow": false,
+  "tiene_formulario": false
+ },
+ "envio": {
+  "url": "http://127.0.0.1:8369/es/derechos-datos/enviar",
+  "texto": "Recibimos tu solicitud\n\nReferencia: Público - Acceso - Titular de ensayo DI25-07.\n\nVerificaremos tu identidad y te responderemos a más tardar el 2026-10-09 (15 días desde hoy).\n\nVolver al inicio"
+ },
+ "formulario_zoom200": {
+  "axe": {
+   "ok": 32,
+   "violaciones": []
+  },
+  "overflow": false,
+  "tiene_formulario": false
+ },
+ "backend_zoom200": {
+  "ok": 22,
+  "violaciones": []
+ }
+}

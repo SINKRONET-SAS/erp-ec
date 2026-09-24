@@ -1,0 +1,428 @@
+{
+ "entorno": "Chrome (Playwright, canal chrome), demo 127.0.0.1:8369",
+ "roles": {
+  "qa_admin": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 21,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Importaciones comerciales",
+     "Retenciones contables",
+     "Tesorería",
+     "Nómina",
+     "Configuración de impuestos",
+     "Fiscal · Pruebas",
+     "Estado técnico"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_basic": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 22,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 22,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_vendedor": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Ventas"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 22,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_comprador": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Compras"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_bodega": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Inventario",
+     "Importaciones comerciales"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_operario": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Inventario",
+     "Importaciones comerciales",
+     "Producción y trabajo"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_supervisor": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Inventario",
+     "Importaciones comerciales",
+     "Producción y trabajo"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_nomina": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 21,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Importaciones comerciales",
+     "Tesorería",
+     "Nómina",
+     "Configuración de impuestos"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  },
+  "qa_contador": {
+   "360": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 360
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 768
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 1,
+    "ancho_css": 1280,
+    "axe": {
+     "reglas_ok": 21,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Importaciones comerciales",
+     "Retenciones contables",
+     "Tesorería",
+     "Configuración de impuestos",
+     "Fiscal · Pruebas"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "dpr": 2,
+    "ancho_css": 640,
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": [],
+     "serias_o_criticas": 0
+    }
+   }
+  }
+ },
+ "cambio_empresa": {
+  "antes_empresa": "Empresa autoservicio ensayo",
+  "antes_texto": "Facturación electrónica\nAlcance instalado: firma electrónica, envío directo al SRI, consulta de autorización y RIDE (emisión nativa).\nFalta configurar en esta empresa: registrar el establecimiento y el punto de emisión.\nValidación externa: solo el SRI acredita una autorización; una factura contabilizada o pagada no la garantiza. Revisa el resultado en Emisiones.\n\nConector de pruebas instalado (Facturador externo; es ",
+  "opciones": [
+   "Comercial Andina DEMO — Datos ficticios",
+   "Empresa autoservicio ensayo"
+  ],
+  "despues_empresa": "Comercial Andina DEMO — Datos ficticios",
+  "despues_texto": "Facturación electrónica\nAlcance instalado: firma electrónica, envío directo al SRI, consulta de autorización y RIDE (emisión nativa).\nFalta configurar en esta empresa: RUC de la empresa, cargar el certificado de firma electrónica.\nAmbiente actual: pruebas en todos los puntos de emisión.\nValidación externa: solo el SRI acredita una autorización; una factura contabilizada o pagada no la garantiza. Revisa el resultado e"
+ }
+}

@@ -49,6 +49,13 @@ RIGHTS_REQUEST_TYPES = [
     ('suspension', 'Suspensión del tratamiento (Art. 19 LOPDP)'),
 ]
 RIGHTS_REQUEST_DEADLINE_DAYS = 15
+# DI25-05.3. Reglamento de Comprobantes de Venta, Retención y Documentos Complementarios, Art. 41: los comprobantes de
+# venta, documentos complementarios y comprobantes de retención "deberán conservarse durante el plazo mínimo de 7 años,
+# de acuerdo a lo establecido en el Código Tributario respecto de los plazos de prescripción" (Art. 50: los anulados,
+# también siete años). Leído el 24-09-2026 en la compilación informativa que publica el SRI (sri.gob.ec, Biblioteca);
+# el texto original está en el Registro Oficial. Es un mínimo contado desde la fecha del documento, no el cómputo exacto
+# de la prescripción de cada obligación: una decisión más larga (p. ej. auditoría en curso) se registra como bloqueo legal.
+FISCAL_RETENTION_YEARS = 7
 
 BREACH_DISCOVERED_BY = [
     ('responsable', 'Responsable del tratamiento'),
@@ -127,6 +134,8 @@ class DataSubjectRequest(models.Model):
     name = fields.Char('Referencia', required=True, help='Descripción corta, por ejemplo "Acceso - Juan Pérez".')
     request_type = fields.Selection(RIGHTS_REQUEST_TYPES, string='Derecho solicitado', required=True, tracking=True)
     requester_name = fields.Char('Nombre del titular', required=True)
+    requester_email = fields.Char('Correo de contacto del titular', help='Para responder la solicitud; el sistema no envía correos por sí mismo.')
+    channel = fields.Selection([('interno', 'Registrada por el responsable'), ('publico', 'Página pública de derechos')], default='interno', required=True, readonly=True)
     requester_identification = fields.Char(
         'Identificación del titular',
         help='Cédula, RUC o pasaporte. Sirve para verificar la identidad antes de responder, '
@@ -155,6 +164,47 @@ class DataSubjectRequest(models.Model):
     ], default='new', required=True, tracking=True)
     is_overdue = fields.Boolean('Vencida', compute='_compute_is_overdue')
     notes = fields.Text('Notas internas')
+    legal_hold = fields.Boolean(
+        'Bloqueo legal', tracking=True,
+        help='Litigio, auditoría o requerimiento de una autoridad que obliga a conservar los datos aunque el plazo fiscal haya vencido. '
+             'Mientras esté activo no se puede responder como eliminada una solicitud de eliminación.')
+    legal_hold_reason = fields.Text('Motivo del bloqueo legal')
+    retention_blockers = fields.Text(
+        'Conservación obligatoria', compute='_compute_retention_blockers',
+        help='Comprobantes contabilizados del contacto dentro del plazo mínimo de conservación fiscal (7 años, Art. 41 del Reglamento de '
+             'Comprobantes de Venta, Retención y Documentos Complementarios) y bloqueo legal declarado.')
+
+    def _fiscal_retention_documents(self):
+        """Comprobantes contabilizados del contacto vinculado dentro del plazo mínimo de conservación fiscal. Sin el módulo de
+        contabilidad instalado no hay documentos fiscales que conservar."""
+        self.ensure_one()
+        if 'account.move' not in self.env or not self.partner_id:
+            return self.env['res.partner'].browse()
+        limit = fields.Date.context_today(self).replace(year=fields.Date.context_today(self).year - FISCAL_RETENTION_YEARS)
+        partners = self.partner_id.commercial_partner_id | self.partner_id.commercial_partner_id.child_ids
+        return self.env['account.move'].sudo().search([
+            ('partner_id', 'in', partners.ids), ('state', '=', 'posted'), ('date', '>=', limit),
+            ('move_type', 'in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))])
+
+    @api.depends('partner_id', 'legal_hold', 'legal_hold_reason', 'request_type')
+    def _compute_retention_blockers(self):
+        for request in self:
+            lines = []
+            if request.request_type == 'eliminacion':
+                documents = request._fiscal_retention_documents()
+                if documents:
+                    lines.append(_('%(count)s comprobante(s) contabilizado(s) dentro de los %(years)s años mínimos de conservación fiscal '
+                                   '(Art. 41 del Reglamento de Comprobantes de Venta, Retención y Documentos Complementarios); el más antiguo es del %(oldest)s.',
+                                   count=len(documents), years=FISCAL_RETENTION_YEARS, oldest=min(documents.mapped('date'))))
+                if request.legal_hold:
+                    lines.append(_('Bloqueo legal declarado: %s') % (request.legal_hold_reason or ''))
+            request.retention_blockers = '\n'.join(lines) or False
+
+    @api.constrains('legal_hold', 'legal_hold_reason')
+    def _check_legal_hold_reason(self):
+        for request in self:
+            if request.legal_hold and not (request.legal_hold_reason or '').strip():
+                raise ValidationError(_('Indica el motivo del bloqueo legal (litigio, auditoría o requerimiento de autoridad).'))
 
     @api.depends('received_date')
     def _compute_deadline_date(self):
@@ -190,6 +240,10 @@ class DataSubjectRequest(models.Model):
                 raise UserError(_('Verifica la identidad del titular antes de responder la solicitud.'))
             if not request.response_notes:
                 raise UserError(_('Registra la respuesta entregada antes de marcar la solicitud como respondida.'))
+            if request.request_type == 'eliminacion' and request.retention_blockers and not (request.exception_notes or '').strip():
+                raise UserError(_('No se puede responder como eliminada sin documentar la excepción: %s\n'
+                                  'Registra en "Excepción aplicada" qué datos se conservan por obligación legal (Art. 18 LOPDP) y responde solo '
+                                  'lo que sí se elimina, o rechaza la solicitud.') % request.retention_blockers)
         self.write({'state': 'answered', 'response_date': fields.Date.context_today(self)})
 
     def action_reject(self):
@@ -318,3 +372,92 @@ class DataBreachIncident(models.Model):
             if incident.risk_to_rights and not incident.titular_notified_date and not incident.titular_notice_exception:
                 raise UserError(_('Notifica al titular o registra la excepción aplicada (Art. 46 LOPDP) antes de cerrar.'))
         self.write({'state': 'closed'})
+
+
+class DataProcessor(models.Model):
+    """DI25-05.4: encargados y subencargados del tratamiento. No se precarga ningún proveedor: los declara el responsable."""
+    _name = 'erpec.data.processor'
+    _description = 'Encargado o subencargado del tratamiento de datos personales (LOPDP)'
+    _inherit = ['mail.thread']
+    _order = 'role, name'
+
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    name = fields.Char('Proveedor', required=True)
+    role = fields.Selection([('encargado', 'Encargado'), ('subencargado', 'Subencargado')], required=True, default='encargado', tracking=True)
+    parent_id = fields.Many2one('erpec.data.processor', string='Encargado principal', domain="[('role', '=', 'encargado'), ('company_id', '=', company_id)]",
+                                help='Un subencargado trata datos por cuenta de un encargado; se indica cuál.')
+    service = fields.Text('Servicio y finalidad', required=True, help='Qué hace con los datos y para qué actividad del RAT.')
+    activity_ids = fields.Many2many('erpec.data.processing.activity', string='Actividades de tratamiento (RAT)')
+    data_categories = fields.Text('Categorías de datos que recibe', required=True)
+    contract_reference = fields.Char('Contrato o cláusulas de encargo', help='Referencia del instrumento que regula el encargo; sin él no se declara vigente.')
+    security_measures = fields.Text('Medidas de seguridad exigidas')
+    cross_border = fields.Boolean('Transferencia internacional')
+    transfer_country = fields.Char('País destino')
+    transfer_mechanism = fields.Text('Mecanismo lícito de la transferencia',
+                                     help='Consentimiento específico u otro mecanismo lícito (LOPDP, régimen de transferencias internacionales; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, LEGAL-06).')
+    rnpd_reference = fields.Char('Registro en el RNPD', help='Las transferencias internacionales deben registrarse en el Registro Nacional de Protección de Datos Personales (SPDP).')
+    responsible_id = fields.Many2one('res.users', string='Responsable interno', required=True, default=lambda self: self.env.user)
+    state = fields.Selection([('draft', 'Borrador'), ('active', 'Vigente'), ('under_review', 'En revisión')], default='draft', required=True, tracking=True)
+    notes = fields.Text('Notas')
+    _sql_constraints = [('name_company_unique', 'unique(company_id,name,role)', 'Ya existe este proveedor con el mismo rol en la empresa.')]
+
+    @api.constrains('role', 'parent_id')
+    def _check_parent(self):
+        for processor in self:
+            if processor.role == 'subencargado' and not processor.parent_id:
+                raise ValidationError(_('Un subencargado requiere indicar su encargado principal.'))
+            if processor.role == 'encargado' and processor.parent_id:
+                raise ValidationError(_('Un encargado no depende de otro encargado; márcalo como subencargado.'))
+
+    @api.constrains('cross_border', 'transfer_country', 'transfer_mechanism', 'state', 'rnpd_reference', 'contract_reference')
+    def _check_transfer_and_contract(self):
+        for processor in self:
+            if processor.cross_border and not (processor.transfer_country and (processor.transfer_mechanism or '').strip()):
+                raise ValidationError(_('Una transferencia internacional requiere país destino y mecanismo lícito.'))
+            if processor.state == 'active':
+                if not (processor.contract_reference or '').strip():
+                    raise ValidationError(_('Un proveedor vigente requiere la referencia del contrato o cláusulas de encargo.'))
+                if processor.cross_border and not (processor.rnpd_reference or '').strip():
+                    raise ValidationError(_('Una transferencia internacional vigente requiere su referencia de registro en el RNPD.'))
+
+
+class DpoAssessment(models.Model):
+    """DI25-05.4: evaluación de obligatoriedad del Delegado de Protección de Datos (Art. 49 LOPDP, según LEGAL-06). No la decide
+    el sistema: la registra el responsable con su motivación; si el DPD es obligatorio exige su designación y registro."""
+    _name = 'erpec.data.dpo.assessment'
+    _description = 'Evaluación del Delegado de Protección de Datos (Art. 49 LOPDP)'
+    _inherit = ['mail.thread']
+
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    public_entity = fields.Boolean('Entidad pública')
+    large_scale_monitoring = fields.Boolean('Monitoreo sistemático a gran escala')
+    large_scale_sensitive = fields.Boolean('Tratamiento a gran escala de datos sensibles')
+    sector = fields.Selection([('education_minors', 'Educación con datos de menores'), ('financial', 'Entidad financiera'), ('insurance', 'Aseguradora'),
+                               ('health', 'Salud')], string='Sector con obligación expresa')
+    dpo_required = fields.Boolean('DPD obligatorio', compute='_compute_dpo_required', store=True)
+    justification = fields.Text('Motivación de la evaluación', required=True, help='Por qué se concluye que el DPD es o no obligatorio (Art. 49 LOPDP).')
+    dpo_name = fields.Char('Delegado designado')
+    dpo_contact = fields.Char('Contacto del delegado')
+    spdp_registration = fields.Char('Registro ante la SPDP')
+    assessed_by = fields.Many2one('res.users', string='Evaluado por', required=True, default=lambda self: self.env.user)
+    assessed_on = fields.Date('Fecha de evaluación', required=True, default=fields.Date.context_today)
+    _sql_constraints = [('company_unique', 'unique(company_id)', 'Ya existe una evaluación del DPD para esta empresa.')]
+
+    @api.depends('public_entity', 'large_scale_monitoring', 'large_scale_sensitive', 'sector')
+    def _compute_dpo_required(self):
+        for assessment in self:
+            assessment.dpo_required = bool(assessment.public_entity or assessment.large_scale_monitoring or assessment.large_scale_sensitive or assessment.sector)
+
+    @api.constrains('dpo_required', 'dpo_name', 'dpo_contact', 'spdp_registration')
+    def _check_designation(self):
+        for assessment in self:
+            if assessment.dpo_required and not (assessment.dpo_name and assessment.dpo_contact and (assessment.spdp_registration or '').strip()):
+                raise ValidationError(_('El DPD es obligatorio según esta evaluación: registra el delegado designado, su contacto y su registro ante la SPDP.'))
+
+
+class Company(models.Model):
+    _inherit = 'res.company'
+    ec_dp_public_responsible_id = fields.Many2one(
+        'res.users', string='Responsable del canal público de derechos',
+        help='Recibe las solicitudes presentadas desde la página pública de derechos del titular. Sin responsable el canal público queda deshabilitado.')
+    ec_dp_rights_email = fields.Char('Correo público para derechos del titular', help='Se muestra en la página pública como vía alternativa; no se envían correos desde el sistema.')

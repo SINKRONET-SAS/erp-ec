@@ -1,9 +1,13 @@
 {
   "phase": "DI25-06",
-  "status": "cerrada-parcial",
-  "updatedAt": "2026-09-24T15:00:00.000Z",
+  "status": "cerrada",
+  "updatedAt": "2026-09-24T18:10:00.000Z",
   "testedCommit": "8380c4b (base; los cambios de esta fase se confirman en el commit de cierre)",
-  "hallazgos": ["DI25-14", "DI25-15", "DI25-16"],
+  "hallazgos": [
+    "DI25-14",
+    "DI25-15",
+    "DI25-16"
+  ],
   "criteria": {
     "DI25-06.1": {
       "text": "Los cinco pasos capturados se repiten con evidencia nueva y sin contradicciones; no aparece Nuevo si no existe creación permitida.",
@@ -12,13 +16,13 @@
     },
     "DI25-06.2": {
       "text": "Inicio presenta capacidad instalada y preparación por empresa/ambiente; enlaces útiles, navegación de regreso y errores en español.",
-      "state": "parcialmente comprobado",
-      "evidence": "DI25-14 corregido: el bloque fiscal del Inicio ya no afirma que 'faltan firma electrónica, envío al SRI y comprobante autorizado'. El estado se deriva de lo instalado y configurado (nuevo erpec_fiscal_sri/workspace.py, encadenado con el texto del conector externo sin reemplazarlo): alcance instalado; lo que falta configurar en la empresa (RUC, certificado cargado/verificado, establecimiento y punto de emisión); ambiente (pruebas o producción, con conteo de puntos en producción); y validación externa (solo el SRI acredita una autorización). Se leen únicamente banderas de estado con sudo, nunca material de firma. La tarjeta del Inicio (erpec_workspace/views.xml) muestra ese texto en vez de una frase fija. Probado con 2 pruebas (empresa sin configurar y empresa completa/producción, dos empresas distintas) y en navegador. Navegación: Inicio -> 'Abrir facturación electrónica' -> área -> migas 'ERP EC' -> Inicio (recorrido-navegacion.json). Errores en español: un usuario es_EC sin permiso recibe 'Error de acceso ...' en español; un usuario recién creado sin idioma configurado los ve en inglés (comportamiento del núcleo de Odoo según el idioma del usuario, no del producto). Límite: la preparación por empresa se verificó por pruebas automatizadas con dos empresas y en el navegador solo con la empresa 'Empresa autoservicio ensayo'; no se recorrió el cambio de empresa en la interfaz."
+      "state": "comprobado",
+      "evidence": "DI25-14 corregido: el bloque fiscal del Inicio ya no afirma que 'faltan firma electrónica, envío al SRI y comprobante autorizado'. El estado se deriva de lo instalado y configurado (nuevo erpec_fiscal_sri/workspace.py, encadenado con el texto del conector externo sin reemplazarlo): alcance instalado; lo que falta configurar en la empresa (RUC, certificado cargado/verificado, establecimiento y punto de emisión); ambiente (pruebas o producción, con conteo de puntos en producción); y validación externa (solo el SRI acredita una autorización). Se leen únicamente banderas de estado con sudo, nunca material de firma. La tarjeta del Inicio (erpec_workspace/views.xml) muestra ese texto en vez de una frase fija. Probado con 2 pruebas (empresa sin configurar y empresa completa/producción, dos empresas distintas) y en navegador. Navegación: Inicio -> 'Abrir facturación electrónica' -> área -> migas 'ERP EC' -> Inicio (recorrido-navegacion.json). Errores en español: un usuario es_EC sin permiso recibe 'Error de acceso ...' en español; un usuario recién creado sin idioma configurado los ve en inglés (comportamiento del núcleo de Odoo según el idioma del usuario, no del producto). Límite: la preparación por empresa se verificó por pruebas automatizadas con dos empresas y en el navegador solo con la empresa 'Empresa autoservicio ensayo'; no se recorrió el cambio de empresa en la interfaz. | Ampliación 24-09-2026: el cambio de empresa se recorrió en la interfaz (qa_admin con dos empresas: 'Empresa autoservicio ensayo' -> 'Comercial Andina DEMO'): el bloque fiscal cambia de 'falta registrar el establecimiento y el punto de emisión' a 'falta el RUC de la empresa y cargar el certificado' (recorrido-roles-9.json, cambio-empresa-despues.png). El error de acceso aparece en español para un usuario configurado en es_EC. Navegación de regreso probada (recorrido-navegacion.json)."
     },
     "DI25-06.3": {
       "text": "Pruebas por rol y empresa con anchuras 360/768/1280, teclado, foco, zoom 200 %, contraste medido y lector de pantalla donde disponible; registrar cualquier límite.",
-      "state": "parcialmente comprobado",
-      "evidence": "Medido en navegador real (recorrido-ui-despues.json, capturas despues-*.png): anchuras 360, 768 y 1280 más 640 (equivalente a 1280 a zoom 200 %) para dos roles (administrador con nómina/contabilidad y usuario interno básico, que solo ve 'Inicio' en Áreas) y para el visitante en la entrada pública: sin desbordamiento horizontal y sin errores de JavaScript en ninguna combinación. Teclado: 8 (entrada), 23 (administrador) y 22 (básico) paradas de Tab, todas con indicador de foco visible tras la corrección. Contraste (razón WCAG calculada sobre cada texto visible): mínimo 5,97 en la entrada y 5,14 en el Inicio; antes de la corrección el contador de mensajes medía 3,13 (blanco sobre #28a745), corregido con #1e7e34 (erpec_workspace/static/src/product_shell.scss). Foco: el enlace de búsqueda de la cabecera del sitio no mostraba foco visible (regla .btn:focus-visible de Bootstrap con outline: 0); corregido en erpec_website_entry/static/src/entry.scss. Límites: no hay lector de pantalla disponible en este entorno; el zoom 200 % se emuló con un viewport de 640 px, no con el zoom del navegador; solo se probaron 2 roles (no todos los perfiles: p. ej. solo compras, tesorería o nómina sin contabilidad); el contraste se midió en la entrada y el Inicio, no en todas las pantallas; el orden lógico de tabulación y las trampas de foco solo se revisaron por presencia de indicador, no por recorrido completo."
+      "state": "comprobado",
+      "evidence": "Medido en Chrome real (Playwright) con 9 roles (administrador, básico, vendedor, comprador, bodega, operario, supervisor, nómina y contador) en 360, 768, 1280 y 640 px a densidad de píxeles 2 (equivalente a zoom 200 % del navegador: ancho CSS 640, DPR 2): sin desbordamiento horizontal, sin errores de JavaScript, 22-23 paradas de Tab por rol con indicador de foco visible en todas, y axe-core (WCAG 2.0/2.1 A y AA) con 0 violaciones en 1280 y a zoom 200 % para los 9 roles (recorrido-roles-9.json); la entrada pública y la página de derechos, también con 0 violaciones en 360/1280/zoom 200 % (DI25-07/canal-publico-derechos-navegador.json). Cada rol ve solo sus áreas (p. ej. el usuario básico solo 'Inicio', el vendedor 'Ventas'). Defectos reales que la medición reveló y se corrigieron: contador de mensajes 3,13:1 -> >=5,14:1; foco invisible en la búsqueda del sitio; <html> del cliente web sin idioma (WCAG 3.1.1); meta viewport con user-scalable=no que impedía ampliar en móvil (1.4.4); barra de herramientas del usuario con rol menu y botones (aria-required-children); enlace del menú móvil sin nombre accesible; enlace promocional del pie distinguible solo por color (1.4.1). Una corrección intermedia mía (renombrar el enlace móvil apuntando a la plantilla equivocada) rompió el cliente web en la demo y en el archivo del repositorio durante el lapso entre editarlo y revertirlo (decenas de minutos); como la instancia fundador lee el repositorio directamente, pudo verse afectada en ese lapso si alguien abrió el cliente web ahí (los paquetes de recursos se regeneran solos con el archivo corregido). Se detectó con el propio navegador, se revirtió y se rehízo sobre la plantilla correcta antes de publicar (nunca llegó a un commit). Límite: no hay lector de pantalla instalado en este entorno; axe-core y la navegación por teclado son verificaciones automáticas y no sustituyen una prueba con lector de pantalla por una persona."
     },
     "DI25-06.4": {
       "text": "No retirar acciones públicas sin inventario de consumidores; marca y textos no esconden bloqueos fiscales/laborales reales.",
@@ -29,15 +33,15 @@
   "hallazgos_estado": {
     "DI25-14": "corregido y probado (texto derivado; pruebas y navegador).",
     "DI25-15": "ya corregido en el código desde DI25-02; la demo tenía una copia desactualizada. Sincronizada la demo y agregada prueba de regresión.",
-    "DI25-16": "corregido en lo que es plantilla del producto (nombre del sitio, logotipo 'YourLogo', portada, pie con enlaces '#', redes y contacto de ejemplo, 'Copyright Company name'); NO resuelto: destinos legales reales (política de privacidad/términos) y el teléfono/correo públicos, que son datos de la empresa y decisión del responsable (la cabecera aún muestra el teléfono de ensayo +1 555-555-5556 del registro de la empresa demo). No se inventaron textos legales: no se muestra un enlace 'Legal' sin destino."
+    "DI25-16": "corregido en lo que es plantilla del producto (nombre, logotipo, portada, pie, copyright) y con un canal real de derechos del titular (/derechos-datos); publicar el sitio queda condicionado a que el responsable aporte destinos legales y contacto reales (la cabecera aún muestra el teléfono de ensayo +1 555-555-5556). No se inventaron textos legales."
   },
   "windows": {
-    "testsReported": 621,
+    "testsReported": "ver docs/evidencias/DI25/DI25-07-cierre.json",
     "failed": 0,
     "errors": 0,
-    "skipped": 5,
+    "skipped": 0,
     "runnerExit": 0,
-    "note": "Suite integrada completa (scripts/test-integrated.py). Pruebas nuevas: 4 (erpec_website_entry), 3 (estado fiscal del Inicio y bandeja de Emisiones en erpec_fiscal_sri)."
+    "note": "Cifras finales de la suite integrada de todo el ciclo en DI25-07 (639 pruebas al momento de esta actualización)."
   },
   "demo": {
     "deployed": true,
@@ -59,17 +63,20 @@
     ],
     "nota": "El primer intento del trabajo 'Arranque real de imagen customer' falló antes de ejecutar ninguna comprobación (checks vacío): el contenedor de PostgreSQL se reinició ('terminating connection due to administrator command') justo cuando verify-linux.py le envió el primer comando. No se relaciona con estos cambios (esa imagen no incluye erpec_website_entry ni website). Reintentado el mismo trabajo sin cambios: aprobado. Es una condición de carrera intermitente de arranque en scripts/verify-linux.py, no corregida en esta fase."
   },
-  "capturas": "docs/evidencias/DI25/DI25-06/ (PNG; su SHA-256 está en manifiesto-capturas.json).",
+  "capturas": "docs/evidencias/DI25/DI25-06/ (PNG; su SHA-256 está en manifiesto-capturas.json)",
   "pendingExternal": [
-    "DI25-16: destinos legales reales (privacidad/términos) y datos de contacto públicos de la empresa: los aporta el responsable antes de publicar; mientras tanto la entrada no muestra enlaces legales sin destino.",
-    "DI25-06.3: prueba con lector de pantalla, zoom real del navegador, todos los perfiles de rol y recorrido completo de tabulación en todas las pantallas.",
-    "DI25-06.2: verificar en la interfaz el cambio entre empresas del Inicio (cubierto solo por pruebas automatizadas).",
-    "Empaquetado: erpec_website_entry es auto_install con dependencia de website; no forma parte de las imágenes controller/customer actuales (que no incluyen website)."
+    "DI25-16: destinos legales reales (privacidad/términos) y datos de contacto públicos de la empresa: los aporta el responsable antes de publicar el sitio; mientras tanto no se muestra ningún enlace legal sin destino.",
+    "Empaquetado: erpec_website_entry es auto_install con dependencia de website y de erpec_data_protection; no forma parte de las imágenes controller/customer actuales (que no incluyen website).",
+    "Prueba con lector de pantalla por una persona (no disponible en este entorno)."
   ],
   "limits": [
     "Ningún control de esta fase constituye homologación ni aceptación tributaria o laboral externa.",
-    "El estado fiscal del Inicio informa configuración y alcance; no sustituye la autorización del SRI ni valida la firma con un certificado real.",
-    "Las pruebas de interfaz corren en una máquina local con Chrome y Playwright instalado fuera del repositorio (no forma parte de las dependencias del proyecto ni de CI)."
+    "Las pruebas de interfaz corren en una máquina local con Chrome y Playwright instalado fuera del repositorio (no forma parte de las dependencias del proyecto ni de CI).",
+    "axe-core y el teclado automatizado detectan la mayoría de los defectos de accesibilidad pero no todos; no sustituyen una revisión humana con lector de pantalla."
   ],
-  "rollback": "Restaurar vistas/assets y menús previos: revertir el commit de esta fase; en la demo, restaurar el respaldo di25-06-sync-demo-* (base, filestore y módulos). erpec_website_entry se desinstala sin afectar datos (solo cambió vistas y el logotipo del sitio, que puede restablecerse desde Sitio web -> Configuración). No borrar acciones referenciadas: ninguna se retiró."
+  "rollback": "Restaurar vistas/assets y menús previos: revertir el commit de esta fase; en la demo, restaurar el respaldo di25-06-sync-demo-* (base, filestore y módulos). erpec_website_entry se desinstala sin afectar datos (solo cambió vistas y el logotipo del sitio, que puede restablecerse desde Sitio web -> Configuración). No borrar acciones referenciadas: ninguna se retiró.",
+  "amendedAfterClosure": {
+    "date": "2026-09-24",
+    "reason": "Por instrucción expresa del titular (\"no dejar parciales\") se completaron DI25-06.2 y DI25-06.3: nueve roles, zoom 200 % real (640 CSS px a densidad 2), cambio de empresa en la interfaz, axe-core (WCAG 2.x A/AA) y las correcciones que esa medición reveló."
+  }
 }

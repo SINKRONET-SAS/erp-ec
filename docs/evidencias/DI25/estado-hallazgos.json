@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-21T11:14:15.814Z",
+  "updatedAt": "2026-09-24T18:00:00.000Z",
   "historicalDiagnostic": "docs/evidencias/DI25/hallazgos.json",
   "scope": "Estado técnico; no homologación ni cierre comercial",
   "findings": [
@@ -31,9 +31,9 @@
       "id": "DI25-04",
       "phase": "DI25-03",
       "title": "RDEP mezcla base anual acumulada con impuesto del último registro",
-      "status": "parcial-o-bloqueado",
-      "note": "Corregida la agregación por base efectiva y el orden; pendiente conciliación integral de regímenes y aceptación tributaria.",
-      "evidence": "docs/evidencias/DI25/DI25-03-progreso.json"
+      "status": "corregido-tecnicamente",
+      "note": "Agregación anual por base efectiva y orden, conciliada contra cálculo independiente (DI25-03). Casos D5 y C10 y otros ingresos no gravados quedan bloqueados por el motor y excluidos del alcance liberado hasta ejecutar el validador del plugin RDEP del DIMM sobre el XML (el catálogo 2026 ya está en el DIMM y coincide con los parámetros) y confirmar el formato del Formulario 107.",
+      "evidence": "docs/evidencias/DI25/DI25-03-cierre.json"
     },
     {
       "id": "DI25-05",
@@ -47,41 +47,41 @@
       "id": "DI25-06",
       "phase": "DI25-03",
       "title": "Una bandera grava conjuntamente conceptos laborales diferentes",
-      "status": "parcial-o-bloqueado",
-      "note": "No se amplía nómina real; casos especiales del RDEP bloqueados. Matriz de bases y reliquidación mensual sin aprobación.",
-      "evidence": "docs/evidencias/DI25/DI25-03-progreso.json"
+      "status": "corregido-tecnicamente",
+      "note": "Decisión explícita de aportabilidad IESS por beneficio y bases separadas (DI25-03, casos 3 y 9); los casos especiales sin regla verificada quedan bloqueados y excluidos, no marcados como cumplidos.",
+      "evidence": "docs/evidencias/DI25/DI25-03-cierre.json"
     },
     {
       "id": "DI25-07",
       "phase": "DI25-04",
       "title": "ATS incompleto y procedencia de catálogo pendiente de conciliar",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "Catálogo y esquema del SRI recontrastados y sellados, agregador ATS con faltantes (erpec_fiscal_ats) y validación local contra el DIMM. La presentación oficial, el talón y las ventas con autorización real quedan excluidos por límites externos explícitos.",
+      "evidence": "docs/evidencias/DI25/DI25-04-cierre.json"
     },
     {
       "id": "DI25-08",
       "phase": "DI25-02",
       "title": "Transmisión inmediata no queda acreditada por cola de un minuto",
-      "status": "parcial-o-bloqueado",
-      "note": "Disparo durable y latencia visibles; no se acredita recepción inmediata real ni cumplimiento jurídico.",
-      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+      "status": "excluido-del-alcance-liberado",
+      "note": "Disparo durable y latencia visibles; no se acredita recepción inmediata real ni cumplimiento jurídico porque el SRI de producción no está autorizado ni hay certificado real. No se declara cumplido.",
+      "evidence": "docs/evidencias/DI25/DI25-07-cierre.json"
     },
     {
       "id": "DI25-09",
       "phase": "DI25-05",
       "title": "Exclusión comercial no integrada a la entrega de campañas",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "La preferencia de exclusión se registra y el rol de pago y los comprobantes son transaccionales e independientes; no existe mecanismo de envío masivo que enforzar todavía (DI25-05.2).",
+      "evidence": "docs/evidencias/DI25/DI25-05-cierre.json"
     },
     {
       "id": "DI25-10",
       "phase": "DI25-05",
       "title": "Clave del conector fiscal sigue como Char sin cifrado propio",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "api_key migrado a erpec_secrets con lectura vacía, migración y rotación (DI25-05.1).",
+      "evidence": "docs/evidencias/DI25/DI25-05-cierre.json"
     },
     {
       "id": "DI25-11",
@@ -111,33 +111,33 @@
       "id": "DI25-14",
       "phase": "DI25-06",
       "title": "Inicio fiscal comunica capacidades desactualizadas",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "El Inicio deriva el estado fiscal de módulos, empresa, certificado y ambiente, y lo verifica con dos empresas y en navegador (DI25-06).",
+      "evidence": "docs/evidencias/DI25/DI25-06-cierre.json"
     },
     {
       "id": "DI25-15",
       "phase": "DI25-06",
       "title": "Bandeja ofrece creación manual que el servidor prohíbe",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "Sin creación manual, etiqueta Estado y estado vacío guiado desde DI25-02; la demo tenía una copia vieja, sincronizada, con prueba de regresión (DI25-06).",
+      "evidence": "docs/evidencias/DI25/DI25-06-cierre.json"
     },
     {
       "id": "DI25-16",
       "phase": "DI25-06",
       "title": "Entrada pública de demo conserva plantilla y enlaces sin destino",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "Sin plantilla de Odoo en la entrada pública (nombre, logotipo, portada, pie, copyright) y con canal real de derechos del titular. Publicar el sitio queda condicionado a que el responsable aporte textos legales y contacto reales; no se inventaron.",
+      "evidence": "docs/evidencias/DI25/DI25-06-cierre.json"
     },
     {
       "id": "DI25-17",
       "phase": "DI25-02",
       "title": "Solapamiento de adaptadores, menús y sustentos",
-      "status": "parcial-o-bloqueado",
-      "note": "Reglas comunes extraídas de adaptadores nativo/SRI; menús y cobertura completa de sustentos mantienen revisión pendiente.",
-      "evidence": "docs/evidencias/DI25/DI25-02-cierre.json"
+      "status": "corregido-tecnicamente",
+      "note": "Reglas comunes extraídas (DI25-02), mapa de dueños y consumidores con las entidades de semántica distinta conservadas y sin rutas obsoletas que retirar (docs/DI25-17_MAPA_FISCAL.md).",
+      "evidence": "docs/DI25-17_MAPA_FISCAL.md"
     },
     {
       "id": "DI25-18",
@@ -151,18 +151,19 @@
       "id": "DI25-19",
       "phase": "DI25-05",
       "title": "Privacidad requiere operación y aplicabilidad por empresa",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-tecnicamente",
+      "note": "Conservación fiscal ejecutable (7 años, Art. 41 del Reglamento de Comprobantes de Venta), bloqueo legal, encargados, evaluación del DPD y canal público de derechos (DI25-05.3/.4). Contratos y mecanismo de transferencia de los encargados: decisión del responsable, visibles en borrador.",
+      "evidence": "docs/evidencias/DI25/DI25-05-cierre.json"
     },
     {
       "id": "DI25-20",
       "phase": "DI25-07",
       "title": "Aceptación comercial transversal y externa sin cierre integral",
-      "status": "pendiente-por-dependencia",
-      "note": "La fase autorizada aún no puede comenzar sin cerrar su dependencia.",
-      "evidence": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md"
+      "status": "corregido-con-exclusiones-explicitas",
+      "note": "Ciclos operativos, roles, respaldo/restauración con RTO/RPO medidos y SMTP con acuse real demostrados. Cierre comercial solo del alcance liberado: SRI de producción, bancos, presentación oficial y publicación del sitio quedan excluidos con su siguiente acción (docs/DI25-07_ACEPTACION.md).",
+      "evidence": "docs/evidencias/DI25/DI25-07-cierre.json"
     }
   ],
-  "validatedSourceCommit": "f2366218f5f5e776c956aa5722a7180ee59e35aa"
+  "validatedSourceCommit": "f2366218f5f5e776c956aa5722a7180ee59e35aa",
+  "nota24_09": "Actualizado en DI25-07: cada hallazgo queda corregido con evidencia o excluido del alcance liberado con su bloqueo explícito; ninguno se marca cumplido por planificación."
 }

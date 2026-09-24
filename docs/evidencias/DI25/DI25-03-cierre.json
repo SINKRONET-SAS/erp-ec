@@ -67,7 +67,7 @@
     "manifest": "docs/evidencias/DI25/DI25-03-capturas.json"
   },
   "pendingExternal": [
-    "D5/C10: catalogo y validador oficial RDEP 2026 y Formulario 107 no publicados por el SRI; el XML sigue siendo vista previa interna.",
+    "D5/C10: catalogo RDEP 2026 ya entregado por el SRI (presente en el DIMM y coincidente con los parametros de nomina); falta ejecutar el validador del plugin sobre el XML y confirmar el formato del Formulario 107; el XML sigue siendo vista previa interna.",
     "C11: convenio de doble imposicion requiere que el responsable tributario registre, por pais, la tasa/mecanismo real con su referencia normativa (erpec.payroll.tax.treaty no trae ninguno precargado); sin registro, el cierre sigue bloqueado para ese empleado.",
     "C11: otros ingresos no gravados de esta relacion (other_general_interest_income, campo otrosIngRenGrav) siguen siendo un campo manual sin calculo del motor.",
     "D1,D2,D3,D4,D6,C01-C09,C11: criterios confirmados por el titular del proyecto en sesion; falta la firma formal de aceptacion del responsable tributario (los campos expertAccepted/signature de la matriz permanecen en false).",

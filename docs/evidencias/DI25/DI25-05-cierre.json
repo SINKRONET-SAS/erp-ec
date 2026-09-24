@@ -1,7 +1,7 @@
 {
   "phase": "DI25-05",
-  "status": "cerrada-parcial",
-  "updatedAt": "2026-09-23T16:40:00.000Z",
+  "status": "cerrada",
+  "updatedAt": "2026-09-24T17:30:00.000Z",
   "testedCommit": "229f91f",
   "criteria": {
     "DI25-05.1": {
@@ -16,13 +16,13 @@
     },
     "DI25-05.3": {
       "text": "Solicitudes e incidentes se prueban con roles mínimos, fechas y evidencias; conservación ejecutable respeta obligaciones fiscales y bloqueo legal.",
-      "state": "parcialmente comprobado",
-      "evidence": "erpec.data.subject.request y erpec.data.breach.incident (addons/erpec_data_protection) ya existían y cubren la primera mitad: plazos citados por artículo LOPDP, verificación de identidad obligatoria, motivo de excepción obligatorio, recordatorio interno, marca de vencimiento; el incidente calcula los tres plazos reales del Art. 43/46 y bloquea el cierre sin notificar a la Autoridad. GAP real, no fabricado: ninguna lógica conecta una solicitud de eliminación con las obligaciones de conservación fiscal/contable ni con un posible bloqueo legal antes de marcarla como respondida. No se encontró en esta sesión un plazo de conservación contable/fiscal verificado contra fuente primaria ecuatoriana para citar; construirlo exige esa verificación o que el responsable la aporte con su fuente, igual que cada cifra tributaria de DI25-03/04."
+      "state": "comprobado",
+      "evidence": "Fuente primaria verificada el 24-09-2026: Reglamento de Comprobantes de Venta, Retención y Documentos Complementarios (compilación informativa publicada por el SRI, sri.gob.ec; el texto original está en el Registro Oficial), Art. 41: los comprobantes de venta, documentos complementarios y comprobantes de retención 'deberán conservarse durante el plazo mínimo de 7 años, de acuerdo a lo establecido en el Código Tributario respecto de los plazos de prescripción'; Art. 50: los anulados, también siete años. Implementado en erpec_data_protection: FISCAL_RETENTION_YEARS=7; erpec.data.subject.request calcula retention_blockers (comprobantes contabilizados del contacto dentro de 7 años y bloqueo legal declarado, con motivo obligatorio); una solicitud de eliminación no puede marcarse respondida sin documentar la excepción (Art. 18 LOPDP) cuando hay conservación obligatoria o bloqueo legal; otros derechos no se bloquean. La vista muestra el aviso 'Conservación obligatoria' y el bloqueo legal. Pruebas: 3 en erpec_data_protection (bloqueo legal exige motivo; exige excepción; eliminación libre y otros derechos no bloqueados) y 2 cruzadas con facturas reales en erpec_acceptance (factura reciente bloquea; factura de hace 8 años no). Límites: el plazo es un mínimo contado desde la fecha del documento, no el cómputo exacto de la prescripción de cada obligación (por eso existe el bloqueo legal); no cubre obligaciones laborales/IESS (no verificadas contra fuente primaria en esta sesión) ni la conservación de asientos que no son comprobantes."
     },
     "DI25-05.4": {
       "text": "Matriz legal de tratamientos, geolocalización, encargados/subencargados, transferencias y DPD tiene fundamento vigente y responsable; canales de derechos visibles.",
-      "state": "estructura parcial, contenido pendiente del responsable",
-      "evidence": "erpec.data.processing.activity (RAT) existe con base legal (Art. 7), transferencias internacionales, mecanismo de transferencia y responsable. docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06, tiene la investigación legal primaria (LOPDP Arts. 7-24, 38-39, 43, 46, 49, con niveles de confianza explícitos) que debe alimentar la matriz. GAP real, no fabricado: no existe modelo de encargados/subencargados de tratamiento; el DPD (Art. 49) solo existe como grupo de seguridad interno, no como designación real -- LEGAL-06 ya documenta que es obligatorio solo caso por caso y que no se evaluó si esta empresa lo requiere (decisión del responsable, no del sistema); el canal de derechos (data_protection_menu) está restringido a group_data_protection_officer, uso interno de caso, no un canal público/portal accesible sin cuenta interna."
+      "state": "comprobado",
+      "evidence": "Nuevos en erpec_data_protection: erpec.data.processor (encargados y subencargados: jerarquía obligatoria, contrato para quedar vigente, transferencia internacional con país, mecanismo y referencia RNPD, responsable interno), erpec.data.dpo.assessment (evaluación de obligatoriedad del DPD según Art. 49 LOPDP: el sistema calcula si algún criterio aplica y, si aplica, exige delegado, contacto y registro SPDP; no decide por el responsable) y canal de derechos: campos en res.company (responsable y correo público) más la página pública /derechos-datos del módulo erpec_website_entry (formulario sin cuenta, CSRF, campo trampa, validación y límite por hora; crea la solicitud como tarea interna del responsable, no envía correos, la identidad la verifica el responsable), enlazada desde el pie del sitio. Matriz previa (RAT, geolocalización/transferencias en actividades, solicitudes, brechas) ya existente. Fundamento vigente: docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, LEGAL-06 (LOPDP Arts. 7-24, 43, 46, 49; Reglamento General Arts. 38-39) con sus niveles de confianza; el artículo exacto del régimen de transferencias internacionales no está verificado y se declara así en el campo. Declarado por el titular el 24-09-2026 (demo y fundador): ningún criterio del Art. 49 aplica (evaluación registrada con su motivación); encargados detectados en borrador: Google (Gmail SMTP, transferencia internacional a Estados Unidos) y PayPhone (pasarela de cobro), sin contrato ni RNPD inventados; responsable del canal público: el usuario titular. Pruebas: 4 (encargados/DPD) + 5 (canal público: deshabilitado sin responsable, envío de visitante, validación/campo trampa, CSRF, enlace del pie) y recorrido real en navegador: el visitante envió el formulario y se creó la solicitud (recorrido en docs/evidencias/DI25/DI25-07/canal-publico-derechos-navegador.json); axe-core sin violaciones en 360/1280/zoom 200 %. Decisiones abiertas dentro de la matriz (visibles, no ocultas): mecanismo lícito de transferencia y registro RNPD de Google, y contratos de ambos encargados; hasta entonces permanecen en borrador y no se declaran vigentes. La página pública solo está activa donde está instalado el sitio web (la instancia fundador no lo tiene instalado)."
     }
   },
   "windows": {
@@ -30,7 +30,8 @@
     "failed": 0,
     "errors": 0,
     "skipped": 5,
-    "runnerExit": 0
+    "runnerExit": 0,
+    "note": " | Actualizado en DI25-07: suite integrada final en docs/evidencias/DI25/DI25-07-cierre.json."
   },
   "fiscalConnectorModule": {
     "testsReported": 17,
@@ -49,15 +50,18 @@
     "note": "Ver también run 35888792989 (DI25-05.1); ambos verdes."
   },
   "pendingExternal": [
-    "DI25-05.3: fuente primaria verificada del plazo de conservación fiscal/contable aplicable, o instrucción explícita del responsable de qué se conserva y por cuánto, antes de codificar cualquier bloqueo de eliminación.",
-    "DI25-05.4: modelo de encargados/subencargados de tratamiento real de la empresa (proveedores de hosting, email, pasarelas de pago, etc.) -- trabajo nuevo, no emprendido en este incremento.",
-    "DI25-05.4: decisión del responsable sobre si se requiere un DPD real (LEGAL-06 ya da el criterio legal para decidirlo) y su designación formal si aplica.",
-    "DI25-05.4: decisión sobre si se necesita un canal de derechos público/portal (sin cuenta interna) y su construcción -- trabajo nuevo, security-sensitive, no emprendido en este incremento."
+    "DI25-05.4: contratos o cláusulas de encargo de Google y PayPhone, mecanismo lícito y registro RNPD de la transferencia a Estados Unidos (Google): decisión del responsable; los registros quedan en borrador hasta entonces.",
+    "DI25-05.4: la página pública de derechos requiere el módulo de sitio web; en la instancia fundador no está instalado (instalarlo agrega todo el sitio web de Odoo y requiere su aprobación).",
+    "DI25-05.3: obligaciones de conservación laborales/IESS y de asientos no comprobantes no están cubiertas por el bloqueo (no se verificó su fuente primaria)."
   ],
   "limits": [
     "Ningún control de esta fase constituye homologación ni aceptación legal externa.",
     "No se enviaron correos reales ni se publicó información sensible para probar riesgos.",
     "No se modificaron repositorios fuente."
   ],
-  "rollback": "Respaldo previo de base/filestore/módulo conservado en cada incremento (ver demo.backups); no reescribir asientos ni usar restauración como anulación fiscal; detener únicamente la demo antes de restaurar."
+  "rollback": "Respaldo previo de base/filestore/módulo conservado en cada incremento (ver demo.backups); no reescribir asientos ni usar restauración como anulación fiscal; detener únicamente la demo antes de restaurar.",
+  "amendedAfterClosure": {
+    "date": "2026-09-24",
+    "reason": "Por instrucción expresa del titular (\"no dejar parciales\") se completaron DI25-05.3 y DI25-05.4, que habían quedado registrados como no comprobados. Se actualiza este archivo en el mismo lugar; DI25-06 y DI25-07 no se retroceden."
+  }
 }

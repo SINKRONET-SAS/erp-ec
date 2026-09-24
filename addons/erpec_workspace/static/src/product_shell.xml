@@ -1,6 +1,7 @@
 <templates xml:space="preserve">
   <t t-name="erpec_workspace.ProductShell" t-inherit="web.NavBar" t-inherit-mode="extension">
     <xpath expr="//nav" position="attributes"><attribute name="class" add="erpec_navbar" separator=" "/></xpath>
+    <xpath expr="//div[hasclass('o_menu_systray')]" position="attributes"><attribute name="role">toolbar</attribute><attribute name="aria-label">Herramientas del usuario</attribute></xpath>
     <xpath expr="//DropdownItem[contains(@class, 'o_menu_brand')]" position="attributes"><attribute name="t-if">!this.ui.isSmall and currentApp and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
     <xpath expr="//t[@t-call='web.NavBar.SectionsMenu']" position="attributes"><attribute name="t-if">currentAppSections.length and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
     <xpath expr="//t[@t-call='web.NavBar.AppsMenu']" position="before">
@@ -21,6 +22,9 @@
         </t>
       </Dropdown>
     </xpath>
+  </t>
+  <t t-name="erpec_workspace.AccessibleAppsMenu" t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension">
+    <xpath expr="//a[hasclass('o_menu_toggle')]" position="attributes"><attribute name="aria-label">Menú de inicio</attribute><attribute name="title">Menú de inicio</attribute></xpath>
   </t>
   <t t-name="erpec_workspace.AccessibleActions" t-inherit="web.FormCogMenu" t-inherit-mode="extension">
     <xpath expr="//button[@data-hotkey='u']" position="attributes"><attribute name="aria-label">Acciones del registro</attribute><attribute name="title">Acciones del registro</attribute></xpath>

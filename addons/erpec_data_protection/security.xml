@@ -3,4 +3,6 @@
 <record id="activity_company_rule" model="ir.rule"><field name="name">Actividad de tratamiento por empresa</field><field name="model_id" ref="model_erpec_data_processing_activity"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="subject_request_company_rule" model="ir.rule"><field name="name">Solicitud de derechos por empresa</field><field name="model_id" ref="model_erpec_data_subject_request"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="breach_incident_company_rule" model="ir.rule"><field name="name">Incidente de brecha por empresa</field><field name="model_id" ref="model_erpec_data_breach_incident"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="processor_company_rule" model="ir.rule"><field name="name">Encargado por empresa</field><field name="model_id" ref="model_erpec_data_processor"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="dpo_assessment_company_rule" model="ir.rule"><field name="name">Evaluacion DPD por empresa</field><field name="model_id" ref="model_erpec_data_dpo_assessment"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 </odoo>

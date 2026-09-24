@@ -4,3 +4,7 @@ a:focus-visible, .btn:focus-visible, button:focus-visible, input:focus-visible {
     outline: 3px solid #146c70 !important;
     outline-offset: 2px;
 }
+
+// Enlaces dentro de texto: se distinguen por subrayado y no solo por color (WCAG 1.4.1); el enlace promocional del pie
+// medía 2,97:1 contra el texto que lo rodea.
+footer a:not(.btn) { text-decoration: underline; }

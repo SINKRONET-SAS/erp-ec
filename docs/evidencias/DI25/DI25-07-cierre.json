@@ -1,0 +1,81 @@
+{
+  "phase": "DI25-07",
+  "status": "cerrada-parcial",
+  "cause": "Solo DI25-07.6: falta la aceptación de negocio del titular, que respondió 'No acepto todavía' el 24-09-2026. Es una decisión suya que el sistema no puede tomar ni firmar; el resto del criterio (cero P1 abiertos en lo liberado, regresión aprobada, exclusiones explícitas) está comprobado.",
+  "updatedAt": "2026-09-24T18:30:00.000Z",
+  "testedCommit": "a4333e5 (base; los cambios de esta fase se confirman en el commit de cierre)",
+  "hallazgos": ["DI25-20", "regresión de todos"],
+  "documento": "docs/DI25-07_ACEPTACION.md",
+  "criteria": {
+    "DI25-07.1": {
+      "text": "Ventas->entrega parcial->factura->nota->cobro; compras->recepción parcial->factura->retención->pago->devolución; producción->faltantes->parcial->desperdicio->valoración.",
+      "state": "comprobado",
+      "evidence": "Cada paso apunta a una prueba de la suite integrada en la matriz verificable addons/erpec_acceptance/matrix.py; test_matrix.py comprueba que ninguna referencia se pudra. El único ciclo que no existía como una sola prueba (compras con retención entre factura y pago) se agregó: test_purchase_cycle_with_withholding_between_bill_and_payment (recepción parcial, factura, retención contabilizada e idempotente, pago del saldo, segunda recepción y factura, devolución y nota de crédito). Las 5 pruebas de Tesorería que se omitían en una base limpia por requerir la demo sembrada se ejecutaron completas sobre una copia aislada de la demo con scripts/test-seeded-copy.py: 12 pruebas, 0 fallos, 0 errores, 0 omisiones (DI25-07/tesoreria-sobre-copia-sembrada.json)."
+    },
+    "DI25-07.2": {
+      "text": "Importación multiproducto/divisa/costos; nómina->novedades->beneficios->anticipo->asiento->pago->reversión; visitas planificadas/omitidas/excepciones; plan SaaS->cobro->aprovisionamiento sin duplicar.",
+      "state": "comprobado",
+      "evidence": "Mismas matriz y suite: importación (costo parcial e inverso, divisa y mercadería vendida, pagos parciales y diferencia cambiaria), nómina (beneficio bloqueado, anticipo inmutable, recálculo sin doble descuento, cierre/contabilización/reversión/corrección, pagos parciales por empleado), visitas (dentro de geocerca, omitir con motivo, aprobar/rechazar excepciones) y plan SaaS (cadena hasta el trabajo de aprovisionamiento, confirmación duplicada, reinicio duplicado)."
+    },
+    "DI25-07.3": {
+      "text": "Roles vendedor/comprador/bodega/operario/supervisor/nómina/contador/administrador: permisos, multiempresa, errores, vacíos, reintentos y doble acción concurrente.",
+      "state": "comprobado",
+      "evidence": "Pruebas automáticas por rol, aislamiento y cambio de empresa, reintentos e idempotencia y doble acción concurrente con transacciones reales independientes (matriz ROLES). Además, en Chrome real con 9 roles (los 8 pedidos más el usuario básico): cada rol ve solo sus áreas, sin desbordamiento ni errores de JavaScript en 360/768/1280 y zoom 200 %, foco visible en todas las paradas de Tab y axe-core sin violaciones; el cambio de empresa en la interfaz cambia el estado fiscal mostrado (DI25-06/recorrido-roles-9.json). Errores en español y estados vacíos guiados (bandeja de emisiones)."
+    },
+    "DI25-07.4": {
+      "text": "Imagen final sin montajes, CI remoto del commit final, respaldo DB+filestore+clave separada y restauración aislada con RPO/RTO medidos.",
+      "state": "comprobado",
+      "evidence": "scripts/backup-restore-drill.py sobre la demo (24-09-2026): respaldo de base (9,8 MB) y filestore (1.214 archivos, 101,7 MB) en 6,3 s con la clave maestra guardada en un directorio aparte (no aparece en el volcado ni en el filestore); restauración en base, rol y directorio propios en 27,2 s y Odoo real sirviendo el login a los 9,0 s: RTO medido 36,2 s; conteo de filas idéntico en 10 tablas de control, el certificado cifrado se descifra con la clave restaurada y una clave incorrecta se rechaza, sin adjuntos con archivo faltante; los recursos del simulacro se eliminaron y solo los propios. RPO: ventana propia del respaldo 6,3 s; el RPO efectivo depende del intervalo entre respaldos y hoy son manuales sin programación (el respaldo previo de ese día tenía 1 h 48 min, 6.472 s): acotarlo exige programar el respaldo, no se instaló ninguna tarea. Imagen final sin montajes y CI remoto del commit final: ver campo ci (la suite integrada del CI corre sobre la imagen sin fuentes montadas y arranca las imágenes controller y customer)."
+    },
+    "DI25-07.5": {
+      "text": "SRI producción supervisada por responsable, SMTP con destinatario autorizado y homologación por banco/servicio solo con autorización específica; cada externo tiene acuse o bloqueo explícito.",
+      "state": "comprobado",
+      "evidence": "SMTP: acuse real. Un único correo ficticio a la dirección que el titular autorizó, por SMTP directo (smtp.gmail.com:587, STARTTLS) con las credenciales del .env sin copiarlas ni mostrarlas: EHLO 250, STARTTLS 220, autenticación 235, mensaje aceptado sin destinatarios rechazados en 5,9 s (referencia 6792defa69); el titular confirmó con una captura que llegó a su bandeja el 24-09-2026 a las 11:39. SRI producción: bloqueo explícito, no autorizado por el titular y sin certificado real utilizable (la contraseña del certificado en el .env está vacía); no se envió ningún comprobante. Homologación bancaria: bloqueo explícito, el titular dio una autorización general sin indicar banco/servicio ni plantilla vigente, y el criterio exige autorización específica; la exportación bancaria sigue deshabilitada y el Inicio lo avisa."
+    },
+    "DI25-07.6": {
+      "text": "Salida por alcance: cero P1 abiertos en funciones liberadas, regresión aprobada, aceptación de negocio y evidencia legal/operativa. Una función bloqueada queda deshabilitada/claramente excluida, nunca marcada como cumplida.",
+      "state": "no comprobado: pendiente de la aceptación de negocio del titular",
+      "evidence": "Comprobado: cero P1 abiertos en lo liberado (docs/evidencias/DI25/estado-hallazgos.json: cada hallazgo corregido con evidencia o excluido del alcance liberado con su bloqueo); regresión aprobada (suite integrada completa y CI); funciones bloqueadas claramente excluidas y no marcadas como cumplidas (tabla de exclusiones de docs/DI25-07_ACEPTACION.md); evidencia legal/operativa documentada (fuentes primarias y límites en los cierres de DI25-03, 04, 05). NO comprobado: la aceptación de negocio del titular. Se le presentó el alcance liberado y las exclusiones y respondió 'No acepto todavía'; no se registra aceptación que no dio."
+    }
+  },
+  "windows": {
+    "testsReported": 639,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "note": "Suite integrada completa. Las 5 omisiones son las de Tesorería por falta de demo sembrada; se ejecutaron sobre la copia sembrada (12 pruebas, 0 omisiones)."
+  },
+  "newModules": ["erpec_acceptance (matriz y pruebas de aceptación, sin modelos)", "erpec_website_entry (entrada pública y canal de derechos)"],
+  "newTools": ["scripts/backup-restore-drill.py", "scripts/test-seeded-copy.py"],
+  "ci": {
+    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
+    "conclusion": "pendiente",
+    "checks": []
+  },
+  "demo": {
+    "deployed": true,
+    "backups": [
+      ".cache/windows/backups/drill-demo-20260924T154551Z",
+      ".cache/windows/backups/di25-07-sync-demo-20260924T162541Z",
+      ".cache/windows/backups/fundador-sync-di25-07-20260924T162716Z"
+    ],
+    "verified": "Demo sincronizada con todo el código; declaraciones de privacidad confirmadas por el titular sembradas en demo y fundador (encargados en borrador, evaluación del DPD, responsable del canal público); canal público probado como visitante y sus solicitudes de ensayo eliminadas; usuarios QA temporales desactivados."
+  },
+  "pendingExternal": [
+    "DI25-07.6: aceptación de negocio del titular del alcance liberado y sus exclusiones (docs/DI25-07_ACEPTACION.md).",
+    "SRI producción: certificado y contraseña reales y autorización del titular para una emisión supervisada.",
+    "Homologación bancaria: banco y servicio específicos y la plantilla vigente de cada uno.",
+    "Presentación oficial ATS/RDEP y talón del DIMM: entorno de 32 bits o interfaz del DIMM; certificado de pruebas del SRI para ventas. Corrección: el catálogo ATS y el catálogo RDEP 2026 sí fueron entregados por el SRI (el de RDEP está en el DIMM y coincide con los parámetros de nómina); lo pendiente es ejecutar el validador del plugin RDEP sobre el XML.",
+    "Publicación del sitio: textos legales y datos de contacto reales de la empresa.",
+    "Respaldo programado para acotar el RPO (script listo, tarea no instalada).",
+    "Contratos y mecanismo de transferencia de Google y PayPhone (en borrador)."
+  ],
+  "limits": [
+    "Ningún control de esta fase constituye homologación ni aceptación tributaria, laboral o bancaria externa.",
+    "El acuse SMTP demuestra el envío directo con las credenciales disponibles y la recepción por el titular; el ERP mantiene desactivado el servidor de correo de Odoo por diseño.",
+    "El simulacro de restauración se hizo sobre la demo; no se restauró la instancia fundador ni se probó la restauración en otra máquina.",
+    "La ejecución de las pruebas de interfaz usa Chrome y Playwright instalados fuera del repositorio y no corre en CI."
+  ],
+  "rollback": "Vuelta al despliegue anterior con los respaldos comprobados (demo: di25-07-sync-demo-*; fundador: fundador-sync-di25-07-*); documentos autorizados por el SRI y pagos reales no se deshacen con un rollback técnico. erpec_acceptance y erpec_website_entry se pueden desinstalar sin afectar datos de negocio."
+}
