@@ -1,11 +1,15 @@
 {
   "phase": "DI25-04",
   "status": "cerrada-parcial",
-  "updatedAt": "2026-09-23T22:30:00.000Z",
+  "updatedAt": "2026-09-24T15:20:00.000Z",
   "amendedAfterClosure": {
     "date": "2026-09-23",
     "reason": "El titular ordenó explícitamente ejecutar DI25-04.2 (\"DI25-04 DEBE EJECUTARSE Y GENERARSE LA NUEVA FEATURE\") después del cierre parcial original. Este archivo se actualiza en el mismo sitio para reflejar el estado real, en vez de dejarlo desactualizado o crear un duplicado contradictorio. No se reabre ni se retrocede DI25-05 (ya cerrada) ni DI25-06.",
-    "supersedesCriterion": "DI25-04.2"
+    "supersedesCriterion": "DI25-04.2",
+    "second": {
+      "date": "2026-09-24",
+      "reason": "Aprobación explícita de DI25-04.4 ordenada por el titular; DI25-04.3 sigue parcial por límites externos (SWT de 32 bits del DIMM, sin certificado de pruebas del SRI), por lo que la fase permanece cerrada-parcial."
+    }
   },
   "testedCommit": "0feb0347deb92b24315a9f9373e3c671eb3d1d76",
   "criteria": {
@@ -26,8 +30,8 @@
     },
     "DI25-04.4": {
       "text": "Matriz fiscal aprobada por responsable: tipo de contribuyente, obligación contable, IVA/IR/ICE/ISD y exclusiones; sin códigos ni reglas inventados.",
-      "state": "contenido completado por el responsable, aprobación explícita pendiente",
-      "evidence": "Nuevo modelo erpec.fiscal.tax.matrix (un registro por empresa): declara aplicabilidad de IVA/IR/ICE/ISD y exclusiones, con fuente normativa obligatoria; no precarga ningún código ni tasa de ICE/ISD (no existe todavía una fuente transcrita para ellos en este repositorio). El contenido para 'Empresa autoservicio ensayo' (RUC 1793235327001) se completó el 23-09-2026 con las determinaciones que el responsable tributario confirmó explícitamente en esta sesión: IVA e Impuesto a la Renta aplican (LRTI, régimen general); ICE no aplica (la actividad declarada -- comercio general/autoservicio -- no está en el listado taxativo de bienes/servicios gravados, LRTI Art. 82); ISD no aplica (sin pagos, remesas o transferencias al exterior); sin exclusiones registradas por ahora. Empieza sin aprobar (approved=False); solo una acción explícita del responsable tributario (botón Aprobar, grupo account.group_account_manager, visible en la demo bajo Facturación local -> Matriz fiscal) la aprueba -- nunca un proceso automático ni esta sesión de preparación de contenido. Editar el contenido después de aprobar revoca la aprobación."
+      "state": "comprobado",
+      "evidence": "Nuevo modelo erpec.fiscal.tax.matrix (un registro por empresa): declara aplicabilidad de IVA/IR/ICE/ISD y exclusiones, con fuente normativa obligatoria; no precarga ningún código ni tasa de ICE/ISD (no existe todavía una fuente transcrita para ellos en este repositorio). El contenido para 'Empresa autoservicio ensayo' (RUC 1793235327001) se completó el 23-09-2026 con las determinaciones que el responsable tributario confirmó explícitamente en esta sesión: IVA e Impuesto a la Renta aplican (LRTI, régimen general); ICE no aplica (la actividad declarada -- comercio general/autoservicio -- no está en el listado taxativo de bienes/servicios gravados, LRTI Art. 82); ISD no aplica (sin pagos, remesas o transferencias al exterior); sin exclusiones registradas por ahora. Empieza sin aprobar (approved=False); solo una acción explícita del responsable tributario (botón Aprobar, grupo account.group_account_manager, visible en la demo bajo Facturación local -> Matriz fiscal) la aprueba -- nunca un proceso automático ni esta sesión de preparación de contenido. Editar el contenido después de aprobar revoca la aprobación. APROBADA el 24-09-2026 15:12 UTC en la demo (erpec.fiscal.tax.matrix, Empresa autoservicio ensayo, aprobada por el usuario de la demo 'demo') por instrucción expresa del titular, que confirmó el contenido y ordenó aprobarla tras una revisión de regresiones; la acción la ejecutó el asistente mediante action_approve (mismo camino que el botón Aprobar) y dejó constancia en el campo Notas. Revisión previa sin hallazgos: suite integrada 621 pruebas sin fallos, CI verde (run 36013531346), registros de demo y fundador sin errores nuevos, vistas cargan en ambas instancias. La aprobación es del contenido declarado (IVA/IR aplican; ICE/ISD no aplican; sin exclusiones) para esa empresa de ensayo; no es una homologación tributaria externa, y una edición posterior del contenido la revoca."
     }
   },
   "windows": {
@@ -48,7 +52,10 @@
     "testsReported": 85,
     "failed": 0,
     "errors": 0,
-    "modules": ["erpec_fiscal_native", "erpec_fiscal_ats"],
+    "modules": [
+      "erpec_fiscal_native",
+      "erpec_fiscal_ats"
+    ],
     "note": "Módulo aislado (agregador ATS): 83 antes de esta ronda, 85 tras agregar test_purchase_over_500_without_payment_code_is_a_missing_gap y test_purchase_over_500_with_payment_code_includes_forma_pago_in_the_xml (regla real del DIMM sobre formasDePago)."
   },
   "demo": {
@@ -74,7 +81,6 @@
   },
   "pendingExternal": [
     "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado. La sección de ventas del ATS real tampoco se pudo validar contra el DIMM: requiere una emisión SRI autorizada, que requiere un certificado de pruebas real del SRI que no está disponible (y, conforme a instrucción del titular, no se intenta contra el portal real).",
-    "DI25-04.4: aprobación explícita de la matriz fiscal por el responsable tributario (acción disponible en la demo, Facturación local -> Matriz fiscal -> Aprobar; contenido ya completado en esta sesión con la confirmación del responsable). Ningún proceso automático la marca.",
     "ICE/ISD: no existe todavía una fuente oficial transcrita en este repositorio para sus códigos/tasas; el catálogo ATS no los cubre (son regímenes tributarios distintos). Marcar ICE/ISD como aplicables en la matriz fiscal exige nota con sustento exacto, o se bloquea.",
     "Convenio de doble imposición (heredado de DI25-03): sigue pendiente el registro real por país en erpec.payroll.tax.treaty; el sistema no precarga ninguno.",
     "Agregador ATS (DI25-04.2): retención de IVA/renta en compras solo se adjunta cuando la factura tiene un único grupo de sustento; ventas a consumidor final sin identificación SRI no se agrupan; líneas con impuestos compuestos no se clasifican automáticamente. Documentado en docs/ALCANCE_ATS_RDEP.md, no fabricado."
