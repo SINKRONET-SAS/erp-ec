@@ -153,7 +153,7 @@ Verificamos el punto de no residentes contra la LRTI y encontramos que el mecani
 
 **Lo que sigue dependiendo de datos que solo usted puede proveer (no es una brecha de implementación):**
 - **Convenio de doble imposición:** registrar, por cada país con el que aplique (España, Comunidad Andina, etc.), el tope o mecanismo exacto del tratado con su fuente normativa.
-- **Otros ingresos no gravados de esta relación** (`other_general_interest_income`, campo `otrosIngRenGrav`): sigue siendo manual, sin cálculo del motor; falta su propio oráculo aprobado.
+- **Otros ingresos no gravados de esta relación** (`other_general_interest_income`, campo `otrosIngRenGrav`): sigue siendo manual, sin cálculo del motor; falta su propio oráculo aprobado. Verificado el 24-09-2026 contra el texto primario de la LORTI, Art. 9: concretamente cubre viáticos/gastos de viaje documentados (num. 11) y bonificación de desahucio e indemnización por despido intempestivo dentro de los límites del Código del Trabajo (num. (3)); no incluye lo que un beneficio propio marcado "No grava renta" excluya por el art. 14 de la Ley de Seguridad Social (IESS), que es una ley y una lista distintas. El agregador ahora muestra ese total como referencia cruzada (`non_taxable_benefits_reference`), sin declararlo automáticamente.
 
 ## 5. Requisitos mínimos para una nueva homologación
 

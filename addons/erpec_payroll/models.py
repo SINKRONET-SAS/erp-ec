@@ -491,6 +491,15 @@ class Line(models.Model):
         keys=('start_date','wage','bonus','commission','non_taxable_income','vacation_payout','sick_days','maternity_days','paternity_days','unpaid_leave_days','unexcused_absence_days','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
         return {key:self[key] for key in keys}
 
+    def _non_taxable_benefits_total(self):
+        """Suma de beneficios propios configurados como no gravados de impuesto a la renta
+        (erpec.payroll.benefit.type.taxable=False). Es una decisión de la empresa por beneficio,
+        no una verificación de este motor contra la LORTI: solo agrupa lo que la propia empresa
+        ya marcó como exento. Ver RdepAnnex.action_build() para su uso como referencia cruzada
+        del campo otrosIngRenGrav del RDEP."""
+        self.ensure_one()
+        return sum(self.benefit_line_ids.filtered(lambda item: not item.benefit_type_id.taxable).mapped('amount'))
+
     def _inputs(self):
         data=self._copy_inputs()
         data['start_date']=fields.Date.to_string(data['start_date'])
@@ -505,7 +514,7 @@ class Line(models.Model):
             lambda item:item.benefit_type_id.taxable and item.benefit_type_id.iess_contributable=='SI').mapped('amount'))
         taxable_no_iess=sum(self.benefit_line_ids.filtered(
             lambda item:item.benefit_type_id.taxable and item.benefit_type_id.iess_contributable=='NO').mapped('amount'))
-        non_taxable=sum(self.benefit_line_ids.filtered(lambda item:not item.benefit_type_id.taxable).mapped('amount'))
+        non_taxable=self._non_taxable_benefits_total()
         data['bonus']=data.get('bonus',0)+taxable_iess
         data['vacation_payout']=data.get('vacation_payout',0)+taxable_no_iess
         data['non_taxable_income']=data.get('non_taxable_income',0)+non_taxable

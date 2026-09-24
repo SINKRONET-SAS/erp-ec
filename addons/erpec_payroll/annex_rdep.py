@@ -259,7 +259,7 @@ class Line(models.Model):
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (RDEP)', help='Campo valRetAsuOtrosEmpls.')
     employer_assumed_tax = fields.Float('Impuesto a la renta asumido por este empleador (RDEP)', help='Campos impRentEmpl/valImpAsuEsteEmpl; solo aplica a contratos de ingreso neto (casillero 381 del F107). Entrada manual para quien ya conoce el valor exacto; si se usa net_income_target, el motor calcula y suma su propio impuesto asumido por bisección contra la tabla progresiva.')
     net_income_target = fields.Float('Neto mensual garantizado (contrato de ingreso neto)', help='Caso 11 (DI25-03): neto adicional que el contrato garantiza libre de impuesto a la renta cada mes (casillero 381 F107). El motor resuelve por bisección, contra la tabla progresiva vigente, el impuesto que el empleador debe asumir para que ese neto llegue íntegro al trabajador; no pasa por IESS ni por la retención mensual del trabajador.')
-    other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (RDEP)', help='Campo otrosIngRenGrav (hoja TABLAS del catálogo RDEP vigente: «Otros ingresos en relación de dependencia que no constituyen renta gravada ni materia gravada de IESS»); no es de otro empleador. Manual: el motor no lo calcula. Completar solo tras validar con el contador o la ficha técnica.')
+    other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (RDEP)', help='Campo otrosIngRenGrav (hoja TABLAS del catálogo RDEP vigente: «Otros ingresos en relación de dependencia que no constituyen renta gravada ni materia gravada de IESS»); no es de otro empleador ni de 13/14/fondo de reserva/salario digno, que ya tienen sus propios campos. Manual: el motor no lo calcula. Verificado el 24-09-2026 contra el texto primario del SRI: la LORTI, Art. 9, exonera aquí concretamente los viáticos, gastos de viaje/hospedaje/alimentación documentados (num. 11) y la bonificación de desahucio e indemnización por despido intempestivo dentro de los límites del Código del Trabajo (num. (3) agregado por la Ley s/n, R.O. 242-3S). Un beneficio marcado "No grava impuesto a la renta" en Beneficios propios (Nómina > Configuración) no cae aquí automáticamente por eso solo: esa marca decide IESS/renta según el art. 14 de la Ley de Seguridad Social, una ley distinta con su propia lista (alimentación, atención médica, seguros, ropa/herramientas de trabajo); no se asume que lo exento de IESS también esté exento de renta sin verificarlo caso por caso. El total ya excluido de la base por esos beneficios se muestra como referencia cruzada en el agregado anual (campo "Referencia: beneficios marcados sin renta").')
     expense_housing = fields.Float('Gastos personales · vivienda (RDEP)', help='Campo deducVivienda. No tiene tope individual; el tope es único y total (ver la categoría "Educación, arte y cultura" para la referencia normativa completa).')
     expense_health = fields.Float('Gastos personales · salud (RDEP)', help='Campo deducSalud. No tiene tope individual; comparte el tope único y total con las demás categorías.')
     expense_education = fields.Float('Gastos personales · educación (RDEP)', help='Parte de la categoría "Educación, arte y cultura" (campo deducEducartcult); se suma con expense_art_culture. Desde la reforma de 2023 no hay tope por categoría: el Boletín NAC-COM-26-006 del SRI fija un tope único anual según cargas familiares (7 a 20 canastas básicas familiares), multiplicado por 1.803 en Galápagos (IPCEG).')
@@ -382,7 +382,8 @@ class RdepAnnex(models.Model):
         special_inputs = ('annual_profit_sharing', 'decent_wage_compensation',
                           'other_general_interest_income')
         if any(any(line[key] for key in special_inputs) for line in periods.line_ids):
-            issues.append('Ingresos especiales (utilidades, salario digno u otros ingresos no gravados): falta conciliación independiente aprobada.')
+            issues.append('Ingresos especiales (utilidades, salario digno u otros ingresos no gravados): falta conciliación independiente aprobada. '
+                           'Para otrosIngRenGrav ver la referencia cruzada de beneficios sin renta y su ayuda (LORTI Art. 9, verificado 24-09-2026).')
         # D8: otros empleadores se concilian con los comprobantes versionados del empleador anterior.
         issues.extend(self.env['erpec.payroll.prior.employer'].reconciliation_issues(self.company_id, self.year, periods.line_ids))
         for employee in periods.line_ids.employee_id:
@@ -429,7 +430,7 @@ class RdepAnnex(models.Model):
             for line in period.line_ids:
                 result = json.loads(line.result or '{}')
                 entry = totals.setdefault(line.employee_id.id, dict.fromkeys(
-                    RDEP_FLOW_KEYS + RDEP_LINE_INPUT_KEYS + ('bonus_commission',), 0.0))
+                    RDEP_FLOW_KEYS + RDEP_LINE_INPUT_KEYS + ('bonus_commission', 'non_taxable_benefits_reference'), 0.0))
                 entry['months'] = entry.get('months', 0) + 1
                 entry['last_month_base'] = result.get('base', 0.0) - result.get('personal_iess', 0.0)
                 for key in RDEP_FLOW_KEYS:
@@ -438,6 +439,8 @@ class RdepAnnex(models.Model):
                     entry[key] += line[key]
                 # Incluye beneficios gravados que ya están en el resultado inmutable.
                 entry['bonus_commission'] += result.get('base', 0) - result.get('salary', 0) - result.get('overtime', 0)
+                # Solo referencia cruzada informativa para otrosIngRenGrav (ver su ayuda): no se declara al SRI.
+                entry['non_taxable_benefits_reference'] += line.non_taxable_income + line._non_taxable_benefits_total()
         records = []
         for employee_id, values in totals.items():
             employee = self.env['hr.employee'].browse(employee_id)
@@ -635,6 +638,14 @@ class RdepAnnexLine(models.Model):
     other_employer_withheld_tax = fields.Float('Impuesto asumido/retenido por otros empleadores (valRetAsuOtrosEmpls)', readonly=True)
     employer_assumed_tax = fields.Float('Impuesto asumido por este empleador (valImpAsuEsteEmpl)', readonly=True)
     other_general_interest_income = fields.Float('Otros ingresos que no constituyen renta gravada (otrosIngRenGrav)', readonly=True)
+    non_taxable_benefits_reference = fields.Float(
+        'Referencia: beneficios marcados sin renta', readonly=True,
+        help='No es un campo del esquema RDEP ni se declara al SRI. Es la suma, ya excluida de la base de '
+             'impuesto a la renta por el motor, de los beneficios propios marcados "No grava impuesto a la '
+             'renta" en este período (erpec.payroll.benefit.type.taxable=False) más el campo "Ingreso no '
+             'gravado" de cada línea. Se muestra solo como referencia para decidir "Otros ingresos que no '
+             'constituyen renta gravada": no todo lo aquí sumado corresponde forzosamente a ese campo del '
+             'RDEP (ver su ayuda) ni todo beneficio exento de IESS lo está también de renta.')
     vacation_payout = fields.Float('Gravado de IR, no de IESS: vacaciones no gozadas y beneficios propios sin aporte (sobSuelComRemu)', readonly=True)
     expense_housing = fields.Float('Gastos personales · vivienda (deducVivienda)', readonly=True)
     expense_health = fields.Float('Gastos personales · salud (deducSalud)', readonly=True)

@@ -194,6 +194,18 @@ class RdepAnnexCase(TransactionCase):
         annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
         self.assertTrue(annex._coverage_issues(period))
 
+    def test_non_taxable_benefits_reference_sums_direct_field_and_non_taxable_benefits(self):
+        benefit_type = self.env['erpec.payroll.benefit.type'].create({
+            'name': 'Seguro médico privado ensayo', 'company_id': self.company.id, 'category': 'seguro', 'taxable': False})
+        period = self.env['erpec.payroll.period'].create({'name': 'ENSAYO-RDEP-8C', 'policy_id': self.policy.id, 'month': 6, 'line_ids': [(0, 0, {
+            'employee_id': self.employee.id, 'partner_id': self.partner.id, 'start_date': '2025-01-01', 'wage': 1200, 'approved': True,
+            'non_taxable_income': 30, 'benefit_line_ids': [(0, 0, {'benefit_type_id': benefit_type.id, 'amount': 40})]})]})
+        period.action_calculate(); period.action_close(); period.action_post()
+        annex = self.env['erpec.payroll.rdep'].create({'company_id': self.company.id, 'year': self.policy.year})
+        annex.action_build()
+        self.assertEqual(annex.line_ids.non_taxable_benefits_reference, 70)
+        self.assertEqual(annex.line_ids.other_general_interest_income, 0)
+
     def test_expense_caps_enforced_as_single_total_by_dependents(self):
         # Boletín NAC-COM-26-006 (SRI): tope único total, sin tope por categoría,
         # según cargas familiares (0 cargas = expense_limit tal cual, 7 canastas).
