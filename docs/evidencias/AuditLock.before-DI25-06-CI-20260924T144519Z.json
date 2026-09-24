@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-24T14:45:19.423Z",
+  "updatedAt": "2026-09-24T14:30:43.390Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -176,7 +176,6 @@
     "docs/evidencias/AuditLock.before-DI25-05-EXCLUSION-COMERCIAL-20260923T163253Z.json",
     "docs/evidencias/AuditLock.before-DI25-05-SECRETS-API-KEY-20260923T162435Z.json",
     "docs/evidencias/AuditLock.before-DI25-05-SECRETS-API-KEY-20260923T162451Z.json",
-    "docs/evidencias/AuditLock.before-DI25-06-CI-20260924T144519Z.json",
     "docs/evidencias/AuditLock.before-DI25-06-CIERRE-FASE-20260924T143043Z.json",
     "docs/evidencias/DI25/DI25-00-cierre.json",
     "docs/evidencias/DI25/DI25-01-cierre.json",
@@ -286,8 +285,7 @@
     "DI25-04.3-demo-real (23-09-2026, instruccion explicita del titular): comprobante de compra real posteado en la demo (empresa autoservicio ensayo, RUC corregido a 1793235327001), ensamblado por el agregador real (erpec.ats.report.action_build(), erpec_fiscal_ats) en un XML real y validado localmente contra el motor real del DIMM (sin contactar el portal del SRI). Primer intento rechazado con 2 errores reales: RUC del informante con sufijo invalido (numeroRucType exige terminar en 001) y formasDePago faltante sobre USD 500 (regla real del DIMM, no del esquema). Corregidos: RUC del sufijo, y formasDePago conectado al campo ya existente account.move.ec_fiscal_payment_code con umbral de deteccion nuevo en el agregador (si supera USD 500 sin forma de pago, el documento queda en faltantes). Segundo intento: aprobado sin errores de esquema ni de negocio. Ventas sigue sin poder validarse: requiere un certificado de pruebas real del SRI que no esta disponible; conforme a instruccion del titular, no se intento nada contra el portal real. 2 pruebas nuevas (test_purchase_over_500_without_payment_code_is_a_missing_gap, test_purchase_over_500_with_payment_code_includes_forma_pago_in_the_xml). Suite integrada 614 pruebas, 0 fallos, 0 errores. Evidencia en docs/evidencias/DI25/DI25-04-dimm-validacion.json y docs/evidencias/DI25/DI25-04-cierre.json.",
     "DI25-04.4-preparada (23-09-2026): erpec.fiscal.tax.matrix creada para la empresa autoservicio ensayo con el contenido que el responsable tributario confirmo explicitamente en esta sesion (IVA/IR aplican; ICE/ISD no aplican por la actividad declarada; sin exclusiones), con fuente normativa citada (LRTI). Queda sin aprobar (approved=False): la aprobacion es una accion explicita separada del responsable, no decidida por este incremento.",
     "DI25-04.3-ci (24-09-2026): CI verde tras el push de la validacion con comprobante real de la demo (run 35937698803: gobierno, Suite integrada, Arranque real de imagen controller/customer, Auditoria de dependencias). docs/evidencias/DI25/DI25-04-cierre.json completado con la URL del run.",
-    "DI25-06 cierre de fase (24-09-2026): DI25-06.1 (cinco pasos repetidos en navegador real con evidencia nueva; sin Nuevo donde el servidor prohibe crear -- DI25-15 ya estaba corregido desde DI25-02 y la demo tenia una copia desactualizada, sincronizada y con prueba de regresion) y DI25-06.4 (ninguna accion publica retirada, con inventario de consumidores) comprobados. DI25-06.2 y DI25-06.3 parcialmente comprobados con limites registrados: el Inicio deriva el estado fiscal de modulos, empresa, certificado y ambiente (DI25-14, nuevo erpec_fiscal_sri/workspace.py); nuevo modulo erpec_website_entry reemplaza el contenido de plantilla de la entrada publica (DI25-16: nombre, logotipo, portada, pie, copyright; sin enlaces #) sin inventar textos legales; contraste del contador de mensajes 3,13 a 5,14 o mas y foco visible en la busqueda del sitio; medido en 3 anchos + 640 px (zoom 200 % emulado), 2 roles, teclado y contraste WCAG. Limites: sin lector de pantalla, zoom real, todos los roles ni cambio de empresa en la interfaz; destinos legales y contacto publico reales los aporta el responsable. Suite integrada 621 pruebas, 0 fallos, 0 errores, 5 omisiones. Demo sincronizada con respaldo previo; instancia fundador actualizada antes (erpec_payroll 1.7.1 a 1.14.13, respaldo fundador-upgrade-erpec-modules-20260924T005037Z). Evidencia: docs/evidencias/DI25/DI25-06-cierre.json y docs/evidencias/DI25/DI25-06/ (PNG con manifiesto SHA-256). Se registran explicitamente como no cumplidos; no se cierra ficticiamente.",
-    "DI25-06-ci (24-09-2026): CI verde tras el cierre de DI25-06 (run 36013531346: gobierno, Suite integrada, Arranque real de imagen controller/customer, Auditoria de dependencias). El trabajo de la imagen customer fallo una vez por un reinicio del contenedor de PostgreSQL antes de ejecutar comprobaciones (condicion de carrera intermitente de scripts/verify-linux.py, ajena a estos cambios) y aprobo al reintentarlo sin cambios. docs/evidencias/DI25/DI25-06-cierre.json completado con la URL del run."
+    "DI25-06 cierre de fase (24-09-2026): DI25-06.1 (cinco pasos repetidos en navegador real con evidencia nueva; sin Nuevo donde el servidor prohibe crear -- DI25-15 ya estaba corregido desde DI25-02 y la demo tenia una copia desactualizada, sincronizada y con prueba de regresion) y DI25-06.4 (ninguna accion publica retirada, con inventario de consumidores) comprobados. DI25-06.2 y DI25-06.3 parcialmente comprobados con limites registrados: el Inicio deriva el estado fiscal de modulos, empresa, certificado y ambiente (DI25-14, nuevo erpec_fiscal_sri/workspace.py); nuevo modulo erpec_website_entry reemplaza el contenido de plantilla de la entrada publica (DI25-16: nombre, logotipo, portada, pie, copyright; sin enlaces #) sin inventar textos legales; contraste del contador de mensajes 3,13 a 5,14 o mas y foco visible en la busqueda del sitio; medido en 3 anchos + 640 px (zoom 200 % emulado), 2 roles, teclado y contraste WCAG. Limites: sin lector de pantalla, zoom real, todos los roles ni cambio de empresa en la interfaz; destinos legales y contacto publico reales los aporta el responsable. Suite integrada 621 pruebas, 0 fallos, 0 errores, 5 omisiones. Demo sincronizada con respaldo previo; instancia fundador actualizada antes (erpec_payroll 1.7.1 a 1.14.13, respaldo fundador-upgrade-erpec-modules-20260924T005037Z). Evidencia: docs/evidencias/DI25/DI25-06-cierre.json y docs/evidencias/DI25/DI25-06/ (PNG con manifiesto SHA-256). Se registran explicitamente como no cumplidos; no se cierra ficticiamente."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -482,7 +480,6 @@
     "docs/evidencias/AuditLock.before-DI25-05-EXCLUSION-COMERCIAL-20260923T163253Z.json": "b9a36a0a62a60795f4ea381beb38c13aee8f169468945d430f12e1724322b79d",
     "docs/evidencias/AuditLock.before-DI25-05-SECRETS-API-KEY-20260923T162435Z.json": "2edcb0c8993e9c17923096c04c4ab4695d2a84558bce9507ae9517201b1087e2",
     "docs/evidencias/AuditLock.before-DI25-05-SECRETS-API-KEY-20260923T162451Z.json": "19bf2ff14038a4e700b8edc728d590e3ad02fb1fb74e5d469c95d4614bac0cf0",
-    "docs/evidencias/AuditLock.before-DI25-06-CI-20260924T144519Z.json": "c3beb80753616f265133a5e5e4dc7f703c7ceda7420bc116bd58277523b6cf4c",
     "docs/evidencias/AuditLock.before-DI25-06-CIERRE-FASE-20260924T143043Z.json": "8872001452f0b123745bd0335e0e4215a4586c82686ae654329ccc32d1fdd675",
     "docs/evidencias/DI25/DI25-00-cierre.json": "b799db9f762677acfd1d630c035f8072b8134e6ff3a4be0432b2ebf986a93b81",
     "docs/evidencias/DI25/DI25-01-cierre.json": "94acb7c59f4820b18bceb3aca824656a479ffbf21281d2b4ffd88f6685f434e1",
@@ -504,7 +501,7 @@
     "docs/evidencias/DI25/DI25-04-cierre.json": "c8164ddf4a986fc375c478b3b57dcc6c1db14d9f984807978133b5946336936d",
     "docs/evidencias/DI25/DI25-04-dimm-validacion.json": "84c8565950272299ae04d3c160a2437fadae3ce3b2df30b2512420630e74d2c2",
     "docs/evidencias/DI25/DI25-05-cierre.json": "f6802f6e58a3f2b9577f3747de140785aaa175cd5db047de9a4254b06e92b4cc",
-    "docs/evidencias/DI25/DI25-06-cierre.json": "2860320aa9abd2d374aa5705a02c5638512dd1943aceea3ca551dfb53531bb8c",
+    "docs/evidencias/DI25/DI25-06-cierre.json": "a9626dddeba1cb62dab6fdcbeb56c53b4a4030c3b87afcbc0cc4fc20df83d391",
     "docs/evidencias/DI25/DI25-06/manifiesto-capturas.json": "eb04fe5f349ff2dd32498b2497006d5bc39cb2e8802c76eb102ab8d95a59ad5c",
     "docs/evidencias/DI25/DI25-06/recorrido-navegacion.json": "73c52c3100adec01a26a558239b554e92752394bebd6b6a6151027bde59418a4",
     "docs/evidencias/DI25/DI25-06/recorrido-ui-despues.json": "5402a3c0cec126ab9056ce7263d736d0987e3436f8fd9c0b0b6f1ade8b7c51f2",
@@ -530,9 +527,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-06-CI-20260924T144519Z.json",
-  "previousAuditLockHash": "c3beb80753616f265133a5e5e4dc7f703c7ceda7420bc116bd58277523b6cf4c",
-  "signature": "3c8a5f0c76c02857f064646f1546fb545ef106aff9f26a235634900baf051e0f",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-06-CIERRE-FASE-20260924T143043Z.json",
+  "previousAuditLockHash": "8872001452f0b123745bd0335e0e4215a4586c82686ae654329ccc32d1fdd675",
+  "signature": "b0ae12acdfa1e68ea9150d1a503822992487a8aba1b4f55756529e7876989f9a",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",

@@ -48,9 +48,16 @@
     "verified": "La demo se sincronizó con el código actual de todos sus módulos (no solo los de esta fase) y se instaló erpec_website_entry; se repitió la batería de interfaz. Usuarios QA temporales (qa_admin, qa_basic) creados para las pruebas y desactivados al terminar (quedan inactivos, sin datos de negocio). Nota operativa: la instancia 'fundador' también estaba desfasada respecto del código (erpec_payroll 18.0.1.7.1 vs 18.0.1.14.13) y se actualizó antes en esta sesión, con respaldo (fundador-upgrade-erpec-modules-20260924T005037Z)."
   },
   "ci": {
-    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
-    "conclusion": "pendiente",
-    "checks": []
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36013531346",
+    "conclusion": "success (tras reintento del trabajo de la imagen customer)",
+    "checks": [
+      "gobierno",
+      "Suite integrada (imagen sin fuentes montadas)",
+      "Arranque real de imagen controller",
+      "Arranque real de imagen customer",
+      "Auditoría de dependencias"
+    ],
+    "nota": "El primer intento del trabajo 'Arranque real de imagen customer' falló antes de ejecutar ninguna comprobación (checks vacío): el contenedor de PostgreSQL se reinició ('terminating connection due to administrator command') justo cuando verify-linux.py le envió el primer comando. No se relaciona con estos cambios (esa imagen no incluye erpec_website_entry ni website). Reintentado el mismo trabajo sin cambios: aprobado. Es una condición de carrera intermitente de arranque en scripts/verify-linux.py, no corregida en esta fase."
   },
   "capturas": "docs/evidencias/DI25/DI25-06/ (PNG; su SHA-256 está en manifiesto-capturas.json).",
   "pendingExternal": [
