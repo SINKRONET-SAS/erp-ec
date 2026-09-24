@@ -49,10 +49,10 @@
   "newModules": ["erpec_acceptance (matriz y pruebas de aceptación, sin modelos)", "erpec_website_entry (entrada pública y canal de derechos)"],
   "newTools": ["scripts/backup-restore-drill.py", "scripts/test-seeded-copy.py"],
   "ci": {
-    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36050867808",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36053373987",
     "conclusion": "success",
     "checks": ["gobierno", "Suite integrada (imagen sin fuentes montadas)", "Auditoría de dependencias", "Arranque real de imagen customer", "Arranque real de imagen controller"],
-    "note": "Commit a3dbba3 (homologación bancaria de nómina, DI25-07.6). Runs previos también verdes: a77c322 (36034527612), 8123735 (36037676098), 33cfbe2 (36045596773)."
+    "note": "Commit ef4c3c1 (aclaración de responsabilidad: conservación fiscal y Responsable del Tratamiento son del Cliente, no del Fundador). Runs previos también verdes: a77c322, 8123735, 33cfbe2, a3dbba3 (36050867808)."
   },
   "demo": {
     "deployed": true,
