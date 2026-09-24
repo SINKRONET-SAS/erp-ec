@@ -70,7 +70,7 @@
     "D2": "el procedimiento de regularizacion lo define por escrito el responsable tributario",
     "D6": "la reliquidacion mensual cambia cada retencion y necesita su criterio y casos de aceptacion",
     "caso3_caso8_caso11": "matriz de incidencias, ausencias y regimenes especiales sin reglas aprobadas",
-    "rdep2026": "catalogo RDEP 2026 (tablas de renta y canasta) presente en el DIMM instalado y coincidente con parametros_ec2026; validacion del XML RDEP contra el validador del plugin del DIMM aun no ejecutada; Formulario 107: formato por confirmar",
+    "rdep2026": "catalogo RDEP 2026 (tablas de renta y canasta) presente en el DIMM instalado y coincidente con parametros_ec2026; XML de vista previa validado con el validador oficial del plugin RDEP del DIMM (esquema rdepv10, 0 mensajes; DI25-07/validacion-rdep-dimm.json); critica semantica del DIMM no ejecutable fuera de su runtime; Formulario 107: formato por confirmar",
     "adultoMayor": "pregunta abierta: acreditacion documental obligatoria vs edad por fecha de nacimiento (D1)"
   },
   "limits": [

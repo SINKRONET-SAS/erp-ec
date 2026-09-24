@@ -32,7 +32,7 @@
       "phase": "DI25-03",
       "title": "RDEP mezcla base anual acumulada con impuesto del último registro",
       "status": "corregido-tecnicamente",
-      "note": "Agregación anual por base efectiva y orden, conciliada contra cálculo independiente (DI25-03). Casos D5 y C10 y otros ingresos no gravados quedan bloqueados por el motor y excluidos del alcance liberado hasta ejecutar el validador del plugin RDEP del DIMM sobre el XML (el catálogo 2026 ya está en el DIMM y coincide con los parámetros) y confirmar el formato del Formulario 107.",
+      "note": "Agregación anual por base efectiva y orden, conciliada contra cálculo independiente (DI25-03). Casos D5 y C10 y otros ingresos no gravados quedan bloqueados por el motor y excluidos del alcance liberado hasta completar la crítica semántica del DIMM (el XML ya pasa su validador de esquema rdepv10, el catálogo 2026 está en el DIMM y coincide con los parámetros) y contrastar el Formulario 107 (formato 2023 recibido).",
       "evidence": "docs/evidencias/DI25/DI25-03-cierre.json"
     },
     {

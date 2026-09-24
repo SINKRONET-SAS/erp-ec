@@ -1,0 +1,15 @@
+{
+  "fecha": "2026-09-24",
+  "fase": "DI25-07",
+  "tema": "Validador RDEP del DIMM sobre la vista previa del ERP",
+  "herramienta": "ec.gov.sri.dimm.rdep.validacion.validador.esquema.ValidacionEsquema.validarEsquema (plug-in RDEP 3.13.0 del DIMM instalado por el titular), esquema rdepv10.xsd, via scripts/verify-rdep-dimm.py",
+  "origen": "XML generado por erpec.payroll.rdep.action_generate_xml sobre una COPIA aislada y desechable de la demo (RUC de ensayo 1793235327001, ejercicio 2026, 3 empleados ficticios de la demo); la copia se elimino y la demo no se modifico. sha256 del XML: afd84fcccc3920bb5c41480a019392cc6c3d594348215a60c1a5123f8852a01d",
+  "resultado": {
+    "positivo": "estado COMPLETO, 0 mensajes: el XML cumple rdepv10.xsd segun el validador oficial",
+    "tambienConLxmlContra": "rdepv10.xsd y rdepv9.xsd validos; rdepv8.xsd lo rechaza (elemento tipIdRet no esperado), coherente con que la version vigente es la 10",
+    "negativo": "con numRuc=abc el validador devuelve 1 mensaje: El valor 'abc' del elemento 'numRuc' no es valido. Favor revisar la ficha tecnica."
+  },
+  "catalogo": "C:/SRI-DIMM/.../ec.gov.sri.dimm.rdep.validacion_3.13.0/catalogos: datosIR.xml (2002-2026) y canasta.xml (2026 = 821.80); la tabla 2026 coincide con addons/erpec_payroll/parameters_ec2026.py",
+  "formulario107": "Formato SRI 2023 recibido del titular (Formulario_107 - Formato 2023.xls, sha256 e2f000dcadd579b7483aa8b513590ed49e16994664dfb06abeb061cabf863712): campos 301-407 y 349; contraste con el reporte del ERP pendiente",
+  "limite": "Solo validacion de esquema. La critica semantica (DIMMCriticoSemantico: limites, base imponible, impuesto causado, rebaja) exige el runtime OSGi/EJB del DIMM y no se pudo ejecutar sin su interfaz (RuntimeException Operacion no soportada al invocarla fuera de OSGi). No es homologacion ni presentacion al SRI."
+}
