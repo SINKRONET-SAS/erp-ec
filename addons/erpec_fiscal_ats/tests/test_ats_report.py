@@ -29,10 +29,11 @@ class AtsReportCase(TransactionCase):
         self.liability = self.env['account.account'].create({'name': 'Retenciones ATS por pagar', 'code': 'ECATS01', 'account_type': 'liability_current'})
         self.doc_type_invoice = self.env.ref('l10n_ec.ec_dt_01')
 
-    def purchase(self, sustento='01', authorization='9' * 30, number='001-001-000000123'):
+    def purchase(self, sustento='01', authorization='9' * 30, number='001-001-000000123', payment_code='20'):
         move = self.env['account.move'].create({
             'move_type': 'in_invoice', 'partner_id': self.supplier.id, 'invoice_date': '2026-09-11', 'date': '2026-09-11',
             'l10n_latam_document_type_id': self.doc_type_invoice.id, 'ec_purchase_sri_authorization': authorization,
+            'ec_fiscal_payment_code': payment_code,
             'invoice_line_ids': [(0, 0, {
                 'name': 'Insumo de ensayo', 'quantity': 1, 'price_unit': 1000.0,
                 'tax_ids': [(6, 0, self.tax.ids)], 'erpec_ats_sustento_code': sustento})],
@@ -85,6 +86,29 @@ class AtsReportCase(TransactionCase):
         import base64
         doc = etree.fromstring(base64.b64decode(report.xml_preview))
         self.assertTrue(schema.validate(doc), schema.error_log)
+
+    def test_purchase_over_500_without_payment_code_is_a_missing_gap(self):
+        # Regla real del DIMM (no del esquema, que la marca opcional), descubierta validando un XML
+        # real de la demo contra el motor real: una compra cuya suma de bases+IVA/ICE supera USD 500
+        # exige formasDePago. Sin ec_fiscal_payment_code, el documento queda en faltantes.
+        move = self.purchase(payment_code=False)
+        report = self.report()
+        report.action_build()
+        self.assertEqual(report.compra_count, 0)
+        self.assertEqual(report.missing_count, 1)
+        self.assertIn('forma de pago', report.missing_ids.reason)
+        self.assertEqual(report.missing_ids.move_id, move)
+
+    def test_purchase_over_500_with_payment_code_includes_forma_pago_in_the_xml(self):
+        self.purchase(payment_code='20')
+        report = self.report()
+        report.action_build()
+        self.assertEqual(report.compra_count, 1)
+        schema = etree.XMLSchema(etree.parse(str(XSD_PATH)))
+        import base64
+        doc = etree.fromstring(base64.b64decode(report.xml_preview))
+        self.assertTrue(schema.validate(doc), schema.error_log)
+        self.assertEqual(doc.find('compras/detalleCompras/formasDePago/formaPago').text, '20')
 
     def test_purchase_retention_pulls_real_withholding_line_by_sri_code(self):
         # sri_code '9' = tramo 10% (Tabla 20 de la Ficha Técnica, ya documentado en

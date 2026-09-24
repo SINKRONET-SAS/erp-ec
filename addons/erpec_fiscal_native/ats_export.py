@@ -124,6 +124,9 @@ def build_compra_element(compra):
             '<pagExtSujRetNorLeg>%s</pagExtSujRetNorLeg>' % compra['pago_exterior_sujeto_retencion_normativa'],
         ]),
     ]
+    if compra.get('forma_pago'):
+        parts.append('<formasDePago>%s</formasDePago>' % ''.join(
+            '<formaPago>%s</formaPago>' % code for code in compra['forma_pago']))
     if compra.get('air'):
         parts.append(_build_air_block(compra['air']))
     if all(compra.get(key) for key in RETENTION_REF_KEYS):

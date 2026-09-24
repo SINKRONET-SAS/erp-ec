@@ -279,6 +279,15 @@ class AtsReport(models.Model):
                         totals['base_imp_exe'] += line.price_subtotal
                     elif category == 'ice':
                         totals['monto_ice'] += tax_amount
+                # Regla real del DIMM (no del XSD, que lo marca opcional): un detalle de compra cuya
+                # suma de bases imponibles + IVA + ICE supere USD 500 exige formasDePago. Confirmado
+                # contra el motor real del DIMM (docs/evidencias/DI25/DI25-04-dimm-validacion.json).
+                group_total = totals['base_imponible'] + totals['base_imp_grav'] + totals['monto_iva'] + totals['monto_ice']
+                if group_total > 500 and not move.ec_fiscal_payment_code:
+                    missing.append({'move_id': move.id, 'section': 'compra',
+                                     'reason': 'la suma de bases e IVA/ICE de este detalle (sustento %s) supera USD 500 '
+                                               'y no tiene forma de pago registrada (ec_fiscal_payment_code)' % sustento})
+                    continue
                 payload = dict({
                     'cod_sustento': sustento, 'tp_id_prov': tp_id, 'id_prov': id_prov, 'tipo_comprobante': voucher,
                     'fecha_registro': move.date.strftime('%d/%m/%Y'), 'establecimiento': establecimiento,
@@ -289,6 +298,8 @@ class AtsReport(models.Model):
                     'tot_bases_imp_reemb': 0.0, 'pago_local_o_exterior': '01',
                     'aplica_convenio_doble_tributacion': 'NA', 'pago_exterior_sujeto_retencion_normativa': 'NA',
                 }, **totals)
+                if move.ec_fiscal_payment_code:
+                    payload['forma_pago'] = [move.ec_fiscal_payment_code]
                 payload.update(retention_extra)
                 rows.append((move, payload))
         return rows, missing

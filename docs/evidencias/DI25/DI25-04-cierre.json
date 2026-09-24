@@ -22,21 +22,21 @@
     "DI25-04.3": {
       "text": "Validar estructura oficial y prueba independiente con herramienta/canal oficial aplicable; guardar acuse cuando corresponda, sin declarar presentación por generar XML.",
       "state": "parcialmente comprobado",
-      "evidence": "El titular instaló localmente Java 8, DIMM base 1.17, plug-in ATS 1.18.0 y plug-in RDEP v3.19.0 (software oficial del SRI). Se conectó el motor real de validación (ec.gob.sri.dimm.ats.validacion.ValidacionATS) vía jpype1, sin interfaz gráfica; scripts/verify-ats-dimm.py, probado con el ejemplo oficial del SRI (positivo y negativo) y con un XML generado desde datos del ERP (rechazado primero por 6 errores reales de negocio del DIMM, corregido, luego aprobado). Se investigó a fondo arrancar el framework OSGi real (EclipseStarter.startup) para destrabar el talón/acuse: el framework arranca y activa los bundles de ATS correctamente, pero el talón y la revalidación de reglas de negocio vía activación OSGi completa quedan bloqueados por una dependencia nativa real de SWT de 32 bits (ec.gov.sri.dimm.core -> org.eclipse.ui.workbench -> SWT win32.x86), incompatible con cualquier proceso de 64 bits que lo invoque por reflexión sin lanzar la GUI real. El plug-in RDEP v3.19.0 tiene la misma dependencia (confirmada por su MANIFEST.MF, sin repetir el experimento). El acuse real y la presentación/envío oficial siguen sin resolverse: requieren la interfaz gráfica real del DIMM. Evidencia completa en docs/evidencias/DI25/DI25-04-dimm-validacion.json."
+      "evidence": "El titular instaló localmente Java 8, DIMM base 1.17, plug-in ATS 1.18.0 y plug-in RDEP v3.19.0 (software oficial del SRI). Se conectó el motor real de validación (ec.gob.sri.dimm.ats.validacion.ValidacionATS) vía jpype1, sin interfaz gráfica; scripts/verify-ats-dimm.py, probado con el ejemplo oficial del SRI (positivo y negativo) y con un XML generado desde datos del ERP (rechazado primero por 6 errores reales de negocio del DIMM, corregido, luego aprobado). Ronda adicional (23-09-2026, instrucción explícita del titular): se generó un comprobante de compra REAL, posteado en la base de datos de la demo (no un diccionario de prueba), y erpec.ats.report.action_build() (el agregador real, DI25-04.2) lo ensambló en un XML real, validado localmente contra el DIMM. Esa validación descubrió y corrigió dos defectos reales adicionales: el RUC de la empresa de ensayo tenía un sufijo inválido (999 en vez de 001, exigido por el esquema para el RUC del propio informante) y falta el bloque formasDePago cuando la suma de bases+IVA/ICE supera USD 500 (regla real del DIMM, no documentada en el esquema XSD, que la marca opcional) -- ahora conectado al campo ya existente account.move.ec_fiscal_payment_code, con su propio umbral de detección en el agregador. Segundo intento: aprobado sin errores de esquema ni de negocio. Se investigó a fondo arrancar el framework OSGi real (EclipseStarter.startup) para destrabar el talón/acuse: el framework arranca y activa los bundles de ATS correctamente, pero el talón y la revalidación de reglas de negocio vía activación OSGi completa quedan bloqueados por una dependencia nativa real de SWT de 32 bits (ec.gov.sri.dimm.core -> org.eclipse.ui.workbench -> SWT win32.x86), incompatible con cualquier proceso de 64 bits que lo invoque por reflexión sin lanzar la GUI real. El plug-in RDEP v3.19.0 tiene la misma dependencia (confirmada por su MANIFEST.MF, sin repetir el experimento). El acuse real y la presentación/envío oficial siguen sin resolverse: requieren la interfaz gráfica real del DIMM (bloqueo de arquitectura, no de intento) y, para ventas, un certificado de pruebas real del SRI que no está disponible; conforme a instrucción explícita del titular, no se intentó ningún envío al portal real del SRI. Evidencia completa en docs/evidencias/DI25/DI25-04-dimm-validacion.json."
     },
     "DI25-04.4": {
       "text": "Matriz fiscal aprobada por responsable: tipo de contribuyente, obligación contable, IVA/IR/ICE/ISD y exclusiones; sin códigos ni reglas inventados.",
-      "state": "andamiaje comprobado, aprobación pendiente del responsable",
-      "evidence": "Nuevo modelo erpec.fiscal.tax.matrix (un registro por empresa): declara aplicabilidad de IVA/IR/ICE/ISD y exclusiones, con fuente normativa obligatoria; no precarga ningún código ni tasa de ICE/ISD (no existe todavía una fuente transcrita para ellos en este repositorio). Empieza sin aprobar (approved=False); solo una acción explícita del responsable tributario (botón Aprobar, grupo account.group_account_manager, visible en la demo bajo Facturación local -> Matriz fiscal) la aprueba -- nunca un proceso automático. Editar el contenido después de aprobar revoca la aprobación. La aprobación en sí misma queda, correctamente, sin marcar: es una decisión del responsable, no del sistema."
+      "state": "contenido completado por el responsable, aprobación explícita pendiente",
+      "evidence": "Nuevo modelo erpec.fiscal.tax.matrix (un registro por empresa): declara aplicabilidad de IVA/IR/ICE/ISD y exclusiones, con fuente normativa obligatoria; no precarga ningún código ni tasa de ICE/ISD (no existe todavía una fuente transcrita para ellos en este repositorio). El contenido para 'Empresa autoservicio ensayo' (RUC 1793235327001) se completó el 23-09-2026 con las determinaciones que el responsable tributario confirmó explícitamente en esta sesión: IVA e Impuesto a la Renta aplican (LRTI, régimen general); ICE no aplica (la actividad declarada -- comercio general/autoservicio -- no está en el listado taxativo de bienes/servicios gravados, LRTI Art. 82); ISD no aplica (sin pagos, remesas o transferencias al exterior); sin exclusiones registradas por ahora. Empieza sin aprobar (approved=False); solo una acción explícita del responsable tributario (botón Aprobar, grupo account.group_account_manager, visible en la demo bajo Facturación local -> Matriz fiscal) la aprueba -- nunca un proceso automático ni esta sesión de preparación de contenido. Editar el contenido después de aprobar revoca la aprobación."
     }
   },
   "windows": {
-    "testsReported": 612,
+    "testsReported": 614,
     "failed": 0,
     "errors": 0,
     "skipped": 5,
     "runnerExit": 0,
-    "note": "Actualizado tras DI25-04.2 (612 pruebas; eran 588 antes de esta pieza)."
+    "note": "614 pruebas tras esta ronda (612 antes de agregar la validación real RUC/formasDePago)."
   },
   "fiscalNativeModule": {
     "testsReported": 187,
@@ -45,35 +45,30 @@
     "note": "1 falla preexistente y ajena a este incremento (FiscalConcurrencyCase.test_both_orders_with_real_independent_transactions, requiere el ejecutor integrado con base desechable; no corre en este script de módulo aislado)."
   },
   "fiscalAtsModule": {
-    "testsReported": 83,
+    "testsReported": 85,
     "failed": 0,
     "errors": 0,
     "modules": ["erpec_fiscal_native", "erpec_fiscal_ats"],
-    "note": "Módulo aislado nuevo (agregador ATS, DI25-04.2), corrido junto con erpec_fiscal_native por la ampliación de ats_export.py."
+    "note": "Módulo aislado (agregador ATS): 83 antes de esta ronda, 85 tras agregar test_purchase_over_500_without_payment_code_is_a_missing_gap y test_purchase_over_500_with_payment_code_includes_forma_pago_in_the_xml (regla real del DIMM sobre formasDePago)."
   },
   "demo": {
     "deployed": true,
     "backups": [
       ".cache/windows/backups/di25-04-ats-taxmatrix-20260923T130050Z",
       ".cache/windows/backups/di25-04-ats-export-20260923T145204Z",
-      ".cache/windows/backups/di25-04-2-ats-aggregator-20260923T223519Z"
+      ".cache/windows/backups/di25-04-2-ats-aggregator-20260923T223519Z",
+      ".cache/windows/backups/di25-04-2-ats-aggregator-20260923T235505Z"
     ],
-    "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado (rollback, sin datos de ensayo persistidos), ats_export.build_ats_xml genera XML real desde la demo. DI25-04.2: erpec_fiscal_ats instalado (module state=installed), erpec_fiscal_native actualizado, account.move.ec_purchase_sri_authorization presente, erpec.ats.report.action_build() ejecutado contra la base real de la demo sin errores (0 documentos ese período: la demo no tiene facturas posteadas en enero/2026, resultado esperado, no un fallo)."
+    "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado. DI25-04.2/.3: erpec_fiscal_ats instalado, factura de compra real posteada en 'Empresa autoservicio ensayo' (RUC 1793235327001, corregido de un sufijo inválido 999), erpec.ats.report.action_build() ejecutado contra esa factura real (1 compra, 0 faltantes), XML extraído y validado con éxito contra el motor real del DIMM (esquema + reglas de negocio, ver docs/evidencias/DI25/DI25-04-dimm-validacion.json). DI25-04.4: erpec.fiscal.tax.matrix creada para esa empresa con el contenido confirmado por el responsable (IVA/IR aplican, ICE/ISD no aplican), sin aprobar todavía."
   },
   "ci": {
-    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35929681190",
-    "conclusion": "success",
-    "checks": [
-      "gobierno",
-      "Suite integrada (imagen sin fuentes montadas)",
-      "Arranque real de imagen controller",
-      "Arranque real de imagen customer",
-      "Auditoría de dependencias"
-    ]
+    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
+    "conclusion": "pendiente",
+    "checks": []
   },
   "pendingExternal": [
-    "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado.",
-    "DI25-04.4: aprobación explícita de la matriz fiscal por el responsable tributario (acción disponible en la demo, Facturación local -> Matriz fiscal -> Aprobar). Ningún proceso automático la marca.",
+    "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado. La sección de ventas del ATS real tampoco se pudo validar contra el DIMM: requiere una emisión SRI autorizada, que requiere un certificado de pruebas real del SRI que no está disponible (y, conforme a instrucción del titular, no se intenta contra el portal real).",
+    "DI25-04.4: aprobación explícita de la matriz fiscal por el responsable tributario (acción disponible en la demo, Facturación local -> Matriz fiscal -> Aprobar; contenido ya completado en esta sesión con la confirmación del responsable). Ningún proceso automático la marca.",
     "ICE/ISD: no existe todavía una fuente oficial transcrita en este repositorio para sus códigos/tasas; el catálogo ATS no los cubre (son regímenes tributarios distintos). Marcar ICE/ISD como aplicables en la matriz fiscal exige nota con sustento exacto, o se bloquea.",
     "Convenio de doble imposición (heredado de DI25-03): sigue pendiente el registro real por país en erpec.payroll.tax.treaty; el sistema no precarga ninguno.",
     "Agregador ATS (DI25-04.2): retención de IVA/renta en compras solo se adjunta cuando la factura tiene un único grupo de sustento; ventas a consumidor final sin identificación SRI no se agrupan; líneas con impuestos compuestos no se clasifican automáticamente. Documentado en docs/ALCANCE_ATS_RDEP.md, no fabricado."
