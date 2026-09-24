@@ -1,0 +1,11 @@
+{
+  "fecha": "2026-09-24",
+  "entorno": "Chrome (Playwright, canal chrome), demo local 127.0.0.1:8369, usuario QA temporal con rol administrador",
+  "recorrido": "Inicio -> botón 'Abrir facturación electrónica' -> área 'Facturas — preparación local' -> migas de pan 'ERP EC' -> Inicio",
+  "resultado": {
+    "inicio": "/odoo/action-583/8",
+    "tras_boton": "/odoo/action-583/8/action-581 (migas: ERP EC > Facturas — preparación local)",
+    "regreso_por_migas": "/odoo/action-583/8, el Inicio vuelve a mostrar el bloque Facturación electrónica"
+  },
+  "nota": "En esta área sí aparece 'Nuevo': crear una factura de cliente es una creación permitida (account.move). La bandeja de Emisiones nativas, cuyo servidor prohíbe la creación manual, no lo ofrece."
+}

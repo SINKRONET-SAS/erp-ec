@@ -1,0 +1,20 @@
+{
+  "phase": "DI25-06",
+  "nota": "Manifiesto de capturas binarias (PNG) de la fase; el gobierno no hashea binarios, se registran aquí con SHA-256.",
+  "archivos": {
+    "antes-1-entrada.png": "9a22d6a841b94fc7ea429fd84eb5e5f4401d8aac9977274897820cb1217503c9",
+    "antes-2-inicio.png": "0dc91d327dd36d6a2b8b7f5036512cca243c2d6934c8f7472b23688b0651495d",
+    "antes-4-emisiones.png": "cd2a1cfb24b76dd9973580116b7504b95c71b6cd8629125e6b319bc4f445f0fa",
+    "despues-1-entrada-1280.png": "acbd606ca4f9da9412ffa9ea6716f0b263329aadf06f16270ade3b580f78d5b6",
+    "despues-1-entrada-360.png": "c29afdcf81595c492daae55574ee35f5e78a7033ae166a7e5bbbce3b7a03c869",
+    "despues-1-entrada-768.png": "8b393180886de0480a741abad75e945dac0ad11cd1a661a92251c5692070daab",
+    "despues-2-inicio-qa_admin-1280.png": "9920964016c34587299efc8d7097fd09b37a7e39c0e0c48b8f6b2952bd3285bb",
+    "despues-2-inicio-qa_admin-360.png": "006c6958205a3c73d24ecf1f2ec4e682e60a099d0a637b2c9a767f020c9c39e0",
+    "despues-2-inicio-qa_admin-640.png": "05a44970033b3c013654b6066ab3cfa0187d6408e99f2817b29d7239d48db2d2",
+    "despues-2-inicio-qa_admin-768.png": "ea11689b36d16c85e78d0b68410270513d77d98f48c9825a3ddeb03d55cab855",
+    "despues-2-inicio-qa_basic-1280.png": "d4c316df848c61e2781acf3f06a1211edec4ab2a396b19bc229f02fd4cdb6181",
+    "despues-3-area-fiscal-qa_admin.png": "a72e3a44a36d766477d5babaf5fbbebc6d638d1570fa5ab80b39a3ef308c7220",
+    "despues-4-emisiones-qa_admin.png": "1b1eff17693fbe7f35cb315e60f2fa709dea1ae811fa30bdd4b7980d45464a47",
+    "despues-4-emisiones-qa_basic.png": "65a425a537df231ff6a1130cffa76d3291f9c92640eef00be4871e35fac4d6e8"
+  }
+}

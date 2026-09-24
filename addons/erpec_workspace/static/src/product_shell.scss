@@ -77,3 +77,6 @@
         .border.rounded { padding: 16px !important; }
     }
 }
+
+// DI25-06.3: el contador de mensajes (blanco sobre #28a745) medía 3,13:1; con #1e7e34 supera 4,5:1.
+.o_web_client .o-mail-MessagingMenu-counter.badge { background-color: #1e7e34 !important; color: #fff !important; }

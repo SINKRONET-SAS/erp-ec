@@ -12,3 +12,5 @@ from . import test_secret_store
 from . import test_secret_rotation
 
 from . import test_di25_concurrency
+
+from . import test_workspace_scope

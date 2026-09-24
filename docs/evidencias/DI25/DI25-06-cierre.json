@@ -1,0 +1,68 @@
+{
+  "phase": "DI25-06",
+  "status": "cerrada-parcial",
+  "updatedAt": "2026-09-24T15:00:00.000Z",
+  "testedCommit": "8380c4b (base; los cambios de esta fase se confirman en el commit de cierre)",
+  "hallazgos": ["DI25-14", "DI25-15", "DI25-16"],
+  "criteria": {
+    "DI25-06.1": {
+      "text": "Los cinco pasos capturados se repiten con evidencia nueva y sin contradicciones; no aparece Nuevo si no existe creación permitida.",
+      "state": "comprobado",
+      "evidence": "Se repitieron con un navegador real (Chrome, Playwright) sobre la demo: (1) entrada pública, (2) inicio autenticado, (3) menú/áreas (Áreas -> Fiscal · Pruebas), (4) bandeja de Emisiones. El paso 5 (formulario de 'Nuevo' sin origen) ya no existe porque la bandeja no ofrece Nuevo. Reproducción previa (capturas antes-*.png): la demo mostraba 'Nuevo' y la columna 'State' en la bandeja de Emisiones -- no era un defecto del código vigente sino de una copia desactualizada de erpec_fiscal_sri en la demo: el código ya tenía create=0, etiqueta 'Estado' y estado vacío guiado desde DI25-02 (commit fd00358). Se sincronizó la demo con todo el código actual (respaldo previo) y se agregó una prueba de regresión (test_emission_inbox_offers_no_manual_creation_and_guides_to_origin). Tras la sincronización: sin Nuevo, encabezado 'Estado', estado vacío con instrucción de origen. En 'Facturas — preparación local' sí aparece Nuevo, correctamente: crear una factura de cliente es una creación permitida."
+    },
+    "DI25-06.2": {
+      "text": "Inicio presenta capacidad instalada y preparación por empresa/ambiente; enlaces útiles, navegación de regreso y errores en español.",
+      "state": "parcialmente comprobado",
+      "evidence": "DI25-14 corregido: el bloque fiscal del Inicio ya no afirma que 'faltan firma electrónica, envío al SRI y comprobante autorizado'. El estado se deriva de lo instalado y configurado (nuevo erpec_fiscal_sri/workspace.py, encadenado con el texto del conector externo sin reemplazarlo): alcance instalado; lo que falta configurar en la empresa (RUC, certificado cargado/verificado, establecimiento y punto de emisión); ambiente (pruebas o producción, con conteo de puntos en producción); y validación externa (solo el SRI acredita una autorización). Se leen únicamente banderas de estado con sudo, nunca material de firma. La tarjeta del Inicio (erpec_workspace/views.xml) muestra ese texto en vez de una frase fija. Probado con 2 pruebas (empresa sin configurar y empresa completa/producción, dos empresas distintas) y en navegador. Navegación: Inicio -> 'Abrir facturación electrónica' -> área -> migas 'ERP EC' -> Inicio (recorrido-navegacion.json). Errores en español: un usuario es_EC sin permiso recibe 'Error de acceso ...' en español; un usuario recién creado sin idioma configurado los ve en inglés (comportamiento del núcleo de Odoo según el idioma del usuario, no del producto). Límite: la preparación por empresa se verificó por pruebas automatizadas con dos empresas y en el navegador solo con la empresa 'Empresa autoservicio ensayo'; no se recorrió el cambio de empresa en la interfaz."
+    },
+    "DI25-06.3": {
+      "text": "Pruebas por rol y empresa con anchuras 360/768/1280, teclado, foco, zoom 200 %, contraste medido y lector de pantalla donde disponible; registrar cualquier límite.",
+      "state": "parcialmente comprobado",
+      "evidence": "Medido en navegador real (recorrido-ui-despues.json, capturas despues-*.png): anchuras 360, 768 y 1280 más 640 (equivalente a 1280 a zoom 200 %) para dos roles (administrador con nómina/contabilidad y usuario interno básico, que solo ve 'Inicio' en Áreas) y para el visitante en la entrada pública: sin desbordamiento horizontal y sin errores de JavaScript en ninguna combinación. Teclado: 8 (entrada), 23 (administrador) y 22 (básico) paradas de Tab, todas con indicador de foco visible tras la corrección. Contraste (razón WCAG calculada sobre cada texto visible): mínimo 5,97 en la entrada y 5,14 en el Inicio; antes de la corrección el contador de mensajes medía 3,13 (blanco sobre #28a745), corregido con #1e7e34 (erpec_workspace/static/src/product_shell.scss). Foco: el enlace de búsqueda de la cabecera del sitio no mostraba foco visible (regla .btn:focus-visible de Bootstrap con outline: 0); corregido en erpec_website_entry/static/src/entry.scss. Límites: no hay lector de pantalla disponible en este entorno; el zoom 200 % se emuló con un viewport de 640 px, no con el zoom del navegador; solo se probaron 2 roles (no todos los perfiles: p. ej. solo compras, tesorería o nómina sin contabilidad); el contraste se midió en la entrada y el Inicio, no en todas las pantallas; el orden lógico de tabulación y las trampas de foco solo se revisaron por presencia de indicador, no por recorrido completo."
+    },
+    "DI25-06.4": {
+      "text": "No retirar acciones públicas sin inventario de consumidores; marca y textos no esconden bloqueos fiscales/laborales reales.",
+      "state": "comprobado",
+      "evidence": "No se retiró ninguna acción pública. Inventario de lo cambiado: (a) la etiqueta del botón del Inicio pasó de 'Revisar preparación local' a 'Abrir facturación electrónica'; el método (action_area) y su contexto no cambian, y la etiqueta solo la consumía la propia vista (búsqueda en addons/*/tests y *.xml: ninguna prueba ni vista externa la referencia); (b) fiscal_scope se sigue calculando por la misma cadena de módulos (operations -> conector -> sri), sin quitar el mensaje del conector externo, cuyas cadenas usadas por pruebas se conservaron; (c) erpec_website_entry no elimina rutas ni vistas: solo reemplaza contenido que todavía es plantilla, de forma idempotente y sin pisar ediciones propias del cliente (probado). Los textos nuevos no ocultan bloqueos: el Inicio lista explícitamente lo que falta configurar y aclara que solo el SRI acredita la autorización; la tarjeta de Nómina conserva su aviso de validación pendiente."
+    }
+  },
+  "hallazgos_estado": {
+    "DI25-14": "corregido y probado (texto derivado; pruebas y navegador).",
+    "DI25-15": "ya corregido en el código desde DI25-02; la demo tenía una copia desactualizada. Sincronizada la demo y agregada prueba de regresión.",
+    "DI25-16": "corregido en lo que es plantilla del producto (nombre del sitio, logotipo 'YourLogo', portada, pie con enlaces '#', redes y contacto de ejemplo, 'Copyright Company name'); NO resuelto: destinos legales reales (política de privacidad/términos) y el teléfono/correo públicos, que son datos de la empresa y decisión del responsable (la cabecera aún muestra el teléfono de ensayo +1 555-555-5556 del registro de la empresa demo). No se inventaron textos legales: no se muestra un enlace 'Legal' sin destino."
+  },
+  "windows": {
+    "testsReported": 621,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 5,
+    "runnerExit": 0,
+    "note": "Suite integrada completa (scripts/test-integrated.py). Pruebas nuevas: 4 (erpec_website_entry), 3 (estado fiscal del Inicio y bandeja de Emisiones en erpec_fiscal_sri)."
+  },
+  "demo": {
+    "deployed": true,
+    "backups": [
+      ".cache/windows/backups/di25-06-sync-demo-20260924T134348Z",
+      ".cache/windows/backups/di25-06-sync-demo-20260924T135753Z"
+    ],
+    "verified": "La demo se sincronizó con el código actual de todos sus módulos (no solo los de esta fase) y se instaló erpec_website_entry; se repitió la batería de interfaz. Usuarios QA temporales (qa_admin, qa_basic) creados para las pruebas y desactivados al terminar (quedan inactivos, sin datos de negocio). Nota operativa: la instancia 'fundador' también estaba desfasada respecto del código (erpec_payroll 18.0.1.7.1 vs 18.0.1.14.13) y se actualizó antes en esta sesión, con respaldo (fundador-upgrade-erpec-modules-20260924T005037Z)."
+  },
+  "ci": {
+    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
+    "conclusion": "pendiente",
+    "checks": []
+  },
+  "capturas": "docs/evidencias/DI25/DI25-06/ (PNG; su SHA-256 está en manifiesto-capturas.json).",
+  "pendingExternal": [
+    "DI25-16: destinos legales reales (privacidad/términos) y datos de contacto públicos de la empresa: los aporta el responsable antes de publicar; mientras tanto la entrada no muestra enlaces legales sin destino.",
+    "DI25-06.3: prueba con lector de pantalla, zoom real del navegador, todos los perfiles de rol y recorrido completo de tabulación en todas las pantallas.",
+    "DI25-06.2: verificar en la interfaz el cambio entre empresas del Inicio (cubierto solo por pruebas automatizadas).",
+    "Empaquetado: erpec_website_entry es auto_install con dependencia de website; no forma parte de las imágenes controller/customer actuales (que no incluyen website)."
+  ],
+  "limits": [
+    "Ningún control de esta fase constituye homologación ni aceptación tributaria o laboral externa.",
+    "El estado fiscal del Inicio informa configuración y alcance; no sustituye la autorización del SRI ni valida la firma con un certificado real.",
+    "Las pruebas de interfaz corren en una máquina local con Chrome y Playwright instalado fuera del repositorio (no forma parte de las dependencias del proyecto ni de CI)."
+  ],
+  "rollback": "Restaurar vistas/assets y menús previos: revertir el commit de esta fase; en la demo, restaurar el respaldo di25-06-sync-demo-* (base, filestore y módulos). erpec_website_entry se desinstala sin afectar datos (solo cambió vistas y el logotipo del sitio, que puede restablecerse desde Sitio web -> Configuración). No borrar acciones referenciadas: ninguna se retiró."
+}

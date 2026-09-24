@@ -1,0 +1,295 @@
+{
+ "tag": "despues",
+ "entorno": "Chrome (canal chrome, Playwright), demo local 127.0.0.1:8369",
+ "1_entrada": {
+  "360": {
+   "overflow": {
+    "sw": 360,
+    "iw": 360,
+    "over": false
+   },
+   "links_hash": [],
+   "texto_plantilla": [],
+   "titulo": "Home | ERP EC · SINKRONET"
+  },
+  "768": {
+   "overflow": {
+    "sw": 768,
+    "iw": 768,
+    "over": false
+   },
+   "links_hash": [],
+   "texto_plantilla": [],
+   "titulo": "Home | ERP EC · SINKRONET"
+  },
+  "1280": {
+   "overflow": {
+    "sw": 1280,
+    "iw": 1280,
+    "over": false
+   },
+   "links_hash": [],
+   "texto_plantilla": [
+    "555-555"
+   ],
+   "titulo": "Home | ERP EC · SINKRONET"
+  },
+  "contraste": {
+   "muestras": 20,
+   "minimo": 5.97,
+   "fallan": 0,
+   "ejemplos": []
+  },
+  "teclado": {
+   "paradas": 8,
+   "sin_indicador_visible": [],
+   "primeras": [
+    {
+     "tag": "a",
+     "label": "Ir al contenido",
+     "visible_focus": true,
+     "w": 141.5
+    },
+    {
+     "tag": "a",
+     "label": "",
+     "visible_focus": true,
+     "w": 150
+    },
+    {
+     "tag": "a",
+     "label": "Inicio",
+     "visible_focus": true,
+     "w": 56.234375
+    },
+    {
+     "tag": "a",
+     "label": "Contáctanos",
+     "visible_focus": true,
+     "w": 111.96875
+    },
+    {
+     "tag": "a",
+     "label": "Búsqueda",
+     "visible_focus": true,
+     "w": 42
+    },
+    {
+     "tag": "a",
+     "label": "+1 555-555-5556",
+     "visible_focus": true,
+     "w": 160.28125
+    }
+   ]
+  }
+ },
+ "2_qa_admin": {
+  "360": {
+   "overflow": {
+    "sw": 360,
+    "iw": 360,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": true,
+   "ingles_visible": []
+  },
+  "768": {
+   "overflow": {
+    "sw": 768,
+    "iw": 768,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": true,
+   "ingles_visible": []
+  },
+  "1280": {
+   "overflow": {
+    "sw": 1280,
+    "iw": 1280,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": true,
+   "ingles_visible": [],
+   "contraste": {
+    "muestras": 41,
+    "minimo": 5.14,
+    "fallan": 0,
+    "ejemplos": []
+   },
+   "teclado": {
+    "paradas": 23,
+    "sin_indicador_visible": [],
+    "primeras": [
+     {
+      "tag": "button",
+      "label": "Consultar plan de impuestos",
+      "visible_focus": true,
+      "w": 207.140625
+     },
+     {
+      "tag": "button",
+      "label": "Abrir facturación electrónica",
+      "visible_focus": true,
+      "w": 206.078125
+     },
+     {
+      "tag": "button",
+      "label": "ERP EC · Inicio",
+      "visible_focus": true,
+      "w": 97.953125
+     },
+     {
+      "tag": "button",
+      "label": "Áreas",
+      "visible_focus": true,
+      "w": 75.296875
+     },
+     {
+      "tag": "button",
+      "label": "Menú de inicio",
+      "visible_focus": true,
+      "w": 47.375
+     },
+     {
+      "tag": "button",
+      "label": "3",
+      "visible_focus": true,
+      "w": 44.046875
+     }
+    ]
+   },
+   "emisiones": {
+    "dialogo": null,
+    "nuevo": false,
+    "encabezados": [
+     "",
+     "Comprobante",
+     "Clave de acceso",
+     "Ambiente",
+     "Estado",
+     "Intentos",
+     "Próximo intento",
+     "Edad en cola (segundos)"
+    ],
+    "ayuda_vacia": "No hay emisiones que mostrar\n\nSi aplicaste filtros, retíralos para volver a ver tus registros. Para una nueva emisión, abre la factura, nota, liquidación, retención o guía de origen. Aquí revisarás el"
+   }
+  },
+  "640": {
+   "overflow": {
+    "sw": 640,
+    "iw": 640,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": true,
+   "ingles_visible": []
+  }
+ },
+ "2_qa_basic": {
+  "360": {
+   "overflow": {
+    "sw": 360,
+    "iw": 360,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": false,
+   "ingles_visible": []
+  },
+  "768": {
+   "overflow": {
+    "sw": 768,
+    "iw": 768,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": false,
+   "ingles_visible": []
+  },
+  "1280": {
+   "overflow": {
+    "sw": 1280,
+    "iw": 1280,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": false,
+   "ingles_visible": [],
+   "contraste": {
+    "muestras": 12,
+    "minimo": 5.14,
+    "fallan": 0,
+    "ejemplos": []
+   },
+   "teclado": {
+    "paradas": 22,
+    "sin_indicador_visible": [],
+    "primeras": [
+     {
+      "tag": "button",
+      "label": "ERP EC · Inicio",
+      "visible_focus": true,
+      "w": 97.953125
+     },
+     {
+      "tag": "button",
+      "label": "Áreas",
+      "visible_focus": true,
+      "w": 75.296875
+     },
+     {
+      "tag": "button",
+      "label": "Menú de inicio",
+      "visible_focus": true,
+      "w": 47.375
+     },
+     {
+      "tag": "button",
+      "label": "3",
+      "visible_focus": true,
+      "w": 44.046875
+     },
+     {
+      "tag": "button",
+      "label": "",
+      "visible_focus": true,
+      "w": 28.59375
+     },
+     {
+      "tag": "button",
+      "label": "Empresa autoservicio ensayo",
+      "visible_focus": true,
+      "w": 190.671875
+     }
+    ]
+   },
+   "emisiones": {
+    "dialogo": "Error de acceso\n\nNo puede acceder a los registros 'Emisión nativa (firma XAdES + transmisión SOAP directa al SRI)' (erpec.fiscal.emission).\n\nEsta operación está permitida para los siguientes grupos:\n\t- Técnico/Mostrar características de contabilidad completas\n\nPóngase en contacto con su administrado",
+    "nuevo": false,
+    "encabezados": [],
+    "ayuda_vacia": null
+   }
+  },
+  "640": {
+   "overflow": {
+    "sw": 640,
+    "iw": 640,
+    "over": false
+   },
+   "errores_js": [],
+   "menciona_faltan_firma": false,
+   "alcance_instalado": false,
+   "ingles_visible": []
+  }
+ }
+}

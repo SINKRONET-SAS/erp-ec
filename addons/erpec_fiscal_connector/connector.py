@@ -391,4 +391,4 @@ class Workspace(models.Model):
     def _compute_company_readiness(self):
         super()._compute_company_readiness()
         for workspace in self:
-            workspace.fiscal_scope = 'Conector de pruebas instalado. Pendiente: verificar la conexión de la empresa y completar el ensayo SRI con firma y punto de emisión autorizados. Antes de producción, registrar y emitir el RUC del proveedor del sistema cuando corresponda. Consulta cada solicitud en la bandeja; instalar el conector no autoriza comprobantes.'
+            workspace.fiscal_scope = 'Conector de pruebas instalado (Facturador externo; es excluyente con la emisión nativa para un mismo comprobante). Pendiente en este canal: verificar la conexión de la empresa y completar el ensayo con un punto de emisión autorizado. Antes de producción, registrar y emitir el RUC del proveedor del sistema cuando corresponda. Consulta cada solicitud en la bandeja; instalar el conector no autoriza comprobantes.'

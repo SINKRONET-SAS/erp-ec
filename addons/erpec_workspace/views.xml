@@ -34,9 +34,9 @@
             <field name="company_readiness" nolabel="1"/>
           </group>
           <div class="border rounded p-3 mb-3" groups="account.group_account_user">
-            <h2>Facturación electrónica · En preparación</h2>
-            <p>La preparación local permite revisar un XML sin firma. Faltan firma electrónica, envío al SRI y comprobante autorizado. Una factura contabilizada o pagada no acredita autorización fiscal.</p>
-            <button name="action_area" type="object" string="Revisar preparación local" context="{'erpec_area': 'fiscal'}" class="btn btn-outline-primary"/>
+            <h2>Facturación electrónica</h2>
+            <field name="fiscal_scope" nolabel="1" class="d-block mb-2" style="white-space: pre-line;"/>
+            <button name="action_area" type="object" string="Abrir facturación electrónica" context="{'erpec_area': 'fiscal'}" class="btn btn-outline-primary"/>
           </div>
           <div class="border rounded p-3" groups="erpec_payroll.group_payroll_manager">
             <h2>Nómina · Validación pendiente</h2>

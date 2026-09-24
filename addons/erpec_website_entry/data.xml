@@ -1,0 +1,3 @@
+<odoo>
+  <function model="website" name="_erpec_apply_entry_branding"/>
+</odoo>
