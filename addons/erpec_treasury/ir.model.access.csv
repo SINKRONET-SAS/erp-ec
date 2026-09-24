@@ -3,3 +3,7 @@ bank_match_manager,Conciliación bancaria,model_erpec_bank_match,account.group_a
 payroll_disbursement_manager,Pagos de nómina,model_erpec_payroll_disbursement,erpec_payroll.group_payroll_manager,1,1,1,0
 statement_manager,Extractos de tesorería responsables,account.model_account_bank_statement,account.group_account_manager,1,1,1,0
 statement_line_manager,Movimientos de tesorería responsables,account.model_account_bank_statement_line,account.group_account_manager,1,1,1,0
+bank_company_account_manager,Cuentas propias por banco,model_erpec_bank_company_account,account.group_account_manager,1,1,1,1
+bank_export_wizard_manager,Generar archivo de pago bancario,model_erpec_bank_export_wizard,account.group_account_manager,1,1,1,1
+bank_export_batch_manager,Archivos bancarios generados,model_erpec_bank_export_batch,account.group_account_manager,1,0,1,0
+bank_export_line_manager,Registros de archivo bancario,model_erpec_bank_export_line,account.group_account_manager,1,0,1,0

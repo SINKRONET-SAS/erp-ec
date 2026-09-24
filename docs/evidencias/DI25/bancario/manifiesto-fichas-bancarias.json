@@ -1,0 +1,33 @@
+{
+  "nota": "Manifiesto de binarios (PDF/HTML) de fichas técnicas bancarias oficiales, obtenidos el 24-09-2026 e implementados en addons/erpec_treasury/bank_export.py. El gobierno no hashea binarios; se registran aquí con SHA-256.",
+  "archivos": {
+    "pichincha-formato-carga-pagos.pdf": {
+      "sha256": "2b2bd2d0892c034c31c0ab00dd226a70429674b66a4c5e738d64ff23b18c4aa9",
+      "url": "https://www.pichincha.com/sites/default/files/images/Doc%2B10-footer-cash-pymes-instructivos-10-formato-carga-de-ordenes-de-pago-masiva_10.pdf",
+      "titulo": "Banca Electrónica Empresas · Formato de carga para pagos",
+      "confirmado": true,
+      "resumen": "12 columnas, tabulador, sin encabezado (se borra antes de guardar), monto en centavos sin separador. Campos: TIPO(PA), CONTRAPARTIDA, MONEDA(USD), VALOR, FORMA DE PAGO(CTA), TIPO CTA(AHO/CTE), NUMERO CTA, REFERENCIA, TIPO ID(C/R/P), NUMERO ID, NOMBRE BENEFICIARIO, CODIGOS BANCOS."
+    },
+    "produbanco-formato-entrada-pagos-full-v1.1.pdf": {
+      "sha256": "f9cbbdf5697f8798213ac5e384a3fc8731d011e019ecbf03e67ce6ac3c0d57a1",
+      "url": "https://www.produbanco.com.ec/media/712207/formato-entrada-pagos_full.pdf",
+      "titulo": "Formato de Entrada Pagos_Full, versión 1.1, 07/04/2022",
+      "confirmado": true,
+      "resumen": "20 campos tabulados, con ejemplos numéricos completos y catálogo de códigos de institución financiera (anexo). Cuenta Empresa (11 díg., ceros a la izquierda) y Valor (13 díg., ceros a la izquierda) van rellenados; implementación verificada campo a campo contra el Ejemplo 1 del propio documento."
+    },
+    "ruminahui-formato-cm-full-pagos.pdf": {
+      "sha256": "0470747d03d37c5741597b4a6724fdd5547bf9e0412db3b3485c1266a975da81",
+      "url": "https://www.bgr.com.ec/resources/pdf/cash-management/cmfull-pagos-bgr-carga.pdf",
+      "titulo": "Formato CM Full Pagos, 19/03/2015",
+      "confirmado": true,
+      "resumen": "20 campos tabulados, mismo orden que Produbanco pero sin relleno de ceros (el documento lo dice expresamente) y código de banco fijo 0042 (el formato no admite otro banco). El ejemplo numérico del propio documento no rellena el valor a 13 dígitos pese a declarar Num(13); se siguió el ejemplo, no la celda de ancho declarado, y se documenta la discrepancia en el código."
+    },
+    "guayaquil-articulo-formato-pago-terceros.html": {
+      "sha256": "18f28288bfc42298e7172c4708db321bc3d9127b9e104f5c0896d8d9dbe9a1c1",
+      "url": "https://ayudaempresas.bancoguayaquil.com/hc/es/articles/11032985670804--Cu%C3%A1l-es-el-formato-para-cargar-una-orden-de-Cash-Management-para-pago-a-terceros-en-mi-Banca-Empresas",
+      "titulo": "Centro de ayuda Banco Guayaquil: formato para cargar una orden de pago a terceros",
+      "confirmado": false,
+      "resumen": "Identifica 20 campos casi idénticos a Produbanco/Rumiñahui (nombre de archivo BENEFICIARIO_AAAAMMDD_NN.TXT) pero esta fuente no declara el delimitador del archivo. No se implementó: no se asume tabulador por analogía con los otros dos bancos de la misma familia de formato."
+    }
+  }
+}
