@@ -62,9 +62,15 @@
     "verified": "ats_catalog corregido presente (260 países, comprobante 374), ats_catalog_seal sin incidencias, modelo erpec.fiscal.tax.matrix instalado con flujo de aprobación probado. DI25-04.2/.3: erpec_fiscal_ats instalado, factura de compra real posteada en 'Empresa autoservicio ensayo' (RUC 1793235327001, corregido de un sufijo inválido 999), erpec.ats.report.action_build() ejecutado contra esa factura real (1 compra, 0 faltantes), XML extraído y validado con éxito contra el motor real del DIMM (esquema + reglas de negocio, ver docs/evidencias/DI25/DI25-04-dimm-validacion.json). DI25-04.4: erpec.fiscal.tax.matrix creada para esa empresa con el contenido confirmado por el responsable (IVA/IR aplican, ICE/ISD no aplican), sin aprobar todavía."
   },
   "ci": {
-    "url": "pendiente de push; se completa en una corrección menor tras verificar el run",
-    "conclusion": "pendiente",
-    "checks": []
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/35937698803",
+    "conclusion": "success",
+    "checks": [
+      "gobierno",
+      "Suite integrada (imagen sin fuentes montadas)",
+      "Arranque real de imagen controller",
+      "Arranque real de imagen customer",
+      "Auditoría de dependencias"
+    ]
   },
   "pendingExternal": [
     "DI25-04.3: talón/acuse real y canal de presentación/envío oficial ante el SRI. Bloqueados por una dependencia nativa de 32 bits (SWT) del propio DIMM, no por falta de intento; requieren la interfaz gráfica real del DIMM o un entorno de 32 bits dedicado. La sección de ventas del ATS real tampoco se pudo validar contra el DIMM: requiere una emisión SRI autorizada, que requiere un certificado de pruebas real del SRI que no está disponible (y, conforme a instrucción del titular, no se intenta contra el portal real).",

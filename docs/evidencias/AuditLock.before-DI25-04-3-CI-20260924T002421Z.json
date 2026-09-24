@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-24T00:24:21.342Z",
+  "updatedAt": "2026-09-24T00:15:02.542Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -151,7 +151,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-2-AGREGADOR-20260923T223854Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-2-CI-20260923T225507Z.json",
-    "docs/evidencias/AuditLock.before-DI25-04-3-CI-20260924T002421Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-3-DEMO-REAL-20260924T001502Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-EXPORT-20260923T145430Z.json",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130336Z.json",
@@ -265,8 +264,7 @@
     "DI25-04.2 (23-09-2026, enmienda tras cierre): el titular ordeno explicitamente ejecutar la pieza pendiente (\"DI25-04 DEBE EJECUTARSE Y GENERARSE LA NUEVA FEATURE\"). Nuevo modulo erpec_fiscal_ats (agregador ATS real, aparte de erpec_fiscal_native para evitar dependencia circular con erpec_fiscal_sri/erpec_fiscal_withholding_sri). erpec.ats.report.action_build() concilia compras/ventas/anulados reales de account.move y retenciones reales (erpec.withholding.line.sri_code, Tabla 20 de la Ficha Tecnica ATS ya documentada en el codigo sin consumidor previo), con vista de faltantes con documento origen (erpec.ats.report.missing). Anulados: codigo probado, documentado como inalcanzable desde la UI real de este ERP (erpec_fiscal_connector bloquea deliberadamente cancelar un comprobante con emision fiscal). Brechas registradas explicitamente, no fabricadas: retencion de compra solo se adjunta si la factura tiene un unico grupo de sustento; consumidor final sin identificacion SRI no se agrupa; lineas con impuestos compuestos no se clasifican automaticamente. docs/evidencias/DI25/DI25-04-cierre.json actualizado en el mismo lugar (DI25-04.2 pasa de \"no comprobado\" a \"comprobado\"); la fase se mantiene cerrada parcial (DI25-04.3 bloqueado por SWT de 32 bits del DIMM, DI25-04.4 pendiente de aprobacion del responsable). No se reabre ni retrocede DI25-05 (ya cerrada) ni DI25-06 (en progreso). 21 pruebas nuevas (test_ats_report.py) + ampliacion de test_ats_export.py (bloques air/retencion, ventas, anulados). Suite integrada 612 pruebas, 0 fallos, 0 errores, 5 omisiones. Demo redesplegada con respaldo previo (di25-04-2-ats-aggregator-20260923T223519Z) y verificada contra la base real (action_build() ejecutado sin errores).",
     "DI25-04.2-ci (23-09-2026): CI verde tras el push del agregador ATS (run 35929681190: gobierno, Suite integrada, Arranque real de imagen controller/customer, Auditoria de dependencias). docs/evidencias/DI25/DI25-04-cierre.json completado con la URL del run.",
     "DI25-04.3-demo-real (23-09-2026, instruccion explicita del titular): comprobante de compra real posteado en la demo (empresa autoservicio ensayo, RUC corregido a 1793235327001), ensamblado por el agregador real (erpec.ats.report.action_build(), erpec_fiscal_ats) en un XML real y validado localmente contra el motor real del DIMM (sin contactar el portal del SRI). Primer intento rechazado con 2 errores reales: RUC del informante con sufijo invalido (numeroRucType exige terminar en 001) y formasDePago faltante sobre USD 500 (regla real del DIMM, no del esquema). Corregidos: RUC del sufijo, y formasDePago conectado al campo ya existente account.move.ec_fiscal_payment_code con umbral de deteccion nuevo en el agregador (si supera USD 500 sin forma de pago, el documento queda en faltantes). Segundo intento: aprobado sin errores de esquema ni de negocio. Ventas sigue sin poder validarse: requiere un certificado de pruebas real del SRI que no esta disponible; conforme a instruccion del titular, no se intento nada contra el portal real. 2 pruebas nuevas (test_purchase_over_500_without_payment_code_is_a_missing_gap, test_purchase_over_500_with_payment_code_includes_forma_pago_in_the_xml). Suite integrada 614 pruebas, 0 fallos, 0 errores. Evidencia en docs/evidencias/DI25/DI25-04-dimm-validacion.json y docs/evidencias/DI25/DI25-04-cierre.json.",
-    "DI25-04.4-preparada (23-09-2026): erpec.fiscal.tax.matrix creada para la empresa autoservicio ensayo con el contenido que el responsable tributario confirmo explicitamente en esta sesion (IVA/IR aplican; ICE/ISD no aplican por la actividad declarada; sin exclusiones), con fuente normativa citada (LRTI). Queda sin aprobar (approved=False): la aprobacion es una accion explicita separada del responsable, no decidida por este incremento.",
-    "DI25-04.3-ci (24-09-2026): CI verde tras el push de la validacion con comprobante real de la demo (run 35937698803: gobierno, Suite integrada, Arranque real de imagen controller/customer, Auditoria de dependencias). docs/evidencias/DI25/DI25-04-cierre.json completado con la URL del run."
+    "DI25-04.4-preparada (23-09-2026): erpec.fiscal.tax.matrix creada para la empresa autoservicio ensayo con el contenido que el responsable tributario confirmo explicitamente en esta sesion (IVA/IR aplican; ICE/ISD no aplican por la actividad declarada; sin exclusiones), con fuente normativa citada (LRTI). Queda sin aprobar (approved=False): la aprobacion es una accion explicita separada del responsable, no decidida por este incremento."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -435,7 +433,6 @@
     "docs/evidencias/AuditLock.before-DI25-03-VERIFICACION-20260921T140229979Z.json": "82c618865aca0ba96f7e98180c6aac59ccf22d9cd19860f9eedcf949811fbf4a",
     "docs/evidencias/AuditLock.before-DI25-04-2-AGREGADOR-20260923T223854Z.json": "a5883501ed6ddc595db13c1da03154ec3357de9dac4cc85493c6207d52c1d02a",
     "docs/evidencias/AuditLock.before-DI25-04-2-CI-20260923T225507Z.json": "57e3afc0a54df08dcbda045093d6385e7adb101ee05b2fa2c903ac0992997e30",
-    "docs/evidencias/AuditLock.before-DI25-04-3-CI-20260924T002421Z.json": "d2171345658fa2dedb0ee3c8264f67912830f6d1543c14fdfbb64686606fc5d0",
     "docs/evidencias/AuditLock.before-DI25-04-3-DEMO-REAL-20260924T001502Z.json": "74829f19f325dda588c78fa2e98336cf86f718eaf8691aa0a5f11884decc4941",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-EXPORT-20260923T145430Z.json": "2b2d3cd700b5c83672ac23ee751c8672c8e8808068889f4653b7b7b02014fb80",
     "docs/evidencias/AuditLock.before-DI25-04-ATS-TAXMATRIX-20260923T130336Z.json": "fd8bf5ef824e2ba75dc94b6a2ae33d87a9f077820fdeea492af88adc82d5d942",
@@ -464,7 +461,7 @@
     "docs/evidencias/DI25/DI25-03-ensayos-renta.json": "8fe914b524a022db930655031c3f757eb5387e135b9f871f55df0157acaa34ba",
     "docs/evidencias/DI25/DI25-03-exenciones-personales.json": "0c909d7dde88bb7ce222c9965ba58776e2001fac19804f3f732760fc173248a5",
     "docs/evidencias/DI25/DI25-03-progreso.json": "6f951db9c6b64b7b4164534cf088f67553fd3bcf0a372faee8b489b243d97ad7",
-    "docs/evidencias/DI25/DI25-04-cierre.json": "c8164ddf4a986fc375c478b3b57dcc6c1db14d9f984807978133b5946336936d",
+    "docs/evidencias/DI25/DI25-04-cierre.json": "6a8af7705b608c3b3ede476f4af31a75d4983f66d7ca29574fcd3f589e9a4003",
     "docs/evidencias/DI25/DI25-04-dimm-validacion.json": "84c8565950272299ae04d3c160a2437fadae3ce3b2df30b2512420630e74d2c2",
     "docs/evidencias/DI25/DI25-05-cierre.json": "f6802f6e58a3f2b9577f3747de140785aaa175cd5db047de9a4254b06e92b4cc",
     "docs/evidencias/DI25/capturas.json": "9d98bfb3803f74d55edefb235b15a2bed28da1278b50da7ca8ca9a73224b6310",
@@ -489,9 +486,9 @@
     "scripts/verify-governance.cjs": "4e6e3f1d7f77564ca73ac48c960d9bb346ae3c7fd482fe5095dbc92b08995403",
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-04-3-CI-20260924T002421Z.json",
-  "previousAuditLockHash": "d2171345658fa2dedb0ee3c8264f67912830f6d1543c14fdfbb64686606fc5d0",
-  "signature": "5b90dba8d785259a3bff52e6290a2a9202fafccee23271352ef030e19be0e188",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-04-3-DEMO-REAL-20260924T001502Z.json",
+  "previousAuditLockHash": "74829f19f325dda588c78fa2e98336cf86f718eaf8691aa0a5f11884decc4941",
+  "signature": "d7bec501da7c9c5f64e015771d168d2d9b921aae76ebfe3b887307c10310d9eb",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
