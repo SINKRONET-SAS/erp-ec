@@ -1,0 +1,26 @@
+{
+  "fecha": "2026-09-24",
+  "fase": "DI25-07 (cierra el limite de DI25-04.3)",
+  "tema": "Talon Resumen del ATS generado por el titular en la interfaz del DIMM",
+  "origen": "ATS-ENSAYO-2026-09.xml producido por erpec.ats.report (empresa 'Empresa autoservicio ensayo', RUC 1793235327001, periodo 09-2026) y cargado por el titular en dimm.exe; captura del titular a las 14:01 del 24-09-2026 (Talon Resumen, fecha de generacion 24/09/2026 14:00:45)",
+  "observado": {
+    "compras": {
+      "codigo": "01",
+      "transaccion": "FACTURA",
+      "registros": 1,
+      "biTarifa0": "0.00",
+      "biDiferente0": "500.00",
+      "biNoObjetoIva": "0.00",
+      "iva": "75.00"
+    },
+    "retencionIvaCompras": "todos los conceptos en 0.00 (coincide con el XML: sin retenciones)",
+    "ventas": "el XML no contiene ventas; no aplica",
+    "concuerdaConXml": "si: baseImpGrav 500.00 y montoIva 75.00 del unico detalleCompras"
+  },
+  "conclusion": "El DIMM aceptó el XML y emitio el Talon Resumen con cifras identicas a las del ERP. Queda demostrado que la interfaz del DIMM corre en esta maquina (JRE de 32 bits incluido) y que el flujo XML del ERP -> DIMM -> talon funciona.",
+  "limites": [
+    "El comprobante de compra usa una autorizacion de 49 digitos ficticia de la demo; es un ensayo, no una declaracion.",
+    "Solo compras: las ventas ATS requieren emision autorizada con certificado propio cargado.",
+    "No se presento nada al SRI; el talon es un reporte local del DIMM."
+  ]
+}
