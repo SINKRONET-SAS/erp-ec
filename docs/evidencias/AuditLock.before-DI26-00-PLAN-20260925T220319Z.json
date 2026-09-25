@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-25T22:03:19.274Z",
+  "updatedAt": "2026-09-25T17:10:27.854Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -16,13 +16,6 @@
     ".github/prompts/ERPEC26-DI25-05.md",
     ".github/prompts/ERPEC26-DI25-06.md",
     ".github/prompts/ERPEC26-DI25-07.md",
-    ".github/prompts/ERPEC26-DI26-00.md",
-    ".github/prompts/ERPEC26-DI26-A.md",
-    ".github/prompts/ERPEC26-DI26-B.md",
-    ".github/prompts/ERPEC26-DI26-C.md",
-    ".github/prompts/ERPEC26-DI26-D.md",
-    ".github/prompts/ERPEC26-DI26-E.md",
-    ".github/prompts/ERPEC26-DI26-F.md",
     ".github/workflows/tests.yml",
     "addons/erpec_acceptance/__init__.py",
     "addons/erpec_acceptance/__manifest__.py",
@@ -158,7 +151,6 @@
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md",
     "docs/DIAGNOSTICO_INTEGRAL_DI26.md",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md",
-    "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
     "docs/PLAN_HAIKY_ERPEC26.md",
     "docs/VALIDACION_ARCHIVOS_BANCARIOS.md",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json",
@@ -230,7 +222,6 @@
     "docs/evidencias/AuditLock.before-DI25-07-RESPONSABLE-20260924T201118Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-RESPONSABLE-CI-20260924T201857Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-TALON-20260924T190223Z.json",
-    "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json",
     "docs/evidencias/AuditLock.before-DI26-DIAGNOSTICO-20260925T170928Z.json",
     "docs/evidencias/AuditLock.before-DI26-LF-20260925T171027Z.json",
     "docs/evidencias/DI25/DI25-00-cierre.json",
@@ -282,7 +273,6 @@
     "docs/evidencias/DI26/validacion.json",
     "scripts/backup-restore-drill.py",
     "scripts/render-di25-matrix.py",
-    "scripts/seal-auditlock.cjs",
     "scripts/seed-tax-review-demo.py",
     "scripts/test-di25-demo-runner.py",
     "scripts/test-governance.cjs",
@@ -376,8 +366,7 @@
     "DI25-07 aceptacion de negocio (24-09-2026): tras la re-auditoria de falsos positivos (RDEP, homologacion bancaria, responsabilidad Cliente/Fundador, otrosIngRenGrav), el titular acepto DI25-07.6: \"DI25-07.6 se acepta, sin embargo, queda abierta la opcion de mejora o cierre de las decisiones tomadas.\" Los seis criterios de DI25-07 quedan comprobados; DI25-07 cierra completa (no parcial). Ninguna exclusion de la tabla de DI25-07.6 pasa a cumplida por esto; cada una queda abierta para un incremento futuro. Evidencia: docs/evidencias/DI25/DI25-07-cierre.json y docs/DI25-07_ACEPTACION.md.",
     "DI25-07 CI verde del commit 3bb75a6 (cierre completo aceptado) registrado en la evidencia (run 36078558267).",
     "Diagnóstico integral DI26 (25-09-2026): 16 hallazgos (6 P1, 10 P2) y 7 observaciones P3 en docs/DIAGNOSTICO_INTEGRAL_DI26.md y docs/evidencias/DI26/. Sin cambios de código. Acciones operativas con respaldo: -u de erpec_treasury, erpec_payroll y erpec_data_protection en fundador (desfase de esquema), -u erpec_suite en el inquilino b (desfase), sincronización completa de la demo. Suite 647/0/0, 143 menús sin errores, 9 roles sin regresión.",
-    "DI26: evidencias JSON normalizadas a LF (las copias desde el directorio temporal quedaron con CRLF y su huella no coincidía con git).",
-    "DI26-00 cerrada (25-09-2026): diagnóstico DI26 publicado con evidencia y Plan Haiky DI26 desplegado (plan, 7 prompts, contexto y AuditLock). DI26-06 confirmado contra la Ficha Técnica 2.34, Anexo 26 (texto primario)."
+    "DI26: evidencias JSON normalizadas a LF (las copias desde el directorio temporal quedaron con CRLF y su huella no coincidía con git)."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -401,11 +390,11 @@
     "DI25-04 (cerrada parcial): DI25-04.3 (talon/acuse real y ventas) sigue bloqueado -- talon por SWT de 32 bits del DIMM, ventas por falta de un certificado de pruebas real del SRI (no se intenta contra el portal real por instruccion del titular). DI25-04.4 (matriz fiscal) tiene el contenido preparado y confirmado por el responsable; falta unicamente su aprobacion explicita (boton Aprobar). ICE/ISD sin fuente oficial transcrita; convenio de doble imposicion de DI25-03 sigue pendiente de registro real por pais.",
     "DI25-06 (cerrada parcial): DI25-06.2/.3 con limites (sin lector de pantalla, zoom emulado, 2 roles, cambio de empresa solo por pruebas); DI25-16 sin destinos legales reales ni contacto publico de la empresa (lo aporta el responsable); erpec_website_entry no esta en las imagenes controller/customer. Ver docs/evidencias/DI25/DI25-06-cierre.json.",
     "DI25-07 (cerrada, aceptada 24-09-2026): SRI produccion, resto de homologacion bancaria (Guayaquil/Pacifico/Internacional/Bolivariano, proveedores), textos legales y contacto real del sitio, respaldo programado, contratos de encargados en borrador -- todas exclusiones explicitas y vivas para un incremento futuro, no bloqueos del cierre de fase. Ver docs/evidencias/DI25/DI25-07-cierre.json.",
-    "DI26: fases A a F en ejecución según docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md."
+    "DI26 (25-09-2026): diagnóstico publicado; Plan Haiky DI26 propuesto y pendiente de autorización del titular. Ver docs/DIAGNOSTICO_INTEGRAL_DI26.md."
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "fc50988c39a77786b4cb513aa60df552a0402bab03ef4d133f54165996829c42",
+    ".github/CODEX_CONTEXT.md": "f1c388fba58b4afa93d4a99e65b21d7452bb813a9b3d6860b1a84b3b6ba4e8be",
     ".github/prompts/ERPEC26-DI25-00.md": "6dedd464202df5529d7b477d00a194decf23aa63d00987baed84c8448cea0c31",
     ".github/prompts/ERPEC26-DI25-01.md": "4e54396b755f8223202c151c1d5c1a577521aa07fe0299c3275797cba190acb1",
     ".github/prompts/ERPEC26-DI25-02.md": "fa69838d8929e0e6cfe3b19aa5eadac18aa6ccfa38cf477632058a8af978f5ae",
@@ -414,13 +403,6 @@
     ".github/prompts/ERPEC26-DI25-05.md": "8bb31f889510049e9d2cb4f2c82e3751eeb8071f21c1af6d8f43109d42125710",
     ".github/prompts/ERPEC26-DI25-06.md": "f353192f7f39b6939f78fc546cc7f14057888c297c4709f295567573b29e21d3",
     ".github/prompts/ERPEC26-DI25-07.md": "a755712e87217abc2c46a83f8859ce7d2f03c948f7716c1f3303a2428eb245e3",
-    ".github/prompts/ERPEC26-DI26-00.md": "576e749183667b35bc94476466ef71c868950f62ee09ad849d61f8c34e30efac",
-    ".github/prompts/ERPEC26-DI26-A.md": "1df6de64053d063c28d8e801726a87373e5d8ff4b86b81d5732badb7bd39cf43",
-    ".github/prompts/ERPEC26-DI26-B.md": "2ebc4d5255981e4656350e19b2d0ed3e554d91f164fb592b6e67e7cd9ebd535e",
-    ".github/prompts/ERPEC26-DI26-C.md": "2682696db45e3051cbb77654beb3c822fd33838bf61c887dbc6aefc085def560",
-    ".github/prompts/ERPEC26-DI26-D.md": "3942a1867060f05d6864ad11b47763653b45f194dffd46dbf49a48ed424682f9",
-    ".github/prompts/ERPEC26-DI26-E.md": "02467e546a99bb3ff4abe6b514db85482bab21df624b4db2c639e3f8d944e5de",
-    ".github/prompts/ERPEC26-DI26-F.md": "2aa6c1e60990fca622aa47ec2ede3f9511497172fb887072f3b572cceadc22bd",
     ".github/workflows/tests.yml": "a3aa217896657c27a96663243cfd085e20a890b7a0145b03d98fd22074dd7856",
     "addons/erpec_acceptance/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "addons/erpec_acceptance/__manifest__.py": "24bf3522041496e18e1cc3e8ccae560aed2121ed4f657ab1987f9704e1bf620e",
@@ -556,7 +538,6 @@
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md": "faf1e2712d152b517d8cf06a9cb3ee90b6c9018ba25a4a8cfa46c864fbeb74a3",
     "docs/DIAGNOSTICO_INTEGRAL_DI26.md": "1ae2eea8fba3f0bc8a3ed28606e078cd46cadacbac65ddeb63c0ef558d39e10c",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "1337eecd21e1b3139b8f8a5c88737888da4b09667c29882888adb559292ee259",
-    "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md": "b46d6cf2c28958762256824b855999ecbccfc78c3db60054980413b6f4bd11fc",
     "docs/PLAN_HAIKY_ERPEC26.md": "755ac5c13222d34f6ab255eefe933ede5ce19d7b90a7775ff5874d510e748466",
     "docs/VALIDACION_ARCHIVOS_BANCARIOS.md": "08cf498beed7745f7ebf899d1eeeeae1ac0993331b1e94fc4226978781538c01",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json": "de67ecc73c15639c66edaf57a5599b49d61200ca3c537f8c88bed2081a877e14",
@@ -628,7 +609,6 @@
     "docs/evidencias/AuditLock.before-DI25-07-RESPONSABLE-20260924T201118Z.json": "c96f7eef06f860370cd2260cab4fb40f9d036461ae589bf8e72e1fb94036986d",
     "docs/evidencias/AuditLock.before-DI25-07-RESPONSABLE-CI-20260924T201857Z.json": "2f337775786a8da3b839e41eb278bc8179347e69dca4f531cfcce32f61471c88",
     "docs/evidencias/AuditLock.before-DI25-07-TALON-20260924T190223Z.json": "e130195f4a1a3cfffd229ea03ff6f4fc4cae473c2f8d34d138b0b7cfc8874053",
-    "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json": "7fc3a74ba90675ac13184e9f23fe18b9a0fdf6434f57e9b4ad6ba42249a15fa1",
     "docs/evidencias/AuditLock.before-DI26-DIAGNOSTICO-20260925T170928Z.json": "6ced5a5aabc9225d765c30884b0d842a79f1a8df50f01733469f9f0ef2519122",
     "docs/evidencias/AuditLock.before-DI26-LF-20260925T171027Z.json": "f05faa115ab7f0aa7c1893dcd2be9ccdce8962296d546cf5d7b398f22d1e61a9",
     "docs/evidencias/DI25/DI25-00-cierre.json": "b799db9f762677acfd1d630c035f8072b8134e6ff3a4be0432b2ebf986a93b81",
@@ -680,7 +660,6 @@
     "docs/evidencias/DI26/validacion.json": "17a540d3f6b9c5b6d6d43b25c2f51cdded0066d32f00860feb6ae69baee8acd2",
     "scripts/backup-restore-drill.py": "a1153d470b67eee09dd983fdabcffedb02eeefdb570a5ea5dfa94365064cfb6c",
     "scripts/render-di25-matrix.py": "08f69a66e6db1f090b2f0bb1e1459bc3293d401f2b4c7f2bfef285c8863ac08e",
-    "scripts/seal-auditlock.cjs": "b067f55af014491cb59eeee094a286b8e7f61ab2e1a893314eac302f3a5c9a6a",
     "scripts/seed-tax-review-demo.py": "1e78564f437719f80faf895bfdf195e2ca7d3d24c043b340a907836cf50655a3",
     "scripts/test-di25-demo-runner.py": "8dcfc0a8f8c40bc5b91ceea837f30e0d02f5ba32ebbf1043bd309cd738273624",
     "scripts/test-governance.cjs": "5deed55bb45852620f306450f28af0f55e785f9f9a9b7f80ad87955e2c62b142",
@@ -696,9 +675,9 @@
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json",
-  "previousAuditLockHash": "7fc3a74ba90675ac13184e9f23fe18b9a0fdf6434f57e9b4ad6ba42249a15fa1",
-  "signature": "c2a45e8469c372b1f46543cc136822c7c47cc1886df21a0c4c8d7654a19dc3e5",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI26-LF-20260925T171027Z.json",
+  "previousAuditLockHash": "f05faa115ab7f0aa7c1893dcd2be9ccdce8962296d546cf5d7b398f22d1e61a9",
+  "signature": "227431597744d4b7775d5d792ac2749498a4509db2b440eee29d48824926559d",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -722,25 +701,5 @@
     "currentFindings": "docs/evidencias/DI25/estado-hallazgos.json",
     "reviewDemoEvidence": "docs/evidencias/DI25/DI25-03-ensayos-renta.json",
     "specialExpenseEvidence": "docs/evidencias/DI25/DI25-03-100-canastas.json"
-  },
-  "requiredPrompts": [
-    ".github/prompts/ERPEC26-DI26-00.md",
-    ".github/prompts/ERPEC26-DI26-A.md",
-    ".github/prompts/ERPEC26-DI26-B.md",
-    ".github/prompts/ERPEC26-DI26-C.md",
-    ".github/prompts/ERPEC26-DI26-D.md",
-    ".github/prompts/ERPEC26-DI26-E.md",
-    ".github/prompts/ERPEC26-DI26-F.md"
-  ],
-  "diagnosticImprovementDI26": {
-    "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
-    "diagnostic": "docs/DIAGNOSTICO_INTEGRAL_DI26.md",
-    "findings": 16,
-    "currentFindings": "docs/evidencias/DI26/hallazgos.json",
-    "phaseCompleted": "DI26-00",
-    "phaseInProgress": "DI26-A",
-    "nextPhase": "DI26-A",
-    "status": "plan-desplegado-fase-A-habilitada",
-    "evidence": "docs/evidencias/DI26/validacion.json"
   }
 }
