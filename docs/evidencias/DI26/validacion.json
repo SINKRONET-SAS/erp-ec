@@ -1,0 +1,67 @@
+{
+  "diagnostico": "DI26",
+  "fecha": "2026-09-25",
+  "zonaHoraria": "America/Guayaquil",
+  "baseCodigo": "ebef509 (HEAD al iniciar; los cambios posteriores de este diagnóstico son solo documentales y de evidencia)",
+  "alcance": "Diagnóstico integral pedido por el titular: UI/UX, funcionalidad, regresiones, duplicaciones, incoherencias, mojibake, homologación UTF-8, español de Ecuador y cumplimiento legal. No se ejecutan correcciones funcionales del código; sí se corrigieron dos desfases de esquema en instancias vivas (ver accionesOperativas) porque eran fallas latentes introducidas por cambios ya publicados.",
+  "suiteIntegrada": {
+    "local": {"pruebas": 647, "fallos": 0, "errores": 0, "omisiones": 12, "commit": "3bb75a6 (el código no cambió hasta ebef509)"},
+    "ci": {"run": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36078558267", "pruebas": 647, "fallos": 0, "errores": 0, "omisionesEnCI": 12, "nota": "Las 12 omisiones son siempre las mismas (Tesorería y exportación bancaria requieren la demo sembrada); en CI nunca se ejecutan."}
+  },
+  "codificacion": {
+    "archivosDeTextoVersionados": 838,
+    "utf8Invalido": 0,
+    "bom": ["addons/erpec_fiscal_native/xsd/at.xsd (archivo oficial del SRI, conservado byte a byte, -text)"],
+    "indiceGit": {"lf": 839, "crlfIntencional": 3, "binarioSinTexto": 84, "sinFinDeLinea": 2},
+    "crlfSoloEnCopiaDeTrabajo": 52,
+    "mojibake": [
+      "scripts/install-fiscal.py:14,20,24,47,50 (mensajes de error con 'Ã¡', 'Ã³' en lugar de 'á', 'ó')",
+      "addons/erpec_fiscal_native/xsd/ComprobanteRetencion_V2.0.0.xsd:336 (comentario de documentación del XSD oficial, tal como está en el archivo; no afecta la validación)"
+    ],
+    "basesDeDatos": {"erpec_demo": "UTF8, 14 campos de texto revisados, sin mojibake", "erpec_fundador": "UTF8, 14 campos de texto revisados, sin mojibake"}
+  },
+  "idioma": {
+    "idiomasActivos": ["en_US", "es_EC"],
+    "usuariosInternos": {"erpec_demo": "demo es_EC/America/Guayaquil; selfservice_test_2 en_US sin zona (usuario de prueba activo)", "erpec_fundador": "fundador es_EC/America/Guayaquil"},
+    "idiomaPorDefectoDeContactos": {"erpec_demo": "en_US (ir_default)", "erpec_fundador": "en_US (ir_default)"},
+    "contactosEnEsEC": {"erpec_demo": "10 de 45", "erpec_fundador": "1 de 5"},
+    "empresas": "idioma en_US y sin zona horaria en las tres empresas revisadas",
+    "sitioPublicoDemo": {"idiomaPorDefecto": "en_US", "paginas": {"/": "en-US: Contact Us, Home, Shop, Sign in", "/derechos-datos": "html lang=en-US con contenido en español", "/es": "es-EC, sin textos en inglés"}},
+    "textosPropiosEnIngles": "0 cadenas escritas en inglés en etiquetas, vistas o mensajes de error propios; 220 de 1049 campos propios sin etiqueta en español muestran la etiqueta automática en inglés (etiquetas-automaticas-ingles.json)",
+    "tildes": ["addons/erpec_payroll/reports.xml: nombre del PDF 'Resumen de nomina - %s'", "addons/erpec_workspace/retention_reference_data.xml: 'convenio de debito'"]
+  },
+  "recorridoUI": {
+    "menus": {"usuario": "qa_admin", "menusConAccion": 143, "erroresJS": 0, "dialogosDeError": 0, "mojibakeEnPantalla": 0, "incidentes": ["Website / Configuration / eCommerce / Payment Methods: 'Su sesión de Odoo expiró' (sitio web; no reproducido en pantallas ERP)"], "columnasEnIngles": "11 pantallas propias con encabezados 'Company', 'Name', 'Total Amount'", "evidencia": "recorrido-menus-qa_admin.json"},
+    "roles": {"usuarios": 9, "anchos": ["360", "768", "1280", "640 a DPR 2 (zoom 200 %)"], "desbordes": 0, "erroresJS": 0, "violacionesAxe": 0, "focoSinIndicador": 0, "areasPorRol": "idénticas a la línea base DI25-06", "cambioDeEmpresa": "funciona", "evidencia": "recorrido-roles-9.json", "nota": "Usuarios QA reactivados solo para la prueba y desactivados al terminar."}
+  },
+  "desfaseDeEsquema": {
+    "metodo": "Registro de Odoo cargado con el código actual contra cada base (odoo shell, sin escribir): campos almacenados sin columna.",
+    "antes": {"erpec_fundador": "res_partner_bank.erpec_bank_key, erpec_account_type; tablas erpec_bank_export_*, erpec_bank_company_account; erpec_payroll_rdep_line.non_taxable_benefits_reference", "erpec_b": "erpec.plan.published, currency_id, price (erpec_suite)", "erpec_a": "sin desfase", "erpec_demo": "copia atrasada del código (sin exportación bancaria ni referencia RDEP)"},
+    "despues": {"erpec_fundador": [], "erpec_b": [], "erpec_a": [], "erpec_demo": []},
+    "causaRaiz": "14 de 25 módulos propios cambiaron modelos después de su última subida de versión; fundador, a y b leen addons/ del repositorio en vivo; scripts/manage-odoo.py update() solo actualiza erpec_base."
+  },
+  "accionesOperativas": [
+    {"instancia": "erpec_fundador", "respaldo": ".cache/windows/backups/fundador-sync-bancaria-rdep-20260925T152909Z", "accion": "-u erpec_treasury,erpec_payroll,erpec_data_protection", "resultado": "columnas creadas; el servidor recargó el registro por señalización; sin errores nuevos"},
+    {"instancia": "erpec_b", "respaldo": ".cache/windows/backups/tenant-b-drift-erpec-suite-20260925T165609Z", "accion": "-u erpec_suite", "resultado": "desfase 0"},
+    {"instancia": "erpec_demo", "respaldo": ".cache/windows/backups/diag-sync-demo-20260925T153031Z", "accion": "copia de todos los módulos del repositorio y -u; reinicio del proceso", "resultado": "demo con el código actual; login y cliente web sin errores"}
+  ],
+  "reproducciones": {
+    "sustentoATS": {"base": "copia aislada y desechable de erpec_demo (eliminada al terminar)", "linea": 132, "estadoFactura": "draft", "codigoDelPlan": "02", "guardadoAMano": "01", "despuesDeLeerElAvisoInformativo": "02", "sobrescrito": true, "nota": "En la demo no hay líneas contabilizadas cuyo plan resuelva sustento; el método de cálculo no revisa el estado del documento."},
+    "identificacionBancaria": {"funcion": "erpec_treasury.bank_export._split_identification", "casos": {"PX39582": "('P', '39582')", "A1234567": "('P', '1234567')", "1710034065": "('C', '1710034065')", "0912378320001": "('R', '0912378320001')"}}
+  },
+  "estadoInstanciasFiscales": {
+    "erpec_fundador": {"certificado": "SINKRONET S.A.S., persona jurídica, ANF High Assurance Ecuador Intermediate CA, verificado, CA reconocida, firma probada, vigente hasta 2029-03-10", "emisionesAutorizadas": 4, "ambiente": "1 (pruebas)", "fecha": "2026-09-20"},
+    "erpec_demo": {"empresaEnsayo": "Empresa autoservicio ensayo con RUC 1793235327001 (el RUC real de SINKRONET S.A.S.)", "certificado": "autofirmado de ensayo, CA no reconocida"}
+  },
+  "fuentesLegalesConsultadas": [
+    "SRI, extracto oficial LORTI Arts. 9 al 9.5 y Reglamento Arts. 14-23 (sri.gob.ec), revisado el 24-09-2026",
+    "Ministerio de Economía y Finanzas, instructivos de nómina del décimo cuarto régimen Sierra 2025 y Costa 2026 (spryn.finanzas.gob.ec); calculadora del Ministerio del Trabajo (calculadoras.trabajo.gob.ec/cuarto); Asamblea Nacional, ingresos adicionales"
+  ],
+  "limites": [
+    "No se practicó pentest, carga productiva ni lectura con lector de pantalla.",
+    "El recorrido de menús usó qa_admin; las pantallas de otros roles se cubrieron con la batería de 9 roles en el Inicio, no menú por menú.",
+    "No se verificó contra texto primario el artículo de la LOPDP sobre información al titular al recoger datos; el hallazgo DI26-15 queda como probable.",
+    "La aplicabilidad de NAC-DGERCGC26-00000027 (RUC del proveedor del sistema) al modelo SaaS no se dictaminó.",
+    "No se enviaron comprobantes, correos, transferencias ni declaraciones; no se modificaron repositorios fuente."
+  ]
+}

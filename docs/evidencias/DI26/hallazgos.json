@@ -1,0 +1,146 @@
+{
+ "diagnostico": "DI26",
+ "fecha": "2026-09-25",
+ "total": 16,
+ "p1": 6,
+ "p2": 10,
+ "hallazgos": [
+  {
+   "id": "DI26-01",
+   "prioridad": "P1",
+   "tema": "Regresión / operación",
+   "titulo": "Desfase de esquema recurrente en instancias que leen el repositorio en vivo",
+   "evidencia": "14/25 módulos cambiaron modelos sin subir versión; fundador, a y b leen addons/ en vivo; manage-odoo.py update() solo actualiza erpec_base. Corregido hoy en fundador y b con respaldo; causa raíz abierta.",
+   "faseSugerida": "DI26-A"
+  },
+  {
+   "id": "DI26-02",
+   "prioridad": "P1",
+   "tema": "Integridad fiscal",
+   "titulo": "El sustento ATS corregido a mano se sobrescribe al leer un campo informativo",
+   "evidencia": "tax_intersection.py:202-223; aviso de Odoo 'inconsistent store'; reproducido en copia de la demo (01 -> 02).",
+   "faseSugerida": "DI26-B"
+  },
+  {
+   "id": "DI26-03",
+   "prioridad": "P1",
+   "tema": "Integridad de pagos",
+   "titulo": "El archivo bancario borra letras de pasaportes y clasifica la identificación por longitud",
+   "evidencia": "bank_export._split_identification: PX39582 -> 39582; ignora el tipo declarado del empleado.",
+   "faseSugerida": "DI26-B"
+  },
+  {
+   "id": "DI26-04",
+   "prioridad": "P1",
+   "tema": "Legal / incoherencia",
+   "titulo": "Email Marketing instalado en la demo sin conexión con la exclusión comercial",
+   "evidencia": "mass_mailing instalado; mail_blacklist sin integrar con ec_marketing_email_opt_out; DI25-05.2/07 afirmaban que no existía; sin servidor de correo hoy.",
+   "faseSugerida": "DI26-D"
+  },
+  {
+   "id": "DI26-05",
+   "prioridad": "P1",
+   "tema": "Legal laboral",
+   "titulo": "Décimo tercero y cuarto sin flujo de pago ni periodos legales por región",
+   "evidencia": "Motor causa mensualmente; ficha por año calendario; sin régimen Sierra/Costa (arts. 111 y 113 CT; instructivos MEF; calculadora MDT).",
+   "faseSugerida": "DI26-C"
+  },
+  {
+   "id": "DI26-06",
+   "prioridad": "P1",
+   "tema": "Legal fiscal",
+   "titulo": "RUC del proveedor del sistema (NAC-DGERCGC26-00000027) sin implementar",
+   "evidencia": "Pendiente declarado en UI; aplicabilidad al SaaS sin dictaminar.",
+   "faseSugerida": "DI26-D"
+  },
+  {
+   "id": "DI26-07",
+   "prioridad": "P2",
+   "tema": "Español de Ecuador",
+   "titulo": "Contactos, empresas y sitio público en inglés por defecto; empresas sin zona horaria",
+   "evidencia": "ir_default res.partner.lang=en_US en demo y fundador; aprovisionamiento solo ajusta al admin; sitio en_US.",
+   "faseSugerida": "DI26-E"
+  },
+  {
+   "id": "DI26-08",
+   "prioridad": "P2",
+   "tema": "Español de Ecuador",
+   "titulo": "220 de 1049 campos propios con etiqueta automática en inglés",
+   "evidencia": "Company, Name, Total Amount, Result Tax…; ver etiquetas-automaticas-ingles.json.",
+   "faseSugerida": "DI26-E"
+  },
+  {
+   "id": "DI26-09",
+   "prioridad": "P2",
+   "tema": "Incoherencia UI",
+   "titulo": "Avisos falsos en pantalla (factura y RDEP)",
+   "evidencia": "erpec_fiscal_native/models.py:34; annex_rdep.py:406.",
+   "faseSugerida": "DI26-E"
+  },
+  {
+   "id": "DI26-10",
+   "prioridad": "P2",
+   "tema": "Incoherencia documental",
+   "titulo": "Evidencias de cierre DI25 con afirmaciones falsas",
+   "evidencia": "Certificado propio y 4 autorizaciones en fundador; talón generado; envío masivo existente.",
+   "faseSugerida": "DI26-F"
+  },
+  {
+   "id": "DI26-11",
+   "prioridad": "P2",
+   "tema": "Duplicación",
+   "titulo": "Cuentas bancarias, banco, acción de retenciones, ingresos no gravados y tipo de identificación duplicados",
+   "evidencia": "erpec.bank.company.account vs diario; erpec_bank_key vs res.bank; acción 481 en dos apps; non_taxable_income vs beneficio sin renta; C/P/E vs C/R/P.",
+   "faseSugerida": "DI26-B/DI26-F"
+  },
+  {
+   "id": "DI26-12",
+   "prioridad": "P2",
+   "tema": "Datos de ensayo",
+   "titulo": "La empresa ficticia de la demo usa el RUC real de SINKRONET",
+   "evidencia": "RUC 1793235327001 en 'Empresa autoservicio ensayo'; XML ATS y talón de ensayo con RUC real.",
+   "faseSugerida": "DI26-B"
+  },
+  {
+   "id": "DI26-13",
+   "prioridad": "P2",
+   "tema": "Fiabilidad de validación",
+   "titulo": "Pruebas y procedimientos críticos fuera de CI y del repositorio",
+   "evidencia": "12 omisiones permanentes en CI; UI/axe fuera de CI; scripts de sellado y despliegue en directorio temporal.",
+   "faseSugerida": "DI26-A"
+  },
+  {
+   "id": "DI26-14",
+   "prioridad": "P2",
+   "tema": "Accesibilidad",
+   "titulo": "Alertas sin role en vistas propias; sitio con lang en-US sobre contenido en español",
+   "evidencia": "Advertencias de ir_ui_view al actualizar.",
+   "faseSugerida": "DI26-E"
+  },
+  {
+   "id": "DI26-15",
+   "prioridad": "P2",
+   "tema": "Legal privacidad",
+   "titulo": "El formulario público de derechos no identifica responsable ni finalidad (probable)",
+   "evidencia": "rights_templates.xml; artículo LOPDP por verificar.",
+   "faseSugerida": "DI26-D"
+  },
+  {
+   "id": "DI26-16",
+   "prioridad": "P2",
+   "tema": "UX / superficie",
+   "titulo": "La demo tiene 184 módulos que no representan el producto aprovisionado",
+   "evidencia": "CRM, flota, livechat, blog, foro, gamificación, mass_mailing.",
+   "faseSugerida": "DI26-E"
+  }
+ ],
+ "observacionesP3": [
+  "mojibake en scripts/install-fiscal.py y comentario del XSD oficial de retención",
+  "tildes: 'Resumen de nomina', 'convenio de debito'",
+  "52 archivos CRLF solo en copia de trabajo",
+  "AuditLock.before-CF01.json sin versionar",
+  "152 instantáneas de AuditLock (5,2 MB)",
+  "compute_sudo inconsistente en account.move.line",
+  "sesión expirada en Website > Métodos de pago"
+ ]
+}

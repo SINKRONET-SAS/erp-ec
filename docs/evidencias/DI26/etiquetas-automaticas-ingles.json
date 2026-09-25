@@ -1,0 +1,1147 @@
+{
+ "fecha": "2026-09-25",
+ "base": "erpec_demo",
+ "metodo": "Campo definido por un módulo erpec_* cuya etiqueta efectiva (es_EC o, si falta, en_US) coincide con la etiqueta automática que Odoo deriva del nombre técnico en inglés; se excluyen campos heredados de mixins de mensajería y actividades.",
+ "camposPropiosRevisados": 1049,
+ "conEtiquetaAutomaticaEnIngles": 220,
+ "porModulo": {
+  "erpec_fiscal_ats": 55,
+  "erpec_field_routes": 49,
+  "erpec_payroll": 30,
+  "erpec_treasury": 26,
+  "erpec_withholding_accounting": 14,
+  "erpec_fiscal_sri": 13,
+  "erpec_data_protection": 11,
+  "erpec_fiscal_documents": 7,
+  "erpec_imports": 4,
+  "erpec_fiscal_connector": 4,
+  "erpec_fiscal_guide_sri": 4,
+  "erpec_fiscal_native": 3
+ },
+ "detalle": {
+  "erpec_fiscal_documents": [
+   {
+    "modelo": "erpec.purchase.document.mixin",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.purchase.document.mixin",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.purchase.withholding",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.purchase.withholding",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.reimbursement.support",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.reimbursement.support",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.reimbursement.support",
+    "campo": "document_key",
+    "etiqueta": "Document Key"
+   }
+  ],
+  "erpec_withholding_accounting": [
+   {
+    "modelo": "erpec.withholding",
+    "campo": "correlation_id",
+    "etiqueta": "Correlation"
+   },
+   {
+    "modelo": "erpec.withholding",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.withholding",
+    "campo": "partner_id",
+    "etiqueta": "Partner"
+   },
+   {
+    "modelo": "erpec.withholding",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.withholding",
+    "campo": "fiscal_notice",
+    "etiqueta": "Fiscal Notice"
+   },
+   {
+    "modelo": "erpec.withholding.line",
+    "campo": "withholding_id",
+    "etiqueta": "Withholding"
+   },
+   {
+    "modelo": "erpec.withholding.line",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.withholding.line",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.withholding.line",
+    "campo": "base",
+    "etiqueta": "Base"
+   },
+   {
+    "modelo": "account.move",
+    "campo": "ec_retention_id",
+    "etiqueta": "Ec Retention"
+   },
+   {
+    "modelo": "erpec.trial.balance",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.trial.balance.line",
+    "campo": "report_id",
+    "etiqueta": "Report"
+   },
+   {
+    "modelo": "erpec.trial.balance.line",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "account.bank.statement.line",
+    "campo": "ec_retention_id",
+    "etiqueta": "Ec Retention"
+   }
+  ],
+  "erpec_imports": [
+   {
+    "modelo": "erpec.importation",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.import.charge",
+    "campo": "import_id",
+    "etiqueta": "Import"
+   },
+   {
+    "modelo": "erpec.import.charge",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.import.charge",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   }
+  ],
+  "erpec_payroll": [
+   {
+    "modelo": "erpec.payroll.policy",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.payroll.mapping",
+    "campo": "policy_id",
+    "etiqueta": "Policy"
+   },
+   {
+    "modelo": "erpec.payroll.mapping",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.payroll.period",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "period_id",
+    "etiqueta": "Period"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.payroll.rdep",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.payroll.rdep",
+    "campo": "line_ids",
+    "etiqueta": "Line"
+   },
+   {
+    "modelo": "erpec.payroll.rdep.line",
+    "campo": "annex_id",
+    "etiqueta": "Annex"
+   },
+   {
+    "modelo": "erpec.payroll.rdep",
+    "campo": "filename",
+    "etiqueta": "Filename"
+   },
+   {
+    "modelo": "erpec.payroll.tax.bracket",
+    "campo": "policy_id",
+    "etiqueta": "Policy"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_salary",
+    "etiqueta": "Result Salary"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_overtime",
+    "etiqueta": "Result Overtime"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_personal_iess",
+    "etiqueta": "Result Personal Iess"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_tax",
+    "etiqueta": "Result Tax"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_thirteenth",
+    "etiqueta": "Result Thirteenth"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_fourteenth",
+    "etiqueta": "Result Fourteenth"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_vacation",
+    "etiqueta": "Result Vacation"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_reserve_iess",
+    "etiqueta": "Result Reserve Iess"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_employer_iess",
+    "etiqueta": "Result Employer Iess"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_employer_other",
+    "etiqueta": "Result Employer Other"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.summary",
+    "campo": "name",
+    "etiqueta": "Name"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.summary",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.summary",
+    "campo": "year",
+    "etiqueta": "Year"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.summary",
+    "campo": "line_ids",
+    "etiqueta": "Line"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.summary.line",
+    "campo": "summary_id",
+    "etiqueta": "Summary"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.summary.line",
+    "campo": "employee_id",
+    "etiqueta": "Employee"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_advances",
+    "etiqueta": "Result Advances"
+   },
+   {
+    "modelo": "erpec.payroll.line",
+    "campo": "result_loans",
+    "etiqueta": "Result Loans"
+   },
+   {
+    "modelo": "erpec.payroll.benefit.line",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   }
+  ],
+  "erpec_fiscal_connector": [
+   {
+    "modelo": "erpec.fiscal.connection",
+    "campo": "name",
+    "etiqueta": "Name"
+   },
+   {
+    "modelo": "erpec.fiscal.connection",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.job",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.job",
+    "campo": "state",
+    "etiqueta": "State"
+   }
+  ],
+  "erpec_fiscal_native": [
+   {
+    "modelo": "erpec.fiscal.preview",
+    "campo": "move_id",
+    "etiqueta": "Move"
+   },
+   {
+    "modelo": "erpec.fiscal.preview",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.preview",
+    "campo": "filename",
+    "etiqueta": "Filename"
+   }
+  ],
+  "erpec_treasury": [
+   {
+    "modelo": "account.bank.statement.line",
+    "campo": "erpec_disbursement_ids",
+    "etiqueta": "Erpec Disbursement"
+   },
+   {
+    "modelo": "erpec.payroll.disbursement",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.payroll.disbursement",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "account.move",
+    "campo": "erpec_disbursement_ids",
+    "etiqueta": "Erpec Disbursement"
+   },
+   {
+    "modelo": "erpec.bank.company.account",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.bank.company.account",
+    "campo": "bank",
+    "etiqueta": "Bank"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "name",
+    "etiqueta": "Name"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "bank",
+    "etiqueta": "Bank"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "line_ids",
+    "etiqueta": "Line"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "total_amount",
+    "etiqueta": "Total Amount"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "file",
+    "etiqueta": "File"
+   },
+   {
+    "modelo": "erpec.bank.export.batch",
+    "campo": "filename",
+    "etiqueta": "Filename"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "batch_id",
+    "etiqueta": "Batch"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "disbursement_id",
+    "etiqueta": "Disbursement"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "sequence",
+    "etiqueta": "Sequence"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "id_number",
+    "etiqueta": "Id Number"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "account_number",
+    "etiqueta": "Account Number"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "account_type",
+    "etiqueta": "Account Type"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "beneficiary_name",
+    "etiqueta": "Beneficiary Name"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "amount",
+    "etiqueta": "Amount"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.bank.export.line",
+    "campo": "reference",
+    "etiqueta": "Reference"
+   },
+   {
+    "modelo": "erpec.bank.export.wizard",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.bank.export.wizard",
+    "campo": "bank",
+    "etiqueta": "Bank"
+   }
+  ],
+  "erpec_data_protection": [
+   {
+    "modelo": "erpec.data.processing.activity",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.data.processing.activity",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.data.subject.request",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.data.subject.request",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.data.breach.incident",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.data.breach.incident",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.data.subject.request",
+    "campo": "channel",
+    "etiqueta": "Channel"
+   },
+   {
+    "modelo": "erpec.data.processor",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.data.processor",
+    "campo": "role",
+    "etiqueta": "Role"
+   },
+   {
+    "modelo": "erpec.data.processor",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.data.dpo.assessment",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   }
+  ],
+  "erpec_fiscal_sri": [
+   {
+    "modelo": "erpec.fiscal.certificate",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.emission",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.emission",
+    "campo": "ambiente",
+    "etiqueta": "Ambiente"
+   },
+   {
+    "modelo": "erpec.fiscal.point",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.point",
+    "campo": "active",
+    "etiqueta": "Active"
+   },
+   {
+    "modelo": "erpec.fiscal.point",
+    "campo": "notice",
+    "etiqueta": "Notice"
+   },
+   {
+    "modelo": "erpec.fiscal.reimbursement",
+    "campo": "move_id",
+    "etiqueta": "Move"
+   },
+   {
+    "modelo": "erpec.fiscal.reimbursement",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.reimbursement",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "account.move",
+    "campo": "ec_is_liquidation",
+    "etiqueta": "Ec Is Liquidation"
+   },
+   {
+    "modelo": "account.bank.statement.line",
+    "campo": "ec_is_liquidation",
+    "etiqueta": "Ec Is Liquidation"
+   },
+   {
+    "modelo": "erpec.fiscal.establishment",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.establishment",
+    "campo": "active",
+    "etiqueta": "Active"
+   }
+  ],
+  "erpec_field_routes": [
+   {
+    "modelo": "erpec.route.site",
+    "campo": "name",
+    "etiqueta": "Name"
+   },
+   {
+    "modelo": "erpec.route.site",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.route.site",
+    "campo": "active",
+    "etiqueta": "Active"
+   },
+   {
+    "modelo": "erpec.route.day",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.route.day",
+    "campo": "date",
+    "etiqueta": "Date"
+   },
+   {
+    "modelo": "erpec.route.day",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.route.day",
+    "campo": "planned_stop_count",
+    "etiqueta": "Planned Stop Count"
+   },
+   {
+    "modelo": "erpec.route.day",
+    "campo": "completed_stop_count",
+    "etiqueta": "Completed Stop Count"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "route_day_id",
+    "etiqueta": "Route Day"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "site_id",
+    "etiqueta": "Site"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "sequence",
+    "etiqueta": "Sequence"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "planned",
+    "etiqueta": "Planned"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "omission_reason",
+    "etiqueta": "Omission Reason"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "checkin_mark_id",
+    "etiqueta": "Checkin Mark"
+   },
+   {
+    "modelo": "erpec.route.stop",
+    "campo": "checkout_mark_id",
+    "etiqueta": "Checkout Mark"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "stop_id",
+    "etiqueta": "Stop"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "mark_type",
+    "etiqueta": "Mark Type"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "timestamp",
+    "etiqueta": "Timestamp"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "latitude",
+    "etiqueta": "Latitude"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "longitude",
+    "etiqueta": "Longitude"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "accuracy_meters",
+    "etiqueta": "Accuracy Meters"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "distance_meters",
+    "etiqueta": "Distance Meters"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "within_geofence",
+    "etiqueta": "Within Geofence"
+   },
+   {
+    "modelo": "erpec.route.visit.mark",
+    "campo": "low_accuracy",
+    "etiqueta": "Low Accuracy"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "stop_id",
+    "etiqueta": "Stop"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "mark_id",
+    "etiqueta": "Mark"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "exception_type",
+    "etiqueta": "Exception Type"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "reason",
+    "etiqueta": "Reason"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "resolution",
+    "etiqueta": "Resolution"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "reviewed_by",
+    "etiqueta": "Reviewed By"
+   },
+   {
+    "modelo": "erpec.route.exception",
+    "campo": "reviewed_at",
+    "etiqueta": "Reviewed At"
+   },
+   {
+    "modelo": "erpec.route.visit.wizard",
+    "campo": "stop_id",
+    "etiqueta": "Stop"
+   },
+   {
+    "modelo": "erpec.route.visit.wizard",
+    "campo": "mark_type",
+    "etiqueta": "Mark Type"
+   },
+   {
+    "modelo": "erpec.route.visit.wizard",
+    "campo": "latitude",
+    "etiqueta": "Latitude"
+   },
+   {
+    "modelo": "erpec.route.visit.wizard",
+    "campo": "longitude",
+    "etiqueta": "Longitude"
+   },
+   {
+    "modelo": "erpec.route.omit.wizard",
+    "campo": "stop_id",
+    "etiqueta": "Stop"
+   },
+   {
+    "modelo": "erpec.route.omit.wizard",
+    "campo": "reason",
+    "etiqueta": "Reason"
+   },
+   {
+    "modelo": "erpec.route.unplanned.wizard",
+    "campo": "route_day_id",
+    "etiqueta": "Route Day"
+   },
+   {
+    "modelo": "erpec.route.unplanned.wizard",
+    "campo": "site_id",
+    "etiqueta": "Site"
+   },
+   {
+    "modelo": "erpec.route.unplanned.wizard",
+    "campo": "reason",
+    "etiqueta": "Reason"
+   },
+   {
+    "modelo": "erpec.route.compliance.report",
+    "campo": "name",
+    "etiqueta": "Name"
+   },
+   {
+    "modelo": "erpec.route.compliance.report",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.route.compliance.report.line",
+    "campo": "report_id",
+    "etiqueta": "Report"
+   },
+   {
+    "modelo": "erpec.route.compliance.report.line",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   }
+  ],
+  "erpec_fiscal_guide_sri": [
+   {
+    "modelo": "erpec.fiscal.guide",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.fiscal.guide",
+    "campo": "ambiente",
+    "etiqueta": "Ambiente"
+   },
+   {
+    "modelo": "erpec.fiscal.guide",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.fiscal.guide.line",
+    "campo": "guide_id",
+    "etiqueta": "Guide"
+   }
+  ],
+  "erpec_fiscal_ats": [
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "report_id",
+    "etiqueta": "Report"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "cod_sustento",
+    "etiqueta": "Cod Sustento"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "base_no_gra_iva",
+    "etiqueta": "Base No Gra Iva"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "base_imponible",
+    "etiqueta": "Base Imponible"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "base_imp_grav",
+    "etiqueta": "Base Imp Grav"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "base_imp_exe",
+    "etiqueta": "Base Imp Exe"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "monto_ice",
+    "etiqueta": "Monto Ice"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "monto_iva",
+    "etiqueta": "Monto Iva"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "val_ret_bien10",
+    "etiqueta": "Val Ret Bien10"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "val_ret_serv20",
+    "etiqueta": "Val Ret Serv20"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "valor_ret_bienes",
+    "etiqueta": "Valor Ret Bienes"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "val_ret_serv50",
+    "etiqueta": "Val Ret Serv50"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "valor_ret_servicios",
+    "etiqueta": "Valor Ret Servicios"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "val_ret_serv100",
+    "etiqueta": "Val Ret Serv100"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.ats.report.compra",
+    "campo": "payload",
+    "etiqueta": "Payload"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "report_id",
+    "etiqueta": "Report"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "tp_id_cliente",
+    "etiqueta": "Tp Id Cliente"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "id_cliente",
+    "etiqueta": "Id Cliente"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "tipo_comprobante",
+    "etiqueta": "Tipo Comprobante"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "tipo_emision",
+    "etiqueta": "Tipo Emision"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "numero_comprobantes",
+    "etiqueta": "Numero Comprobantes"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "base_no_gra_iva",
+    "etiqueta": "Base No Gra Iva"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "base_imponible",
+    "etiqueta": "Base Imponible"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "base_imp_grav",
+    "etiqueta": "Base Imp Grav"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "monto_iva",
+    "etiqueta": "Monto Iva"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "valor_ret_iva",
+    "etiqueta": "Valor Ret Iva"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "valor_ret_renta",
+    "etiqueta": "Valor Ret Renta"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "currency_id",
+    "etiqueta": "Currency"
+   },
+   {
+    "modelo": "erpec.ats.report.venta",
+    "campo": "payload",
+    "etiqueta": "Payload"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "report_id",
+    "etiqueta": "Report"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "tipo_comprobante",
+    "etiqueta": "Tipo Comprobante"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "establecimiento",
+    "etiqueta": "Establecimiento"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "punto_emision",
+    "etiqueta": "Punto Emision"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "secuencial_inicio",
+    "etiqueta": "Secuencial Inicio"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "secuencial_fin",
+    "etiqueta": "Secuencial Fin"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "autorizacion",
+    "etiqueta": "Autorizacion"
+   },
+   {
+    "modelo": "erpec.ats.report.anulado",
+    "campo": "payload",
+    "etiqueta": "Payload"
+   },
+   {
+    "modelo": "erpec.ats.report.missing",
+    "campo": "report_id",
+    "etiqueta": "Report"
+   },
+   {
+    "modelo": "erpec.ats.report.missing",
+    "campo": "section",
+    "etiqueta": "Section"
+   },
+   {
+    "modelo": "erpec.ats.report.missing",
+    "campo": "reason",
+    "etiqueta": "Reason"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "company_id",
+    "etiqueta": "Company"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "year",
+    "etiqueta": "Year"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "month",
+    "etiqueta": "Month"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "state",
+    "etiqueta": "State"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "compra_ids",
+    "etiqueta": "Compra"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "venta_ids",
+    "etiqueta": "Venta"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "anulado_ids",
+    "etiqueta": "Anulado"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "missing_ids",
+    "etiqueta": "Missing"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "compra_count",
+    "etiqueta": "Compra Count"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "venta_count",
+    "etiqueta": "Venta Count"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "anulado_count",
+    "etiqueta": "Anulado Count"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "missing_count",
+    "etiqueta": "Missing Count"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "xml_filename",
+    "etiqueta": "Xml Filename"
+   },
+   {
+    "modelo": "erpec.ats.report",
+    "campo": "build_notice",
+    "etiqueta": "Build Notice"
+   }
+  ]
+ }
+}
