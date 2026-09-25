@@ -2,6 +2,10 @@
 
 Fecha: 24-09-2026. Fase: DI25-07 (dependencia DI25-06). Evidencia consolidada en `docs/evidencias/DI25/DI25-07-cierre.json`. Este documento no sustituye la aceptación de negocio del titular ni convierte pruebas locales en cumplimiento legal.
 
+## Aceptación de negocio (DI25-07.6)
+
+El titular respondió el 24-09-2026, tras la auditoría de falsos positivos y las correcciones de este mismo día: **"DI25-07.6 se acepta, sin embargo, queda abierta la opción de mejora o cierre de las decisiones tomadas."** Esto cierra el único criterio que faltaba de DI25-07.6 (el resto — cero P1 abiertos en lo liberado, regresión aprobada, exclusiones explícitas, evidencia legal/operativa — ya estaba comprobado). La aceptación es sobre el alcance liberado y la tabla de exclusiones tal como quedan documentados aquí; no convierte ninguna exclusión en cumplida. Que "quede abierta la opción de mejora o cierre" significa que cada fila de la tabla de exclusión sigue siendo una decisión viva: se puede ampliar (por ejemplo, sumar bancos u homologar SRI producción cuando el titular aporte lo que falta) o cerrar formalmente como fuera de alcance permanente, en un incremento futuro y por instrucción explícita — ninguna de las dos cosas ocurre por sí sola con esta aceptación.
+
 ## Qué se libera y qué queda excluido (DI25-07.6)
 
 **Liberado con evidencia** (sin P1 abiertos en estas funciones): ciclos operativos de ventas, compras, producción, importación, nómina (cálculo, asiento, pago, reversión), visitas y plan SaaS -> cobro -> aprovisionamiento; facturación electrónica nativa y su preparación en ambiente de pruebas (firma, cola, RIDE, estados, una autoridad por comprobante); agregador ATS y matriz fiscal como ensayo local; registros de protección de datos (RAT, derechos con conservación fiscal de 7 años, brechas, encargados, evaluación del DPD); inicio por empresa, roles y accesibilidad medida; respaldo y restauración aislada.

@@ -1,8 +1,8 @@
 {
   "phase": "DI25-07",
-  "status": "cerrada-parcial",
-  "cause": "Solo DI25-07.6: falta la aceptación de negocio del titular, que respondió 'No acepto todavía' el 24-09-2026. Es una decisión suya que el sistema no puede tomar ni firmar; el resto del criterio (cero P1 abiertos en lo liberado, regresión aprobada, exclusiones explícitas) está comprobado.",
-  "updatedAt": "2026-09-24T18:30:00.000Z",
+  "status": "cerrada",
+  "cause": "Los seis criterios numerados quedan comprobados. DI25-07.6 requería, además de lo ya comprobado (cero P1 abiertos en lo liberado, regresión aprobada, exclusiones explícitas, evidencia legal/operativa), la aceptación de negocio del titular: tras la re-auditoría de falsos positivos del 24-09-2026 (RDEP, homologación bancaria, responsabilidad de la conservación fiscal, otrosIngRenGrav), el titular aceptó: 'DI25-07.6 se acepta, sin embargo, queda abierta la opción de mejora o cierre de las decisiones tomadas.' La aceptación es sobre el alcance liberado y la tabla de exclusiones tal como quedan documentados; ninguna exclusión pasa a cumplida por esto. 'Abierta a mejora o cierre' significa que cada exclusión sigue siendo una decisión viva para un incremento futuro (ampliarla o cerrarla formalmente), no que se resuelve sola.",
+  "updatedAt": "2026-09-24T23:50:00.000Z",
   "testedCommit": "a4333e5 (base; los cambios de esta fase se confirman en el commit de cierre)",
   "hallazgos": ["DI25-20", "regresión de todos"],
   "documento": "docs/DI25-07_ACEPTACION.md",
@@ -34,17 +34,17 @@
     },
     "DI25-07.6": {
       "text": "Salida por alcance: cero P1 abiertos en funciones liberadas, regresión aprobada, aceptación de negocio y evidencia legal/operativa. Una función bloqueada queda deshabilitada/claramente excluida, nunca marcada como cumplida.",
-      "state": "no comprobado: pendiente de la aceptación de negocio del titular",
-      "evidence": "Comprobado: cero P1 abiertos en lo liberado (docs/evidencias/DI25/estado-hallazgos.json: cada hallazgo corregido con evidencia o excluido del alcance liberado con su bloqueo); regresión aprobada (suite integrada completa y CI); funciones bloqueadas claramente excluidas y no marcadas como cumplidas (tabla de exclusiones de docs/DI25-07_ACEPTACION.md); evidencia legal/operativa documentada (fuentes primarias y límites en los cierres de DI25-03, 04, 05). Re-auditoría de exclusiones (24-09-2026) tras señalar el titular falsos positivos: se corrigieron (1) RDEP: el catálogo 2026 está en el DIMM y el XML pasa el validador oficial a nivel de esquema (DI25-07/validacion-rdep-dimm.json); el formato del Formulario 107 fue entregado; (2) ATS: el catálogo fue entregado; (3) talón del DIMM: no es un bloqueo del sistema, dimm.exe trae su JRE de 32 bits y corre en esta máquina; (4) SRI: ya hubo autorización real en celcer (17-09-2026) y el certificado prestado se eliminó a propósito (OP22). Siguen siendo exclusiones verdaderas: producción del SRI, homologación bancaria (sin banco/servicio ni plantilla), envío masivo de correo (no existe), textos legales y contacto reales del sitio. NO comprobado: la aceptación de negocio del titular. Se le presentó el alcance liberado y las exclusiones y respondió 'No acepto todavía'; no se registra aceptación que no dio."
+      "state": "comprobado",
+      "evidence": "Comprobado: cero P1 abiertos en lo liberado (docs/evidencias/DI25/estado-hallazgos.json: cada hallazgo corregido con evidencia o excluido del alcance liberado con su bloqueo); regresión aprobada (suite integrada completa y CI, 647 pruebas); funciones bloqueadas claramente excluidas y no marcadas como cumplidas (tabla de exclusiones de docs/DI25-07_ACEPTACION.md); evidencia legal/operativa documentada (fuentes primarias y límites en los cierres de DI25-03, 04, 05). Re-auditoría de exclusiones (24-09-2026) tras señalar el titular falsos positivos: se corrigieron (1) RDEP: el catálogo 2026 está en el DIMM y el XML pasa el validador oficial a nivel de esquema (DI25-07/validacion-rdep-dimm.json); el formato del Formulario 107 fue entregado; (2) ATS: el catálogo fue entregado; (3) talón del DIMM: no es un bloqueo del sistema, dimm.exe trae su JRE de 32 bits y corre en esta máquina; (4) SRI: ya hubo autorización real en celcer (17-09-2026) y el certificado prestado se eliminó a propósito (OP22); (5) homologación bancaria: nómina implementada y probada para Pichincha/Produbanco/Rumiñahui con ficha oficial verificada; (6) responsabilidad de la conservación fiscal: documentado explícitamente que es del Cliente/Owner, no del Fundador; (7) otrosIngRenGrav del RDEP: verificado contra la LORTI Art. 9 (viáticos, desahucio/despido intempestivo), con referencia cruzada nueva del motor. Siguen siendo exclusiones verdaderas y explícitas: producción del SRI, el resto de homologación bancaria (Guayaquil/Pacífico/Internacional/Bolivariano y proveedores), envío masivo de correo (no existe), textos legales y contacto reales del sitio. COMPROBADO 24-09-2026: aceptación de negocio del titular, tras la re-auditoría: 'DI25-07.6 se acepta, sin embargo, queda abierta la opción de mejora o cierre de las decisiones tomadas.' (docs/DI25-07_ACEPTACION.md, sección Aceptación de negocio)."
     }
   },
   "windows": {
-    "testsReported": 639,
+    "testsReported": 647,
     "failed": 0,
     "errors": 0,
-    "skipped": 5,
+    "skipped": 12,
     "runnerExit": 0,
-    "note": "Suite integrada completa. Las 5 omisiones son las de Tesorería por falta de demo sembrada; se ejecutaron sobre la copia sembrada (12 pruebas, 0 omisiones)."
+    "note": "Suite integrada completa tras la homologación bancaria y la referencia cruzada de otrosIngRenGrav (24-09-2026). Las 12 omisiones son las que requieren la demo sembrada (Tesorería, homologación bancaria); se ejecutaron completas sobre copias sembradas, 0 omisiones reales."
   },
   "newModules": ["erpec_acceptance (matriz y pruebas de aceptación, sin modelos)", "erpec_website_entry (entrada pública y canal de derechos)"],
   "newTools": ["scripts/backup-restore-drill.py", "scripts/test-seeded-copy.py"],
@@ -64,7 +64,6 @@
     "verified": "Demo sincronizada con todo el código; declaraciones de privacidad confirmadas por el titular sembradas en demo y fundador (encargados en borrador, evaluación del DPD, responsable del canal público); canal público probado como visitante y sus solicitudes de ensayo eliminadas; usuarios QA temporales desactivados."
   },
   "pendingExternal": [
-    "DI25-07.6: aceptación de negocio del titular del alcance liberado y sus exclusiones (docs/DI25-07_ACEPTACION.md).",
     "SRI producción: certificado y contraseña reales y autorización del titular para una emisión supervisada.",
     "Homologación bancaria: aceptación real en el validador de Pichincha/Produbanco/Rumiñahui; ficha de Guayaquil (delimitador), Pacífico, Internacional y Bolivariano; alcance de proveedores.",
     "Presentación oficial ATS/RDEP ante el SRI (el talón resumen del ATS de ensayo ya lo generó el titular en el DIMM, DI25-07/talon-dimm-ats-ensayo.json): el talón se genera operando la interfaz del DIMM (dimm.exe con su JRE de 32 bits incluido, disponible en esta máquina; solo su automatización desde 64 bits está limitada); un certificado propio cargado para emitir ventas de prueba en celcer (la emisión autorizada real ya se demostró el 17-09-2026). Corrección: el catálogo ATS y el catálogo RDEP 2026 sí fueron entregados por el SRI (el de RDEP está en el DIMM y coincide con los parámetros de nómina); el XML de vista previa ya fue aceptado por el validador oficial del plugin RDEP (esquema rdepv10, DI25-07/validacion-rdep-dimm.json) y se recibió el formato 2023 del Formulario 107; lo pendiente es la crítica semántica del DIMM y contrastar el 107.",

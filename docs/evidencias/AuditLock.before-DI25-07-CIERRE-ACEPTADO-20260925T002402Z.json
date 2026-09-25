@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-25T00:24:02.499Z",
+  "updatedAt": "2026-09-24T23:34:31.668Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -214,7 +214,6 @@
     "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-CI-20260924T195847Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-CI-FIX-20260924T172644Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-CI-URL-20260924T173601Z.json",
-    "docs/evidencias/AuditLock.before-DI25-07-CIERRE-ACEPTADO-20260925T002402Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-CIERRE-FASE-20260924T171635Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-REAUDIT-20260924T175335Z.json",
     "docs/evidencias/AuditLock.before-DI25-07-RESPONSABLE-20260924T201118Z.json",
@@ -353,8 +352,7 @@
     "DI25-07 CI verde del commit a3dbba3 (homologacion bancaria) registrado en la evidencia (run 36050867808).",
     "Aclaracion de responsabilidad (24-09-2026, a instancia del titular): verificado que erpec_data_protection ya atribuye la conservacion fiscal de 7 anios (Art. 41) y toda decision de Responsable del Tratamiento al Cliente/Owner dueno de su propia base de datos (modelo OP08), nunca a SINKRONET/Fundador (encargado de infraestructura). Sin cambio de codigo: se agrego la aclaracion explicita en el docstring de addons/erpec_data_protection/models.py, docs/DI25-07_ACEPTACION.md y docs/ALCANCE_DI25_05_PRIVACIDAD.md. 31/31 pruebas de erpec_data_protection sin regresion.",
     "DI25-07 CI verde del commit ef4c3c1 (aclaracion de responsabilidad) registrado en la evidencia (run 36053373987).",
-    "Otros ingresos no gravados del RDEP (otrosIngRenGrav) 24-09-2026, a instancia del titular: verificado contra el texto primario de la LORTI Art. 9-9.5 y su Reglamento (extracto oficial sri.gob.ec) que la frase que se propuso, \"beneficios de orden social\", no corresponde a esa exencion de renta sino al Art. 14 de la Ley de Seguridad Social (exoneracion de aporte IESS, ley distinta, ya citada en erpec.payroll.benefit.type.iess_contributable). La LORTI Art. 9 si confirma dos categorias aplicables no desglosadas en el RDEP: viaticos documentados (num. 11) y bonificacion de desahucio/indemnizacion por despido intempestivo (num. (3)). No se automatiza el campo (sigue exigiendo criterio caso por caso); se agrego una referencia cruzada informativa (non_taxable_benefits_reference en erpec.payroll.rdep.line) que muestra cuanto ya excluyo el motor por beneficios propios marcados sin renta, con ayuda actualizada citando la fuente y advirtiendo contra confundir la lista del IESS con la de renta. Prueba nueva en addons/erpec_payroll/tests/test_annex_rdep.py. Suite integrada completa: 647 pruebas, 0 fallos, 0 errores, 12 omisiones.",
-    "DI25-07 aceptacion de negocio (24-09-2026): tras la re-auditoria de falsos positivos (RDEP, homologacion bancaria, responsabilidad Cliente/Fundador, otrosIngRenGrav), el titular acepto DI25-07.6: \"DI25-07.6 se acepta, sin embargo, queda abierta la opcion de mejora o cierre de las decisiones tomadas.\" Los seis criterios de DI25-07 quedan comprobados; DI25-07 cierra completa (no parcial). Ninguna exclusion de la tabla de DI25-07.6 pasa a cumplida por esto; cada una queda abierta para un incremento futuro. Evidencia: docs/evidencias/DI25/DI25-07-cierre.json y docs/DI25-07_ACEPTACION.md."
+    "Otros ingresos no gravados del RDEP (otrosIngRenGrav) 24-09-2026, a instancia del titular: verificado contra el texto primario de la LORTI Art. 9-9.5 y su Reglamento (extracto oficial sri.gob.ec) que la frase que se propuso, \"beneficios de orden social\", no corresponde a esa exencion de renta sino al Art. 14 de la Ley de Seguridad Social (exoneracion de aporte IESS, ley distinta, ya citada en erpec.payroll.benefit.type.iess_contributable). La LORTI Art. 9 si confirma dos categorias aplicables no desglosadas en el RDEP: viaticos documentados (num. 11) y bonificacion de desahucio/indemnizacion por despido intempestivo (num. (3)). No se automatiza el campo (sigue exigiendo criterio caso por caso); se agrego una referencia cruzada informativa (non_taxable_benefits_reference en erpec.payroll.rdep.line) que muestra cuanto ya excluyo el motor por beneficios propios marcados sin renta, con ayuda actualizada citando la fuente y advirtiendo contra confundir la lista del IESS con la de renta. Prueba nueva en addons/erpec_payroll/tests/test_annex_rdep.py. Suite integrada completa: 647 pruebas, 0 fallos, 0 errores, 12 omisiones."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -377,11 +375,11 @@
     "DI25-05 (cerrada parcial): DI25-05.3 (retencion ejecutable) sin construir -- falta fuente primaria verificada del plazo de conservacion fiscal/contable, no se fabrica un numero de anos; DI25-05.4 (matriz legal completa) sin modelo de encargados/subencargados (trabajo nuevo) y sin canal publico de derechos; DPD real y canal publico son decision del responsable, no del sistema. Ver docs/evidencias/DI25/DI25-05-cierre.json y docs/ALCANCE_DI25_05_PRIVACIDAD.md.",
     "DI25-04 (cerrada parcial): DI25-04.3 (talon/acuse real y ventas) sigue bloqueado -- talon por SWT de 32 bits del DIMM, ventas por falta de un certificado de pruebas real del SRI (no se intenta contra el portal real por instruccion del titular). DI25-04.4 (matriz fiscal) tiene el contenido preparado y confirmado por el responsable; falta unicamente su aprobacion explicita (boton Aprobar). ICE/ISD sin fuente oficial transcrita; convenio de doble imposicion de DI25-03 sigue pendiente de registro real por pais.",
     "DI25-06 (cerrada parcial): DI25-06.2/.3 con limites (sin lector de pantalla, zoom emulado, 2 roles, cambio de empresa solo por pruebas); DI25-16 sin destinos legales reales ni contacto publico de la empresa (lo aporta el responsable); erpec_website_entry no esta en las imagenes controller/customer. Ver docs/evidencias/DI25/DI25-06-cierre.json.",
-    "DI25-07 (cerrada, aceptada 24-09-2026): SRI produccion, resto de homologacion bancaria (Guayaquil/Pacifico/Internacional/Bolivariano, proveedores), textos legales y contacto real del sitio, respaldo programado, contratos de encargados en borrador -- todas exclusiones explicitas y vivas para un incremento futuro, no bloqueos del cierre de fase. Ver docs/evidencias/DI25/DI25-07-cierre.json."
+    "DI25-07 (cerrada parcial): 07.6 pendiente de la aceptacion de negocio del titular; SRI produccion y homologacion bancaria bloqueados explicitamente; validador del plugin RDEP del DIMM por ejecutar sobre el XML; respaldo programado no instalado. Ver docs/evidencias/DI25/DI25-07-cierre.json."
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "8c4f867e97d248ff765ecb99560786a0051e14d6c7dfe801c368c6ff79e07481",
+    ".github/CODEX_CONTEXT.md": "5eea909e60f2799fa323cedcb8a209b9cafae47c55f78cf91dc9b4555d1f6766",
     ".github/prompts/ERPEC26-DI25-00.md": "6dedd464202df5529d7b477d00a194decf23aa63d00987baed84c8448cea0c31",
     ".github/prompts/ERPEC26-DI25-01.md": "4e54396b755f8223202c151c1d5c1a577521aa07fe0299c3275797cba190acb1",
     ".github/prompts/ERPEC26-DI25-02.md": "fa69838d8929e0e6cfe3b19aa5eadac18aa6ccfa38cf477632058a8af978f5ae",
@@ -520,10 +518,10 @@
     "docs/DI25-03_RESPUESTA_AL_PRONUNCIAMIENTO.md": "8542bd40910e6ffbb4e9106d7cc596a6db671489553c5ff4e39f704c4e5f3f66",
     "docs/DI25-03_SUPUESTO_ESPECIAL_100_CANASTAS.md": "cbe65127fc136470893f9a2f53aa792ffdab925899f684238bbef3f4a05ad623",
     "docs/DI25-03_VERIFICACION_BOLETIN_SRI.md": "dbc2be82cd96020c5c2b50028574938b27648984492de9e66b30c6959bd0f21b",
-    "docs/DI25-07_ACEPTACION.md": "12c9e0cf9b02271f611923a9fb4e1f66095154de0efe54feb0a9e7364900386a",
+    "docs/DI25-07_ACEPTACION.md": "04ccc99eb71156aea49181efe9a5a4ba28cecd73a59c9752bbb24e4995395582",
     "docs/DI25-17_MAPA_FISCAL.md": "ef37afec7e7b2dbb1c5d1d8f053c6c879d504d7cf735bfdcd63ebc52fb6ea4e2",
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md": "faf1e2712d152b517d8cf06a9cb3ee90b6c9018ba25a4a8cfa46c864fbeb74a3",
-    "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "1337eecd21e1b3139b8f8a5c88737888da4b09667c29882888adb559292ee259",
+    "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "d8dd113809a506e5f1d4dd7e4a7a7fb0bec049bf22651a6db2fb8a651d61039e",
     "docs/PLAN_HAIKY_ERPEC26.md": "755ac5c13222d34f6ab255eefe933ede5ce19d7b90a7775ff5874d510e748466",
     "docs/VALIDACION_ARCHIVOS_BANCARIOS.md": "08cf498beed7745f7ebf899d1eeeeae1ac0993331b1e94fc4226978781538c01",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json": "de67ecc73c15639c66edaf57a5599b49d61200ca3c537f8c88bed2081a877e14",
@@ -588,7 +586,6 @@
     "docs/evidencias/AuditLock.before-DI25-07-BANCARIA-CI-20260924T195847Z.json": "789b0521749677b86a5ed74ccbc772c5941182f40f9add2eceae70baaa60fd80",
     "docs/evidencias/AuditLock.before-DI25-07-CI-FIX-20260924T172644Z.json": "429e674091d7348469faa208bbb2133c3f8e04a6cd1207532d845feceeb07fc5",
     "docs/evidencias/AuditLock.before-DI25-07-CI-URL-20260924T173601Z.json": "5018acbdfaff045037a5043e78f698a5a838133284b5dbfb78bd8bae7b896567",
-    "docs/evidencias/AuditLock.before-DI25-07-CIERRE-ACEPTADO-20260925T002402Z.json": "9adc71fb6fea1717f8bd9d7d28371976c0401914e035a1ae325b346998b9ef03",
     "docs/evidencias/AuditLock.before-DI25-07-CIERRE-FASE-20260924T171635Z.json": "9b5b5143510b2ad15d8d0538221edc68073470c472fa06ddf22ab9d06e2fd989",
     "docs/evidencias/AuditLock.before-DI25-07-REAUDIT-20260924T175335Z.json": "daca051d5732fbad190ce3ede2f38e98e2484c6ead969f876728d878e4d63fdf",
     "docs/evidencias/AuditLock.before-DI25-07-RESPONSABLE-20260924T201118Z.json": "c96f7eef06f860370cd2260cab4fb40f9d036461ae589bf8e72e1fb94036986d",
@@ -619,7 +616,7 @@
     "docs/evidencias/DI25/DI25-06/recorrido-navegacion.json": "73c52c3100adec01a26a558239b554e92752394bebd6b6a6151027bde59418a4",
     "docs/evidencias/DI25/DI25-06/recorrido-roles-9.json": "37327d6e5a3c30919f3088da1b2a9d18d9f7091423cd5ccb3b8ca35880adb424",
     "docs/evidencias/DI25/DI25-06/recorrido-ui-despues.json": "5402a3c0cec126ab9056ce7263d736d0987e3436f8fd9c0b0b6f1ade8b7c51f2",
-    "docs/evidencias/DI25/DI25-07-cierre.json": "a601c0665d5725d6e6a283e8774b8e7f09f85df95f8d414737783a06a81233cf",
+    "docs/evidencias/DI25/DI25-07-cierre.json": "e961511da529b65be87da0f3581c94d2a8efb8437373fdb54cb1f72ecc9921dd",
     "docs/evidencias/DI25/DI25-07/canal-publico-derechos-navegador.json": "af21d79f86c232a37942a84fbe23a5c368d249dc856a24d05f95a20e16bd0355",
     "docs/evidencias/DI25/DI25-07/manifiesto-capturas.json": "43a110f12cc06eb990d3d95a2923e33df9d69ae2af52eed8ae1943bb40218c97",
     "docs/evidencias/DI25/DI25-07/simulacro-respaldo-restauracion-demo.json": "62077ecc8cd26889cd7fedd415573b40e6dc93af8d21f49ff571db5939f00638",
@@ -653,9 +650,9 @@
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-07-CIERRE-ACEPTADO-20260925T002402Z.json",
-  "previousAuditLockHash": "9adc71fb6fea1717f8bd9d7d28371976c0401914e035a1ae325b346998b9ef03",
-  "signature": "254909bfb6de5afa260671143cd7cbdb3b275692689b9e788be657aabe57c63f",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI25-03-RDEP-OTROS-INGRESOS-20260924T233431Z.json",
+  "previousAuditLockHash": "40ffc4e65da5fd41a42e71cff57c3b58a51d4bccb1408c43b6505ce0c0c9d348",
+  "signature": "a733ac5052320248801e4f96771eacb80feb408a52930ef972d46488d5b87ecf",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -672,7 +669,7 @@
     "phaseCompleted": "DI25-07",
     "phaseInProgress": "none",
     "nextPhase": "none",
-    "status": "fase07-cerrada-aceptada-24-09-2026",
+    "status": "fase07-cerrada-parcial-aceptacion-de-negocio-del-titular-pendiente",
     "evidence": "docs/evidencias/DI25/DI25-07-cierre.json",
     "findings": 20,
     "implementationCompleted": true,
