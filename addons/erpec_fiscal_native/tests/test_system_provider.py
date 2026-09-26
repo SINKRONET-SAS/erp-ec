@@ -29,12 +29,12 @@ class SystemProviderCase(TransactionCase):
                 _key, plain = module.generate(case._data(self))
                 self.assertNotIn(b'infoAdicional', plain)
 
-    def test_company_uses_the_system_provider_except_for_its_own_system(self):
+    def test_company_uses_the_system_provider_even_for_its_own_system(self):
         company = self.env['res.company'].create({'name': 'Cliente ensayo proveedor', 'vat': '1710034065001'})
         self.env['ir.config_parameter'].sudo().set_param('erpec.system_provider_vat', '1793235327001')
         self.assertEqual(company._ec_info_adicional(), PROVIDER)
         company.vat = '1793235327001'
-        self.assertEqual(company._ec_info_adicional(), [], 'El sistema propio no se declara como proveedor de terceros.')
+        self.assertEqual(company._ec_info_adicional(), PROVIDER, 'Fundador (SINKRONET) también declara su propio RUC como proveedor.')
         company.vat = '1710034065001'
         company.ec_system_provider_vat = '0990000000001'
         self.assertEqual(company._ec_info_adicional(), [('RUC Proveedor', '0990000000001')])

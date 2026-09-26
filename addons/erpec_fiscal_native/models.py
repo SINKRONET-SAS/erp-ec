@@ -16,19 +16,19 @@ class Company(models.Model):
     ec_system_provider_vat=fields.Char('RUC del proveedor del sistema de facturación',
         help='Ficha Técnica SRI 2.34, Anexo 26 (Resolución NAC-DGERCGC26-00000027): quien emite con un sistema de facturación de '
              'terceros incluye en la información adicional de cada comprobante el campo "RUC Proveedor". Si queda vacío se usa el '
-             'RUC del proveedor configurado en el sistema; no se incluye cuando coincide con el RUC de esta empresa (sistema propio).')
+             'RUC del proveedor configurado en el sistema (SINKRONET S.A.S., 1793235327001). Se incluye también cuando el proveedor es la '
+             'propia empresa, por instrucción del titular del 26-09-2026.')
 
     def _ec_system_provider(self):
         self.ensure_one()
         return (self.ec_system_provider_vat or self.env['ir.config_parameter'].sudo().get_param('erpec.system_provider_vat') or '').strip()
 
     def _ec_info_adicional(self):
-        """Campos adicionales obligatorios de los comprobantes nativos de esta empresa."""
+        """Campos adicionales obligatorios de los comprobantes nativos de esta empresa. El titular fijó el 26-09-2026 que fundador
+        (SINKRONET S.A.S.) también declara su propio RUC como proveedor: no hay exención por sistema propio."""
         self.ensure_one()
         provider=self._ec_system_provider()
-        if provider and provider!=(self.vat or '').strip():
-            return [('RUC Proveedor',provider)]
-        return []
+        return [('RUC Proveedor',provider)] if provider else []
 
     @api.constrains('ec_system_provider_vat')
     def _check_system_provider_vat(self):
@@ -55,7 +55,7 @@ class Move(models.Model):
             if not move.company_id.street:missing.append('dirección matriz')
             if not move.company_id.ec_native_ordinary or not move.company_id.ec_native_accounting:missing.append('perfil fiscal y obligación contable verificados en la empresa')
             if move.state!='posted':missing.append('factura contabilizada')
-            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Vista previa del XML sin firma, preparada dentro del ERP: no emite ni autoriza. La firma XAdES, el envío y la autorización del SRI y el RIDE se hacen en la pestaña "Firma y transmisión SRI", en el ambiente configurado para la empresa. El RUC del proveedor del sistema se agrega en la información adicional cuando corresponde (Ficha Técnica 2.34, Anexo 26).'
+            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Vista previa del XML sin firma, preparada dentro del ERP: no emite ni autoriza. La firma XAdES, el envío y la autorización del SRI y el RIDE se hacen en la pestaña "Firma y transmisión SRI", en el ambiente configurado para la empresa. El RUC del proveedor del sistema se agrega en la información adicional (Ficha Técnica 2.34, Anexo 26).'
 
     def _gather_native_common(self, allow_special_vat=False):
         """Datos comunes para vista previa y emisión; una validación de líneas e identificación."""

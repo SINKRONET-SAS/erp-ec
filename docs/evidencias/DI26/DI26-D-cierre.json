@@ -14,7 +14,7 @@
     {
       "task": "DI26-D.1",
       "status": "comprobada",
-      "evidence": "append_info_adicional en los seis motores nativos antes de validar contra su XSD oficial; res.company._ec_info_adicional (campo por empresa o parámetro erpec.system_provider_vat = 1793235327001; se omite cuando la empresa es el propio proveedor); RIDE con la información adicional; 3 pruebas (tests/test_system_provider.py)."
+      "evidence": "append_info_adicional en los seis motores nativos antes de validar contra su XSD oficial; res.company._ec_info_adicional (campo por empresa o parámetro erpec.system_provider_vat = 1793235327001); RIDE con la información adicional; 3 pruebas (tests/test_system_provider.py)."
     },
     {
       "task": "DI26-D.2",
@@ -28,7 +28,7 @@
     }
   ],
   "pendientes": [
-    "Plazo legal de DI26-06: 26-09-2026. El código queda listo; ninguna instancia emite hoy como sistema de terceros (fundador es el propio proveedor y queda exento por diseño). No se envió al SRI un comprobante con la información adicional en esta sesión.",
+    "No se envió al SRI (ni en pruebas) un comprobante con \"RUC Proveedor\"; solo se validó contra los XSD oficiales.",
     "El texto de finalidad/conservación del formulario es general; cada empresa debe alinearlo con su registro de actividades de tratamiento."
   ],
   "limites": [
@@ -60,5 +60,11 @@
       "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
     },
     "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  },
+  "decisionTitular": {
+    "fecha": "2026-09-26",
+    "instruccion": "El RUC del proveedor para fundador es 1793235327001 (SINKRONET S.A.S.).",
+    "cambio": "Se retiró la exención por sistema propio que se había supuesto sin texto primario que la respaldara: todo comprobante nativo lleva \"RUC Proveedor\" con el proveedor configurado, también en fundador.",
+    "comprobado": "Pruebas erpec_fiscal_native, erpec_fiscal_sri, erpec_fiscal_withholding_sri y erpec_fiscal_guide_sri: 191, 0 fallos, 0 errores. Fundador y demo actualizadas (respaldos update-fundador-20260926T111708Z y update-demo-20260926T111708Z), sin desfase; en fundador SINKRONET S.A.S. devuelve [(\"RUC Proveedor\", \"1793235327001\")]."
   }
 }
