@@ -122,23 +122,23 @@ class AtsReportCompra(models.Model):
     _description = 'Fila de compra del agregador ATS'
     _order = 'id'
 
-    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade')
+    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade', string='Reporte')
     move_id = fields.Many2one('account.move', string='Factura de compra', required=True, ondelete='restrict')
-    cod_sustento = fields.Char(required=True)
-    base_no_gra_iva = fields.Monetary(currency_field='currency_id')
-    base_imponible = fields.Monetary(currency_field='currency_id')
-    base_imp_grav = fields.Monetary(currency_field='currency_id')
-    base_imp_exe = fields.Monetary(currency_field='currency_id')
-    monto_ice = fields.Monetary(currency_field='currency_id')
-    monto_iva = fields.Monetary(currency_field='currency_id')
-    val_ret_bien10 = fields.Monetary(currency_field='currency_id')
-    val_ret_serv20 = fields.Monetary(currency_field='currency_id')
-    valor_ret_bienes = fields.Monetary(currency_field='currency_id')
-    val_ret_serv50 = fields.Monetary(currency_field='currency_id')
-    valor_ret_servicios = fields.Monetary(currency_field='currency_id')
-    val_ret_serv100 = fields.Monetary(currency_field='currency_id')
-    currency_id = fields.Many2one(related='report_id.company_id.currency_id')
-    payload = fields.Json(readonly=True)
+    cod_sustento = fields.Char(required=True, string='Código de sustento')
+    base_no_gra_iva = fields.Monetary(currency_field='currency_id', string='Base no objeto de IVA')
+    base_imponible = fields.Monetary(currency_field='currency_id', string='Base imponible')
+    base_imp_grav = fields.Monetary(currency_field='currency_id', string='Base imponible gravada')
+    base_imp_exe = fields.Monetary(currency_field='currency_id', string='Base imponible exenta')
+    monto_ice = fields.Monetary(currency_field='currency_id', string='Monto ICE')
+    monto_iva = fields.Monetary(currency_field='currency_id', string='Monto IVA')
+    val_ret_bien10 = fields.Monetary(currency_field='currency_id', string='Retención IVA bienes 10 %')
+    val_ret_serv20 = fields.Monetary(currency_field='currency_id', string='Retención IVA servicios 20 %')
+    valor_ret_bienes = fields.Monetary(currency_field='currency_id', string='Retención IVA bienes')
+    val_ret_serv50 = fields.Monetary(currency_field='currency_id', string='Retención IVA servicios 50 %')
+    valor_ret_servicios = fields.Monetary(currency_field='currency_id', string='Retención IVA servicios')
+    val_ret_serv100 = fields.Monetary(currency_field='currency_id', string='Retención IVA servicios 100 %')
+    currency_id = fields.Many2one(related='report_id.company_id.currency_id', string='Moneda')
+    payload = fields.Json(readonly=True, string='Contenido técnico')
 
 
 class AtsReportVenta(models.Model):
@@ -146,21 +146,21 @@ class AtsReportVenta(models.Model):
     _description = 'Fila agrupada de venta del agregador ATS'
     _order = 'id'
 
-    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade')
-    tp_id_cliente = fields.Char(required=True)
-    id_cliente = fields.Char(required=True)
-    tipo_comprobante = fields.Char(required=True)
-    tipo_emision = fields.Char(required=True)
-    numero_comprobantes = fields.Integer(required=True)
-    base_no_gra_iva = fields.Monetary(currency_field='currency_id')
-    base_imponible = fields.Monetary(currency_field='currency_id')
-    base_imp_grav = fields.Monetary(currency_field='currency_id')
-    monto_iva = fields.Monetary(currency_field='currency_id')
-    valor_ret_iva = fields.Monetary(currency_field='currency_id')
-    valor_ret_renta = fields.Monetary(currency_field='currency_id')
-    currency_id = fields.Many2one(related='report_id.company_id.currency_id')
+    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade', string='Reporte')
+    tp_id_cliente = fields.Char(required=True, string='Tipo de identificación del cliente')
+    id_cliente = fields.Char(required=True, string='Identificación del cliente')
+    tipo_comprobante = fields.Char(required=True, string='Tipo de comprobante')
+    tipo_emision = fields.Char(required=True, string='Tipo de emisión')
+    numero_comprobantes = fields.Integer(required=True, string='Número de comprobantes')
+    base_no_gra_iva = fields.Monetary(currency_field='currency_id', string='Base no objeto de IVA')
+    base_imponible = fields.Monetary(currency_field='currency_id', string='Base imponible')
+    base_imp_grav = fields.Monetary(currency_field='currency_id', string='Base imponible gravada')
+    monto_iva = fields.Monetary(currency_field='currency_id', string='Monto IVA')
+    valor_ret_iva = fields.Monetary(currency_field='currency_id', string='Retención de IVA')
+    valor_ret_renta = fields.Monetary(currency_field='currency_id', string='Retención de renta')
+    currency_id = fields.Many2one(related='report_id.company_id.currency_id', string='Moneda')
     move_ids = fields.Many2many('account.move', string='Comprobantes agrupados')
-    payload = fields.Json(readonly=True)
+    payload = fields.Json(readonly=True, string='Contenido técnico')
 
 
 class AtsReportAnulado(models.Model):
@@ -168,15 +168,15 @@ class AtsReportAnulado(models.Model):
     _description = 'Fila de comprobante anulado del agregador ATS'
     _order = 'id'
 
-    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade')
+    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade', string='Reporte')
     move_id = fields.Many2one('account.move', string='Comprobante anulado', required=True, ondelete='restrict')
-    tipo_comprobante = fields.Char(required=True)
-    establecimiento = fields.Char(required=True)
-    punto_emision = fields.Char(required=True)
-    secuencial_inicio = fields.Char(required=True)
-    secuencial_fin = fields.Char(required=True)
-    autorizacion = fields.Char(required=True)
-    payload = fields.Json(readonly=True)
+    tipo_comprobante = fields.Char(required=True, string='Tipo de comprobante')
+    establecimiento = fields.Char(required=True, string='Establecimiento')
+    punto_emision = fields.Char(required=True, string='Punto de emisión')
+    secuencial_inicio = fields.Char(required=True, string='Secuencial inicial')
+    secuencial_fin = fields.Char(required=True, string='Secuencial final')
+    autorizacion = fields.Char(required=True, string='Autorización')
+    payload = fields.Json(readonly=True, string='Contenido técnico')
 
 
 class AtsReportMissing(models.Model):
@@ -184,10 +184,10 @@ class AtsReportMissing(models.Model):
     _description = 'Faltante detectado por el agregador ATS, con su documento origen'
     _order = 'id'
 
-    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade')
+    report_id = fields.Many2one('erpec.ats.report', required=True, ondelete='cascade', string='Reporte')
     move_id = fields.Many2one('account.move', string='Documento origen', ondelete='cascade')
-    section = fields.Selection([('compra', 'Compra'), ('venta', 'Venta'), ('anulado', 'Anulado')], required=True)
-    reason = fields.Char(required=True)
+    section = fields.Selection([('compra', 'Compra'), ('venta', 'Venta'), ('anulado', 'Anulado')], required=True, string='Sección')
+    reason = fields.Char(required=True, string='Motivo')
 
 
 class AtsReport(models.Model):
@@ -197,21 +197,22 @@ class AtsReport(models.Model):
     _order = 'year desc, month desc'
     _check_company_auto = True
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
-    year = fields.Integer(required=True, default=lambda self: fields.Date.context_today(self).year)
-    month = fields.Selection([(code, label) for code, label in ats_catalog.MONTHS.items()], required=True)
-    state = fields.Selection([('draft', 'Borrador'), ('built', 'Construido')], default='draft', readonly=True, copy=False, tracking=True)
-    compra_ids = fields.One2many('erpec.ats.report.compra', 'report_id', copy=False)
-    venta_ids = fields.One2many('erpec.ats.report.venta', 'report_id', copy=False)
-    anulado_ids = fields.One2many('erpec.ats.report.anulado', 'report_id', copy=False)
-    missing_ids = fields.One2many('erpec.ats.report.missing', 'report_id', copy=False)
-    compra_count = fields.Integer(compute='_compute_counts')
-    venta_count = fields.Integer(compute='_compute_counts')
-    anulado_count = fields.Integer(compute='_compute_counts')
-    missing_count = fields.Integer(compute='_compute_counts')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
+    year = fields.Integer(required=True, default=lambda self: fields.Date.context_today(self).year, string='Año')
+    month = fields.Selection([(code, label) for code, label in ats_catalog.MONTHS.items()], required=True, string='Mes')
+    state = fields.Selection([('draft', 'Borrador'), ('built', 'Construido')], default='draft', readonly=True, copy=False, tracking=True, string='Estado')
+    compra_ids = fields.One2many('erpec.ats.report.compra', 'report_id', copy=False, string='Detalle de compras')
+    venta_ids = fields.One2many('erpec.ats.report.venta', 'report_id', copy=False, string='Detalle de ventas')
+    anulado_ids = fields.One2many('erpec.ats.report.anulado', 'report_id', copy=False, string='Detalle de anulados')
+    missing_ids = fields.One2many('erpec.ats.report.missing', 'report_id', copy=False, string='Faltante')
+    compra_count = fields.Integer(compute='_compute_counts', string='Compras')
+    venta_count = fields.Integer(compute='_compute_counts', string='Ventas')
+    anulado_count = fields.Integer(compute='_compute_counts', string='Comprobantes anulados')
+    missing_count = fields.Integer(compute='_compute_counts', string='Faltantes')
     xml_preview = fields.Binary('XML de ensayo', readonly=True, copy=False, attachment=False)
-    xml_filename = fields.Char(readonly=True, copy=False)
-    build_notice = fields.Text(readonly=True, copy=False)
+    xml_filename = fields.Char(readonly=True, copy=False, string='Nombre del archivo XML')
+    company_is_test = fields.Boolean(related='company_id.ec_test_company', string='Empresa de ensayo')
+    build_notice = fields.Text(readonly=True, copy=False, string='Aviso de generación')
     _sql_constraints = [('period_once', 'unique(company_id, year, month)', 'Ya existe un anexo ATS para esta empresa y período.')]
 
     @api.depends('compra_ids', 'venta_ids', 'anulado_ids', 'missing_ids')
@@ -478,7 +479,7 @@ class AtsReport(models.Model):
         else:
             notice_parts.append('Sin datos suficientes para generar un XML de ensayo este período.')
         if xml_bytes:
-            self.write({'xml_preview': base64.b64encode(xml_bytes), 'xml_filename': 'ATS-ENSAYO-%s-%s.xml' % (self.year, self.month)})
+            self.write({'xml_preview': base64.b64encode(xml_bytes), 'xml_filename': self.company_id._ec_annex_filename('ATS-ENSAYO-%s-%s.xml' % (self.year, self.month))})
         self.write({'state': 'built', 'build_notice': ' '.join(notice_parts)})
         return True
 

@@ -1,0 +1,17 @@
+<odoo>
+  <record id="company_test_flag" model="ir.ui.view">
+    <field name="name">res.company.erpec.test.flag</field>
+    <field name="model">res.company</field>
+    <field name="inherit_id" ref="base.view_company_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="before">
+        <div class="alert alert-warning mb-0" role="status" invisible="not ec_test_company">Empresa de ensayo: sus datos son ficticios y sus anexos se generan como ENSAYO-NO-PRESENTAR. No presentes ninguna declaración con ellos.</div>
+      </xpath>
+      <xpath expr="//notebook" position="inside">
+        <page string="Ensayo" name="erpec_test">
+          <group><field name="ec_test_company"/></group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

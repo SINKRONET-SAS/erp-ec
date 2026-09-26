@@ -204,7 +204,7 @@ class InvoiceLine(models.Model):
     erpec_tax_notice = fields.Text('Aplicación del plan', compute='_compute_erpec_selection')
     erpec_retention_ids = fields.Many2many('account.tax', string='Retenciones previstas', compute='_compute_erpec_selection')
     erpec_ats_sustento_code = fields.Selection(ATS_SUSTENTO_SELECTION, string='Sustento ATS',
-        compute='_compute_erpec_selection', store=True, readonly=False,
+        compute='_compute_erpec_sustento', store=True, readonly=False,
         help='Código de sustento tributario del Anexo Transaccional Simplificado, resuelto automáticamente desde '
              'el caso aplicable del tercero y del producto. Vacío si no hay un caso configurado o si los planes '
              'del tercero y del producto no coinciden en el mismo código; se completa manualmente en ese caso. '
@@ -213,14 +213,20 @@ class InvoiceLine(models.Model):
     @api.depends('product_id', 'move_id.partner_id', 'move_id.company_id')
     def _compute_erpec_selection(self):
         for line in self:
-            is_sale = line.move_id.is_sale_document()
-            result = selection(line, 'sale' if is_sale else 'bill')
+            result = selection(line, 'sale' if line.move_id.is_sale_document() else 'bill')
             line.erpec_tax_notice = result['message']
             line.erpec_retention_ids = result['income'] | result['vat']
-            if is_sale:
+
+    @api.depends('product_id', 'move_id.partner_id', 'move_id.company_id')
+    def _compute_erpec_sustento(self):
+        # DI26-02: método propio para el campo almacenado; leer los avisos no lo recalcula. Solo se deriva del plan al
+        # cambiar producto, tercero o empresa en un documento sin contabilizar, y nunca vacía un valor manual.
+        for line in self:
+            if line.move_id.is_sale_document():
                 line.erpec_ats_sustento_code = False
-            elif result.get('sustento_code'):
-                line.erpec_ats_sustento_code = result['sustento_code']
+                continue
+            code = selection(line, 'bill').get('sustento_code') if line.move_id.state != 'posted' else False
+            line.erpec_ats_sustento_code = code or line.erpec_ats_sustento_code
 
     @api.depends('product_id', 'product_uom_id', 'move_id.partner_id', 'move_id.fiscal_position_id')
     def _compute_tax_ids(self):

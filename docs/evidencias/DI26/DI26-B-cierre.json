@@ -1,0 +1,70 @@
+{
+  "phase": "DI26-B",
+  "status": "cerrada",
+  "fecha": "2026-09-25",
+  "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
+  "prompt": ".github/prompts/ERPEC26-DI26-B.md",
+  "ejecucion": "Fases DI26-A a DI26-F ejecutadas de forma continua en la misma sesión y el mismo árbol de trabajo, por pedido del titular del 25-09-2026 (\"ejecutar todos los prompts del plan desplegado; luego verificar ... corregir; finalmente commit y push\"). La validación integral se hizo una vez con todo el código final; por eso cada cierre cita la misma suite. Los archivos compartidos entre fases se registran en el commit de la primera fase que los tocó, ya con su estado final.",
+  "hallazgos": [
+    "DI26-02",
+    "DI26-03",
+    "DI26-11 (cuentas e identificación)",
+    "DI26-12"
+  ],
+  "tareas": [
+    {
+      "task": "DI26-B.1",
+      "status": "comprobada",
+      "evidence": "Cómputo separado _compute_erpec_sustento (depende de producto, tercero y empresa; nunca en documentos contabilizados ni sobre un valor manual); prueba test_reading_the_plan_notice_never_overwrites_a_manual_sustento."
+    },
+    {
+      "task": "DI26-B.2",
+      "status": "comprobada",
+      "evidence": "beneficiary_identification usa ec_rdep_id_type; pasaporte alfanumérico conservado, longitud máxima por banco y rechazo de identificaciones inválidas; campo id_type en el registro del archivo; pruebas test_passport_keeps_letters_and_declared_type_wins y test_invalid_identification_is_rejected_not_truncated."
+    },
+    {
+      "task": "DI26-B.3",
+      "status": "comprobada",
+      "evidence": "La cuenta propia sale de la cuenta bancaria del diario de nómina; modelo erpec.bank.company.account retirado con pre-migración que aborta si tuviera filas (ninguna instancia tenía)."
+    },
+    {
+      "task": "DI26-B.4",
+      "status": "comprobada",
+      "evidence": "res.company.ec_test_company con prefijo ENSAYO-NO-PRESENTAR en ATS y RDEP y avisos en pantalla; \"Empresa autoservicio ensayo\" (demo) marcada por scripts/align-demo-di26.py."
+    }
+  ],
+  "pendientes": [
+    "erpec_bank_key en res.partner.bank sigue expresando el perfil de archivo aparte de res.bank (DI26-11): se mantiene porque el perfil de archivo no siempre coincide con el banco; queda para revisión funcional."
+  ],
+  "limites": [
+    "La empresa de ensayo conserva el RUC real de SINKRONET: se eligió marcarla (prefijo y avisos) en lugar de inventar un RUC; el titular puede pedir un RUC de ensayo inequívoco."
+  ],
+  "cambioDePermisos": "La exportación bancaria (asistente, lotes y registros) exige ahora Responsable de nómina: expone sueldos y cuentas del personal. qa_contador (solo contabilidad) ya no la ve.",
+  "validacion": {
+    "suiteIntegrada": {
+      "comando": "scripts/test-integrated.py (todos los módulos erpec_*)",
+      "resultado": "662 pruebas, 0 fallos, 0 errores, 3 omisiones",
+      "omisiones": "TreasuryCase.test_sanitize_* requieren la demo sembrada (erpec_operational_demo); legítimas",
+      "registro": ".cache/windows/ec_integrated_test_7cfb33b865a7.log (local, no versionado)",
+      "salida": 0
+    },
+    "suiteTrasEtiquetas": {
+      "comando": "scripts/test-integrated.py erpec_payroll erpec_withholding_accounting erpec_fiscal_ats",
+      "resultado": "229 pruebas, 0 fallos, 0 errores, 0 omisiones",
+      "advertenciasEtiquetaRepetida": 0,
+      "salida": 0
+    },
+    "instancias": {
+      "actualizacion": "scripts/update-instance.py demo fundador a b --restart: todos los módulos erpec_* instalados, sin desfase de esquema en las cuatro",
+      "respaldos": [
+        ".cache/windows/backups/update-demo-20260926T003508Z",
+        ".cache/windows/backups/update-fundador-20260926T003910Z",
+        ".cache/windows/backups/update-a-20260926T003910Z",
+        ".cache/windows/backups/update-b-20260926T003910Z",
+        ".cache/windows/backups/align-demo-di26-20260926T003717Z"
+      ],
+      "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
+    },
+    "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  }
+}

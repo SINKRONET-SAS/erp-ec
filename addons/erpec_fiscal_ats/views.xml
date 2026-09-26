@@ -2,7 +2,8 @@
 <record id="report_form" model="ir.ui.view"><field name="name">erpec.ats.report.form</field><field name="model">erpec.ats.report</field><field name="arch" type="xml"><form>
 <header><button name="action_build" type="object" string="Construir" class="oe_highlight" groups="account.group_account_manager"/><button name="action_reset" type="object" string="Reiniciar" invisible="state == 'draft'" groups="account.group_account_manager"/><field name="state" widget="statusbar"/></header>
 <sheet>
-<div class="alert alert-warning" invisible="not build_notice">Este anexo es un ensayo construido a partir de los documentos del ERP: no está presentado ante el SRI ni homologado. Revisa la vista de faltantes antes de considerarlo completo.<field name="build_notice" nolabel="1"/></div>
+<field name="company_is_test" invisible="1"/><div class="alert alert-danger" role="alert" invisible="not company_is_test">Empresa de ensayo con datos ficticios: el XML se genera como ENSAYO-NO-PRESENTAR. No lo cargues en el DIMM para declarar.</div>
+<div class="alert alert-warning" role="status" invisible="not build_notice">Este anexo es un ensayo construido a partir de los documentos del ERP: no está presentado ante el SRI ni homologado. Revisa la vista de faltantes antes de considerarlo completo.<field name="build_notice" nolabel="1"/></div>
 <group>
 <field name="company_id"/>
 <field name="year"/>

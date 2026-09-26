@@ -1,6 +1,7 @@
 <odoo>
 <record id="disbursement_company" model="ir.rule"><field name="name">Pagos de nómina por empresa</field><field name="model_id" ref="model_erpec_payroll_disbursement"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
-<record id="bank_company_account_company" model="ir.rule"><field name="name">Cuentas propias por banco por empresa</field><field name="model_id" ref="model_erpec_bank_company_account"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="bank_export_batch_company" model="ir.rule"><field name="name">Archivos bancarios generados por empresa</field><field name="model_id" ref="model_erpec_bank_export_batch"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="bank_export_line_company" model="ir.rule"><field name="name">Registros de archivo bancario por empresa</field><field name="model_id" ref="model_erpec_bank_export_line"/><field name="domain_force">[('batch_id.company_id','in',company_ids)]</field></record>
+<record id="bonus_settlement_company" model="ir.rule"><field name="name">Liquidación de décimos por empresa</field><field name="model_id" ref="model_erpec_payroll_bonus_settlement"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="bonus_settlement_line_company" model="ir.rule"><field name="name">Empleados de la liquidación de décimos por empresa</field><field name="model_id" ref="model_erpec_payroll_bonus_settlement_line"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 </odoo>

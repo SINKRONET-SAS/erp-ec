@@ -76,10 +76,25 @@ class AtsSustentoCase(TransactionCase):
             'invoice_line_ids': [Command.create({'product_id': self.product.id, 'quantity': 1, 'price_unit': 100})]})
         self.assertFalse(invoice.invoice_line_ids.erpec_ats_sustento_code)
 
+    def test_reading_the_plan_notice_never_overwrites_a_manual_sustento(self):
+        # DI26-02: antes, leer el aviso informativo recalculaba y guardaba el sustento del plan sobre el valor manual.
+        bill = self._make_bill()
+        line = bill.invoice_line_ids
+        self.assertEqual(line.erpec_ats_sustento_code, '02')
+        line.erpec_ats_sustento_code = '01'
+        self.env.flush_all()
+        self.env.invalidate_all()
+        self.assertTrue(line.erpec_tax_notice is not None)
+        self.assertTrue(line.erpec_retention_ids is not None)
+        self.env.flush_all()
+        self.env.cr.execute('SELECT erpec_ats_sustento_code FROM account_move_line WHERE id=%s', [line.id])
+        self.assertEqual(self.env.cr.fetchone()[0], '01')
+
     def test_manual_override_persists_when_intersection_cannot_resolve(self):
         bill = self._make_bill()
         self.assertEqual(bill.invoice_line_ids.erpec_ats_sustento_code, '02')
         self.right_case.ats_sustento_code = '06'
         bill.invoice_line_ids.erpec_ats_sustento_code = '01'
         bill.invoice_line_ids._compute_erpec_selection()
+        bill.invoice_line_ids._compute_erpec_sustento()
         self.assertEqual(bill.invoice_line_ids.erpec_ats_sustento_code, '01')

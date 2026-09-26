@@ -325,10 +325,11 @@ class RdepAnnex(models.Model):
     _inherit = ['mail.thread']
     company_id = fields.Many2one('res.company', 'Empresa', required=True, default=lambda self: self.env.company)
     year = fields.Integer('Año fiscal', required=True)
-    state = fields.Selection([('draft', 'Borrador'), ('generated', 'XML generado')], default='draft', readonly=True)
-    line_ids = fields.One2many('erpec.payroll.rdep.line', 'annex_id', readonly=True)
+    state = fields.Selection([('draft', 'Borrador'), ('generated', 'XML generado')], default='draft', readonly=True, string='Estado')
+    line_ids = fields.One2many('erpec.payroll.rdep.line', 'annex_id', readonly=True, string='Línea')
     xml_file = fields.Binary('XML de vista previa', readonly=True, attachment=False)
-    filename = fields.Char(readonly=True)
+    company_is_test = fields.Boolean(related='company_id.ec_test_company', string='Empresa de ensayo')
+    filename = fields.Char(readonly=True, string='Nombre del archivo')
     digest = fields.Char('SHA256 del XML', readonly=True)
     pending_notice = fields.Text('Pendiente', readonly=True, default=(
         'Vista previa interna del RDEP; no se presenta ante el SRI ni se homologa. DI25-03: se aplica la tarifa a acumulados efectivos. '
@@ -403,7 +404,6 @@ class RdepAnnex(models.Model):
         for annex in self:
             periods = annex._posted_periods()
             issues = annex._coverage_issues(periods)
-            issues.append('D5 · Compatibilidad RDEP 2026 pendiente: el portal publica programa 2026, pero ficha y catálogo visibles para 2025. El XML sigue siendo una vista previa interna.')
             issues += ['Aviso, %s: %s' % (employee.name, note) for employee in periods.line_ids.employee_id
                        for note in employee.sudo()._rdep_personal_status(annex.year)['notes']]
             if annex.source_hash and annex.source_hash != annex._source_signature(periods):
@@ -592,14 +592,14 @@ class RdepAnnex(models.Model):
         import hashlib
         import base64
         xml_bytes = etree.tostring(root, encoding='UTF-8', xml_declaration=True, pretty_print=True)
-        self.write({'xml_file': base64.b64encode(xml_bytes), 'filename': 'RDEP-VISTA-PREVIA-%s-%s.xml' % (self.company_id.id, self.year), 'digest': hashlib.sha256(xml_bytes).hexdigest(), 'state': 'generated'})
+        self.write({'xml_file': base64.b64encode(xml_bytes), 'filename': self.company_id._ec_annex_filename('RDEP-VISTA-PREVIA-%s-%s.xml' % (self.company_id.id, self.year)), 'digest': hashlib.sha256(xml_bytes).hexdigest(), 'state': 'generated'})
         return True
 
 
 class RdepAnnexLine(models.Model):
     _name = 'erpec.payroll.rdep.line'
     _description = 'Totales anuales por empleado para el agregador RDEP'
-    annex_id = fields.Many2one('erpec.payroll.rdep', required=True, ondelete='cascade')
+    annex_id = fields.Many2one('erpec.payroll.rdep', required=True, ondelete='cascade', string='Anexo')
     company_id = fields.Many2one(related='annex_id.company_id', store=True)
     employee_id = fields.Many2one('hr.employee', 'Empleado', required=True, readonly=True)
     months = fields.Integer('Períodos contabilizados', readonly=True)
