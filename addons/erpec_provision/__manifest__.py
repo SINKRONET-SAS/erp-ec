@@ -1,1 +1,1 @@
-{'name':'ERP EC Aprovisionamiento', 'version':'18.0.1.0.0', 'author':'SINKRONET S.A.S.', 'license':'Other proprietary', 'depends':['erpec_suite'], 'data':['security/ir.model.access.csv','views/provision.xml'], 'installable':True}
+{'name':'ERP EC Aprovisionamiento', 'version':'18.0.1.0.1', 'author':'SINKRONET S.A.S.', 'license':'Other proprietary', 'depends':['erpec_suite'], 'data':['security/ir.model.access.csv','views/provision.xml'], 'installable':True}

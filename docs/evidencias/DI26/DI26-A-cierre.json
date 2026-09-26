@@ -1,0 +1,70 @@
+{
+  "phase": "DI26-A",
+  "status": "cerrada",
+  "fecha": "2026-09-25",
+  "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
+  "prompt": ".github/prompts/ERPEC26-DI26-A.md",
+  "ejecucion": "Fases DI26-A a DI26-F ejecutadas de forma continua en la misma sesión y el mismo árbol de trabajo, por pedido del titular del 25-09-2026 (\"ejecutar todos los prompts del plan desplegado; luego verificar ... corregir; finalmente commit y push\"). La validación integral se hizo una vez con todo el código final; por eso cada cierre cita la misma suite. Los archivos compartidos entre fases se registran en el commit de la primera fase que los tocó, ya con su estado final.",
+  "hallazgos": [
+    "DI26-01",
+    "DI26-13"
+  ],
+  "tareas": [
+    {
+      "task": "DI26-A.1",
+      "status": "comprobada",
+      "evidence": "Versiones subidas en los módulos con cambios de modelo; scripts/check-module-versions.py (huella AST del esquema en docs/evidencias/module-schema-fingerprints.json) corre en el job de gobierno de CI (.github/workflows/tests.yml) y da \"Versiones coherentes\" en 25 módulos."
+    },
+    {
+      "task": "DI26-A.2",
+      "status": "comprobada",
+      "evidence": "scripts/check-schema-drift.py: sin desfase en demo, fundador, a y b tras la actualización."
+    },
+    {
+      "task": "DI26-A.3",
+      "status": "comprobada",
+      "evidence": "scripts/update-instance.py respalda con pg_dump, sincroniza la copia propia de la demo y actualiza todos los erpec_* instalados; manage-odoo.py update() lo usa para a y b."
+    },
+    {
+      "task": "DI26-A.4",
+      "status": "comprobada",
+      "evidence": "scripts/seal-auditlock.cjs, scripts/ui-menu-crawl.py y scripts/ui-roles-battery.py versionados; recorridos repetidos en este cierre."
+    },
+    {
+      "task": "DI26-A.5",
+      "status": "comprobada",
+      "evidence": "Tesorería y exportación bancaria crean su propia política sintética (TreasuryCase.payroll_policy); solo las 3 pruebas de saneamiento de la demo siguen omitidas."
+    }
+  ],
+  "pendientes": [],
+  "limites": [
+    "El script de CI solo compara la huella de campos (tipo, comodelo, store/compute/related); los cambios de etiqueta no exigen versión, update-instance.py actualiza igual todos los módulos."
+  ],
+  "validacion": {
+    "suiteIntegrada": {
+      "comando": "scripts/test-integrated.py (todos los módulos erpec_*)",
+      "resultado": "662 pruebas, 0 fallos, 0 errores, 3 omisiones",
+      "omisiones": "TreasuryCase.test_sanitize_* requieren la demo sembrada (erpec_operational_demo); legítimas",
+      "registro": ".cache/windows/ec_integrated_test_7cfb33b865a7.log (local, no versionado)",
+      "salida": 0
+    },
+    "suiteTrasEtiquetas": {
+      "comando": "scripts/test-integrated.py erpec_payroll erpec_withholding_accounting erpec_fiscal_ats",
+      "resultado": "229 pruebas, 0 fallos, 0 errores, 0 omisiones",
+      "advertenciasEtiquetaRepetida": 0,
+      "salida": 0
+    },
+    "instancias": {
+      "actualizacion": "scripts/update-instance.py demo fundador a b --restart: todos los módulos erpec_* instalados, sin desfase de esquema en las cuatro",
+      "respaldos": [
+        ".cache/windows/backups/update-demo-20260926T003508Z",
+        ".cache/windows/backups/update-fundador-20260926T003910Z",
+        ".cache/windows/backups/update-a-20260926T003910Z",
+        ".cache/windows/backups/update-b-20260926T003910Z",
+        ".cache/windows/backups/align-demo-di26-20260926T003717Z"
+      ],
+      "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
+    },
+    "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  }
+}

@@ -1,5 +1,8 @@
 """Ensayos de extracto, nómina por empleado y saneamiento reversible de la demo."""
+import json
+
 from odoo import fields
+from odoo.addons.erpec_payroll.demo_parameters import PARAMS
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import TransactionCase, tagged, new_test_user
 
@@ -76,11 +79,27 @@ class TreasuryCase(TransactionCase):
             self.skipTest('Requiere la demo sembrada: %s'%xmlid)
         return record
 
+    def payroll_policy(self):
+        """Política sintética propia (DI26-A.5): las pruebas no dependen de la demo sembrada y corren en CI."""
+        # El motor solo calcula nóminas de una empresa DEMO sin RUC (misma preparación que las pruebas del RDEP).
+        self.env.company.write({'name':'DEMO tesorería sintética','vat':False})
+        expense=self.env['account.account'].create({'code':'TSNOMGAS','name':'Gasto de nómina ensayo','account_type':'expense'})
+        liability=self.env['account.account'].create({'code':'TSNOMOBL','name':'Obligaciones de nómina ensayo','account_type':'liability_current'})
+        journal=self.env['account.journal'].create({'name':'Nómina ensayo tesorería','code':'TSNOM','type':'general'})
+        policy=self.env['erpec.payroll.policy'].create({'name':'SINTETICA-TESORERIA','year':2098,'journal_id':journal.id,
+            'parameters':json.dumps(PARAMS),'authorization':'Ensayo local de tesorería','source_reference':'Parámetros ficticios para pruebas'})
+        for concept in ('gross','net','personal_iess','tax','advances','loans','other_deductions','employer_iess','thirteenth','fourteenth','vacation','reserve_iess'):
+            credit_only=concept in ('net','personal_iess','tax','advances','loans','other_deductions')
+            self.env['erpec.payroll.mapping'].create({'policy_id':policy.id,'concept':concept,
+                'debit_id':False if credit_only else expense.id,'credit_id':False if concept=='gross' else liability.id})
+        policy.action_activate()
+        return policy
+
     def period(self):
         self.env.company.erpec_payroll_bank_journal_id=self.bank
         self.env.company.erpec_payroll_payable_id=self.env['account.account'].create({
             'name':'Nómina por pagar ensayo','code':'TSPAY','account_type':'liability_payable','reconcile':True})
-        policy=self._seeded('erpec_operational_demo.payroll_policy')
+        policy=self.payroll_policy()
         plan=self.env['account.analytic.plan'].create({'name':'Centros tesorería ensayo'})
         values=[]
         for index,wage in enumerate([1200,800]):

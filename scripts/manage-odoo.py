@@ -31,9 +31,10 @@ def stop():
 
 def update():
     stop()
+    # DI26-01: actualizar todos los módulos erpec_* instalados, con respaldo y comprobación de desfase.
+    subprocess.run([str(PYTHON),str(ROOT/'scripts/update-instance.py'),'a','b'],check=True)
     for tenant in ['a','b']:
-        subprocess.run([str(PYTHON),str(SOURCE/'odoo-bin'),'-c',str(STATE/tenant/'odoo.conf'),'-u','erpec_base','--stop-after-init','--no-http'],check=True)
-        code="lang=env['res.lang'].with_context(active_test=False).search([('code','=','es_EC')],limit=1)\nassert lang, 'No existe idioma es_EC'\nenv['base.language.install'].create({'lang_ids':[(6,0,lang.ids)],'overwrite':False}).lang_install()\nenv.ref('base.user_admin').write({'lang':'es_EC','tz':'America/Guayaquil'})\nenv.cr.commit()\n"
+        code="lang=env['res.lang'].with_context(active_test=False).search([('code','=','es_EC')],limit=1)\nassert lang, 'No existe idioma es_EC'\nenv['base.language.install'].create({'lang_ids':[(6,0,lang.ids)],'overwrite':False}).lang_install()\nenv.ref('base.user_admin').write({'lang':'es_EC','tz':'America/Guayaquil'})\nhasattr(env['res.company'], '_ec_apply_locale_defaults') and env['res.company']._ec_apply_locale_defaults()\nenv.cr.commit()\n"
         subprocess.run([str(PYTHON),str(SOURCE/'odoo-bin'),'shell','-c',str(STATE/tenant/'odoo.conf'),'--no-http'],input=code,text=True,check=True)
     subprocess.run([str(PYTHON),str(ROOT/'scripts/windows-local.py'),'start'],check=True)
 

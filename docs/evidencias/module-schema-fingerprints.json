@@ -1,0 +1,102 @@
+{
+ "erpec_acceptance": {
+  "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "version": "18.0.1.0.0"
+ },
+ "erpec_base": {
+  "schema": "f12368d2ea249e7f235a7f819970c9dc48455a43205fb5abdcb1d8164dd61d26",
+  "version": "18.0.1.0.2"
+ },
+ "erpec_data_protection": {
+  "schema": "c239235e00088536967c2d333d4b537fa4505c8a3b9ecf1afc85aca240cb600e",
+  "version": "18.0.1.0.2"
+ },
+ "erpec_field_routes": {
+  "schema": "8b874891c8a08d557a67ede0731a506a9d7520bee7d5ad2be779559a33e32dc9",
+  "version": "18.0.1.1.0"
+ },
+ "erpec_fiscal_ats": {
+  "schema": "109d91f028edda37fc89e91d802d71b372ce85a81059a1ba8829c4375de0496a",
+  "version": "18.0.1.0.2"
+ },
+ "erpec_fiscal_connector": {
+  "schema": "6f2754dc3a2ea12caad663178335fd066dfe7f70e7d9012c8f332dfda787f64a",
+  "version": "18.0.1.1.1"
+ },
+ "erpec_fiscal_documents": {
+  "schema": "f1608633d9402c5d74adae01985987d70beb03ae83ca829033062dcc9b2640ef",
+  "version": "18.0.1.0.0"
+ },
+ "erpec_fiscal_guide_sri": {
+  "schema": "56c4da20d15e0dd14504404c25d09afa942c015103399db387f10b75b3701659",
+  "version": "18.0.1.1.0"
+ },
+ "erpec_fiscal_native": {
+  "schema": "18febb3a6a29f9b6d0193d24c7551ba6b0178fa32f322bbe1f3845750965573c",
+  "version": "18.0.1.4.2"
+ },
+ "erpec_fiscal_sri": {
+  "schema": "3b23c4bd678c438ffdd34de85ae457131d440de5e9de3b811a020cdddec10965",
+  "version": "18.0.1.5.3"
+ },
+ "erpec_fiscal_withholding_sri": {
+  "schema": "4451a3243b88b0db0c8234335ba19e55a40408b2e6538cf668d64974cf781127",
+  "version": "18.0.1.1.0"
+ },
+ "erpec_imports": {
+  "schema": "cf3d590448254f032392c63b126cd9abb9ac552b9d80381da101fd913cd65b1f",
+  "version": "18.0.1.0.1"
+ },
+ "erpec_manufacturing": {
+  "schema": "846ad40686d46635ec022a9891e8ad5ec7f3396394c6d8a7ff85c8dcfb7868b4",
+  "version": "18.0.1.0.1"
+ },
+ "erpec_operations": {
+  "schema": "9529135e91d7052055ec8e4be72405cb7e65b74b0d54f4999517cf743bc718c9",
+  "version": "18.0.1.0.0"
+ },
+ "erpec_payphone": {
+  "schema": "8e5831d3ffba6615ff7d226eccf4131ce5cd3a18a18c1473e241f7b97abcf8df",
+  "version": "18.0.1.1.1"
+ },
+ "erpec_payroll": {
+  "schema": "18268c6d5f322d51ec844ab8ef3fa2ae41f5884f516bba657f1048a7990d6f3e",
+  "version": "18.0.1.14.15"
+ },
+ "erpec_provision": {
+  "schema": "733dc3de173ed17d7f5be828c3a99bda3f6d27368d304497c56f1a3471ba8864",
+  "version": "18.0.1.0.1"
+ },
+ "erpec_runtime": {
+  "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "version": "18.0.1.0.0"
+ },
+ "erpec_secrets": {
+  "schema": "3dfa520653ee1d0d2714e7ddb265cbbdf324e2725dd74fea3f95618fbcf57ca1",
+  "version": "18.0.2.0.0"
+ },
+ "erpec_selfservice": {
+  "schema": "e58b295e732dda6067ac87ae10f5de66310e4e064292ea516ac1926864f5d093",
+  "version": "18.0.1.0.0"
+ },
+ "erpec_suite": {
+  "schema": "93ace775ed7e106ee727c4188db0e871120c7a6f6b46be81ba1da4714897b107",
+  "version": "18.0.1.0.1"
+ },
+ "erpec_treasury": {
+  "schema": "c1e36b441fbdc6449aa108bb17e98a70956d3dcc7e7593c162306f84111be069",
+  "version": "18.0.1.0.2"
+ },
+ "erpec_website_entry": {
+  "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "version": "18.0.1.0.2"
+ },
+ "erpec_withholding_accounting": {
+  "schema": "9a6a97ffdd25ad593b4a5343399571a8beb84d8cb446fac5d6d33cf97df02caf",
+  "version": "18.0.1.0.0"
+ },
+ "erpec_workspace": {
+  "schema": "c4d82e6cbb31d8d7015150b6ac119f0a8f2b75826944e3888a6d247c17a53107",
+  "version": "18.0.1.3.1"
+ }
+}

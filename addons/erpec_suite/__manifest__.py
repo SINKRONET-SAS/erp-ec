@@ -1,6 +1,6 @@
 {
     'name': 'ERP EC Planes y contratos',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'author': 'SINKRONET S.A.S.',
     'license': 'Other proprietary',
     'depends': ['erpec_base'],

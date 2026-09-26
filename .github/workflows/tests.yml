@@ -17,6 +17,7 @@ jobs:
       - run: node --test scripts/test-governance.cjs
       - run: python scripts/test-di25-demo-runner.py
       - run: python scripts/render-di25-matrix.py --check
+      - run: python scripts/check-module-versions.py --check
 
   suite-linux:
     name: Suite integrada (imagen sin fuentes montadas)

@@ -1,1 +1,1 @@
-{'name': 'ERP EC — Importaciones comerciales', 'version': '18.0.1.0.0', 'license': 'Other proprietary', 'author': 'SINKRONET S.A.S.', 'depends': ['erpec_operations', 'stock_landed_costs'], 'data': ['security.xml', 'ir.model.access.csv', 'views.xml'], 'installable': True}
+{'name': 'ERP EC — Importaciones comerciales', 'version': '18.0.1.0.1', 'license': 'Other proprietary', 'author': 'SINKRONET S.A.S.', 'depends': ['erpec_operations', 'stock_landed_costs'], 'data': ['security.xml', 'ir.model.access.csv', 'views.xml'], 'installable': True}
