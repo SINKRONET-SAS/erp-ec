@@ -37,7 +37,7 @@
     "erpec_bank_key en res.partner.bank sigue expresando el perfil de archivo aparte de res.bank (DI26-11): se mantiene porque el perfil de archivo no siempre coincide con el banco; queda para revisión funcional."
   ],
   "limites": [
-    "La empresa de ensayo conserva el RUC real de SINKRONET: se eligió marcarla (prefijo y avisos) en lugar de inventar un RUC; el titular puede pedir un RUC de ensayo inequívoco."
+    "El RUC de ensayo 1799999990001 es sintético (dígito verificador válido, como exige el DIMM) y visiblemente artificial; no se consultó en el catastro del SRI si está asignado a alguien."
   ],
   "cambioDePermisos": "La exportación bancaria (asistente, lotes y registros) exige ahora Responsable de nómina: expone sueldos y cuentas del personal. qa_contador (solo contabilidad) ya no la ve.",
   "validacion": {
@@ -66,5 +66,12 @@
       "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
     },
     "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  },
+  "cambioRucEnsayo": {
+    "fecha": "2026-09-25",
+    "pedido": "Instrucción del titular: cambiar el RUC real de SINKRONET en la empresa de ensayo de la demo.",
+    "accion": "scripts/align-demo-di26.py (respaldo .cache/windows/backups/align-demo-di26-20260926T022002Z): \"Empresa autoservicio ensayo\" pasa de 1793235327001 a 1799999990001; certificado autofirmado de ensayo regenerado para el RUC nuevo (verificado y con firma de prueba exitosa; el anterior tenía serie 1793235327999 y ni siquiera coincidía); ATS reconstruido como ENSAYO-NO-PRESENTAR-ATS-ENSAYO-2026-09.xml con IdInformante 1799999990001.",
+    "comprobado": "En erpec_demo: 0 contactos con el RUC real; el XML ATS no contiene 1793235327001.",
+    "noCambiado": "Los fixtures de pruebas automáticas y scripts/create-test-issuer.cjs (alta de SINKRONET en el Facturador local) conservan el RUC real porque representan al propio proveedor, no a la empresa de ensayo. El talón del DIMM ya generado (DI25-07) queda como historia con el RUC anterior."
   }
 }

@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-26T02:20:52.874Z",
+  "updatedAt": "2026-09-26T01:17:49.550Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -283,7 +283,6 @@
     "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json",
     "docs/evidencias/AuditLock.before-DI26-A-CIERRE-20260926T010702Z.json",
     "docs/evidencias/AuditLock.before-DI26-B-CIERRE-20260926T010704Z.json",
-    "docs/evidencias/AuditLock.before-DI26-B-RUC-ENSAYO-20260926T022052Z.json",
     "docs/evidencias/AuditLock.before-DI26-C-CIERRE-20260926T010706Z.json",
     "docs/evidencias/AuditLock.before-DI26-D-CIERRE-20260926T010708Z.json",
     "docs/evidencias/AuditLock.before-DI26-DIAGNOSTICO-20260925T170928Z.json",
@@ -462,8 +461,7 @@
     "DI26-E: cierre docs/evidencias/DI26/DI26-E-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
     "DI26-F: cierre docs/evidencias/DI26/DI26-F-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
     "DI26-F: recorrido de 128 menús sin problemas; batería de 9 roles sin errores JS ni violaciones axe, 2 diferencias esperadas con la línea base DI25-06 (entrada de retenciones retirada).",
-    "DI26-F.3: CI verde en 2cc500b (https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36207499586): gobierno, suite integrada, arranque de imágenes customer y controller, auditoría de dependencias.",
-    "DI26-B.4 (instrucción del titular 25-09-2026): la empresa de ensayo de la demo deja el RUC real 1793235327001 y pasa a 1799999990001; certificado de ensayo regenerado y verificado; ATS reconstruido sin el RUC real; 0 contactos con el RUC real en erpec_demo; respaldo align-demo-di26-20260926T022002Z."
+    "DI26-F.3: CI verde en 2cc500b (https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36207499586): gobierno, suite integrada, arranque de imágenes customer y controller, auditoría de dependencias."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -491,7 +489,7 @@
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "8743442819960efa979b4227bc3a7abad4e72fc483d363f79f11f169a5effb56",
+    ".github/CODEX_CONTEXT.md": "a54e2300abbcef6b453e8f8bed0a9251fd3d954011b5b410e5d3e16218368e6f",
     ".github/prompts/ERPEC26-DI25-00.md": "6dedd464202df5529d7b477d00a194decf23aa63d00987baed84c8448cea0c31",
     ".github/prompts/ERPEC26-DI25-01.md": "4e54396b755f8223202c151c1d5c1a577521aa07fe0299c3275797cba190acb1",
     ".github/prompts/ERPEC26-DI25-02.md": "fa69838d8929e0e6cfe3b19aa5eadac18aa6ccfa38cf477632058a8af978f5ae",
@@ -767,7 +765,6 @@
     "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json": "7fc3a74ba90675ac13184e9f23fe18b9a0fdf6434f57e9b4ad6ba42249a15fa1",
     "docs/evidencias/AuditLock.before-DI26-A-CIERRE-20260926T010702Z.json": "30e1aa532cd940ad5864778958c64c4e51f3775fadd185d58625d4275b306943",
     "docs/evidencias/AuditLock.before-DI26-B-CIERRE-20260926T010704Z.json": "c905073a2f7bab88b73354462b9dc28210f2b4cd54ba5bce4427b90593e48579",
-    "docs/evidencias/AuditLock.before-DI26-B-RUC-ENSAYO-20260926T022052Z.json": "3d19d3352e96f5409c9c987cee2c4b75d9de5209b856d15af52649086b5f15c3",
     "docs/evidencias/AuditLock.before-DI26-C-CIERRE-20260926T010706Z.json": "c38faa4bbcde8ec44c5fecc885b9bdb3ed700c11265bfe3562f6c7a5d5a6aa71",
     "docs/evidencias/AuditLock.before-DI26-D-CIERRE-20260926T010708Z.json": "10571fbc05c026ab6bf86e7847b7273f83576e6cd2d228824bf14d96265c6c6f",
     "docs/evidencias/AuditLock.before-DI26-DIAGNOSTICO-20260925T170928Z.json": "6ced5a5aabc9225d765c30884b0d842a79f1a8df50f01733469f9f0ef2519122",
@@ -818,7 +815,7 @@
     "docs/evidencias/DI25/repro_diagnostico.py": "c88d5cb0a44ea2b82466081c1a67009f969750d173290aa5eddadc8df8446fa8",
     "docs/evidencias/DI25/validacion.json": "ae116311491018eb1bdf8c73f05230b4c28562b3adcb84da53c3dd90e9e8b473",
     "docs/evidencias/DI26/DI26-A-cierre.json": "70140ad20345c44834ba07857fcec1190eb3c2acd5133cd8039c8319201c321d",
-    "docs/evidencias/DI26/DI26-B-cierre.json": "9815c842e3d37d8f19411c820ac743bb9d230f79e4f8a877c285c3e6de9b911b",
+    "docs/evidencias/DI26/DI26-B-cierre.json": "aed4508ac44efcfef6d0de7b6b60176c406961ed89f396371188e90bd5e4dbcd",
     "docs/evidencias/DI26/DI26-C-cierre.json": "db10048ce211b89e60c8726c9bee2d437ed071c4617f0357b5bcb1c4ccb86761",
     "docs/evidencias/DI26/DI26-D-cierre.json": "b3cdc406d9d01860e187389d4df59b616819b36687000ce02f14a3b645a49407",
     "docs/evidencias/DI26/DI26-E-cierre.json": "7ed6948ad599b5fc4360ada135d8680e77273915b029f695a19ef0a35eea7896",
@@ -831,7 +828,7 @@
     "docs/evidencias/DI26/regresion/recorrido-roles-9.json": "b7419a1596e9fb4c0305981ace57c60b743a26ec30d432dcffe12fb77261fdc6",
     "docs/evidencias/DI26/validacion.json": "17a540d3f6b9c5b6d6d43b25c2f51cdded0066d32f00860feb6ae69baee8acd2",
     "docs/evidencias/module-schema-fingerprints.json": "5e2049042754af69e9e8961a142ac1ad8bac1ce42ccde3c2657c6ec4089eaaa0",
-    "scripts/align-demo-di26.py": "061097ece26685293a96485e8c9eb646e07ddd126ca1bc933e1e180ed4a1ca11",
+    "scripts/align-demo-di26.py": "ef0a4a715ebc7906d9d291ccbc4d1c451d5505e489822c32093c739a3b364a6d",
     "scripts/backup-restore-drill.py": "a1153d470b67eee09dd983fdabcffedb02eeefdb570a5ea5dfa94365064cfb6c",
     "scripts/check-module-versions.py": "b16335f223ac5180f660395e6675a57cfaa0060d0bbebf485d646834f9f5a939",
     "scripts/check-schema-drift.py": "961f5d6e3017a17f01390f86f65944d4df2e465bb5e17959a764e964b8fc4774",
@@ -859,9 +856,9 @@
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI26-B-RUC-ENSAYO-20260926T022052Z.json",
-  "previousAuditLockHash": "3d19d3352e96f5409c9c987cee2c4b75d9de5209b856d15af52649086b5f15c3",
-  "signature": "a1f58a50416f6674bfb8f7269d73a578a38a3d1c84ed7a077bb7ecd30ffd3fda",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI26-F-CI-20260926T011749Z.json",
+  "previousAuditLockHash": "43d731182e27149e62637374921a566894503f2fd4cda1adf02ed0b1d7bcdb52",
+  "signature": "efd123885187492c1d8cd15d0ef9bde9029d55721dd0a6068f728c4d786a9798",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -906,7 +903,6 @@
     "status": "plan-DI26-ejecutado-fases-A-F-cerradas",
     "evidence": "docs/evidencias/DI26/validacion.json",
     "closure": "docs/evidencias/DI26/DI26-F-cierre.json",
-    "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36207499586",
-    "testCompanyVat": "1799999990001"
+    "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36207499586"
   }
 }
