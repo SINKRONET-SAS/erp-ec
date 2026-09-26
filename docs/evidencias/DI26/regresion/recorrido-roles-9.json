@@ -1,0 +1,330 @@
+{
+ "entorno": "Chrome (Playwright), http://127.0.0.1:8369",
+ "roles": {
+  "qa_admin": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 21,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Importaciones comerciales",
+     "Tesorería",
+     "Nómina",
+     "Configuración de impuestos",
+     "Fiscal · Pruebas",
+     "Estado técnico"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_basic": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 22,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 22,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_vendedor": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Ventas"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 22,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_comprador": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Compras"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_bodega": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Inventario",
+     "Importaciones comerciales"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_operario": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Inventario",
+     "Importaciones comerciales",
+     "Producción y trabajo"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_supervisor": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 20,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Inventario",
+     "Importaciones comerciales",
+     "Producción y trabajo"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 22,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_nomina": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 21,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Importaciones comerciales",
+     "Tesorería",
+     "Nómina",
+     "Configuración de impuestos"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": []
+    }
+   }
+  },
+  "qa_contador": {
+   "360": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "768": {
+    "overflow": false,
+    "errores_js": []
+   },
+   "1280": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 21,
+     "violaciones": []
+    },
+    "teclado": {
+     "paradas": 23,
+     "sin_indicador": []
+    },
+    "areas": [
+     "Inicio",
+     "Importaciones comerciales",
+     "Tesorería",
+     "Configuración de impuestos",
+     "Fiscal · Pruebas"
+    ]
+   },
+   "zoom200": {
+    "overflow": false,
+    "errores_js": [],
+    "axe": {
+     "reglas_ok": 23,
+     "violaciones": []
+    }
+   }
+  }
+ },
+ "problemas": [
+  "qa_admin: áreas distintas a la línea base (['Inicio', 'Importaciones comerciales', 'Retenciones contables', 'Tesorería', 'Nómina', 'Configuración de impuestos', 'Fiscal · Pruebas', 'Estado técnico'] -> ['Inicio', 'Importaciones comerciales', 'Tesorería', 'Nómina', 'Configuración de impuestos', 'Fiscal · Pruebas', 'Estado técnico'])",
+  "qa_contador: áreas distintas a la línea base (['Inicio', 'Importaciones comerciales', 'Retenciones contables', 'Tesorería', 'Configuración de impuestos', 'Fiscal · Pruebas'] -> ['Inicio', 'Importaciones comerciales', 'Tesorería', 'Configuración de impuestos', 'Fiscal · Pruebas'])"
+ ]
+}

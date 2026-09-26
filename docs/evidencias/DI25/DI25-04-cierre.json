@@ -91,5 +91,13 @@
     "Las herramientas que dependen del DIMM (scripts/verify-ats-dimm.py, scripts/verify-ats-catalog.py) no corren en CI: dependen de instalaciones locales de terceros (Java 8, DIMM) específicas de cada máquina.",
     "No se modificaron repositorios fuente ni se enviaron comprobantes/correos/fondos reales."
   ],
-  "rollback": "Respaldo previo de base/filestore/módulo conservado en cada incremento (ver demo.backups); no reescribir asientos ni usar restauración como anulación fiscal; detener únicamente la demo antes de restaurar."
+  "rollback": "Respaldo previo de base/filestore/módulo conservado en cada incremento (ver demo.backups); no reescribir asientos ni usar restauración como anulación fiscal; detener únicamente la demo antes de restaurar.",
+  "correccionDI26": {
+    "fecha": "2026-09-25",
+    "nota": "Nota de corrección DI26-F.1 (2026-09-25, hallazgo DI26-10 del diagnóstico docs/DIAGNOSTICO_INTEGRAL_DI26.md). El texto original se conserva como historia; donde contradiga esta nota, prevalece la nota.",
+    "correcciones": [
+      "Certificado y ventas: la afirmación de que no había certificado propio de la empresa emisora ni ventas ATS con emisión autorizada se verificó solo en la demo. La instancia fundador (SINKRONET S.A.S.) sí tiene cargado su certificado de persona jurídica (ANF, entidad reconocida, firma probada, vigente hasta 2029-03-10) y 4 comprobantes autorizados en el ambiente de pruebas del SRI. Lo pendiente para producción es la decisión del titular y habilitar el punto de emisión, no la falta de certificado.",
+      "Talón del DIMM: DI25-04.3 dejó de estar bloqueado por el SWT de 32 bits: el titular generó el talón resumen del ATS de ensayo en el DIMM (docs/evidencias/DI25/DI25-07/talon-dimm-ats-ensayo.json) y los datos de ventas existen en fundador. La presentación oficial sigue excluida porque sería una declaración tributaria real."
+    ]
+  }
 }

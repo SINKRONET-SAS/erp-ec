@@ -63,5 +63,12 @@
   "amendedAfterClosure": {
     "date": "2026-09-24",
     "reason": "Por instrucción expresa del titular (\"no dejar parciales\") se completaron DI25-05.3 y DI25-05.4, que habían quedado registrados como no comprobados. Se actualiza este archivo en el mismo lugar; DI25-06 y DI25-07 no se retroceden."
+  },
+  "correccionDI26": {
+    "fecha": "2026-09-25",
+    "nota": "Nota de corrección DI26-F.1 (2026-09-25, hallazgo DI26-10 del diagnóstico docs/DIAGNOSTICO_INTEGRAL_DI26.md). El texto original se conserva como historia; donde contradiga esta nota, prevalece la nota.",
+    "correcciones": [
+      "Envío masivo: sí existía un mecanismo de envío masivo: Email Marketing (mass_mailing) estaba instalado en la demo sin conexión con la exclusión comercial. Desde DI26-D.2 la exclusión comercial se guarda en la lista negra de correo (mail.blacklist), que respeta todo envío masivo."
+    ]
   }
 }

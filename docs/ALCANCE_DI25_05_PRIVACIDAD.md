@@ -45,3 +45,9 @@ DI25-05.1 y DI25-05.2 comprobados con evidencia real. DI25-05.3 (retención ejec
 **Decisiones abiertas visibles dentro de la matriz**: contratos de ambos encargados y mecanismo lícito/RNPD de la transferencia de Google (siguen en borrador); la página pública solo funciona donde está instalado el sitio web (no en la instancia fundador).
 
 **Responsable de la conservación fiscal de 7 años (verificado 24-09-2026, a instancia del titular)**: cada Cliente (Owner) es dueño de su propia base de datos y de sus propios registros de este módulo (`company_id` sin valor por defecto fijo; responsables sin valor por defecto salvo el usuario que actúa); es el Cliente, titular del RUC que emite sus comprobantes, quien responde ante el SRI por conservarlos 7 años (Art. 41), nunca SINKRONET/Fundador. SINKRONET solo provee software y hospedaje. Que en la instancia "fundador" el usuario titular haya quedado como responsable del canal público (párrafo anterior) es correcto únicamente para los propios registros de SINKRONET como empresa; no es una regla del sistema ni se replica hacia ningún cliente real.
+
+## Nota de corrección DI26-F.1 (2026-09-25)
+
+Nota de corrección DI26-F.1 (2026-09-25, hallazgo DI26-10 del diagnóstico docs/DIAGNOSTICO_INTEGRAL_DI26.md). El texto original se conserva como historia; donde contradiga esta nota, prevalece la nota.
+
+- Envío masivo: sí existía un mecanismo de envío masivo: Email Marketing (mass_mailing) estaba instalado en la demo sin conexión con la exclusión comercial. Desde DI26-D.2 la exclusión comercial se guarda en la lista negra de correo (mail.blacklist), que respeta todo envío masivo.

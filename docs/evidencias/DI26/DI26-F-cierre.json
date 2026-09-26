@@ -1,0 +1,65 @@
+{
+  "phase": "DI26-F",
+  "status": "cerrada",
+  "fecha": "2026-09-25",
+  "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
+  "prompt": ".github/prompts/ERPEC26-DI26-F.md",
+  "ejecucion": "Fases DI26-A a DI26-F ejecutadas de forma continua en la misma sesión y el mismo árbol de trabajo, por pedido del titular del 25-09-2026 (\"ejecutar todos los prompts del plan desplegado; luego verificar ... corregir; finalmente commit y push\"). La validación integral se hizo una vez con todo el código final; por eso cada cierre cita la misma suite. Los archivos compartidos entre fases se registran en el commit de la primera fase que los tocó, ya con su estado final.",
+  "hallazgos": [
+    "DI26-10",
+    "DI26-11 (menús e ingresos)",
+    "regresión"
+  ],
+  "tareas": [
+    {
+      "task": "DI26-F.1",
+      "status": "comprobada",
+      "evidence": "Nota de corrección fechada, sin borrar la historia, en DI25-04-cierre.json, DI25-05-cierre.json, DI25-07-cierre.json, estado-hallazgos.json, DI25-07_ACEPTACION.md y ALCANCE_DI25_05_PRIVACIDAD.md (certificado de fundador y 4 autorizaciones en pruebas, talón del DIMM, Email Marketing)."
+    },
+    {
+      "task": "DI26-F.2",
+      "status": "comprobada",
+      "evidence": "Retenciones contables con una sola entrada (\"Contabilidad ERP EC › Retenciones\"); \"Ingreso no gravado (puntual)\" y el aviso de beneficios explican que los beneficios no gravados se suman solos."
+    },
+    {
+      "task": "DI26-F.3",
+      "status": "comprobada-local-ci-pendiente",
+      "evidence": "Suite completa aprobada, desfase 0 en las cuatro instancias, recorrido de 128 menús sin problemas y batería de 9 roles sin errores JS ni violaciones axe; sus 2 diferencias con la línea base DI25-06 son la entrada de retenciones retirada a propósito (F.2). CI: se completa con la URL tras el push."
+    }
+  ],
+  "pendientes": [
+    "URL de CI del push final."
+  ],
+  "limites": [],
+  "validacion": {
+    "suiteIntegrada": {
+      "comando": "scripts/test-integrated.py (todos los módulos erpec_*)",
+      "resultado": "662 pruebas, 0 fallos, 0 errores, 3 omisiones",
+      "omisiones": "TreasuryCase.test_sanitize_* requieren la demo sembrada (erpec_operational_demo); legítimas",
+      "registro": ".cache/windows/ec_integrated_test_7cfb33b865a7.log (local, no versionado)",
+      "salida": 0
+    },
+    "suiteTrasEtiquetas": {
+      "comando": "scripts/test-integrated.py erpec_payroll erpec_withholding_accounting erpec_fiscal_ats",
+      "resultado": "229 pruebas, 0 fallos, 0 errores, 0 omisiones",
+      "advertenciasEtiquetaRepetida": 0,
+      "salida": 0
+    },
+    "instancias": {
+      "actualizacion": "scripts/update-instance.py demo fundador a b --restart: todos los módulos erpec_* instalados, sin desfase de esquema en las cuatro",
+      "respaldos": [
+        ".cache/windows/backups/update-demo-20260926T003508Z",
+        ".cache/windows/backups/update-fundador-20260926T003910Z",
+        ".cache/windows/backups/update-a-20260926T003910Z",
+        ".cache/windows/backups/update-b-20260926T003910Z",
+        ".cache/windows/backups/align-demo-di26-20260926T003717Z"
+      ],
+      "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
+    },
+    "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)",
+    "recorridos": {
+      "menus": "docs/evidencias/DI26/regresion/recorrido-menus-qa_admin.json (128 menús, 0 problemas)",
+      "roles": "docs/evidencias/DI26/regresion/recorrido-roles-9.json (9 roles; 2 diferencias esperadas por F.2)"
+    }
+  }
+}

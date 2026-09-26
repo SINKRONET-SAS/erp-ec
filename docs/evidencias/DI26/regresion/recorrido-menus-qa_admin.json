@@ -1,0 +1,1161 @@
+{
+ "usuario": "qa_admin",
+ "paginas": [
+  {
+   "id": 309,
+   "ruta": "ERP EC / Inicio",
+   "accion": 582,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 365,
+   "ruta": "ERP EC / Importaciones comerciales",
+   "accion": 575,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 377,
+   "ruta": "ERP EC / Tesorería / Conciliar movimientos",
+   "accion": 584,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 379,
+   "ruta": "ERP EC / Tesorería / Proveedores: saldos pendientes",
+   "accion": 586,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 380,
+   "ruta": "ERP EC / Tesorería / Pagos y anticipos",
+   "accion": 587,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 648,
+   "ruta": "ERP EC / Tesorería / Archivo de pago bancario (nómina)",
+   "accion": 898,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 649,
+   "ruta": "ERP EC / Tesorería / Archivos bancarios generados",
+   "accion": 899,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 367,
+   "ruta": "ERP EC / Nómina / Períodos y novedades",
+   "accion": 576,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 378,
+   "ruta": "ERP EC / Nómina / Pagos por empleado",
+   "accion": 585,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 650,
+   "ruta": "ERP EC / Nómina / Liquidación de décimos",
+   "accion": 900,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 470,
+   "ruta": "ERP EC / Nómina / Saldos iniciales",
+   "accion": 682,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 368,
+   "ruta": "ERP EC / Nómina / Versiones y autoridad",
+   "accion": 577,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 566,
+   "ruta": "ERP EC / Nómina / Beneficios propios",
+   "accion": 811,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 567,
+   "ruta": "ERP EC / Nómina / Anticipos y préstamos",
+   "accion": 812,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 573,
+   "ruta": "ERP EC / Nómina / Certificados de otro empleador",
+   "accion": 818,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 574,
+   "ruta": "ERP EC / Nómina / Expedientes de exención",
+   "accion": 819,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 576,
+   "ruta": "ERP EC / Nómina / Regularización de documentos tardíos",
+   "accion": 821,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 381,
+   "ruta": "ERP EC / Nómina / Agregador RDEP",
+   "accion": 589,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 572,
+   "ruta": "ERP EC / Nómina / Ensayos tributarios de renta",
+   "accion": 817,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 577,
+   "ruta": "ERP EC / Nómina / Convenios de doble imposición",
+   "accion": 822,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 575,
+   "ruta": "ERP EC / Nómina / Matriz de aceptación DI25-03",
+   "accion": 820,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 469,
+   "ruta": "ERP EC / Nómina / Beneficios acumulados",
+   "accion": 681,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 386,
+   "ruta": "ERP EC / Configuración de impuestos / 1. Catálogos SRI",
+   "accion": 592,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 391,
+   "ruta": "ERP EC / Configuración de impuestos / 2. Detalles y cuentas contables",
+   "accion": 286,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 392,
+   "ruta": "ERP EC / Configuración de impuestos / 2. Retenciones de Renta y cuentas",
+   "accion": 597,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 393,
+   "ruta": "ERP EC / Configuración de impuestos / 2. Retenciones de IVA y cuentas",
+   "accion": 598,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 387,
+   "ruta": "ERP EC / Configuración de impuestos / 3. Planes de impuestos",
+   "accion": 594,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 388,
+   "ruta": "ERP EC / Configuración de impuestos / Casos de impuestos",
+   "accion": 595,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 389,
+   "ruta": "ERP EC / Configuración de impuestos / 4. Tipos de proveedores y productos",
+   "accion": 593,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 390,
+   "ruta": "ERP EC / Configuración de impuestos / 5. Asignaciones de planes y casos",
+   "accion": 596,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 382,
+   "ruta": "ERP EC / Configuración de impuestos / 6. Consultar aplicación",
+   "accion": 590,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 372,
+   "ruta": "ERP EC / Fiscal · Pruebas / Facturas — preparación local",
+   "accion": 581,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 397,
+   "ruta": "ERP EC / Fiscal · Pruebas / Emisiones nativas (firma + SRI)",
+   "accion": 602,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 569,
+   "ruta": "ERP EC / Fiscal · Pruebas / Guías de remisión (firma + SRI)",
+   "accion": 814,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 570,
+   "ruta": "ERP EC / Fiscal · Pruebas / Establecimientos",
+   "accion": 815,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 568,
+   "ruta": "ERP EC / Fiscal · Pruebas / Establecimientos y puntos de emisión",
+   "accion": 813,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 396,
+   "ruta": "ERP EC / Fiscal · Pruebas / Certificado de firma (SRI)",
+   "accion": 601,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 370,
+   "ruta": "ERP EC / Fiscal · Pruebas / Bandeja de pruebas",
+   "accion": 579,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 371,
+   "ruta": "ERP EC / Fiscal · Pruebas / Conexión externa de pruebas",
+   "accion": 578,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 578,
+   "ruta": "ERP EC / Fiscal · Pruebas / Matriz fiscal",
+   "accion": 823,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 579,
+   "ruta": "ERP EC / Fiscal · Pruebas / Anexo ATS (agregador)",
+   "accion": 824,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 307,
+   "ruta": "ERP EC / Estado técnico",
+   "accion": 476,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 84,
+   "ruta": "Conversaciones / Configuración / Notificaciones",
+   "accion": 142,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 85,
+   "ruta": "Conversaciones / Configuración / Voz y video",
+   "accion": 143,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 86,
+   "ruta": "Conversaciones / Configuración / Respuestas predefinidas",
+   "accion": 127,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 312,
+   "ruta": "Contabilidad ERP EC / Panel contable",
+   "accion": 482,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 313,
+   "ruta": "Contabilidad ERP EC / Retenciones",
+   "accion": 481,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 506,
+   "ruta": "Calendario / Calendario",
+   "accion": 744,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 508,
+   "ruta": "Calendario / Configuración / Ajustes",
+   "accion": 745,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 116,
+   "ruta": "Contactos / Contactos",
+   "accion": 164,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 118,
+   "ruta": "Contactos / Configuración / Etiquetas de contacto",
+   "accion": 59,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 119,
+   "ruta": "Contactos / Configuración / Títulos de contacto",
+   "accion": 55,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 120,
+   "ruta": "Contactos / Configuración / Industrias",
+   "accion": 60,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 122,
+   "ruta": "Contactos / Configuración / Localización / Países",
+   "accion": 63,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 124,
+   "ruta": "Contactos / Configuración / Localización / Estados",
+   "accion": 65,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 123,
+   "ruta": "Contactos / Configuración / Localización / Grupo del país",
+   "accion": 64,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 126,
+   "ruta": "Contactos / Configuración / Cuentas bancarias / Bancos",
+   "accion": 61,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 127,
+   "ruta": "Contactos / Configuración / Cuentas bancarias / Cuentas bancarias",
+   "accion": 62,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 262,
+   "ruta": "Contactos / Configuración / Tipo de Identificación",
+   "accion": 437,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 191,
+   "ruta": "Tableros / Tableros",
+   "accion": 312,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 193,
+   "ruta": "Tableros / Configuración / Tableros",
+   "accion": 313,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 138,
+   "ruta": "Facturación / Tablero",
+   "accion": 305,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 140,
+   "ruta": "Facturación / Clientes / Facturas",
+   "accion": 264,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 141,
+   "ruta": "Facturación / Clientes / Notas de crédito",
+   "accion": 265,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 143,
+   "ruta": "Facturación / Clientes / Pagos",
+   "accion": 240,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 144,
+   "ruta": "Facturación / Clientes / Productos",
+   "accion": 292,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 145,
+   "ruta": "Facturación / Clientes / Clientes",
+   "accion": 303,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 147,
+   "ruta": "Facturación / Proveedores / Facturas de proveedor",
+   "accion": 267,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 148,
+   "ruta": "Facturación / Proveedores / Reembolsos",
+   "accion": 268,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 150,
+   "ruta": "Facturación / Proveedores / Pagos",
+   "accion": 241,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 151,
+   "ruta": "Facturación / Proveedores / Productos",
+   "accion": 293,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 152,
+   "ruta": "Facturación / Proveedores / Proveedores",
+   "accion": 304,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 154,
+   "ruta": "Facturación / Contabilidad / Asientos contables",
+   "accion": 262,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 155,
+   "ruta": "Facturación / Contabilidad / Apuntes contables",
+   "accion": 261,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 160,
+   "ruta": "Facturación / Reportes / Gestión / Análisis de facturas",
+   "accion": 296,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 161,
+   "ruta": "Facturación / Reportes / Gestión / Reporte analítico",
+   "accion": 294,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 164,
+   "ruta": "Facturación / Configuración / Ajustes",
+   "accion": 300,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 166,
+   "ruta": "Facturación / Configuración / Facturación / Términos de pago",
+   "accion": 288,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 169,
+   "ruta": "Facturación / Configuración / Bancos / Agregar una cuenta bancaria",
+   "accion": 289,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 170,
+   "ruta": "Facturación / Configuración / Bancos / Modelos de conciliación",
+   "accion": 285,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 172,
+   "ruta": "Facturación / Configuración / Contabilidad / Plan de cuentas",
+   "accion": 278,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 173,
+   "ruta": "Facturación / Configuración / Contabilidad / Impuestos",
+   "accion": 286,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 174,
+   "ruta": "Facturación / Configuración / Contabilidad / Diarios ",
+   "accion": 280,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 176,
+   "ruta": "Facturación / Configuración / Contabilidad / Monedas",
+   "accion": 67,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 177,
+   "ruta": "Facturación / Configuración / Contabilidad / Posiciones fiscales",
+   "accion": 302,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 178,
+   "ruta": "Facturación / Configuración / Contabilidad / Varios libros mayores",
+   "accion": 281,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 263,
+   "ruta": "Facturación / Configuración / Contabilidad / Tipos de Documentos",
+   "accion": 438,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 238,
+   "ruta": "Facturación / Configuración / Pagos en línea / Proveedores de pago",
+   "accion": 226,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 239,
+   "ruta": "Facturación / Configuración / Pagos en línea / Métodos de pago",
+   "accion": 227,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 182,
+   "ruta": "Facturación / Configuración / Gestión / Categorías de productos",
+   "accion": 182,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 304,
+   "ruta": "Facturación / Configuración / Ecuatoriano SRI / Formas de pago SRI",
+   "accion": 473,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 544,
+   "ruta": "Sitio web / Sitio / Página de inicio",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 545,
+   "ruta": "Sitio web / Sitio / Editor de menú",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 555,
+   "ruta": "Sitio web / Sitio / Contenido / Páginas",
+   "accion": 801,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 646,
+   "ruta": "Sitio web / Sitio / Contenido / Productos",
+   "accion": 894,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 548,
+   "ruta": "Sitio web / Sitio / Esta página / Propiedades",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 549,
+   "ruta": "Sitio web / Sitio / Esta página / Optimizar SEO",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 565,
+   "ruta": "Sitio web / Sitio / Esta página / Rastreador de enlaces",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 550,
+   "ruta": "Sitio web / Sitio / Esta página / Editor HTML / CSS",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 551,
+   "ruta": "Sitio web / Sitio / Esta página / Editar menú",
+   "accion": 794,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 554,
+   "ruta": "Sitio web / Reportes / Analítica",
+   "accion": 797,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 557,
+   "ruta": "Sitio web / Reportes / Visitantes",
+   "accion": 805,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 558,
+   "ruta": "Sitio web / Reportes / Vistas a la página",
+   "accion": 806,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 560,
+   "ruta": "Sitio web / Configuración / Ajustes",
+   "accion": 807,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 561,
+   "ruta": "Sitio web / Configuración / Aplicaciones",
+   "accion": 789,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 639,
+   "ruta": "Sitio web / Configuración / Comercio electrónico / Proveedores de pago",
+   "accion": 226,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 640,
+   "ruta": "Sitio web / Configuración / Comercio electrónico / Métodos de pago",
+   "accion": 227,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 643,
+   "ruta": "Sitio web / Configuración / Comercio electrónico / Métodos de entrega",
+   "accion": 864,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 343,
+   "ruta": "Empleados / Empleados / Empleados",
+   "accion": 556,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 359,
+   "ruta": "Empleados / Empleados / Organigrama",
+   "accion": 564,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 350,
+   "ruta": "Empleados / Departamentos",
+   "accion": 559,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 363,
+   "ruta": "Empleados / Reportes / Habilidades",
+   "accion": 570,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 358,
+   "ruta": "Empleados / Configuración / Ajustes",
+   "accion": 561,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 348,
+   "ruta": "Empleados / Configuración / Plan de actividad",
+   "accion": 548,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 351,
+   "ruta": "Empleados / Configuración / Empleado / Ubicaciones de trabajo",
+   "accion": 560,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 352,
+   "ruta": "Empleados / Configuración / Empleado / Horarios de trabajo",
+   "accion": 97,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 353,
+   "ruta": "Empleados / Configuración / Empleado / Motivos de salida",
+   "accion": 550,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 362,
+   "ruta": "Empleados / Configuración / Empleado / Tipos de habilidad",
+   "accion": 566,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 356,
+   "ruta": "Empleados / Configuración / Reclutamiento / Puestos de trabajo",
+   "accion": 552,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 357,
+   "ruta": "Empleados / Configuración / Reclutamiento / Tipos de empleo",
+   "accion": 551,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 583,
+   "ruta": "Limpieza de datos / Reciclar registros",
+   "accion": 829,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 586,
+   "ruta": "Limpieza de datos / Configuración / Reglas / Reciclar registros",
+   "accion": 828,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 49,
+   "ruta": "Aplicaciones / Aplicaciones / Aplicaciones principales",
+   "accion": 39,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 52,
+   "ruta": "Aplicaciones / Aplicaciones / Tienda de temas",
+   "accion": 41,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 51,
+   "ruta": "Aplicaciones / Aplicaciones / Aplicaciones externas",
+   "accion": 40,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 67,
+   "ruta": "Ajustes / Ajustes generales",
+   "accion": 88,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 61,
+   "ruta": "Ajustes / Usuarios y empresas / Usuarios",
+   "accion": 70,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  },
+  {
+   "id": 58,
+   "ruta": "Ajustes / Usuarios y empresas / Empresas",
+   "accion": 53,
+   "errores": [],
+   "dialogoError": null,
+   "mojibake": [],
+   "ingles": []
+  }
+ ],
+ "resumen": {
+  "menus": 128,
+  "conProblemas": 0
+ }
+}

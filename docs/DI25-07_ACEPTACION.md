@@ -89,3 +89,11 @@ Imagen final sin montajes y CI remoto del commit final: el CI ejecuta la suite i
 ## Reversión
 
 Vuelta al despliegue anterior con los respaldos comprobados (demo: `.cache/windows/backups/di25-07-sync-demo-*`; fundador: `fundador-sync-di25-07-*`); un documento autorizado por el SRI o un pago real no se deshacen con una restauración técnica.
+
+## Nota de corrección DI26-F.1 (2026-09-25)
+
+Nota de corrección DI26-F.1 (2026-09-25, hallazgo DI26-10 del diagnóstico docs/DIAGNOSTICO_INTEGRAL_DI26.md). El texto original se conserva como historia; donde contradiga esta nota, prevalece la nota.
+
+- Certificado y ventas: la afirmación de que no había certificado propio de la empresa emisora ni ventas ATS con emisión autorizada se verificó solo en la demo. La instancia fundador (SINKRONET S.A.S.) sí tiene cargado su certificado de persona jurídica (ANF, entidad reconocida, firma probada, vigente hasta 2029-03-10) y 4 comprobantes autorizados en el ambiente de pruebas del SRI. Lo pendiente para producción es la decisión del titular y habilitar el punto de emisión, no la falta de certificado.
+- Talón del DIMM: DI25-04.3 dejó de estar bloqueado por el SWT de 32 bits: el titular generó el talón resumen del ATS de ensayo en el DIMM (docs/evidencias/DI25/DI25-07/talon-dimm-ats-ensayo.json) y los datos de ventas existen en fundador. La presentación oficial sigue excluida porque sería una declaración tributaria real.
+- Envío masivo: sí existía un mecanismo de envío masivo: Email Marketing (mass_mailing) estaba instalado en la demo sin conexión con la exclusión comercial. Desde DI26-D.2 la exclusión comercial se guarda en la lista negra de correo (mail.blacklist), que respeta todo envío masivo.

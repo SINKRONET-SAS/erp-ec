@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-26T01:07:12.578Z",
+  "updatedAt": "2026-09-26T01:07:04.383Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -283,11 +283,7 @@
     "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json",
     "docs/evidencias/AuditLock.before-DI26-A-CIERRE-20260926T010702Z.json",
     "docs/evidencias/AuditLock.before-DI26-B-CIERRE-20260926T010704Z.json",
-    "docs/evidencias/AuditLock.before-DI26-C-CIERRE-20260926T010706Z.json",
-    "docs/evidencias/AuditLock.before-DI26-D-CIERRE-20260926T010708Z.json",
     "docs/evidencias/AuditLock.before-DI26-DIAGNOSTICO-20260925T170928Z.json",
-    "docs/evidencias/AuditLock.before-DI26-E-CIERRE-20260926T010710Z.json",
-    "docs/evidencias/AuditLock.before-DI26-F-CIERRE-20260926T010712Z.json",
     "docs/evidencias/AuditLock.before-DI26-LF-20260925T171027Z.json",
     "docs/evidencias/DI25/DI25-00-cierre.json",
     "docs/evidencias/DI25/DI25-01-cierre.json",
@@ -454,12 +450,7 @@
     "DI26: evidencias JSON normalizadas a LF (las copias desde el directorio temporal quedaron con CRLF y su huella no coincidía con git).",
     "DI26-00 cerrada (25-09-2026): diagnóstico DI26 publicado con evidencia y Plan Haiky DI26 desplegado (plan, 7 prompts, contexto y AuditLock). DI26-06 confirmado contra la Ficha Técnica 2.34, Anexo 26 (texto primario).",
     "DI26-A: cierre docs/evidencias/DI26/DI26-A-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
-    "DI26-B: cierre docs/evidencias/DI26/DI26-B-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
-    "DI26-C: cierre docs/evidencias/DI26/DI26-C-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
-    "DI26-D: cierre docs/evidencias/DI26/DI26-D-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
-    "DI26-E: cierre docs/evidencias/DI26/DI26-E-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
-    "DI26-F: cierre docs/evidencias/DI26/DI26-F-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b.",
-    "DI26-F: recorrido de 128 menús sin problemas; batería de 9 roles sin errores JS ni violaciones axe, 2 diferencias esperadas con la línea base DI25-06 (entrada de retenciones retirada)."
+    "DI26-B: cierre docs/evidencias/DI26/DI26-B-cierre.json; suite integrada completa 662 pruebas, 0 fallos, 0 errores, 3 omisiones legítimas; check-module-versions --check coherente en 25 módulos; desfase 0 en demo, fundador, a y b."
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -483,8 +474,7 @@
     "DI25-04 (cerrada parcial): DI25-04.3 (talon/acuse real y ventas) sigue bloqueado -- talon por SWT de 32 bits del DIMM, ventas por falta de un certificado de pruebas real del SRI (no se intenta contra el portal real por instruccion del titular). DI25-04.4 (matriz fiscal) tiene el contenido preparado y confirmado por el responsable; falta unicamente su aprobacion explicita (boton Aprobar). ICE/ISD sin fuente oficial transcrita; convenio de doble imposicion de DI25-03 sigue pendiente de registro real por pais.",
     "DI25-06 (cerrada parcial): DI25-06.2/.3 con limites (sin lector de pantalla, zoom emulado, 2 roles, cambio de empresa solo por pruebas); DI25-16 sin destinos legales reales ni contacto publico de la empresa (lo aporta el responsable); erpec_website_entry no esta en las imagenes controller/customer. Ver docs/evidencias/DI25/DI25-06-cierre.json.",
     "DI25-07 (cerrada, aceptada 24-09-2026): SRI produccion, resto de homologacion bancaria (Guayaquil/Pacifico/Internacional/Bolivariano, proveedores), textos legales y contacto real del sitio, respaldo programado, contratos de encargados en borrador -- todas exclusiones explicitas y vivas para un incremento futuro, no bloqueos del cierre de fase. Ver docs/evidencias/DI25/DI25-07-cierre.json.",
-    "DI26: fases A a F en ejecución según docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md.",
-    "DI26-F.3: completar la URL de CI del push final en docs/evidencias/DI26/DI26-F-cierre.json."
+    "DI26: fases A a F en ejecución según docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md."
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
@@ -764,11 +754,7 @@
     "docs/evidencias/AuditLock.before-DI26-00-PLAN-20260925T220319Z.json": "7fc3a74ba90675ac13184e9f23fe18b9a0fdf6434f57e9b4ad6ba42249a15fa1",
     "docs/evidencias/AuditLock.before-DI26-A-CIERRE-20260926T010702Z.json": "30e1aa532cd940ad5864778958c64c4e51f3775fadd185d58625d4275b306943",
     "docs/evidencias/AuditLock.before-DI26-B-CIERRE-20260926T010704Z.json": "c905073a2f7bab88b73354462b9dc28210f2b4cd54ba5bce4427b90593e48579",
-    "docs/evidencias/AuditLock.before-DI26-C-CIERRE-20260926T010706Z.json": "c38faa4bbcde8ec44c5fecc885b9bdb3ed700c11265bfe3562f6c7a5d5a6aa71",
-    "docs/evidencias/AuditLock.before-DI26-D-CIERRE-20260926T010708Z.json": "10571fbc05c026ab6bf86e7847b7273f83576e6cd2d228824bf14d96265c6c6f",
     "docs/evidencias/AuditLock.before-DI26-DIAGNOSTICO-20260925T170928Z.json": "6ced5a5aabc9225d765c30884b0d842a79f1a8df50f01733469f9f0ef2519122",
-    "docs/evidencias/AuditLock.before-DI26-E-CIERRE-20260926T010710Z.json": "c2d96f6eca701b8e88e5dfa3c41b85ad84db08e38857340531b2dee557ad6370",
-    "docs/evidencias/AuditLock.before-DI26-F-CIERRE-20260926T010712Z.json": "03335f58dab456adba7047d7ed4f75f9e1432b252b5509e72aab360836b64889",
     "docs/evidencias/AuditLock.before-DI26-LF-20260925T171027Z.json": "f05faa115ab7f0aa7c1893dcd2be9ccdce8962296d546cf5d7b398f22d1e61a9",
     "docs/evidencias/DI25/DI25-00-cierre.json": "b799db9f762677acfd1d630c035f8072b8134e6ff3a4be0432b2ebf986a93b81",
     "docs/evidencias/DI25/DI25-01-cierre.json": "94acb7c59f4820b18bceb3aca824656a479ffbf21281d2b4ffd88f6685f434e1",
@@ -854,9 +840,9 @@
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI26-F-CIERRE-20260926T010712Z.json",
-  "previousAuditLockHash": "03335f58dab456adba7047d7ed4f75f9e1432b252b5509e72aab360836b64889",
-  "signature": "59270c7f12e047260ae34c1526e13392e4a5e5dc7477b04afe0e333fdc702c5f",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI26-B-CIERRE-20260926T010704Z.json",
+  "previousAuditLockHash": "c905073a2f7bab88b73354462b9dc28210f2b4cd54ba5bce4427b90593e48579",
+  "signature": "8a94b0e7e3829ef01e91b32154fe925d1701a647f8f964491afa87e248a716a0",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -895,11 +881,11 @@
     "diagnostic": "docs/DIAGNOSTICO_INTEGRAL_DI26.md",
     "findings": 16,
     "currentFindings": "docs/evidencias/DI26/hallazgos.json",
-    "phaseCompleted": "DI26-F",
-    "phaseInProgress": null,
-    "nextPhase": null,
-    "status": "plan-DI26-ejecutado-fases-A-F-cerradas-ci-pendiente",
+    "phaseCompleted": "DI26-B",
+    "phaseInProgress": "DI26-C",
+    "nextPhase": "DI26-C",
+    "status": "fase-B-cerrada-fase-C-habilitada",
     "evidence": "docs/evidencias/DI26/validacion.json",
-    "closure": "docs/evidencias/DI26/DI26-F-cierre.json"
+    "closure": "docs/evidencias/DI26/DI26-B-cierre.json"
   }
 }
