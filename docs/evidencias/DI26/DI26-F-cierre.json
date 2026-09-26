@@ -23,13 +23,11 @@
     },
     {
       "task": "DI26-F.3",
-      "status": "comprobada-local-ci-pendiente",
-      "evidence": "Suite completa aprobada, desfase 0 en las cuatro instancias, recorrido de 128 menús sin problemas y batería de 9 roles sin errores JS ni violaciones axe; sus 2 diferencias con la línea base DI25-06 son la entrada de retenciones retirada a propósito (F.2). CI: se completa con la URL tras el push."
+      "status": "comprobada",
+      "evidence": "Suite completa aprobada, desfase 0 en las cuatro instancias, recorrido de 128 menús sin problemas y batería de 9 roles sin errores JS ni violaciones axe; sus 2 diferencias con la línea base DI25-06 son la entrada de retenciones retirada a propósito (F.2). CI verde en el commit 2cc500b (gobierno, suite integrada, arranque de imágenes y auditoría de dependencias): https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36207499586"
     }
   ],
-  "pendientes": [
-    "URL de CI del push final."
-  ],
+  "pendientes": [],
   "limites": [],
   "validacion": {
     "suiteIntegrada": {
@@ -60,6 +58,7 @@
     "recorridos": {
       "menus": "docs/evidencias/DI26/regresion/recorrido-menus-qa_admin.json (128 menús, 0 problemas)",
       "roles": "docs/evidencias/DI26/regresion/recorrido-roles-9.json (9 roles; 2 diferencias esperadas por F.2)"
-    }
+    },
+    "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36207499586"
   }
 }
