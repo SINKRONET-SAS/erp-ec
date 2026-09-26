@@ -1,0 +1,61 @@
+{
+  "phase": "DI26-C",
+  "status": "cerrada",
+  "fecha": "2026-09-25",
+  "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
+  "prompt": ".github/prompts/ERPEC26-DI26-C.md",
+  "ejecucion": "Fases DI26-A a DI26-F ejecutadas de forma continua en la misma sesión y el mismo árbol de trabajo, por pedido del titular del 25-09-2026 (\"ejecutar todos los prompts del plan desplegado; luego verificar ... corregir; finalmente commit y push\"). La validación integral se hizo una vez con todo el código final; por eso cada cierre cita la misma suite. Los archivos compartidos entre fases se registran en el commit de la primera fase que los tocó, ya con su estado final.",
+  "hallazgos": [
+    "DI26-05"
+  ],
+  "tareas": [
+    {
+      "task": "DI26-C.1",
+      "status": "comprobada",
+      "evidence": "fourteenth_regime.py: régimen Sierra/Amazonía o Costa/Insular por empleado, por defecto el de la empresa; visible en las fichas."
+    },
+    {
+      "task": "DI26-C.2",
+      "status": "comprobada",
+      "evidence": "erpec.payroll.bonus.settlement: suma lo no pagado de los períodos contabilizados hasta el corte, propone corte y fecha límite legal (décimo tercero 24-dic, art. 111 CT; décimo cuarto 15-mar Costa/Insular, 15-ago Sierra/Amazonía), traslada el pasivo y registra el pago por empleado sin duplicar lo liquidado; reverso con asiento inverso."
+    },
+    {
+      "task": "DI26-C.3",
+      "status": "comprobada",
+      "evidence": "Menú \"Liquidación de décimos\", permisos de Responsable de nómina, reglas por empresa y 4 pruebas (tests/test_bonus_settlement.py)."
+    }
+  ],
+  "pendientes": [
+    "Confirmación del responsable tributario/laboral de los cortes por empresa."
+  ],
+  "limites": [
+    "No se registraron pagos reales; el corte es editable porque el texto legal dice \"año calendario\" y el corte de noviembre es práctica del Ministerio del Trabajo."
+  ],
+  "validacion": {
+    "suiteIntegrada": {
+      "comando": "scripts/test-integrated.py (todos los módulos erpec_*)",
+      "resultado": "662 pruebas, 0 fallos, 0 errores, 3 omisiones",
+      "omisiones": "TreasuryCase.test_sanitize_* requieren la demo sembrada (erpec_operational_demo); legítimas",
+      "registro": ".cache/windows/ec_integrated_test_7cfb33b865a7.log (local, no versionado)",
+      "salida": 0
+    },
+    "suiteTrasEtiquetas": {
+      "comando": "scripts/test-integrated.py erpec_payroll erpec_withholding_accounting erpec_fiscal_ats",
+      "resultado": "229 pruebas, 0 fallos, 0 errores, 0 omisiones",
+      "advertenciasEtiquetaRepetida": 0,
+      "salida": 0
+    },
+    "instancias": {
+      "actualizacion": "scripts/update-instance.py demo fundador a b --restart: todos los módulos erpec_* instalados, sin desfase de esquema en las cuatro",
+      "respaldos": [
+        ".cache/windows/backups/update-demo-20260926T003508Z",
+        ".cache/windows/backups/update-fundador-20260926T003910Z",
+        ".cache/windows/backups/update-a-20260926T003910Z",
+        ".cache/windows/backups/update-b-20260926T003910Z",
+        ".cache/windows/backups/align-demo-di26-20260926T003717Z"
+      ],
+      "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
+    },
+    "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  }
+}
