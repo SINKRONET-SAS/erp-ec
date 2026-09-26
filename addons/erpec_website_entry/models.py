@@ -57,4 +57,17 @@ class Website(models.Model):
             arch = view.arch_db or ''
             if 'Company name' in arch:
                 view.arch_db = arch.replace('Copyright &amp;copy; Company name', '&amp;copy; SINKRONET S.A.S. · ERP EC')
+        self._erpec_apply_entry_language()
+        return True
+
+    @api.model
+    def _erpec_apply_entry_language(self):
+        """DI26-E.4 (hallazgo DI26-14): el sitio público se sirve en español de Ecuador. Solo cambia sitios que siguen en el
+        inglés de instalación; sin es_EC activo no hace nada."""
+        lang = self.env['res.lang']._lang_get('es_EC')
+        if not lang:
+            return False
+        for website in self.search([]):
+            if website.default_lang_id.code in (False, 'en_US'):
+                website.write({'language_ids': [(4, lang.id)], 'default_lang_id': lang.id})
         return True

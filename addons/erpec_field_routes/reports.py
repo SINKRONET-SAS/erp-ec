@@ -11,8 +11,8 @@ class ComplianceReport(models.Model):
     _description = 'Reporte de cumplimiento de visitas por vendedor y zona'
     _check_company_auto = True
 
-    name = fields.Char(compute='_compute_name', store=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    name = fields.Char(compute='_compute_name', store=True, string='Nombre')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     date_from = fields.Date('Desde', required=True)
     date_to = fields.Date('Hasta', required=True)
     line_ids = fields.One2many('erpec.route.compliance.report.line', 'report_id', readonly=True, string='Líneas')
@@ -91,8 +91,8 @@ class ComplianceReportLine(models.Model):
     _description = 'Línea de cumplimiento de visitas por vendedor y zona'
     _order = 'report_id, employee_id, site_id'
 
-    report_id = fields.Many2one('erpec.route.compliance.report', required=True, ondelete='cascade')
-    company_id = fields.Many2one(related='report_id.company_id', store=True)
+    report_id = fields.Many2one('erpec.route.compliance.report', required=True, ondelete='cascade', string='Reporte')
+    company_id = fields.Many2one(related='report_id.company_id', store=True, string='Empresa')
     date_from = fields.Date(related='report_id.date_from', store=True)
     date_to = fields.Date(related='report_id.date_to', store=True)
     employee_id = fields.Many2one('hr.employee', required=True, string='Vendedor')

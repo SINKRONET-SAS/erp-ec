@@ -9,7 +9,7 @@ class TrialBalance(models.TransientModel):
     _check_company_auto = True
 
     company_id = fields.Many2one('res.company',required=True,default=lambda self:self.env.company,string='Empresa')
-    currency_id = fields.Many2one(related='company_id.currency_id')
+    currency_id = fields.Many2one(related='company_id.currency_id', string='Moneda')
     date_from = fields.Date('Desde',required=True,default=lambda self:fields.Date.context_today(self).replace(month=1,day=1))
     date_to = fields.Date('Hasta',required=True,default=fields.Date.context_today)
     line_ids = fields.One2many('erpec.trial.balance.line','report_id',readonly=True,string='Balance de comprobación')
@@ -56,9 +56,9 @@ class TrialBalanceLine(models.TransientModel):
     _description = 'Cuenta del balance de comprobación'
     _order = 'account_id'
 
-    report_id = fields.Many2one('erpec.trial.balance',required=True,ondelete='cascade')
+    report_id = fields.Many2one('erpec.trial.balance',required=True,ondelete='cascade', string='Reporte')
     account_id = fields.Many2one('account.account',required=True,string='Cuenta')
-    currency_id = fields.Many2one(related='report_id.currency_id')
+    currency_id = fields.Many2one(related='report_id.currency_id', string='Moneda')
     opening = fields.Monetary('Saldo inicial')
     debit = fields.Monetary('Debe')
     credit = fields.Monetary('Haber')

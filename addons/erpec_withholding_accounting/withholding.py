@@ -14,11 +14,11 @@ class Withholding(models.Model):
     _rec_name = 'reference'
 
     reference = fields.Char('Referencia del comprobante', required=True, tracking=True)
-    correlation_id = fields.Char(default=lambda self: uuid.uuid4().hex, readonly=True, copy=False)
+    correlation_id = fields.Char(default=lambda self: uuid.uuid4().hex, readonly=True, copy=False, string='Correlación')
     invoice_id = fields.Many2one('account.move', required=True, check_company=True, ondelete='restrict', string='Factura')
-    company_id = fields.Many2one(related='invoice_id.company_id', store=True, index=True)
-    partner_id = fields.Many2one(related='invoice_id.partner_id', store=True)
-    currency_id = fields.Many2one(related='invoice_id.currency_id')
+    company_id = fields.Many2one(related='invoice_id.company_id', store=True, index=True, string='Empresa')
+    partner_id = fields.Many2one(related='invoice_id.partner_id', store=True, string='Tercero')
+    currency_id = fields.Many2one(related='invoice_id.currency_id', string='Moneda')
     direction = fields.Selection([('issued','Emitida a proveedor'),('received','Recibida de cliente')], compute='_compute_direction', store=True, string='Dirección')
     date = fields.Date('Fecha contable', required=True, default=fields.Date.context_today)
     journal_id = fields.Many2one('account.journal', required=True, check_company=True, string='Diario de retenciones')
@@ -29,7 +29,7 @@ class Withholding(models.Model):
     reversal_id = fields.Many2one('account.move',readonly=True,copy=False,ondelete='restrict',string='Asiento de reversión')
     reversal_date = fields.Date('Fecha de reversión')
     reversal_reason = fields.Text('Motivo de reversión')
-    fiscal_notice = fields.Char(default='La contabilización no acredita autorización fiscal. El conector debe verificar el comprobante y su estado en el SRI.',readonly=True)
+    fiscal_notice = fields.Char(default='La contabilización no acredita autorización fiscal. El conector debe verificar el comprobante y su estado en el SRI.',readonly=True, string='Aviso fiscal')
     _sql_constraints = [('reference_unique','unique(company_id,partner_id,direction,reference)','Ya existe esta referencia de retención para el tercero y dirección indicados.')]
 
     @api.depends('invoice_id.move_type')
@@ -141,9 +141,9 @@ class WithholdingLine(models.Model):
     _description = 'Concepto contable de retención'
     _check_company_auto = True
 
-    withholding_id = fields.Many2one('erpec.withholding',required=True,ondelete='cascade',check_company=True)
-    company_id = fields.Many2one(related='withholding_id.company_id',store=True)
-    currency_id = fields.Many2one(related='withholding_id.currency_id')
+    withholding_id = fields.Many2one('erpec.withholding',required=True,ondelete='cascade',check_company=True, string='Comprobante de retención')
+    company_id = fields.Many2one(related='withholding_id.company_id',store=True, string='Empresa')
+    currency_id = fields.Many2one(related='withholding_id.currency_id', string='Moneda')
     name = fields.Char('Concepto y código SRI',required=True)
     kind = fields.Selection([('income','Renta'),('vat','IVA')],required=True,string='Impuesto')
     base = fields.Monetary('Base',required=True)
@@ -197,7 +197,7 @@ class WithholdingLine(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    ec_retention_id = fields.Many2one('erpec.withholding',readonly=True,copy=False,ondelete='restrict')
+    ec_retention_id = fields.Many2one('erpec.withholding',readonly=True,copy=False,ondelete='restrict', string='Retención')
     ec_accounting_withholding_ids = fields.One2many('erpec.withholding','invoice_id',string='Retenciones contables',copy=False)
 
     def _check_retention_entry(self):

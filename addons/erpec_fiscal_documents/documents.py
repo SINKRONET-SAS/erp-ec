@@ -36,8 +36,8 @@ class PurchaseDocument(models.AbstractModel):
     _check_company_auto = True
 
     move_id = fields.Many2one('account.move', string='Factura de proveedor',required=True,ondelete='restrict',check_company=True,index=True)
-    company_id = fields.Many2one(related='move_id.company_id',store=True,index=True)
-    currency_id = fields.Many2one(related='move_id.currency_id')
+    company_id = fields.Many2one(related='move_id.company_id',store=True,index=True, string='Empresa')
+    currency_id = fields.Many2one(related='move_id.currency_id', string='Moneda')
 
     def _check_parent(self):
         for document in self:
@@ -113,7 +113,7 @@ class Reimbursement(models.Model):
     supplier_id = fields.Many2one('res.partner',string='Emisor del comprobante de sustento',required=True,check_company=True,ondelete='restrict')
     document_type_id = fields.Many2one('l10n_latam.document.type',string='Tipo de comprobante de sustento',required=True,ondelete='restrict')
     document_number = fields.Char('Número del comprobante',required=True)
-    document_key = fields.Char(compute='_compute_document_key',store=True)
+    document_key = fields.Char(compute='_compute_document_key',store=True, string='Clave del documento')
     issue_date = fields.Date('Fecha de emisión',required=True)
     untaxed_amount = fields.Monetary('Subtotal de sustento',required=True,currency_field='currency_id')
     tax_amount = fields.Monetary('Impuestos del sustento',currency_field='currency_id')

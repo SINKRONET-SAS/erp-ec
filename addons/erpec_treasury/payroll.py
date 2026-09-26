@@ -24,8 +24,8 @@ class PayrollPayment(models.Model):
     period_id = fields.Many2one('erpec.payroll.period',string='Período',related='line_id.period_id',store=True)
     employee_id = fields.Many2one('hr.employee',string='Empleado',related='line_id.employee_id',store=True)
     partner_id = fields.Many2one(related='line_id.partner_id',store=True)
-    company_id = fields.Many2one(related='line_id.company_id',store=True)
-    currency_id = fields.Many2one(related='company_id.currency_id')
+    company_id = fields.Many2one(related='line_id.company_id',store=True, string='Empresa')
+    currency_id = fields.Many2one(related='company_id.currency_id', string='Moneda')
     move_id = fields.Many2one('account.move','Cuenta por pagar',readonly=True,ondelete='restrict')
     reversal_id = fields.Many2one('account.move','Reversión de preparación',readonly=True,ondelete='restrict')
     amount = fields.Monetary('Neto',compute='_compute_residual')
@@ -128,7 +128,7 @@ class Period(models.Model):
 
 class PreparedMove(models.Model):
     _inherit = 'account.move'
-    erpec_disbursement_ids = fields.One2many('erpec.payroll.disbursement','move_id')
+    erpec_disbursement_ids = fields.One2many('erpec.payroll.disbursement','move_id', string='Pago al empleado')
 
     def _check_disbursement_edit(self):
         # Solo consulta la existencia del vínculo para protegerlo; no expone datos de nómina.

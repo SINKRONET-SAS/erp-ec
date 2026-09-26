@@ -38,8 +38,8 @@ class Connection(models.Model):
     _description = 'Conexión fiscal de pruebas'
     _check_company_auto = True
 
-    name = fields.Char(default='Facturador — Pruebas', required=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    name = fields.Char(default='Facturador — Pruebas', required=True, string='Nombre')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict', string='Empresa')
     base_url = fields.Char('Dirección del Facturador', required=True)
     organization_ref = fields.Char('Identificador de organización de la suite', required=True)
     empresa_ref = fields.Integer('ID Empresa Facturador', required=True)
@@ -162,12 +162,12 @@ class Job(models.Model):
     _check_company_auto = True
 
     move_id = fields.Many2one('account.move', string='Factura', required=True, check_company=True, ondelete='restrict')
-    company_id = fields.Many2one(related='move_id.company_id', store=True, index=True)
+    company_id = fields.Many2one(related='move_id.company_id', store=True, index=True, string='Empresa')
     connection_id = fields.Many2one('erpec.fiscal.connection', string='Conexión', required=True, check_company=True, ondelete='restrict')
     external_reference = fields.Char('Referencia externa', readonly=True, required=True, index=True)
     correlation_id = fields.Char('Correlación', readonly=True, required=True)
     payload = fields.Json('Solicitud conservada', readonly=True)
-    state = fields.Selection([('queued','En cola'),('waiting','Esperando resultado'),('retry','Reintento programado'),('blocked','Revisión requerida'),('authorized','Autorizada en pruebas'),('rejected','Rechazada')], default='queued', readonly=True)
+    state = fields.Selection([('queued','En cola'),('waiting','Esperando resultado'),('retry','Reintento programado'),('blocked','Revisión requerida'),('authorized','Autorizada en pruebas'),('rejected','Rechazada')], default='queued', readonly=True, string='Estado')
     attempts = fields.Integer('Intentos', readonly=True)
     next_attempt = fields.Datetime('Próximo intento', readonly=True)
     message = fields.Text('Estado y siguiente acción', readonly=True, default='Solicitud guardada. Procesar la bandeja para enviarla al Facturador de pruebas.')

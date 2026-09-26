@@ -30,3 +30,12 @@ class EntryCase(TransactionCase):
         footer.arch_db = footer.arch_db.replace('ERP EC', 'Mi empresa propia')
         self.env['website']._erpec_apply_entry_branding()
         self.assertIn('Mi empresa propia', footer.arch_db)
+
+    def test_public_site_defaults_to_spanish_ecuador(self):
+        # DI26-14: el sitio quedaba en inglés (en-US) aunque la empresa opera en Ecuador.
+        self.env['res.lang']._activate_lang('es_EC')
+        website = self.env['website'].search([], limit=1)
+        website.default_lang_id = self.env['res.lang']._lang_get('en_US')
+        self.env['website']._erpec_apply_entry_language()
+        self.assertEqual(website.default_lang_id.code, 'es_EC')
+        self.assertIn('es_EC', website.language_ids.mapped('code'))

@@ -33,3 +33,14 @@ class TestWorkspace(TransactionCase):
         admin = new_test_user(self.env, login='admin-workspace', groups='base.group_system')
         with self.assertRaises(AccessError):
             workspace.with_user(admin).unlink()
+
+
+class TestLocaleDefaults(TransactionCase):
+    def test_spanish_ecuador_and_guayaquil_by_default(self):
+        # DI26-07: las empresas y sus contactos quedaban en inglés y sin zona horaria.
+        self.env['res.lang']._activate_lang('es_EC')
+        company = self.env['res.company'].create({'name': 'Empresa sintética idioma'})
+        company.partner_id.write({'lang': 'en_US', 'tz': False})
+        self.env['res.company']._ec_apply_locale_defaults()
+        self.assertEqual((company.partner_id.lang, company.partner_id.tz), ('es_EC', 'America/Guayaquil'))
+        self.assertEqual(self.env['res.partner'].create({'name': 'Contacto nuevo'}).lang, 'es_EC')

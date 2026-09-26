@@ -13,3 +13,5 @@ filestore/
 *.pfx
 *.key
 *.dump
+# DI26-E.6 (P3): instantánea local previa a CF01, nunca versionada; el sellado ya la excluye.
+docs/evidencias/AuditLock.before-CF01.json

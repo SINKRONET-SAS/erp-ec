@@ -11,7 +11,7 @@ class Importation(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _check_company_auto = True
     name = fields.Char('Referencia', required=True, tracking=True)
-    company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
+    company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True, string='Empresa')
     partner_id = fields.Many2one('res.partner', 'Proveedor extranjero', required=True, check_company=True)
     currency_id = fields.Many2one('res.currency', 'Moneda de compra', required=True, default=lambda self: self.env.company.currency_id)
     incoterm_id = fields.Many2one('account.incoterms', 'Términos comerciales')
@@ -93,14 +93,14 @@ class Charge(models.Model):
     _name = 'erpec.import.charge'
     _description = 'Clasificación de gasto de importación'
     _check_company_auto = True
-    import_id = fields.Many2one('erpec.importation', required=True, ondelete='cascade')
-    company_id = fields.Many2one(related='import_id.company_id', store=True)
+    import_id = fields.Many2one('erpec.importation', required=True, ondelete='cascade', string='Importación')
+    company_id = fields.Many2one(related='import_id.company_id', store=True, string='Empresa')
     name = fields.Char('Concepto', required=True)
     kind = fields.Selection([('capital', 'Costo capitalizable'), ('expense', 'Gasto del período'), ('recoverable', 'Tributo recuperable')], string='Clasificación revisada', required=True)
     bill_line_id = fields.Many2one('account.move.line', 'Línea de factura de gasto', required=True, check_company=True)
     split_method = fields.Selection([('equal', 'Igual'), ('by_quantity', 'Cantidad'), ('by_current_cost_price', 'Valor'), ('by_weight', 'Peso'), ('by_volume', 'Volumen')], default='by_current_cost_price', required=True, string='Criterio de reparto')
     cost_id = fields.Many2one('stock.landed.cost', 'Costo preparado', readonly=True, ondelete='restrict', copy=False)
-    currency_id = fields.Many2one(related='company_id.currency_id')
+    currency_id = fields.Many2one(related='company_id.currency_id', string='Moneda')
     amount = fields.Monetary('Importe contabilizado', related='bill_line_id.balance', currency_field='currency_id')
     _sql_constraints = [('source_once', 'unique(bill_line_id)', 'La línea de gasto ya está asignada a una importación.')]
 

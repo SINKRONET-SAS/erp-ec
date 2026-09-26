@@ -28,7 +28,7 @@ class Policy(models.Model):
     _description = 'Versión de parámetros y autoridad de nómina'
     _inherit = ['mail.thread']
     name = fields.Char('Versión', required=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     year = fields.Integer('Año', required=True)
     authority = fields.Selection([('native','ERP EC nativo'), ('sknomina','SKNOMINA externo')], required=True, default='native', string='Autoridad del cálculo')
     authorization = fields.Text('Decisión y alcance de migración', required=True)
@@ -181,7 +181,7 @@ class TaxBracket(models.Model):
     _name = 'erpec.payroll.tax.bracket'
     _description = 'Tramo de la tabla de impuesto a la renta de una versión de nómina'
     _order = 'policy_id, sequence'
-    policy_id = fields.Many2one('erpec.payroll.policy', required=True, ondelete='cascade')
+    policy_id = fields.Many2one('erpec.payroll.policy', required=True, ondelete='cascade', string='Política')
     sequence = fields.Integer('Orden', required=True, default=0)
     income_from = fields.Float('Desde (base anual)', required=True)
     income_to = fields.Float('Hasta (base anual)')
@@ -222,8 +222,8 @@ class TaxBracket(models.Model):
 class Mapping(models.Model):
     _name = 'erpec.payroll.mapping'
     _description = 'Mapeo contable versionado de nómina'
-    policy_id = fields.Many2one('erpec.payroll.policy',required=True,ondelete='cascade')
-    company_id = fields.Many2one(related='policy_id.company_id',store=True)
+    policy_id = fields.Many2one('erpec.payroll.policy',required=True,ondelete='cascade', string='Política')
+    company_id = fields.Many2one(related='policy_id.company_id',store=True, string='Empresa')
     concept = fields.Selection(CONCEPTS,required=True,string='Concepto')
     debit_id = fields.Many2one('account.account','Cuenta de débito')
     credit_id = fields.Many2one('account.account','Cuenta de crédito')
@@ -252,7 +252,7 @@ class Period(models.Model):
     _description = 'Período de nómina nativa'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     name = fields.Char('Referencia del cierre', required=True, default=lambda self: uuid.uuid4().hex)
-    company_id = fields.Many2one('res.company',required=True,default=lambda self:self.env.company)
+    company_id = fields.Many2one('res.company',required=True,default=lambda self:self.env.company, string='Empresa')
     policy_id = fields.Many2one('erpec.payroll.policy','Versión y autoridad',required=True)
     month = fields.Integer('Mes',required=True)
     year = fields.Integer(related='policy_id.year',store=True)
@@ -389,8 +389,8 @@ class Period(models.Model):
 class Line(models.Model):
     _name='erpec.payroll.line'
     _description='Empleado y novedades de un período'
-    period_id=fields.Many2one('erpec.payroll.period',required=True,ondelete='cascade')
-    company_id=fields.Many2one(related='period_id.company_id',store=True)
+    period_id=fields.Many2one('erpec.payroll.period',required=True,ondelete='cascade', string='Período')
+    company_id=fields.Many2one(related='period_id.company_id',store=True, string='Empresa')
     employee_id=fields.Many2one('hr.employee','Empleado sintético',required=True)
     partner_id=fields.Many2one('res.partner','Tercero para pago',required=True)
     analytic_id=fields.Many2one('account.analytic.account','Centro de costo')
@@ -398,7 +398,9 @@ class Line(models.Model):
     wage=fields.Float('Salario mensual',required=True)
     bonus=fields.Float('Bonificación')
     commission=fields.Float('Comisión')
-    non_taxable_income=fields.Float('Ingreso no gravado')
+    # DI26-F.2 (hallazgo DI26-11): dos vías legítimas y complementarias hacia el mismo total; la ayuda lo explica para evitar el doble registro.
+    non_taxable_income=fields.Float('Ingreso no gravado (puntual)',help='Ingreso no gravado de este período que no proviene de un beneficio propio configurado. '
+        'Los beneficios propios marcados como "no grava" (pestaña Beneficios propios de la empresa) se suman solos a este valor al calcular: no los registres aquí también.')
     vacation_payout=fields.Float('Liquidación de vacaciones no gozadas',
         help='Caso 3 (DI25-03): pago en dinero de vacaciones acumuladas y no tomadas. Grava impuesto '
              'a la renta pero no IESS (catálogo RDEP vigente, campo sobSuelComRemu); distinto del '
@@ -443,23 +445,23 @@ class Line(models.Model):
     # Prefijo result_ para no chocar con los campos de novedades del mismo nombre (p. ej.
     # `advances`/`loans`/`other_deductions` ya existen como entrada; su valor en el resultado es
     # idéntico, así que el reporte de rol de pago (A2) los lee directamente de esos campos).
-    result_salary=fields.Float(compute='_compute_totals')
-    result_overtime=fields.Float(compute='_compute_totals')
-    result_personal_iess=fields.Float(compute='_compute_totals')
-    result_tax=fields.Float(compute='_compute_totals')
-    result_thirteenth=fields.Float(compute='_compute_totals')
-    result_fourteenth=fields.Float(compute='_compute_totals')
-    result_vacation=fields.Float(compute='_compute_totals')
-    result_reserve_iess=fields.Float(compute='_compute_totals')
-    result_employer_iess=fields.Float(compute='_compute_totals')
-    result_employer_other=fields.Float(compute='_compute_totals')
+    result_salary=fields.Float(compute='_compute_totals', string='Sueldo')
+    result_overtime=fields.Float(compute='_compute_totals', string='Horas extra')
+    result_personal_iess=fields.Float(compute='_compute_totals', string='Aporte personal IESS')
+    result_tax=fields.Float(compute='_compute_totals', string='Impuesto a la renta retenido')
+    result_thirteenth=fields.Float(compute='_compute_totals', string='Décimo tercero')
+    result_fourteenth=fields.Float(compute='_compute_totals', string='Décimo cuarto')
+    result_vacation=fields.Float(compute='_compute_totals', string='Vacaciones')
+    result_reserve_iess=fields.Float(compute='_compute_totals', string='Fondos de reserva')
+    result_employer_iess=fields.Float(compute='_compute_totals', string='Aporte patronal IESS')
+    result_employer_other=fields.Float(compute='_compute_totals', string='Otros aportes patronales')
     # result_advances/result_loans: el total REAL descontado (lo escrito a mano en advances/loans
     # más lo resuelto automáticamente desde el libro de anticipos y préstamos, ver
     # _resolve_advance_entries) puede ser mayor que el campo advances/loans de la línea, que solo
     # guarda la parte manual. El rol de pago (A2, reports.xml) debe mostrar este total, no el
     # campo manual -- de lo contrario subestimaría el descuento real que ya afecta gross/net/cost.
-    result_advances=fields.Float(compute='_compute_totals')
-    result_loans=fields.Float(compute='_compute_totals')
+    result_advances=fields.Float(compute='_compute_totals', string='Anticipos descontados')
+    result_loans=fields.Float(compute='_compute_totals', string='Préstamos descontados')
 
     benefit_line_ids=fields.One2many('erpec.payroll.benefit.line','line_id','Beneficios del período')
     advance_deduction_ids=fields.One2many('erpec.payroll.advance.deduction','line_id','Cuotas de anticipos/préstamos aplicadas',readonly=True)
@@ -841,7 +843,7 @@ class BenefitLine(models.Model):
     _description='Beneficio asignado a un empleado en un período de nómina'
     _check_company_auto=True
     line_id=fields.Many2one('erpec.payroll.line','Línea de nómina',required=True,ondelete='cascade')
-    company_id=fields.Many2one(related='line_id.company_id',store=True)
+    company_id=fields.Many2one(related='line_id.company_id',store=True, string='Empresa')
     benefit_type_id=fields.Many2one('erpec.payroll.benefit.type','Beneficio',required=True,check_company=True)
     amount=fields.Float('Monto',required=True)
     note=fields.Text('Nota')

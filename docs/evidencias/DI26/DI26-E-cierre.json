@@ -1,0 +1,80 @@
+{
+  "phase": "DI26-E",
+  "status": "cerrada",
+  "fecha": "2026-09-25",
+  "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
+  "prompt": ".github/prompts/ERPEC26-DI26-E.md",
+  "ejecucion": "Fases DI26-A a DI26-F ejecutadas de forma continua en la misma sesión y el mismo árbol de trabajo, por pedido del titular del 25-09-2026 (\"ejecutar todos los prompts del plan desplegado; luego verificar ... corregir; finalmente commit y push\"). La validación integral se hizo una vez con todo el código final; por eso cada cierre cita la misma suite. Los archivos compartidos entre fases se registran en el commit de la primera fase que los tocó, ya con su estado final.",
+  "hallazgos": [
+    "DI26-07",
+    "DI26-08",
+    "DI26-09",
+    "DI26-14",
+    "DI26-16",
+    "P3"
+  ],
+  "tareas": [
+    {
+      "task": "DI26-E.1",
+      "status": "comprobada",
+      "evidence": "res.company._ec_apply_locale_defaults (post_init_hook, post-migración erpec_base 18.0.1.0.2 y aprovisionamiento en provision-worker.py/manage-odoo.py): valor por defecto es_EC en contactos y empresas en es_EC con zona America/Guayaquil. Comprobado en demo, fundador, a y b: 0 empresas fuera."
+    },
+    {
+      "task": "DI26-E.2",
+      "status": "comprobada",
+      "evidence": "string= en español en 200 campos; en la demo quedan 7 de 1.091 campos con etiqueta derivada del nombre, todas ya en español (Base, Ambiente, Establecimiento, ...). Tres choques de etiquetas repetidas detectados en el registro y corregidos."
+    },
+    {
+      "task": "DI26-E.3",
+      "status": "comprobada",
+      "evidence": "Aviso de la factura reescrito (vista previa sin firma; emisión en \"Firma y transmisión SRI\"); retirado el aviso RDEP \"D5 · Compatibilidad RDEP 2026 pendiente\"."
+    },
+    {
+      "task": "DI26-E.4",
+      "status": "comprobada",
+      "evidence": "role en las 11 alertas que faltaban (sin advertencias ir_ui_view en la suite); sitio público de la demo con idioma por defecto es_EC."
+    },
+    {
+      "task": "DI26-E.5",
+      "status": "comprobada",
+      "evidence": "scripts/align-demo-di26.py (respaldo previo, simulación y comprobación de que ningún erpec_* depende de lo retirado): la demo pasa de 184 a 132 módulos (CRM, flota, chat en vivo, blog, foro, Email Marketing, gamificación y proyectos con sus dependientes)."
+    },
+    {
+      "task": "DI26-E.6",
+      "status": "comprobada",
+      "evidence": "Mojibake de install-fiscal.py, tildes de \"Resumen de nómina\" y \"convenio de débito\", usuario selfservice_test_2 desactivado, advertencia de compute_sudo ya no aparece, AuditLock.before-CF01.json en .gitignore."
+    }
+  ],
+  "pendientes": [
+    "P3-3 (CRLF solo en la copia de trabajo de Windows) y P3-5 (crecimiento de instantáneas del AuditLock) no se tocaron.",
+    "P3-7 (\"Su sesión de Odoo expiró\" en Website › Métodos de pago) no se reprodujo en el recorrido de menús; sin corrección."
+  ],
+  "limites": [],
+  "validacion": {
+    "suiteIntegrada": {
+      "comando": "scripts/test-integrated.py (todos los módulos erpec_*)",
+      "resultado": "662 pruebas, 0 fallos, 0 errores, 3 omisiones",
+      "omisiones": "TreasuryCase.test_sanitize_* requieren la demo sembrada (erpec_operational_demo); legítimas",
+      "registro": ".cache/windows/ec_integrated_test_7cfb33b865a7.log (local, no versionado)",
+      "salida": 0
+    },
+    "suiteTrasEtiquetas": {
+      "comando": "scripts/test-integrated.py erpec_payroll erpec_withholding_accounting erpec_fiscal_ats",
+      "resultado": "229 pruebas, 0 fallos, 0 errores, 0 omisiones",
+      "advertenciasEtiquetaRepetida": 0,
+      "salida": 0
+    },
+    "instancias": {
+      "actualizacion": "scripts/update-instance.py demo fundador a b --restart: todos los módulos erpec_* instalados, sin desfase de esquema en las cuatro",
+      "respaldos": [
+        ".cache/windows/backups/update-demo-20260926T003508Z",
+        ".cache/windows/backups/update-fundador-20260926T003910Z",
+        ".cache/windows/backups/update-a-20260926T003910Z",
+        ".cache/windows/backups/update-b-20260926T003910Z",
+        ".cache/windows/backups/align-demo-di26-20260926T003717Z"
+      ],
+      "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
+    },
+    "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  }
+}

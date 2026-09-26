@@ -18,10 +18,10 @@ class BenefitSummary(models.Model):
     _description = 'Ficha de beneficios acumulados por empleado'
     _order = 'year desc'
 
-    name = fields.Char(compute='_compute_name', store=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
-    year = fields.Integer(required=True, default=lambda self: fields.Date.context_today(self).year)
-    line_ids = fields.One2many('erpec.payroll.benefit.summary.line', 'summary_id', readonly=True)
+    name = fields.Char(compute='_compute_name', store=True, string='Nombre')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
+    year = fields.Integer(required=True, default=lambda self: fields.Date.context_today(self).year, string='Año')
+    line_ids = fields.One2many('erpec.payroll.benefit.summary.line', 'summary_id', readonly=True, string='Línea')
 
     @api.depends('company_id', 'year')
     def _compute_name(self):
@@ -55,8 +55,8 @@ class BenefitSummary(models.Model):
 class BenefitSummaryLine(models.Model):
     _name = 'erpec.payroll.benefit.summary.line'
     _description = 'Línea de la ficha de beneficios acumulados'
-    summary_id = fields.Many2one('erpec.payroll.benefit.summary', required=True, ondelete='cascade')
-    employee_id = fields.Many2one('hr.employee', required=True)
+    summary_id = fields.Many2one('erpec.payroll.benefit.summary', required=True, ondelete='cascade', string='Resumen')
+    employee_id = fields.Many2one('hr.employee', required=True, string='Empleado')
     months = fields.Integer('Meses contabilizados')
     thirteenth = fields.Float('Décimo tercero acumulado')
     fourteenth = fields.Float('Décimo cuarto acumulado')

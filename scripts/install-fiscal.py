@@ -11,17 +11,17 @@ CONF=DIRECTORY/'odoo.conf'
 ODOO=ROOT/'.cache/odoo-community/odoo-bin'
 report=json.loads((STATE/'fiscal_documents-test-result.json').read_text(encoding='utf-8'))
 if report['exitCode'] != 0:
- raise RuntimeError('Las pruebas del incremento no estÃ¡n aprobadas')
+ raise RuntimeError('Las pruebas del incremento no están aprobadas')
 if not re.search(rb'0 failed, 0 error\(s\) of [1-9][0-9]* tests', Path(report['log']).read_bytes()):
  raise RuntimeError('Falta un resultado positivo con pruebas ejecutadas')
 for name,expected in report['fileHashes'].items():
  path=ROOT/name
  if not path.resolve().is_relative_to(ROOT.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest()!=expected:
-  raise RuntimeError('Los archivos cambiaron despuÃ©s de las pruebas')
+  raise RuntimeError('Los archivos cambiaron después de las pruebas')
 config=configparser.ConfigParser(interpolation=None)
 config.read(CONF,encoding='utf-8'); options=config['options']
 if options['http_port']!='8186' or options['db_name']!='erp_'+INSTANCE:
- raise RuntimeError('La configuraciÃ³n no corresponde al cliente previsto')
+ raise RuntimeError('La configuración no corresponde al cliente previsto')
 pidfile=DIRECTORY/'pid'
 process=psutil.Process(int(pidfile.read_text()))
 if str(CONF) not in process.cmdline() or str(ODOO) not in process.cmdline():
@@ -44,10 +44,10 @@ for attempt in range(60):
    break
  except requests.RequestException:
   if attempt==59:
-   raise RuntimeError('El cliente no respondiÃ³ tras la instalaciÃ³n') from None
+   raise RuntimeError('El cliente no respondió tras la instalación') from None
  time.sleep(1)
 else:
- raise RuntimeError('No se recuperÃ³ la pantalla de acceso')
+ raise RuntimeError('No se recuperó la pantalla de acceso')
 private=json.loads((DIRECTORY/'credentials.json').read_text(encoding='utf-8'))
 url='http://127.0.0.1:8186'
 uid=xmlrpc.client.ServerProxy(url+'/xmlrpc/2/common').authenticate(options['db_name'],'admin',private['admin'],{})

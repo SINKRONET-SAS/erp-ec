@@ -28,14 +28,14 @@ class RouteSite(models.Model):
     _description = 'Sitio de visita con geocerca'
     _check_company_auto = True
 
-    name = fields.Char(required=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    name = fields.Char(required=True, string='Nombre')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     partner_id = fields.Many2one('res.partner', string='Cliente/contacto', check_company=True)
     latitude = fields.Float('Latitud', digits=(10, 7), required=True)
     longitude = fields.Float('Longitud', digits=(10, 7), required=True)
     radius_meters = fields.Float('Radio de geocerca (m)', default=150.0, required=True)
     min_accuracy_meters = fields.Float('Precisión GPS mínima exigida (m)', default=80.0, required=True)
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(default=True, string='Activo')
 
     @api.constrains('latitude', 'longitude')
     def _check_coordinates(self):
@@ -57,15 +57,15 @@ class RouteDay(models.Model):
     _order = 'date desc'
 
     employee_id = fields.Many2one('hr.employee', required=True, check_company=True, string='Vendedor')
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
-    date = fields.Date(required=True, default=fields.Date.context_today)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
+    date = fields.Date(required=True, default=fields.Date.context_today, string='Fecha')
     state = fields.Selection([('planned', 'Planificado'), ('in_progress', 'En progreso'),
                                ('completed', 'Completado'), ('cancelled', 'Cancelado')],
-                              default='planned', required=True, readonly=True)
+                              default='planned', required=True, readonly=True, string='Estado')
     allow_unplanned = fields.Boolean('Permite paradas no planificadas', default=True)
     stop_ids = fields.One2many('erpec.route.stop', 'route_day_id', string='Paradas')
-    planned_stop_count = fields.Integer(compute='_compute_metrics')
-    completed_stop_count = fields.Integer(compute='_compute_metrics')
+    planned_stop_count = fields.Integer(compute='_compute_metrics', string='Paradas planificadas')
+    completed_stop_count = fields.Integer(compute='_compute_metrics', string='Paradas completadas')
     completion_rate = fields.Float('Cumplimiento (%)', compute='_compute_metrics')
     within_geofence_rate = fields.Float('Dentro de geocerca (%)', compute='_compute_metrics')
     _sql_constraints = [('employee_date_unique', 'unique(employee_id, date)',
@@ -120,17 +120,17 @@ class RouteStop(models.Model):
     _order = 'route_day_id, sequence'
     _check_company_auto = True
 
-    route_day_id = fields.Many2one('erpec.route.day', required=True, ondelete='cascade')
-    company_id = fields.Many2one(related='route_day_id.company_id', store=True)
-    site_id = fields.Many2one('erpec.route.site', required=True, check_company=True)
-    sequence = fields.Integer(default=10)
-    planned = fields.Boolean(default=True)
+    route_day_id = fields.Many2one('erpec.route.day', required=True, ondelete='cascade', string='Día de ruta')
+    company_id = fields.Many2one(related='route_day_id.company_id', store=True, string='Empresa')
+    site_id = fields.Many2one('erpec.route.site', required=True, check_company=True, string='Sitio')
+    sequence = fields.Integer(default=10, string='Secuencia')
+    planned = fields.Boolean(default=True, string='Planificado')
     state = fields.Selection([('pending', 'Pendiente'), ('started', 'Iniciada'),
                                ('completed', 'Completada'), ('omitted', 'Omitida')],
-                              default='pending', required=True, readonly=True)
-    omission_reason = fields.Text()
-    checkin_mark_id = fields.Many2one('erpec.route.visit.mark', readonly=True, copy=False)
-    checkout_mark_id = fields.Many2one('erpec.route.visit.mark', readonly=True, copy=False)
+                              default='pending', required=True, readonly=True, string='Estado')
+    omission_reason = fields.Text(string='Motivo de la omisión')
+    checkin_mark_id = fields.Many2one('erpec.route.visit.mark', readonly=True, copy=False, string='Marca de llegada')
+    checkout_mark_id = fields.Many2one('erpec.route.visit.mark', readonly=True, copy=False, string='Marca de salida')
 
     def action_checkin(self, latitude, longitude, accuracy_meters):
         self.ensure_one()
@@ -179,16 +179,16 @@ class RouteVisitMark(models.Model):
     _description = 'Marca de check-in/check-out con geolocalización'
     _order = 'timestamp'
 
-    stop_id = fields.Many2one('erpec.route.stop', required=True, ondelete='cascade')
-    company_id = fields.Many2one(related='stop_id.company_id', store=True)
-    mark_type = fields.Selection([('checkin', 'Check-in'), ('checkout', 'Check-out')], required=True)
-    timestamp = fields.Datetime(default=fields.Datetime.now, required=True)
-    latitude = fields.Float(digits=(10, 7), required=True)
-    longitude = fields.Float(digits=(10, 7), required=True)
-    accuracy_meters = fields.Float(required=True)
-    distance_meters = fields.Float(compute='_compute_geofence', store=True)
-    within_geofence = fields.Boolean(compute='_compute_geofence', store=True)
-    low_accuracy = fields.Boolean(compute='_compute_geofence', store=True)
+    stop_id = fields.Many2one('erpec.route.stop', required=True, ondelete='cascade', string='Parada')
+    company_id = fields.Many2one(related='stop_id.company_id', store=True, string='Empresa')
+    mark_type = fields.Selection([('checkin', 'Check-in'), ('checkout', 'Check-out')], required=True, string='Tipo de marca')
+    timestamp = fields.Datetime(default=fields.Datetime.now, required=True, string='Fecha y hora')
+    latitude = fields.Float(digits=(10, 7), required=True, string='Latitud')
+    longitude = fields.Float(digits=(10, 7), required=True, string='Longitud')
+    accuracy_meters = fields.Float(required=True, string='Precisión (metros)')
+    distance_meters = fields.Float(compute='_compute_geofence', store=True, string='Distancia (metros)')
+    within_geofence = fields.Boolean(compute='_compute_geofence', store=True, string='Dentro del perímetro')
+    low_accuracy = fields.Boolean(compute='_compute_geofence', store=True, string='Precisión baja')
 
     @api.depends('latitude', 'longitude', 'accuracy_meters', 'stop_id.site_id.latitude',
                  'stop_id.site_id.longitude', 'stop_id.site_id.radius_meters',
@@ -239,19 +239,19 @@ class RouteException(models.Model):
     _description = 'Excepción revisable de cumplimiento de visitas'
     _order = 'create_date desc'
 
-    stop_id = fields.Many2one('erpec.route.stop', ondelete='cascade')
-    mark_id = fields.Many2one('erpec.route.visit.mark', ondelete='cascade')
-    company_id = fields.Many2one('res.company', compute='_compute_company', store=True)
+    stop_id = fields.Many2one('erpec.route.stop', ondelete='cascade', string='Parada')
+    mark_id = fields.Many2one('erpec.route.visit.mark', ondelete='cascade', string='Marca')
+    company_id = fields.Many2one('res.company', compute='_compute_company', store=True, string='Empresa')
     exception_type = fields.Selection([
         ('geofence_violation', 'Fuera de geocerca'), ('low_accuracy', 'Precisión GPS baja'),
         ('unplanned_visit', 'Visita no planificada'), ('omitted_visit', 'Visita omitida'),
-    ], required=True)
-    reason = fields.Text(required=True)
+    ], required=True, string='Tipo de excepción')
+    reason = fields.Text(required=True, string='Motivo')
     state = fields.Selection([('pending', 'Pendiente'), ('approved', 'Aprobada'), ('rejected', 'Rechazada')],
-                              default='pending', required=True, readonly=True)
-    resolution = fields.Text()
-    reviewed_by = fields.Many2one('res.users', readonly=True, copy=False)
-    reviewed_at = fields.Datetime(readonly=True, copy=False)
+                              default='pending', required=True, readonly=True, string='Estado')
+    resolution = fields.Text(string='Resolución')
+    reviewed_by = fields.Many2one('res.users', readonly=True, copy=False, string='Revisado por')
+    reviewed_at = fields.Datetime(readonly=True, copy=False, string='Revisado el')
 
     @api.depends('stop_id.company_id', 'mark_id.company_id')
     def _compute_company(self):
@@ -292,10 +292,10 @@ class RouteVisitWizard(models.TransientModel):
     con GPS) en vez de leerse automáticamente."""
     _name = 'erpec.route.visit.wizard'
     _description = 'Registrar check-in/check-out de una parada'
-    stop_id = fields.Many2one('erpec.route.stop', required=True)
-    mark_type = fields.Selection([('checkin', 'Check-in'), ('checkout', 'Check-out')], required=True)
-    latitude = fields.Float(digits=(10, 7), required=True)
-    longitude = fields.Float(digits=(10, 7), required=True)
+    stop_id = fields.Many2one('erpec.route.stop', required=True, string='Parada')
+    mark_type = fields.Selection([('checkin', 'Check-in'), ('checkout', 'Check-out')], required=True, string='Tipo de marca')
+    latitude = fields.Float(digits=(10, 7), required=True, string='Latitud')
+    longitude = fields.Float(digits=(10, 7), required=True, string='Longitud')
     accuracy_meters = fields.Float('Precisión GPS (m)', required=True, default=20.0)
 
     def action_confirm(self):
@@ -310,8 +310,8 @@ class RouteVisitWizard(models.TransientModel):
 class RouteOmitWizard(models.TransientModel):
     _name = 'erpec.route.omit.wizard'
     _description = 'Omitir una parada'
-    stop_id = fields.Many2one('erpec.route.stop', required=True)
-    reason = fields.Text(required=True)
+    stop_id = fields.Many2one('erpec.route.stop', required=True, string='Parada')
+    reason = fields.Text(required=True, string='Motivo')
 
     def action_confirm(self):
         self.ensure_one()
@@ -322,9 +322,9 @@ class RouteOmitWizard(models.TransientModel):
 class RouteUnplannedWizard(models.TransientModel):
     _name = 'erpec.route.unplanned.wizard'
     _description = 'Agregar parada no planificada'
-    route_day_id = fields.Many2one('erpec.route.day', required=True)
-    site_id = fields.Many2one('erpec.route.site', required=True)
-    reason = fields.Text(required=True)
+    route_day_id = fields.Many2one('erpec.route.day', required=True, string='Día de ruta')
+    site_id = fields.Many2one('erpec.route.site', required=True, string='Sitio')
+    reason = fields.Text(required=True, string='Motivo')
 
     def action_confirm(self):
         self.ensure_one()
