@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 from lxml import etree
 
-from .engine import access_key, money
+from .engine import access_key, money, append_info_adicional
 
 DOC_TYPE = '04'
 
@@ -72,6 +72,7 @@ def generate(data):
         for name,value in [('descripcion',item['description']),('cantidad',format(qty,'f')),('precioUnitario',format(unit,'f')),('descuento',f'{reduction:.2f}'),('precioTotalSinImpuesto',f'{base:.2f}')]:add(node,name,value)
         vat=etree.SubElement(etree.SubElement(node,'impuestos'),'impuesto')
         for name,value in [('codigo','2'),('codigoPorcentaje',code),('tarifa',format(rate,'f')),('baseImponible',f'{base:.2f}'),('valor',f'{tax:.2f}')]:add(vat,name,value)
+    append_info_adicional(root,data.get('info_adicional'))
     schema=etree.XMLSchema(etree.parse(str(Path(__file__).parent/'xsd/NotaCredito_V1.1.0.xsd'),etree.XMLParser(no_network=True,resolve_entities=False)))
     if not schema.validate(root):raise ValueError('XML incompatible con el esquema SRI: '+str(schema.error_log.last_error))
     return key,etree.tostring(root,encoding='UTF-8',xml_declaration=True,pretty_print=True)

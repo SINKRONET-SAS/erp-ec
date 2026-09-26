@@ -1,0 +1,7 @@
+<odoo noupdate="1">
+  <!-- Ficha Técnica SRI 2.34, Anexo 26: RUC del proveedor del sistema de facturación ERP EC (SINKRONET S.A.S.). -->
+  <record id="param_system_provider_vat" model="ir.config_parameter">
+    <field name="key">erpec.system_provider_vat</field>
+    <field name="value">1793235327001</field>
+  </record>
+</odoo>

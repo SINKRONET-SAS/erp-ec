@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 from lxml import etree
 
-from .engine import access_key, money
+from .engine import access_key, money, append_info_adicional
 from .retention_catalog import INCOME
 
 DOC_TYPE = '07'
@@ -95,6 +95,7 @@ def generate(data):
     if total<=0:raise ValueError('El total retenido debe ser positivo.')
     payments=etree.SubElement(doc,'pagos');payment=etree.SubElement(payments,'pago')
     add(payment,'formaPago',support['payment']);add(payment,'total',f"{money(support['total']):.2f}")
+    append_info_adicional(root,data.get('info_adicional'))
     schema=etree.XMLSchema(etree.parse(str(Path(__file__).parent/'xsd/ComprobanteRetencion_V2.0.0.xsd'),etree.XMLParser(no_network=True,resolve_entities=False)))
     if not schema.validate(root):raise ValueError('XML incompatible con el esquema SRI: '+str(schema.error_log.last_error))
     return key,etree.tostring(root,encoding='UTF-8',xml_declaration=True,pretty_print=True)

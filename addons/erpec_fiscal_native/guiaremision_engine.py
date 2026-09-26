@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 from lxml import etree
 
-from .engine import access_key
+from .engine import access_key, append_info_adicional
 
 DOC_TYPE = '06'
 
@@ -68,6 +68,7 @@ def generate(data):
         node=etree.SubElement(details,'detalle')
         if item.get('code'):add(node,'codigoInterno',str(item['code'])[:25])
         add(node,'descripcion',item['description'][:300]);add(node,'cantidad',format(quantity,'f'))
+    append_info_adicional(root,data.get('info_adicional'))
     schema=etree.XMLSchema(etree.parse(str(Path(__file__).parent/'xsd/GuiaRemision_V1.1.0.xsd'),etree.XMLParser(no_network=True,resolve_entities=False)))
     if not schema.validate(root):raise ValueError('XML incompatible con el esquema SRI: '+str(schema.error_log.last_error))
     return key,etree.tostring(root,encoding='UTF-8',xml_declaration=True,pretty_print=True)

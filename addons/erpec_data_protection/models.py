@@ -15,9 +15,9 @@ buena práctica.
 
 El campo de exclusión de correo comercial en res.partner apoya el mecanismo de
 exclusión exigido por la Ley de Comercio Electrónico, Firmas Electrónicas y
-Mensajes de Datos (Ley 67, 2002) para mensajes periódicos/masivos. Este ERP no
-envía correos reales (ver seed-ui-acceptance.py, que desactiva ir.mail_server);
-el campo solo registra la preferencia para cuando el envío se habilite.
+Mensajes de Datos (Ley 67, 2002) para mensajes periódicos/masivos. Desde DI26-D.2
+se guarda en la lista negra de correo de Odoo (mail.blacklist), la misma que
+respetan Email Marketing y los envíos masivos, en vez de un campo aparte.
 
 Segundo incremento (13-09-2026): procedimiento operativo de derechos del
 titular y de notificación de brechas, tras confirmar los artículos primarios
@@ -52,7 +52,7 @@ sustituye la responsabilidad de ningún cliente real.
 from datetime import timedelta
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 RIGHTS_REQUEST_TYPES = [
     ('acceso', 'Acceso (Art. 13 LOPDP)'),
@@ -99,7 +99,7 @@ class DataProcessingActivity(models.Model):
     _name = 'erpec.data.processing.activity'
     _description = 'Registro de actividad de tratamiento de datos personales (LOPDP)'
     _inherit = ['mail.thread']
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     name = fields.Char('Actividad de tratamiento', required=True)
     purpose = fields.Text('Finalidad', required=True, help='Para qué se tratan los datos de esta actividad; debe ser específica, no genérica.')
     legal_basis = fields.Selection(LEGAL_BASIS, string='Base legal', required=True, help='Art. 7 de la LOPDP. Confirmar contra el texto oficial antes de un caso real; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md.')
@@ -113,7 +113,7 @@ class DataProcessingActivity(models.Model):
     cross_border_transfer = fields.Boolean('Transferencia internacional')
     transfer_country = fields.Char('País destino de la transferencia')
     transfer_mechanism = fields.Text('Mecanismo/base legal de la transferencia', help='Consentimiento específico, declaración de adecuación de la SPDP u otro mecanismo lícito. Las transferencias internacionales deben registrarse además en el RNPD (registro público de la SPDP), fuera del alcance de este módulo.')
-    state = fields.Selection([('draft', 'Borrador'), ('active', 'Vigente'), ('under_review', 'En revisión')], default='draft', required=True, tracking=True)
+    state = fields.Selection([('draft', 'Borrador'), ('active', 'Vigente'), ('under_review', 'En revisión')], default='draft', required=True, tracking=True, string='Estado')
     notes = fields.Text('Notas')
     _sql_constraints = [('name_company_unique', 'unique(company_id,name)', 'Ya existe una actividad de tratamiento con este nombre en la empresa.')]
 
@@ -125,16 +125,49 @@ class DataProcessingActivity(models.Model):
 
 
 class Partner(models.Model):
+    """DI26-D.2: la exclusión comercial y la lista negra de correo de Odoo (`mail.blacklist`) son una sola autoridad. Marcar la
+    exclusión agrega el correo a la lista negra, que Email Marketing y cualquier envío masivo ya respetan, y la exclusión refleja la
+    lista negra aunque el contacto se haya dado de baja desde el enlace de un correo."""
     _inherit = 'res.partner'
     ec_marketing_email_opt_out = fields.Boolean(
-        'Excluido de correo comercial', tracking=True,
-        help='Mecanismo de exclusión de mensajes periódicos/masivos exigido por la Ley de Comercio Electrónico, '
-             'Firmas Electrónicas y Mensajes de Datos (Ley 67, 2002). Este ERP no envía correos reales todavía; '
-             'este campo solo registra la preferencia declarada por el contacto.')
-    ec_marketing_email_opt_out_date = fields.Date('Fecha de exclusión', readonly=True)
+        'Excluido de correo comercial', compute='_compute_ec_marketing_email_opt_out', inverse='_inverse_ec_marketing_email_opt_out',
+        search='_search_ec_marketing_email_opt_out',
+        help='Mecanismo de exclusión de mensajes periódicos/masivos exigido por la Ley de Comercio Electrónico, Firmas Electrónicas y '
+             'Mensajes de Datos (Ley 67, 2002). Se guarda en la lista negra de correo, que respeta todo envío masivo del sistema.')
+    ec_marketing_email_opt_out_date = fields.Date('Fecha de exclusión', compute='_compute_ec_marketing_email_opt_out')
+
+    @api.depends('email_normalized', 'is_blacklisted')
+    def _compute_ec_marketing_email_opt_out(self):
+        entries = self.env['mail.blacklist'].sudo().search([('email', 'in', [e for e in self.mapped('email_normalized') if e])])
+        dates = {entry.email: entry.create_date.date() for entry in entries}
+        for partner in self:
+            partner.ec_marketing_email_opt_out = partner.email_normalized in dates
+            partner.ec_marketing_email_opt_out_date = dates.get(partner.email_normalized, False)
+
+    def _inverse_ec_marketing_email_opt_out(self):
+        for partner in self:
+            if partner.ec_marketing_email_opt_out:
+                partner._ec_blacklist_add()
+            elif partner.email_normalized:
+                self.env['mail.blacklist'].sudo()._remove(
+                    partner.email_normalized, message=_('Exclusión comercial retirada desde el contacto %s.') % partner.display_name)
+
+    def _search_ec_marketing_email_opt_out(self, operator, value):
+        return [('is_blacklisted', operator, value)]
+
+    def _ec_blacklist_add(self):
+        self.ensure_one()
+        if not self.email_normalized:
+            raise UserError(_('El contacto %s no tiene un correo válido: la exclusión comercial se registra sobre el correo.') % self.display_name)
+        self.env['mail.blacklist'].sudo()._add(
+            self.email_normalized, message=_('Exclusión comercial solicitada por el contacto %s (Ley 67, 2002).') % self.display_name)
 
     def action_ec_mark_marketing_opt_out(self):
-        self.write({'ec_marketing_email_opt_out': True, 'ec_marketing_email_opt_out_date': fields.Date.today()})
+        if not (self.env.su or self.env.user.has_group('erpec_data_protection.group_data_protection_officer')
+                or self.env.user.has_group('base.group_system')):
+            raise AccessError(_('Registrar la exclusión comercial requiere el permiso de protección de datos.'))
+        for partner in self:
+            partner._ec_blacklist_add()
         return True
 
 
@@ -144,12 +177,12 @@ class DataSubjectRequest(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'received_date desc, id desc'
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     name = fields.Char('Referencia', required=True, help='Descripción corta, por ejemplo "Acceso - Juan Pérez".')
     request_type = fields.Selection(RIGHTS_REQUEST_TYPES, string='Derecho solicitado', required=True, tracking=True)
     requester_name = fields.Char('Nombre del titular', required=True)
     requester_email = fields.Char('Correo de contacto del titular', help='Para responder la solicitud; el sistema no envía correos por sí mismo.')
-    channel = fields.Selection([('interno', 'Registrada por el responsable'), ('publico', 'Página pública de derechos')], default='interno', required=True, readonly=True)
+    channel = fields.Selection([('interno', 'Registrada por el responsable'), ('publico', 'Página pública de derechos')], default='interno', required=True, readonly=True, string='Canal')
     requester_identification = fields.Char(
         'Identificación del titular',
         help='Cédula, RUC o pasaporte. Sirve para verificar la identidad antes de responder, '
@@ -175,7 +208,7 @@ class DataSubjectRequest(models.Model):
         ('answered', 'Respondida'),
         ('rejected', 'Rechazada'),
         ('closed', 'Cerrada'),
-    ], default='new', required=True, tracking=True)
+    ], default='new', required=True, tracking=True, string='Estado')
     is_overdue = fields.Boolean('Vencida', compute='_compute_is_overdue')
     notes = fields.Text('Notas internas')
     legal_hold = fields.Boolean(
@@ -281,7 +314,7 @@ class DataBreachIncident(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'detected_date desc, id desc'
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     name = fields.Char('Referencia', required=True)
     discovered_by = fields.Selection(BREACH_DISCOVERED_BY, string='Detectado por', required=True, default='responsable', tracking=True)
     detected_date = fields.Datetime('Fecha en que se tuvo constancia', required=True, default=fields.Datetime.now)
@@ -312,7 +345,7 @@ class DataBreachIncident(models.Model):
         ('assessing', 'En evaluación'),
         ('notified', 'Notificado'),
         ('closed', 'Cerrado'),
-    ], default='draft', required=True, tracking=True)
+    ], default='draft', required=True, tracking=True, string='Estado')
     is_authority_notice_overdue = fields.Boolean('Notificación a la Autoridad vencida', compute='_compute_overdue')
     is_titular_notice_overdue = fields.Boolean('Notificación al titular vencida', compute='_compute_overdue')
     notes = fields.Text('Notas internas')
@@ -395,9 +428,9 @@ class DataProcessor(models.Model):
     _inherit = ['mail.thread']
     _order = 'role, name'
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     name = fields.Char('Proveedor', required=True)
-    role = fields.Selection([('encargado', 'Encargado'), ('subencargado', 'Subencargado')], required=True, default='encargado', tracking=True)
+    role = fields.Selection([('encargado', 'Encargado'), ('subencargado', 'Subencargado')], required=True, default='encargado', tracking=True, string='Rol')
     parent_id = fields.Many2one('erpec.data.processor', string='Encargado principal', domain="[('role', '=', 'encargado'), ('company_id', '=', company_id)]",
                                 help='Un subencargado trata datos por cuenta de un encargado; se indica cuál.')
     service = fields.Text('Servicio y finalidad', required=True, help='Qué hace con los datos y para qué actividad del RAT.')
@@ -411,7 +444,7 @@ class DataProcessor(models.Model):
                                      help='Consentimiento específico u otro mecanismo lícito (LOPDP, régimen de transferencias internacionales; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, LEGAL-06).')
     rnpd_reference = fields.Char('Registro en el RNPD', help='Las transferencias internacionales deben registrarse en el Registro Nacional de Protección de Datos Personales (SPDP).')
     responsible_id = fields.Many2one('res.users', string='Responsable interno', required=True, default=lambda self: self.env.user)
-    state = fields.Selection([('draft', 'Borrador'), ('active', 'Vigente'), ('under_review', 'En revisión')], default='draft', required=True, tracking=True)
+    state = fields.Selection([('draft', 'Borrador'), ('active', 'Vigente'), ('under_review', 'En revisión')], default='draft', required=True, tracking=True, string='Estado')
     notes = fields.Text('Notas')
     _sql_constraints = [('name_company_unique', 'unique(company_id,name,role)', 'Ya existe este proveedor con el mismo rol en la empresa.')]
 
@@ -442,7 +475,7 @@ class DpoAssessment(models.Model):
     _description = 'Evaluación del Delegado de Protección de Datos (Art. 49 LOPDP)'
     _inherit = ['mail.thread']
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, string='Empresa')
     public_entity = fields.Boolean('Entidad pública')
     large_scale_monitoring = fields.Boolean('Monitoreo sistemático a gran escala')
     large_scale_sensitive = fields.Boolean('Tratamiento a gran escala de datos sensibles')

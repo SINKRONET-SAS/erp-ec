@@ -251,15 +251,7 @@ def build_ride(comprobante_xml, numero_autorizacion='', fecha_autorizacion=''):
         text_at(left, pay_y, 'Forma de pago: %s — %s' % (FORMA_PAGO_LABEL.get(forma, 'código %s' % forma), _text(pago, 'total')), size=8)
         pay_y -= 4.5 * mm
 
-    info_adicional = factura.findall('infoAdicional/campoAdicional')
-    if info_adicional:
-        pay_y -= 2 * mm
-        text_at(left, pay_y, 'Información adicional', size=8, bold=True)
-        pay_y -= 4 * mm
-        for campo in info_adicional:
-            nombre = campo.get('nombre', '')
-            text_at(left, pay_y, '%s: %s' % (nombre, campo.text or ''), size=8)
-            pay_y -= 4 * mm
+    _draw_info_adicional(text_at, factura, left, pay_y - 2 * mm)
 
     page.showPage()
     page.save()
@@ -449,10 +441,26 @@ def _build_ride_modificatorio(comprobante_xml, numero_autorizacion, fecha_autori
 
     if not is_debit and not is_liq:
         text_at(left, y, 'Motivo: ' + _text(detail, 'motivo')[:90], size=8)
+        y -= 6 * mm
+    _draw_info_adicional(text_at, nota, left, min(y, totals_y - 8 * mm))
 
     page.showPage()
     page.save()
     return buffer.getvalue()
+
+
+def _draw_info_adicional(text_at, root, left, y):
+    """Sección "Información adicional" del RIDE (p. ej. "RUC Proveedor", Ficha Técnica 2.34, Anexo 26). Devuelve la
+    coordenada vertical siguiente."""
+    campos = root.findall('infoAdicional/campoAdicional')
+    if not campos:
+        return y
+    text_at(left, y, 'Información adicional', size=8, bold=True)
+    y -= 4 * mm
+    for campo in campos:
+        text_at(left, y, '%s: %s' % (campo.get('nombre', ''), campo.text or ''), size=8)
+        y -= 4 * mm
+    return y
 
 
 def _drawing_helpers(page):
@@ -575,6 +583,7 @@ def build_ride_retencion(comprobante_xml, numero_autorizacion='', fecha_autoriza
     y -= 5 * mm
     text_at(right - 60 * mm, y, 'TOTAL RETENIDO:', size=10, bold=True)
     text_at(right, y, '%.2f' % total, size=10, bold=True, align='right', w=0)
+    _draw_info_adicional(text_at, root, left, y - 8 * mm)
     page.showPage()
     page.save()
     return buffer.getvalue()
@@ -675,6 +684,7 @@ def build_ride_guiaremision(comprobante_xml, numero_autorizacion='', fecha_autor
         page.setLineWidth(0.3)
         page.line(left, y - 5.5 * mm, right, y - 5.5 * mm)
         y -= 5.5 * mm
+    _draw_info_adicional(text_at, root, left, y - 6 * mm)
     page.showPage()
     page.save()
     return buffer.getvalue()

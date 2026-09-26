@@ -13,6 +13,30 @@ class Company(models.Model):
     ec_tax_regime=fields.Selection([('general','General'),('rimpe_emprendedor','RIMPE emprendedor'),('rimpe_popular','RIMPE negocio popular')],string='Régimen fiscal',
         help='Los regímenes RIMPE exigen la leyenda contribuyenteRimpe en los comprobantes, que este motor aún no genera: no se permite emitir hasta ampliarlo.')
 
+    ec_system_provider_vat=fields.Char('RUC del proveedor del sistema de facturación',
+        help='Ficha Técnica SRI 2.34, Anexo 26 (Resolución NAC-DGERCGC26-00000027): quien emite con un sistema de facturación de '
+             'terceros incluye en la información adicional de cada comprobante el campo "RUC Proveedor". Si queda vacío se usa el '
+             'RUC del proveedor configurado en el sistema; no se incluye cuando coincide con el RUC de esta empresa (sistema propio).')
+
+    def _ec_system_provider(self):
+        self.ensure_one()
+        return (self.ec_system_provider_vat or self.env['ir.config_parameter'].sudo().get_param('erpec.system_provider_vat') or '').strip()
+
+    def _ec_info_adicional(self):
+        """Campos adicionales obligatorios de los comprobantes nativos de esta empresa."""
+        self.ensure_one()
+        provider=self._ec_system_provider()
+        if provider and provider!=(self.vat or '').strip():
+            return [('RUC Proveedor',provider)]
+        return []
+
+    @api.constrains('ec_system_provider_vat')
+    def _check_system_provider_vat(self):
+        for company in self:
+            value=(company.ec_system_provider_vat or '').strip()
+            if value and not (len(value)==13 and value.isdigit() and value.endswith('001')):
+                raise ValidationError('El RUC del proveedor del sistema debe tener 13 dígitos y terminar en 001.')
+
     def _check_regime_supported(self):
         for company in self:
             if company.ec_tax_regime and company.ec_tax_regime!='general':
@@ -31,7 +55,7 @@ class Move(models.Model):
             if not move.company_id.street:missing.append('dirección matriz')
             if not move.company_id.ec_native_ordinary or not move.company_id.ec_native_accounting:missing.append('perfil fiscal y obligación contable verificados en la empresa')
             if move.state!='posted':missing.append('factura contabilizada')
-            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Preparación XML dentro del ERP, sin servicio Facturador. Ambiente PRUEBAS. Falta implementar y validar firma XAdES, envío/consulta SRI, RIDE autorizado y el RUC del proveedor del sistema en la información adicional cuando corresponda; esta vista previa no emite ni autoriza.'
+            move.ec_native_notice=('Completar: '+', '.join(missing)+'. ' if missing else '')+'Vista previa del XML sin firma, preparada dentro del ERP: no emite ni autoriza. La firma XAdES, el envío y la autorización del SRI y el RIDE se hacen en la pestaña "Firma y transmisión SRI", en el ambiente configurado para la empresa. El RUC del proveedor del sistema se agrega en la información adicional cuando corresponde (Ficha Técnica 2.34, Anexo 26).'
 
     def _gather_native_common(self, allow_special_vat=False):
         """Datos comunes para vista previa y emisión; una validación de líneas e identificación."""
@@ -71,6 +95,7 @@ class Move(models.Model):
         data['payment'] = self.ec_fiscal_payment_code
         data['ambiente'] = '1'
         # Código reproducible solo para previsualización; no reserva un secuencial fiscal.
+        data['info_adicional']=self.company_id._ec_info_adicional()
         digest=hashlib.sha256(json.dumps(data,sort_keys=True,ensure_ascii=False).encode('utf-8')).hexdigest();data['numeric']=str(int(digest[:12],16)%100000000).zfill(8)
         try:key,xml=generate(data)
         except ValueError as error:raise ValidationError(str(error)) from error
@@ -81,11 +106,11 @@ class Move(models.Model):
 class Preview(models.TransientModel):
     _name='erpec.fiscal.preview'
     _description='Vista previa fiscal local sin firma'
-    move_id=fields.Many2one('account.move',required=True,readonly=True)
-    company_id=fields.Many2one(related='move_id.company_id',store=True)
+    move_id=fields.Many2one('account.move',required=True,readonly=True, string='Asiento contable')
+    company_id=fields.Many2one(related='move_id.company_id',store=True, string='Empresa')
     access_key=fields.Char('Clave de la vista previa',readonly=True)
     xml_file=fields.Binary('XML sin firma',readonly=True,attachment=False)
-    filename=fields.Char(readonly=True)
+    filename=fields.Char(readonly=True, string='Nombre del archivo')
     digest=fields.Char('SHA256 del XML',readonly=True)
 
     @api.model_create_multi

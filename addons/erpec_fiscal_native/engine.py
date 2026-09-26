@@ -35,6 +35,20 @@ def access_key(day,ruc,number,numeric,doc_type='01',ambiente='1'):
     return base+str(modulo11(base))
 
 
+def append_info_adicional(root,fields):
+    """Agrega <infoAdicional> con sus <campoAdicional nombre="..."> al final del comprobante (antes de la firma), como
+    exige el esquema de cada comprobante; p. ej. "RUC Proveedor" (Ficha Técnica 2.34, Anexo 26). Sin campos no agrega nada."""
+    fields=[(name,value) for name,value in (fields or []) if (value or '').strip()]
+    if not fields:
+        return
+    node=etree.SubElement(root,'infoAdicional')
+    for name,value in fields:
+        if len(value)>300:
+            raise ValueError('El campo adicional %s supera los 300 caracteres del esquema SRI.'%name)
+        campo=etree.SubElement(node,'campoAdicional',nombre=name)
+        campo.text=value
+
+
 def generate(data):
     key=access_key(data['date'],data['issuer_vat'],data['number'],data['numeric'],ambiente=data.get('ambiente','1'))
     if data['buyer_type'] not in ('04','05') or not re.fullmatch(r'[0-9]{13}' if data['buyer_type']=='04' else r'[0-9]{10}',data['buyer_vat'] or ''):
@@ -110,6 +124,7 @@ def generate(data):
             for tax in entry['taxes']:
                 node=etree.SubElement(taxes_node,'detalleImpuesto')
                 for name,value in [('codigo','2'),('codigoPorcentaje',tax['rate_code']),('tarifa',format(Decimal(str(tax['rate'])),'f')),('baseImponibleReembolso',f"{money(tax['base']):.2f}"),('impuestoReembolso',f"{money(tax['amount']):.2f}")]:add(node,name,value)
+    append_info_adicional(root,data.get('info_adicional'))
     schema=etree.XMLSchema(etree.parse(str(Path(__file__).parent/'xsd/factura_V2.1.0.xsd'),etree.XMLParser(no_network=True,resolve_entities=False)))
     if not schema.validate(root):raise ValueError('XML incompatible con el esquema SRI: '+str(schema.error_log.last_error))
     return key,etree.tostring(root,encoding='UTF-8',xml_declaration=True,pretty_print=True)

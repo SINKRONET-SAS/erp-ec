@@ -43,6 +43,13 @@ class RightsChannelCase(HttpCase):
         self.assertFalse(record.identity_verified, 'La identidad la verifica el responsable, no el formulario.')
         self.assertTrue(record.activity_ids, 'Debe agendarse la tarea interna de respuesta.')
 
+    def test_form_informs_controller_purpose_basis_and_retention(self):
+        # DI26-15: el formulario identifica al responsable y explica finalidad, base legal y conservación.
+        self.company.write({'ec_dp_public_responsible_id': self.responsible.id, 'vat': '1710034065001', 'ec_dp_rights_email': 'datos@example.com'})
+        page, _token = self.token()
+        for text in (self.company.name, '1710034065001', 'datos@example.com', 'Finalidad', 'Base legal', 'Conservación'):
+            self.assertIn(text, page.text)
+
     def test_invalid_data_and_honeypot_create_nothing(self):
         self.company.ec_dp_public_responsible_id = self.responsible
         _page, token = self.token()

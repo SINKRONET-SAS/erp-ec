@@ -7,6 +7,16 @@
         <h1>Derechos sobre tus datos personales</h1>
         <p>Puedes pedir acceso, rectificación, eliminación, oposición, portabilidad o suspensión del tratamiento de tus datos (Ley Orgánica de Protección de Datos Personales). Respondemos en <t t-esc="days"/> días.</p>
         <p>Antes de responder verificaremos tu identidad. Algunos datos, como los comprobantes tributarios, deben conservarse por obligación legal durante el plazo mínimo que fija la normativa; te indicaremos cuáles.</p>
+        <section class="border rounded p-3 mb-3" aria-labelledby="rights-privacy-title">
+          <h2 id="rights-privacy-title" class="h5">Cómo tratamos los datos de este formulario</h2>
+          <dl class="mb-0">
+            <dt>Responsable del tratamiento</dt><dd><t t-esc="controller_name"/><t t-if="controller_vat"> · RUC <t t-esc="controller_vat"/></t><t t-if="controller_address"> · <t t-esc="controller_address"/></t><t t-if="controller_contact"> · <a t-att-href="'mailto:' + controller_contact" t-esc="controller_contact"/></t></dd>
+            <dt>Finalidad</dt><dd>Verificar tu identidad, atender la solicitud que presentes y dejar constancia de la respuesta. No se usan para publicidad ni se comunican a terceros, salvo obligación legal.</dd>
+            <dt>Base legal</dt><dd>Cumplimiento de una obligación legal del responsable: atender los derechos del titular (Ley Orgánica de Protección de Datos Personales, arts. 7 y 13 a 19).</dd>
+            <dt>Datos que pedimos</dt><dd>Nombre, identificación, correo y el detalle que quieras añadir.</dd>
+            <dt>Conservación</dt><dd>Mientras se tramita la solicitud y, después, solo el tiempo necesario para demostrar que fue atendida, según el registro de actividades de tratamiento de la empresa.</dd>
+          </dl>
+        </section>
         <div t-if="not enabled" class="alert alert-warning" role="status">Este canal no está habilitado en este momento.<t t-if="rights_email"> Escribe a <a t-att-href="'mailto:' + rights_email" t-esc="rights_email"/>.</t></div>
         <div t-if="errors" class="alert alert-danger" role="alert"><ul class="mb-0"><li t-foreach="errors" t-as="error" t-esc="error"/></ul></div>
         <form t-if="enabled" action="/derechos-datos/enviar" method="post" class="mt-3">

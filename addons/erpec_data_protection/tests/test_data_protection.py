@@ -1,7 +1,7 @@
 """Pruebas del registro de actividades de tratamiento (RAT) y exclusión de correo comercial."""
 from odoo import fields
-from odoo.exceptions import AccessError, ValidationError
-from odoo.tests import TransactionCase, tagged
+from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tests import TransactionCase, new_test_user, tagged
 
 
 @tagged('post_install', '-at_install')
@@ -54,11 +54,32 @@ class DataProtectionCase(TransactionCase):
             })
 
     def test_marketing_opt_out(self):
-        partner = self.env['res.partner'].create({'name': 'Cliente de ensayo LOPDP'})
+        partner = self.env['res.partner'].create({'name': 'Cliente de ensayo LOPDP', 'email': 'Ensayo.LOPDP@example.com'})
         self.assertFalse(partner.ec_marketing_email_opt_out)
         partner.with_user(self.officer).action_ec_mark_marketing_opt_out()
+        partner.invalidate_recordset()
         self.assertTrue(partner.ec_marketing_email_opt_out)
+        self.assertTrue(partner.is_blacklisted, 'La exclusión debe quedar en la lista negra que respetan los envíos masivos.')
         self.assertEqual(partner.ec_marketing_email_opt_out_date, fields.Date.today())
+        self.assertIn(partner, self.env['res.partner'].search([('ec_marketing_email_opt_out', '=', True)]))
+
+    def test_blacklist_is_the_single_authority(self):
+        # DI26-04: una baja desde el enlace de un correo (lista negra) se refleja en la exclusión del contacto.
+        partner = self.env['res.partner'].create({'name': 'Baja desde enlace', 'email': 'baja.enlace@example.com'})
+        self.env['mail.blacklist'].sudo()._add('baja.enlace@example.com')
+        partner.invalidate_recordset()
+        self.assertTrue(partner.ec_marketing_email_opt_out)
+        partner.ec_marketing_email_opt_out = False
+        partner.invalidate_recordset()
+        self.assertFalse(partner.is_blacklisted)
+
+    def test_marketing_opt_out_requires_email_and_permission(self):
+        partner = self.env['res.partner'].create({'name': 'Sin correo'})
+        with self.assertRaisesRegex(UserError, 'no tiene un correo'):
+            partner.with_user(self.officer).action_ec_mark_marketing_opt_out()
+        seller = new_test_user(self.env, login='dp_optout_seller', groups='base.group_user')
+        with self.assertRaises(AccessError):
+            partner.with_user(seller).action_ec_mark_marketing_opt_out()
 
     def test_views_compile(self):
         arch = self.env['erpec.data.processing.activity'].with_user(self.officer).get_view(view_type='form')['arch']

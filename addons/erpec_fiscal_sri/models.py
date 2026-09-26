@@ -99,12 +99,12 @@ class Establishment(models.Model):
     _check_company_auto = True
     _order = 'company_id, code'
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict', string='Empresa')
     code = fields.Char('Código', size=3, required=True, help='Código de 3 dígitos del establecimiento registrado en el RUC (001 es normalmente la matriz).')
     name = fields.Char('Nombre', required=True, help='Por ejemplo: PRINCIPAL o Sucursal Norte.')
     address = fields.Char('Dirección', required=True, help='Se imprime como dirEstablecimiento en los comprobantes de sus puntos de emisión.')
     is_principal = fields.Boolean('Establecimiento principal', help='Se propone por defecto cuando el usuario no tiene punto de emisión.')
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(default=True, string='Activo')
     point_ids = fields.One2many('erpec.fiscal.point', 'establishment_id', string='Puntos de emisión')
     _sql_constraints = [('code_unique', 'unique(company_id,code)', 'Ya existe un establecimiento con este código en la empresa.')]
 
@@ -145,7 +145,7 @@ class EmissionPoint(models.Model):
     _check_company_auto = True
     _order = 'company_id, establishment, emission'
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict', string='Empresa')
     establishment_id = fields.Many2one('erpec.fiscal.establishment', string='Establecimiento', check_company=True, ondelete='restrict',
                                        help='Local o sucursal al que pertenece la caja. Puedes crearlo desde aquí con su nombre y dirección.')
     establishment = fields.Char(related='establishment_id.code', store=True, readonly=True, string='Código de establecimiento')
@@ -158,9 +158,9 @@ class EmissionPoint(models.Model):
     production_acknowledged = fields.Boolean('Producción habilitada por el responsable', readonly=True, copy=False)
     production_by = fields.Many2one('res.users', readonly=True, copy=False, string='Habilitado por')
     production_at = fields.Datetime(readonly=True, copy=False, string='Habilitado el')
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(default=True, string='Activo')
     journal_ids = fields.One2many('account.journal', 'ec_point_id', string='Diarios (un consecutivo por ambiente)')
-    notice = fields.Text(readonly=True, copy=False)
+    notice = fields.Text(readonly=True, copy=False, string='Aviso')
     _sql_constraints = [('point_unique', 'unique(company_id,establishment,emission)', 'Ya existe este establecimiento y punto de emisión en la empresa.')]
 
     @api.constrains('establishment_id')
@@ -398,7 +398,7 @@ class Certificate(models.Model):
     _description = 'Certificado de firma electrónica (SRI)'
     _check_company_auto = True
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict', string='Empresa')
     # Autoservicio: la empresa (cliente) del propio inquilino puede cargar y reemplazar su
     # certificado -- ampliado de solo base.group_system a incluir account.group_account_user.
     # Cambio de postura deliberado: mismo nivel de protección de reposo que la credencial de
@@ -572,8 +572,8 @@ class Emission(models.Model):
     _check_company_auto = True
 
     move_id = fields.Many2one('account.move', string='Comprobante', check_company=True, ondelete='restrict')
-    company_id = fields.Many2one('res.company', compute='_compute_company_id', store=True, index=True)
-    ambiente = fields.Selection([('1', 'Pruebas'), ('2', 'Producción')], default='1', required=True, readonly=True)
+    company_id = fields.Many2one('res.company', compute='_compute_company_id', store=True, index=True, string='Empresa')
+    ambiente = fields.Selection([('1', 'Pruebas'), ('2', 'Producción')], default='1', required=True, readonly=True, string='Ambiente')
     access_key = fields.Char('Clave de acceso', readonly=True)
     xml_unsigned = fields.Binary('XML sin firmar', readonly=True, attachment=False)
     xml_signed = fields.Binary('XML firmado', readonly=True, attachment=False)
@@ -774,8 +774,8 @@ class Reimbursement(models.Model):
     _check_company_auto = True
     _order = 'id'
 
-    move_id = fields.Many2one('account.move', required=True, ondelete='cascade', check_company=True, domain=[('move_type', '=', 'out_invoice')])
-    company_id = fields.Many2one(related='move_id.company_id', store=True, index=True)
+    move_id = fields.Many2one('account.move', required=True, ondelete='cascade', check_company=True, domain=[('move_type', '=', 'out_invoice')], string='Asiento contable')
+    company_id = fields.Many2one(related='move_id.company_id', store=True, index=True, string='Empresa')
     provider_type = fields.Selection([('04', 'RUC'), ('05', 'Cédula'), ('06', 'Pasaporte'), ('08', 'Identificación del exterior')],
                                      string='Tipo de identificación del proveedor', required=True, default='04')
     provider_vat = fields.Char('Identificación del proveedor', required=True)
@@ -791,7 +791,7 @@ class Reimbursement(models.Model):
     tax_kind = fields.Selection([('vat15', 'IVA 15%'), ('zero', 'IVA 0%'), ('no_object', 'No objeto de IVA'), ('exempt', 'Exento de IVA')],
                                 string='Impuesto del comprobante', required=True, default='vat15')
     tax_amount = fields.Monetary('IVA', compute='_compute_tax_amount', store=True, currency_field='currency_id')
-    currency_id = fields.Many2one(related='move_id.currency_id')
+    currency_id = fields.Many2one(related='move_id.currency_id', string='Moneda')
 
     @api.depends('base_amount', 'tax_kind', 'currency_id')
     def _compute_tax_amount(self):
@@ -890,7 +890,7 @@ class Move(models.Model):
         data['reason'] = (self.ref or self.narration or 'Nota de crédito').strip()[:300]
         return data
 
-    ec_is_liquidation = fields.Boolean(compute='_compute_ec_is_liquidation')
+    ec_is_liquidation = fields.Boolean(compute='_compute_ec_is_liquidation', string='Es liquidación de compra')
 
     @api.depends('move_type', 'l10n_latam_document_type_id')
     def _compute_ec_is_liquidation(self):
@@ -939,6 +939,7 @@ class Move(models.Model):
             self.action_post()
         data = self._gather_native_liquidation_data()
         data['numeric'] = str(secrets.randbelow(10**8)).zfill(8)
+        data['info_adicional'] = self.company_id._ec_info_adicional()
         try:
             access_key, xml_unsigned = liquidacion_engine.generate(data)
             xml_signed = xades.sign(xml_unsigned, *certificate._signing_material(), self.company_id.vat)
@@ -997,6 +998,7 @@ class Move(models.Model):
             data, engine_module = self._gather_native_data(), None
         numeric_code = str(secrets.randbelow(10**8)).zfill(8)
         data['numeric'] = numeric_code
+        data['info_adicional'] = self.company_id._ec_info_adicional()
         try:
             access_key, xml_unsigned = (engine_module.generate(data) if engine_module else generate(data))
         except ValueError as error:

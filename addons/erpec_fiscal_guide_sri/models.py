@@ -20,7 +20,7 @@ class Guide(models.Model):
     _order = 'id desc'
     _rec_name = 'sri_number'
 
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict', string='Empresa')
     point_id = fields.Many2one('erpec.fiscal.point', string='Punto de emisión', required=True, check_company=True, ondelete='restrict',
                                default=lambda self: self._default_point())
     ambiente = fields.Selection(related='point_id.ambiente', string='Ambiente')
@@ -42,7 +42,7 @@ class Guide(models.Model):
     date_end = fields.Date('Fin del traslado', required=True, default=fields.Date.context_today)
     line_ids = fields.One2many('erpec.fiscal.guide.line', 'guide_id', string='Bienes a trasladar', copy=True)
     emission_ids = fields.One2many('erpec.fiscal.emission', 'guide_id', string='Emisiones SRI', copy=False)
-    state = fields.Selection([('draft', 'Borrador'), ('emitted', 'Firmada / emitida')], compute='_compute_state', store=True)
+    state = fields.Selection([('draft', 'Borrador'), ('emitted', 'Firmada / emitida')], compute='_compute_state', store=True, string='Estado')
 
     @api.model
     def _default_point(self):
@@ -131,6 +131,7 @@ class Guide(models.Model):
         number = self.sri_number or self._next_number()
         data['number'] = number
         data['numeric'] = str(secrets.randbelow(10**8)).zfill(8)
+        data['info_adicional'] = self.company_id._ec_info_adicional()
         try:
             access_key, xml_unsigned = guiaremision_engine.generate(data)
             xml_signed = xades.sign(xml_unsigned, *certificate._signing_material(), self.company_id.vat)
@@ -149,7 +150,7 @@ class GuideLine(models.Model):
     _name = 'erpec.fiscal.guide.line'
     _description = 'Bien a trasladar en una guía de remisión'
 
-    guide_id = fields.Many2one('erpec.fiscal.guide', required=True, ondelete='cascade')
+    guide_id = fields.Many2one('erpec.fiscal.guide', required=True, ondelete='cascade', string='Guía de remisión')
     code = fields.Char('Código interno', size=25)
     description = fields.Char('Descripción', required=True)
     quantity = fields.Float('Cantidad', required=True, digits=(16, 6), default=1.0)

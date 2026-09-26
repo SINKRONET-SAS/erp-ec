@@ -19,7 +19,11 @@ class RightsChannel(http.Controller):
 
     def _values(self, **extra):
         company = self._company()
+        # DI26-D.3: quien recoge datos informa responsable, finalidad, base y conservación (LOPDP, deber de información).
         values = {'types': RIGHTS_REQUEST_TYPES, 'enabled': bool(company.ec_dp_public_responsible_id), 'rights_email': company.ec_dp_rights_email,
+                  'controller_name': company.name, 'controller_vat': company.vat, 'controller_address': ', '.join(
+                      part for part in (company.street, company.city) if part),
+                  'controller_contact': company.ec_dp_rights_email or company.email,
                   'days': RIGHTS_REQUEST_DEADLINE_DAYS, 'errors': [], 'form': {}}
         values.update(extra)
         return values

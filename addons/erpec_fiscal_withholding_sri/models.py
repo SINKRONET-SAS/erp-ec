@@ -142,6 +142,7 @@ class Withholding(models.Model):
         number = self.sri_number or self._next_sri_number()
         data['number'] = number
         data['numeric'] = str(secrets.randbelow(10**8)).zfill(8)
+        data['info_adicional'] = self.company_id._ec_info_adicional()
         try:
             access_key, xml_unsigned = retencion_engine.generate(data)
             xml_signed = xades.sign(xml_unsigned, *certificate._signing_material(), self.company_id.vat)

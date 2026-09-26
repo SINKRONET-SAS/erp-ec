@@ -1,0 +1,64 @@
+{
+  "phase": "DI26-D",
+  "status": "cerrada",
+  "fecha": "2026-09-25",
+  "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
+  "prompt": ".github/prompts/ERPEC26-DI26-D.md",
+  "ejecucion": "Fases DI26-A a DI26-F ejecutadas de forma continua en la misma sesión y el mismo árbol de trabajo, por pedido del titular del 25-09-2026 (\"ejecutar todos los prompts del plan desplegado; luego verificar ... corregir; finalmente commit y push\"). La validación integral se hizo una vez con todo el código final; por eso cada cierre cita la misma suite. Los archivos compartidos entre fases se registran en el commit de la primera fase que los tocó, ya con su estado final.",
+  "hallazgos": [
+    "DI26-04",
+    "DI26-06",
+    "DI26-15"
+  ],
+  "tareas": [
+    {
+      "task": "DI26-D.1",
+      "status": "comprobada",
+      "evidence": "append_info_adicional en los seis motores nativos antes de validar contra su XSD oficial; res.company._ec_info_adicional (campo por empresa o parámetro erpec.system_provider_vat = 1793235327001; se omite cuando la empresa es el propio proveedor); RIDE con la información adicional; 3 pruebas (tests/test_system_provider.py)."
+    },
+    {
+      "task": "DI26-D.2",
+      "status": "comprobada",
+      "evidence": "ec_marketing_email_opt_out calculado desde mail.blacklist, con inverso y búsqueda: una sola autoridad que respeta Email Marketing; post-migración 18.0.1.0.2 pasa exclusiones antiguas a la lista negra; 3 pruebas."
+    },
+    {
+      "task": "DI26-D.3",
+      "status": "comprobada",
+      "evidence": "El formulario público de derechos informa responsable (nombre, RUC, dirección, contacto), finalidad, base legal, datos pedidos y conservación; prueba test_form_informs_controller_purpose_basis_and_retention."
+    }
+  ],
+  "pendientes": [
+    "Plazo legal de DI26-06: 26-09-2026. El código queda listo; ninguna instancia emite hoy como sistema de terceros (fundador es el propio proveedor y queda exento por diseño). No se envió al SRI un comprobante con la información adicional en esta sesión.",
+    "El texto de finalidad/conservación del formulario es general; cada empresa debe alinearlo con su registro de actividades de tratamiento."
+  ],
+  "limites": [
+    "Validado contra los XSD oficiales, no contra una autorización real del SRI."
+  ],
+  "validacion": {
+    "suiteIntegrada": {
+      "comando": "scripts/test-integrated.py (todos los módulos erpec_*)",
+      "resultado": "662 pruebas, 0 fallos, 0 errores, 3 omisiones",
+      "omisiones": "TreasuryCase.test_sanitize_* requieren la demo sembrada (erpec_operational_demo); legítimas",
+      "registro": ".cache/windows/ec_integrated_test_7cfb33b865a7.log (local, no versionado)",
+      "salida": 0
+    },
+    "suiteTrasEtiquetas": {
+      "comando": "scripts/test-integrated.py erpec_payroll erpec_withholding_accounting erpec_fiscal_ats",
+      "resultado": "229 pruebas, 0 fallos, 0 errores, 0 omisiones",
+      "advertenciasEtiquetaRepetida": 0,
+      "salida": 0
+    },
+    "instancias": {
+      "actualizacion": "scripts/update-instance.py demo fundador a b --restart: todos los módulos erpec_* instalados, sin desfase de esquema en las cuatro",
+      "respaldos": [
+        ".cache/windows/backups/update-demo-20260926T003508Z",
+        ".cache/windows/backups/update-fundador-20260926T003910Z",
+        ".cache/windows/backups/update-a-20260926T003910Z",
+        ".cache/windows/backups/update-b-20260926T003910Z",
+        ".cache/windows/backups/align-demo-di26-20260926T003717Z"
+      ],
+      "segundaActualizacionEtiquetas": "demo y fundador actualizadas de nuevo tras corregir etiquetas: sin desfase"
+    },
+    "gobierno": "node scripts/verify-governance.cjs (+ --git tras el commit)"
+  }
+}
