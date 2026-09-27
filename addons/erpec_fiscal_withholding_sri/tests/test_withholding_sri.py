@@ -106,3 +106,18 @@ class WithholdingSriCase(TransactionCase):
             emission.action_process()
         self.assertEqual(emission.state, 'authorized')
         self.assertTrue(base64.b64decode(emission.ride_pdf).startswith(b'%PDF'))
+
+    def test_it26_withholding_smart_button_and_print(self):
+        self.assertEqual(self.bill.ec_withholding_count, 0)
+        retention = self._retention()
+        self.assertEqual(self.bill.ec_withholding_count, 1)
+        action = self.bill.action_view_withholdings()
+        self.assertEqual(action['res_model'], 'erpec.withholding')
+        self.assertEqual(action['res_id'], retention.id)
+        with self.assertRaisesRegex(ValidationError, 'RIDE'):
+            retention.action_print_ride()
+        emission = self.env['erpec.fiscal.emission'].browse(retention.action_sri_emit()['res_id'])
+        emission._save(state='authorized', ride_pdf=base64.b64encode(b'%PDF-test-retention'))
+        print_action = retention.action_print_ride()
+        self.assertEqual(print_action['type'], 'ir.actions.act_url')
+        self.assertIn('download=true', print_action['url'])

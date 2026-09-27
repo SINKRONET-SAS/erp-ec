@@ -1,6 +1,6 @@
 {
     'name': 'ERP EC — Facturación nativa: firma y transmisión SRI',
-    'version': '18.0.1.5.3',
+    'version': '18.0.1.5.4',
     'license': 'Other proprietary',
     'author': 'SINKRONET S.A.S.',
     'depends': ['erpec_fiscal_native', 'erpec_secrets'],

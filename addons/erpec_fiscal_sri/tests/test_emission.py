@@ -210,3 +210,18 @@ class EmissionCase(TransactionCase):
         b = etree.fromstring(base64.b64decode(emission.xml_unsigned))
         for tag in ['detalles', 'infoFactura']:
             self.assertEqual(etree.tostring(a.find(tag)), etree.tostring(b.find(tag)))
+
+    def test_it26_sri_status_and_action(self):
+        self.assertEqual(self.move.ec_sri_status, 'Sin emitir')
+        action_before = self.move.action_view_sri_emission()
+        self.assertEqual(action_before['res_model'], 'erpec.fiscal.emission')
+        self.move.action_native_emit()
+        self.assertEqual(self.move.ec_sri_status, 'Pendiente')
+        action_after = self.move.action_view_sri_emission()
+        self.assertEqual(action_after['res_model'], 'erpec.fiscal.emission')
+        self.assertEqual(action_after['view_mode'], 'form')
+        emission = self.move.ec_fiscal_emission_ids[0]
+        emission.state = 'authorized'
+        self.assertEqual(self.move.ec_sri_status, 'Autorizado')
+        emission.state = 'rejected'
+        self.assertEqual(self.move.ec_sri_status, 'Rechazado')

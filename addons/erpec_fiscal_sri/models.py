@@ -842,6 +842,38 @@ class Move(models.Model):
     ec_sri_reimbursement_ids = fields.One2many('erpec.fiscal.reimbursement', 'move_id', string='Sustentos de reembolso (SRI)', copy=False)
 
     ec_fiscal_emission_ids = fields.One2many('erpec.fiscal.emission', 'move_id', string='Emisiones nativas SRI', copy=False)
+    ec_sri_status = fields.Char(string='Estado SRI', compute='_compute_ec_sri_status')
+
+    @api.depends('ec_fiscal_emission_ids.state', 'state', 'move_type')
+    def _compute_ec_sri_status(self):
+        for move in self:
+            emission = move.ec_fiscal_emission_ids[:1]
+            if not emission:
+                move.ec_sri_status = 'Sin emitir'
+            elif emission.state == 'authorized':
+                move.ec_sri_status = 'Autorizado'
+            elif emission.state in ('rejected', 'returned', 'blocked'):
+                move.ec_sri_status = 'Rechazado'
+            else:
+                move.ec_sri_status = 'Pendiente'
+
+    def action_view_sri_emission(self):
+        self.ensure_one()
+        if self.ec_fiscal_emission_ids:
+            return {
+                'name': 'Emisión SRI',
+                'type': 'ir.actions.act_window',
+                'res_model': 'erpec.fiscal.emission',
+                'res_id': self.ec_fiscal_emission_ids[0].id,
+                'view_mode': 'form',
+            }
+        return {
+            'name': 'Emisiones SRI',
+            'type': 'ir.actions.act_window',
+            'res_model': 'erpec.fiscal.emission',
+            'view_mode': 'list,form',
+            'domain': [('move_id', '=', self.id)],
+        }
 
     def _has_native_fiscal_emissions(self):
         self.check_access('read')

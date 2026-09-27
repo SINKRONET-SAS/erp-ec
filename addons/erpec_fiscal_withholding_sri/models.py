@@ -157,6 +157,18 @@ class Withholding(models.Model):
         self.invalidate_recordset(['sri_number'])
         return {'type': 'ir.actions.act_window', 'res_model': 'erpec.fiscal.emission', 'res_id': emission.id, 'view_mode': 'form'}
 
+    def action_print_ride(self):
+        self.ensure_one()
+        emission = self.emission_ids[:1]
+        if not emission or not emission.ride_pdf:
+            raise ValidationError('No hay un RIDE disponible para esta retención. Debe estar autorizada por el SRI.')
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/erpec.fiscal.emission/%d/ride_pdf/RIDE_Retencion_%s.pdf?download=true' % (
+                emission.id, self.sri_number or self.reference),
+            'target': 'self',
+        }
+
 
 class WithholdingLine(models.Model):
     _inherit = 'erpec.withholding.line'
@@ -196,3 +208,34 @@ class Emission(models.Model):
 
     def _has_source(self):
         return super()._has_source() or bool(self.withholding_id)
+
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    ec_withholding_count = fields.Integer(string='Retenciones SRI', compute='_compute_ec_withholding_count')
+
+    @api.depends('ec_accounting_withholding_ids')
+    def _compute_ec_withholding_count(self):
+        for move in self:
+            move.ec_withholding_count = len(move.ec_accounting_withholding_ids)
+
+    def action_view_withholdings(self):
+        self.ensure_one()
+        withholdings = self.ec_accounting_withholding_ids
+        if len(withholdings) == 1:
+            return {
+                'name': 'Retención SRI',
+                'type': 'ir.actions.act_window',
+                'res_model': 'erpec.withholding',
+                'res_id': withholdings[0].id,
+                'view_mode': 'form',
+            }
+        return {
+            'name': 'Retenciones SRI',
+            'type': 'ir.actions.act_window',
+            'res_model': 'erpec.withholding',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', withholdings.ids)],
+            'context': {'default_invoice_id': self.id},
+        }

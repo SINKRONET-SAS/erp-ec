@@ -2,7 +2,7 @@
 <record id="move_ec_documents" model="ir.ui.view">
  <field name="name">account.move.erpec.documents</field><field name="model">account.move</field><field name="inherit_id" ref="account.view_move_form"/>
  <field name="arch" type="xml"><xpath expr="//notebook" position="inside">
-  <page name="erpec_documents" string="Ecuador" invisible="move_type == 'entry'" groups="account.group_account_invoice">
+  <page name="erpec_documents" string="Comprobante Electrónico (SRI)" invisible="move_type == 'entry'" groups="account.group_account_invoice">
    <div class="alert alert-warning" role="status"><field name="ec_fiscal_notice" nolabel="1"/></div>
    <group string="Relación con la operación"><field name="ec_sale_order_ids" widget="many2many_tags"/><field name="ec_purchase_order_ids" widget="many2many_tags"/><field name="reversed_entry_id" readonly="1"/></group>
    <group string="Preparación de retenciones · sin contabilizar" invisible="move_type != 'in_invoice'">
