@@ -36,16 +36,16 @@ flowchart TD
     IT26_F --> IT26_G["IT26-G: Verificación Integral, Suite y Aceptación UI/UX"]
 ```
 
-| Fase | Entrega | Depende | Hallazgos Atendidos |
-|---|---|---|---|
-| **IT26-00** | Diagnóstico, Plan Haiky, Contexto, Prompts y Despliegue de Gobierno | — | Diagnóstico general |
-| **IT26-A** | Erradicación de referencias a Enterprise, avisos de laboratorio y alertas internas en XML | IT26-00 | IT26-06, IT26-07, IT26-08, IT26-10 |
-| **IT26-B** | Unificación de la barra superior (NavBar), resolución de doble navegación y retiro de paneles estáticos | IT26-A | IT26-01 |
-| **IT26-C** | Retiro de cajas de seguimiento intrusivas en `sale.order` y `purchase.order`; restitución de botones nativos | IT26-B | IT26-02 |
-| **IT26-D** | Fusión de las 6 pestañas de `account.move` en un único flujo de facturación electrónica SRI | IT26-C | IT26-03, IT26-09 |
-| **IT26-E** | Smart buttons en `hr.employee` (roles, liquidaciones, préstamos) y limpieza de vistas de nómina | IT26-D | IT26-05 |
-| **IT26-F** | Integración de Guías de Remisión en Inventario (`stock.picking`) y reubicación de menús | IT26-E | IT26-04 |
-| **IT26-G** | Suite integrada de pruebas (>660 tests), validación de accesibilidad y sellado de cierre | IT26-F | Cierre y aceptación |
+| Fase | Entrega | Depende | Hallazgos Atendidos | Estado |
+|---|---|---|---|---|
+| **IT26-00** | Diagnóstico, Plan Haiky, Contexto, Prompts y Despliegue de Gobierno | — | Diagnóstico general | Cerrada (26-09-2026) |
+| **IT26-A** | Erradicación de referencias a Enterprise, avisos de laboratorio y alertas internas en XML | IT26-00 | IT26-06, IT26-07, IT26-08, IT26-10 | Cerrada (27-09-2026) |
+| **IT26-B** | Unificación de la barra superior (NavBar), resolución de doble navegación y retiro de paneles estáticos | IT26-A | IT26-01 | Cerrada (27-09-2026) |
+| **IT26-C** | Retiro de cajas de seguimiento intrusivas en `sale.order` y `purchase.order`; restitución de botones nativos | IT26-B | IT26-02 | Cerrada (27-09-2026) |
+| **IT26-D** | Fusión de las 6 pestañas de `account.move` en un único flujo de facturación electrónica SRI | IT26-C | IT26-03, IT26-09 | Cerrada (27-09-2026) |
+| **IT26-E** | Smart buttons en `hr.employee` (roles, liquidaciones, préstamos) y limpieza de vistas de nómina | IT26-D | IT26-05 | Cerrada (27-09-2026) |
+| **IT26-F** | Integración de Guías de Remisión en Inventario (`stock.picking`) y reubicación de menús | IT26-E | IT26-04 | Cerrada (27-09-2026) |
+| **IT26-G** | Suite integrada de pruebas (>660 tests), validación de accesibilidad y sellado de cierre | IT26-F | Cierre y aceptación | Cerrada (27-09-2026) |
 
 ---
 

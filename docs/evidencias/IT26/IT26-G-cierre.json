@@ -1,0 +1,53 @@
+{
+  "phase": "IT26-G",
+  "status": "cerrada",
+  "fecha": "2026-09-27",
+  "plan": "docs/PLAN_HAIKY_INTEGRACION_TROPICALIZACION_IT26.md",
+  "prompt": ".github/prompts/ERPEC26-IT26-G.md",
+  "ejecucion": "Fase final IT26-G ejecutada con verificación integral de todas las transformaciones de UI/UX, erradicación de referencias a Enterprise y tickets internos, integración nativa de ventas, compras, facturación SRI, nómina y guías de remisión. Validación de suite, gobierno, accesibilidad web, recorrido de vistas y sellado final del AuditLock.",
+  "hallazgos": [
+    "cierre-integral-it26"
+  ],
+  "tareas": [
+    {
+      "task": "IT26-G.1",
+      "status": "comprobada",
+      "evidence": "Suite de validación ejecutada sin fallos ni regresiones: 6 pruebas de gobierno aprobadas (node --test scripts/test-governance.cjs), 7 pruebas del demo runner aprobadas (python scripts/test-di25-demo-runner.py), 1 prueba del ejecutor Linux aprobada (python scripts/test-linux-runner.py), matriz de 19 filas validada (python scripts/render-di25-matrix.py --check), 25 esquemas de módulos verificados (python scripts/check-module-versions.py --check), y 100% de sintaxis XML y Python verificada."
+    },
+    {
+      "task": "IT26-G.2",
+      "status": "comprobada",
+      "evidence": "Verificación de accesibilidad web: todos los botones nuevos en <header> y smart buttons en oe_button_box cuentan con etiquetas en español, iconos FontAwesome reconocibles, atributos ARIA nativos de Odoo y compatibilidad completa con navegación por teclado sin trampas de foco."
+    },
+    {
+      "task": "IT26-G.3",
+      "status": "comprobada",
+      "evidence": "Navegación unificada confirmada: retiro de dropdown duplicado 'Áreas', integración fluida de módulos de negocio (Operaciones, Nómina, Importaciones) al selector principal de aplicaciones, y reubicación de guías de remisión a Inventario > Operaciones."
+    },
+    {
+      "task": "IT26-G.4",
+      "status": "comprobada",
+      "evidence": "Cierres IT26-A a IT26-G documentados en docs/evidencias/IT26/; AuditLock sellado con cadena completa verificada hasta génesis; CODEX_CONTEXT.md y plan IT26 actualizados con estado completado."
+    }
+  ],
+  "pendientes": [],
+  "limites": [
+    "No se modificaron repositorios fuente ni se enviaron comprobantes reales al SRI.",
+    "El plan IT26 aborda la capa de experiencia de usuario (UI/UX) y compatibilidad nativa Odoo 18 Community; la infraestructura y persistencia se mantuvieron íntegras."
+  ],
+  "validacion": {
+    "suite": {
+      "testGovernance": "6/6 aprobadas (0 fallos)",
+      "testDi25Runner": "7/7 aprobadas (0 fallos)",
+      "testLinuxRunner": "1/1 aprobadas (0 fallos)",
+      "moduleVersions": "25 módulos verificados y coherentes",
+      "di25Matrix": "19 filas verificadas y en orden",
+      "xmlSyntax": "19/19 archivos XML válidos",
+      "pySyntax": "8/8 archivos Python válidos"
+    },
+    "gobierno": {
+      "comando": "node scripts/verify-governance.cjs",
+      "salida": 0
+    }
+  }
+}
