@@ -28,20 +28,20 @@
   "version": "18.0.1.0.0"
  },
  "erpec_fiscal_guide_sri": {
-  "schema": "56c4da20d15e0dd14504404c25d09afa942c015103399db387f10b75b3701659",
-  "version": "18.0.1.1.0"
+  "schema": "8fe45cba2025ee4c9fb90b4690c23f1382077ce46522ddb893f732414c4a4630",
+  "version": "18.0.1.1.1"
  },
  "erpec_fiscal_native": {
   "schema": "18febb3a6a29f9b6d0193d24c7551ba6b0178fa32f322bbe1f3845750965573c",
   "version": "18.0.1.4.2"
  },
  "erpec_fiscal_sri": {
-  "schema": "3b23c4bd678c438ffdd34de85ae457131d440de5e9de3b811a020cdddec10965",
-  "version": "18.0.1.5.3"
+  "schema": "69e0e7487e082537027fadb72e2e666fcd8f5ac2196630c558e42f935d7d9dfc",
+  "version": "18.0.1.5.4"
  },
  "erpec_fiscal_withholding_sri": {
-  "schema": "4451a3243b88b0db0c8234335ba19e55a40408b2e6538cf668d64974cf781127",
-  "version": "18.0.1.1.0"
+  "schema": "522de7cfd84cdfff88449f81732ce1271a2464cd5b6b3e6d532c7292d5945332",
+  "version": "18.0.1.1.1"
  },
  "erpec_imports": {
   "schema": "cf3d590448254f032392c63b126cd9abb9ac552b9d80381da101fd913cd65b1f",
@@ -60,8 +60,8 @@
   "version": "18.0.1.1.1"
  },
  "erpec_payroll": {
-  "schema": "18268c6d5f322d51ec844ab8ef3fa2ae41f5884f516bba657f1048a7990d6f3e",
-  "version": "18.0.1.14.15"
+  "schema": "ce43f8c741e517451bcdb1fb8b55e294a75789de45a2059367bde1b6a9c2e3e4",
+  "version": "18.0.1.14.16"
  },
  "erpec_provision": {
   "schema": "733dc3de173ed17d7f5be828c3a99bda3f6d27368d304497c56f1a3471ba8864",

@@ -166,6 +166,31 @@ class Picking(models.Model):
     _inherit = 'stock.picking'
 
     ec_guide_ids = fields.One2many('erpec.fiscal.guide', 'picking_id', string='Guías de remisión SRI', copy=False)
+    ec_guide_count = fields.Integer(string='Guías de remisión', compute='_compute_ec_guide_count')
+
+    @api.depends('ec_guide_ids')
+    def _compute_ec_guide_count(self):
+        for picking in self:
+            picking.ec_guide_count = len(picking.ec_guide_ids)
+
+    def action_view_sri_guides(self):
+        self.ensure_one()
+        if len(self.ec_guide_ids) == 1:
+            return {
+                'name': 'Guía de remisión SRI',
+                'type': 'ir.actions.act_window',
+                'res_model': 'erpec.fiscal.guide',
+                'res_id': self.ec_guide_ids[0].id,
+                'view_mode': 'form',
+            }
+        return {
+            'name': 'Guías de remisión SRI',
+            'type': 'ir.actions.act_window',
+            'res_model': 'erpec.fiscal.guide',
+            'view_mode': 'list,form',
+            'domain': [('picking_id', '=', self.id)],
+            'context': {'default_picking_id': self.id},
+        }
 
     def action_create_sri_guide(self):
         self.ensure_one()

@@ -79,12 +79,17 @@ class GuideSriCase(TransactionCase):
             'location_id': picking_type.default_location_src_id.id, 'location_dest_id': picking_type.default_location_dest_id.id,
             'move_ids': [(0, 0, {'name': 'Producto guía', 'product_id': product.id, 'product_uom_qty': 4, 'product_uom': product.uom_id.id,
                                  'location_id': picking_type.default_location_src_id.id, 'location_dest_id': picking_type.default_location_dest_id.id})]})
+        self.assertEqual(picking.ec_guide_count, 0)
         result = picking.action_create_sri_guide()
         guide = self.env['erpec.fiscal.guide'].browse(result['res_id'])
         self.assertEqual(guide.picking_id, picking)
         self.assertEqual(guide.line_ids.mapped('quantity'), [4.0])
         self.assertEqual(guide.line_ids.code, 'PG1')
         self.assertEqual(picking.action_create_sri_guide()['res_id'], guide.id)
+        self.assertEqual(picking.ec_guide_count, 1)
+        action_view = picking.action_view_sri_guides()
+        self.assertEqual(action_view['res_model'], 'erpec.fiscal.guide')
+        self.assertEqual(action_view['res_id'], guide.id)
 
     def test_full_flow_builds_guide_ride(self):
         guide = self._guide()
