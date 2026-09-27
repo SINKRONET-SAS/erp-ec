@@ -4,17 +4,8 @@
     <field name="inherit_id" ref="sale.view_order_form"/>
     <field name="arch" type="xml">
       <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
-        <div class="border rounded p-3 my-3">
-          <h2>Seguimiento de la venta</h2>
-          <field name="erpec_sale_guide" nolabel="1" class="d-block mb-2"/>
-          <div class="d-flex flex-wrap gap-2">
-            <button name="action_confirm" type="object" string="Confirmar pedido" class="btn btn-primary erpec_confirm_order"
-              context="{'validate_analytic': True}" groups="sales_team.group_sale_salesman" invisible="state not in ('draft', 'sent')"/>
-
-            <button name="action_view_delivery" type="object" string="Entregas" class="btn btn-outline-primary" groups="stock.group_stock_user" invisible="delivery_count == 0"/>
-            <button name="%(sale.action_view_sale_advance_payment_inv)d" type="action" string="Preparar factura / abono" class="btn btn-outline-primary" groups="account.group_account_invoice" invisible="invoice_status != 'to invoice'"/>
-            <button name="action_view_invoice" type="object" string="Facturas y abonos" class="btn btn-outline-primary" groups="account.group_account_invoice" invisible="invoice_count == 0"/>
-          </div>
+        <div class="alert alert-info py-2 px-3 mb-2" role="status" invisible="not erpec_sale_guide">
+          <field name="erpec_sale_guide" nolabel="1"/>
         </div>
       </xpath>
       <xpath expr="//header/button[@id='create_invoice_percentage']" position="attributes"><attribute name="string">Preparar anticipo</attribute></xpath>
