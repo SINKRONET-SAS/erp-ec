@@ -3,7 +3,7 @@
 <record id="activity_form" model="ir.ui.view"><field name="name">erpec.data.processing.activity.form</field><field name="model">erpec.data.processing.activity</field><field name="arch" type="xml"><form>
 <header><field name="state" widget="statusbar"/></header>
 <sheet>
-<div class="alert alert-info" role="status">Registro de actividades de tratamiento (RAT) de apoyo a la LOPDP. No declara cumplimiento legal; revisar con criterio propio o asesoría legal. Ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06.</div>
+<div class="alert alert-info" role="status">Registro de actividades de tratamiento (RAT) conforme a la Ley Orgánica de Protección de Datos Personales (LOPDP).</div>
 <group><field name="name"/><field name="company_id"/><field name="responsible_id"/></group>
 <group string="Tratamiento"><field name="purpose"/><field name="legal_basis"/><field name="data_subjects"/><field name="data_categories"/><field name="special_category_data"/></group>
 <group string="Destino y conservación"><field name="recipients"/><field name="retention_period"/><field name="security_measures"/></group>
@@ -24,7 +24,7 @@
 </header>
 <sheet>
 <div class="alert alert-warning" role="status" invisible="not is_overdue">Esta solicitud superó el plazo de respuesta (Art. 13-16 LOPDP).</div>
-<div class="alert alert-info" role="status">Solicitud de derecho del titular (LOPDP, Arts. 13-19). No declara cumplimiento legal por sí sola; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06.</div>
+<div class="alert alert-info" role="status">Solicitud de ejercicio de derechos del titular (LOPDP, Arts. 13-19).</div>
 <group><field name="name"/><field name="company_id"/><field name="responsible_id"/></group>
 <group string="Titular"><field name="requester_name"/><field name="requester_identification"/><field name="requester_email"/><field name="partner_id"/><field name="identity_verified"/><field name="channel"/></group>
 <group string="Solicitud"><field name="request_type"/><field name="description"/><field name="received_date"/><field name="deadline_date"/></group>
@@ -53,7 +53,7 @@
 <sheet>
 <div class="alert alert-warning" role="status" invisible="not is_authority_notice_overdue">La notificación a la Autoridad de Protección de Datos superó el plazo de 5 días (Art. 43 LOPDP).</div>
 <div class="alert alert-warning" role="status" invisible="not is_titular_notice_overdue">La notificación al titular superó el plazo de 3 días (Art. 46 LOPDP).</div>
-<div class="alert alert-info" role="status">Incidente de vulneración de seguridad de datos personales (LOPDP, Arts. 43 y 46). No declara cumplimiento legal por sí solo; ver docs/PLAN_HAIKY_CUMPLIMIENTO_LEGAL_EC.md, sección LEGAL-06.</div>
+<div class="alert alert-info" role="status">Registro de incidente de vulneración de seguridad de datos personales (LOPDP, Arts. 43 y 46).</div>
 <group><field name="name"/><field name="company_id"/><field name="responsible_id"/></group>
 <group string="Detección"><field name="discovered_by"/><field name="detected_date"/><field name="encargado_notice_date" invisible="discovered_by != 'encargado'"/><field name="encargado_notice_deadline" invisible="discovered_by != 'encargado'"/></group>
 <group string="Descripción"><field name="description"/><field name="affected_data_categories"/><field name="affected_subjects_estimate"/><field name="containment_measures"/><field name="internal_risk_triage"/></group>

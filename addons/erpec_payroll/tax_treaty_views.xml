@@ -13,7 +13,7 @@
 <record id="tax_treaty_form" model="ir.ui.view">
   <field name="name">erpec.payroll.tax.treaty.form</field><field name="model">erpec.payroll.tax.treaty</field>
   <field name="arch" type="xml"><form><sheet>
-    <div class="alert alert-warning" role="status">Caso 11 (DI25-03): no hay una regla genérica de convenios. Registre aquí, con su fuente exacta, el mecanismo que corresponda al país de residencia del empleado; sin un convenio registrado, el cierre sigue bloqueado.</div>
+    <div class="alert alert-warning" role="status">Convenios para evitar la doble imposición: registre el mecanismo legal aplicable según el país de residencia fiscal del colaborador.</div>
     <group>
       <field name="company_id" groups="base.group_multi_company"/>
       <field name="country_code"/><field name="country_name"/>
