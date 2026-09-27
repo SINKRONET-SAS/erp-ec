@@ -1,0 +1,89 @@
+{
+  "diagnostico": "IT26",
+  "fecha": "2026-09-26",
+  "total": 10,
+  "p1": 7,
+  "p2": 3,
+  "hallazgos": [
+    {
+      "id": "IT26-01",
+      "prioridad": "P1",
+      "tema": "Navegación / UI Shell",
+      "titulo": "Doble navegación en navbar superior (Áreas vs AppsMenu) y paneles estáticos intermedios con botones redundantes",
+      "evidencia": "erpec_workspace/static/src/product_shell.xml monta botón ERP EC y dropdown Áreas junto al menú de 9 puntos; erpec_operations y erpec_withholding_accounting ofrecen paneles estáticos de botones en lugar de integrarse a menús nativos.",
+      "faseSugerida": "IT26-B"
+    },
+    {
+      "id": "IT26-02",
+      "prioridad": "P1",
+      "tema": "Ventas y Compras / UI Mutilada",
+      "titulo": "Cajas de seguimiento duplicadas y una variante del botón de facturación de compras oculta",
+      "evidencia": "sale_views.xml añade acciones en un bloque de seguimiento sin ocultar action_confirm. purchase_views.xml duplica acciones y oculta la variante sin clase de action_create_invoice del header.",
+      "faseSugerida": "IT26-C"
+    },
+    {
+      "id": "IT26-03",
+      "prioridad": "P1",
+      "tema": "Facturación SRI / Hiper-fragmentación",
+      "titulo": "Hiper-fragmentación en la factura (account.move) con 6 pestañas en pugna para procesos fiscales y SRI",
+      "evidencia": "Seis pestañas dispersas en notebook: Facturador — Pruebas, Facturación local, Firma y transmisión SRI, Retenciones del plan, Ecuador, Retenciones con efecto contable.",
+      "faseSugerida": "IT26-D"
+    },
+    {
+      "id": "IT26-04",
+      "prioridad": "P2",
+      "tema": "Inventario / Desconexión Logística",
+      "titulo": "Guías vinculadas a stock.picking con menú fuera de Inventario y sin smart button",
+      "evidencia": "addons/erpec_fiscal_guide_sri/views.xml sitúa el menú bajo fiscal_root y ya incorpora picking_guide_button en stock.picking. models.py contiene picking_id, ec_guide_ids y action_create_sri_guide (crea o abre la guía existente). Falta mejorar navegación, no crear de nuevo la integración.",
+      "faseSugerida": "IT26-F"
+    },
+    {
+      "id": "IT26-05",
+      "prioridad": "P2",
+      "tema": "Nómina / Desarticulación con Empleados",
+      "titulo": "Ficha de empleado (hr.employee) sin smart buttons hacia roles, décimos ni préstamos; pestaña RDEP saturada de alertas",
+      "evidencia": "addons/erpec_payroll/views.xml y addons/hr/ carecen de conexión orgánica mediante smart buttons; pestaña Anexo RDEP usa alertas en texto plano.",
+      "faseSugerida": "IT26-E"
+    },
+    {
+      "id": "IT26-06",
+      "prioridad": "P1",
+      "tema": "Comercial / Referencias a Enterprise",
+      "titulo": "Mención explícita y descalificativa a Enterprise en vistas de usuario",
+      "evidencia": "addons/erpec_operations/views.xml (Línea 19): '<p>La emisión electrónica sigue pendiente de integración. Las funciones de Enterprise no forman parte de este producto.</p>'.",
+      "faseSugerida": "IT26-A"
+    },
+    {
+      "id": "IT26-07",
+      "prioridad": "P1",
+      "tema": "Comercial / Terminología de Licencias en UI",
+      "titulo": "Filtración de términos 'Community' y limitaciones técnicas en títulos de vistas y acciones de usuario",
+      "evidencia": "Títulos y acciones de menú etiquetados como 'Operación Community' o 'Aplicaciones ERP EC · Community' en lugar de la marca comercial ERP EC.",
+      "faseSugerida": "IT26-A"
+    },
+    {
+      "id": "IT26-08",
+      "prioridad": "P1",
+      "tema": "UI/UX / Alertas de Laboratorio",
+      "titulo": "Invasión de alertas de desarrollo interno (tickets, referencias a docs/ y migraciones pendientes) en formularios de negocio",
+      "evidencia": "addons/erpec_payroll/views.xml (Líneas 18, 21, 23, 25, 35, 46, 50) con alertas citando 'Caso 8 (DI25-03)', 'Ver docs/ALCANCE_ATS_RDEP.md', 'migración desde SKNOMINA sigue pendiente'.",
+      "faseSugerida": "IT26-A"
+    },
+    {
+      "id": "IT26-09",
+      "prioridad": "P2",
+      "tema": "Retenciones / Triplicación",
+      "titulo": "Coexistencia de tres estructuras de retención (ec_withholding_ids, erpec_retention_ids, ec_accounting_withholding_ids)",
+      "evidencia": "Modelos y pestañas paralelas para retenciones preliminares, de plan y contables con SRI.",
+      "faseSugerida": "IT26-D"
+    },
+    {
+      "id": "IT26-10",
+      "prioridad": "P1",
+      "tema": "Fiscal / Hardcoded Test Environment",
+      "titulo": "Texto fijo '(ambiente PRUEBAS)' en confirmación de emisión de retenciones SRI",
+      "evidencia": "addons/erpec_fiscal_withholding_sri/views.xml: confirm='Se firmará la retención con el certificado de la empresa y se transmitirá al SRI (ambiente PRUEBAS).'",
+      "faseSugerida": "IT26-A"
+    }
+  ]
+}

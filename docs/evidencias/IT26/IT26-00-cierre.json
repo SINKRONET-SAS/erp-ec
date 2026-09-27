@@ -1,0 +1,79 @@
+{
+  "phase": "IT26-00",
+  "status": "cerrada",
+  "fecha": "2026-09-26",
+  "plan": "docs/PLAN_HAIKY_INTEGRACION_TROPICALIZACION_IT26.md",
+  "prompt": ".github/prompts/ERPEC26-IT26-00.md",
+  "ejecucion": "Fase IT26-00 ejecutada por solicitud del titular del 26-09-2026. Se realizó el diagnóstico integral de la interfaz de tropicalización frente a Odoo nativo, identificando 10 hallazgos (7 P1 y 3 P2), con foco en la erradicación de referencias a Odoo Enterprise, unificación de navegación superior, retiro de cajas de seguimiento invasivas en ventas y compras, consolidación de la factura en una sola pestaña SRI y vinculación nativa de nómina y guías de remisión.",
+  "hallazgos": [
+    "IT26-01",
+    "IT26-02",
+    "IT26-03",
+    "IT26-04",
+    "IT26-05",
+    "IT26-06",
+    "IT26-07",
+    "IT26-08",
+    "IT26-09",
+    "IT26-10"
+  ],
+  "tareas": [
+    {
+      "task": "IT26-00.1",
+      "status": "comprobada",
+      "evidence": "Diagnóstico técnico publicado en docs/DIAGNOSTICO_INTEGRACION_TROPICALIZACION_IT26.md y registro estructurado en docs/evidencias/IT26/hallazgos.json con 10 hallazgos detallados."
+    },
+    {
+      "task": "IT26-00.2",
+      "status": "comprobada",
+      "evidence": "Plan Haiky IT26 publicado en docs/PLAN_HAIKY_INTEGRACION_TROPICALIZACION_IT26.md, prompts .github/prompts/ERPEC26-IT26-00.md a ERPEC26-IT26-G.md creados, .github/CODEX_CONTEXT.md actualizado y .vscode/AuditLock.json sellado y verificado con node scripts/verify-governance.cjs."
+    }
+  ],
+  "pendientes": [],
+  "limites": [
+    "La ejecución funcional de las fases IT26-A a IT26-G requerirá la invocación de cada prompt correspondiente respetando el orden estricto de dependencias.",
+    "Revisión previa a publicación 27-09-2026: diagnóstico basado en código; no es aceptación visual ni cumplimiento legal. Corregidos IT26-02 (ventas no oculta action_confirm) e IT26-04 (ya existe integración con stock.picking). Las fases A-G siguen sin ejecutarse."
+  ],
+  "validacion": {
+    "gobierno": {
+      "comando": "node scripts/verify-governance.cjs",
+      "resultado": "Gobierno válido con cadena verificada hasta génesis y codificación UTF-8 sin BOM comprobada.",
+      "salida": 0
+    },
+    "revisionPrePublicacion": {
+      "fecha": "2026-09-27",
+      "alcance": "Solo documentos, prompts y gobierno. Sin cambios en addons, scripts de ejecución ni despliegue.",
+      "comprobaciones": [
+        {
+          "comando": "node --test scripts/test-governance.cjs",
+          "pruebas": 6,
+          "fallos": 0,
+          "salida": 0
+        },
+        {
+          "comando": "python scripts/test-di25-demo-runner.py",
+          "pruebas": 7,
+          "fallos": 0,
+          "salida": 0
+        },
+        {
+          "comando": "python scripts/test-linux-runner.py",
+          "pruebas": 1,
+          "fallos": 0,
+          "salida": 0
+        },
+        {
+          "comando": "python scripts/render-di25-matrix.py --check",
+          "filas": 19,
+          "salida": 0
+        },
+        {
+          "comando": "python scripts/check-module-versions.py --check",
+          "modulos": 25,
+          "salida": 0
+        }
+      ],
+      "limite": "No se ejecutó una nueva suite funcional local: no hay cambios ejecutables. El CI posterior al push validará el commit publicado."
+    }
+  }
+}

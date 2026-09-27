@@ -1,4 +1,12 @@
-# Estado vigente: pronunciamiento observado y controles automáticos
+# Estado vigente: Diagnóstico Integral IT26 y Plan Haiky IT26 desplegados (26-09-2026)
+
+Diagnóstico Integral de Integración de la Tropicalización a Ecuador (26-09-2026, a instancia del titular; alcance: integración UI/UX con Odoo nativo, erradicación de referencias a Odoo Enterprise, desparasitación de alertas de laboratorio, consolidación de la factura en SRI, normalización de ventas/compras y vinculación orgánica de nómina y guías de remisión): 10 hallazgos (7 P1, 3 P2); ver docs/DIAGNOSTICO_INTEGRACION_TROPICALIZACION_IT26.md y docs/evidencias/IT26/hallazgos.json. P1: mención explícita y descalificativa a Enterprise en vistas de usuario (erpec_operations/views.xml:19); doble navegación en navbar superior (Áreas vs AppsMenu) y paneles estáticos intermedios con botones redundantes; cajas de seguimiento duplicadas en ventas/compras y una variante del botón nativo de facturación oculta en compras; hiper-fragmentación en account.move con 6 pestañas en pugna para procesos fiscales; alertas de desarrollo interno invadiendo formularios de negocio (erpec_payroll/views.xml); filtración de términos de licencia en UI; texto fijo "(ambiente PRUEBAS)" en retenciones SRI. P2: guías ya vinculadas a inventario, con navegación por mejorar; nómina y ficha de empleados desarticuladas; triplicación del modelo de retenciones.
+
+Plan Haiky IT26 desplegado (26-09-2026, orden del titular: desplegar diagnóstico integral, Plan Haiky, CODEX_CONTEXT, AuditLock y prompts por fases según RULES.md): docs/PLAN_HAIKY_INTEGRACION_TROPICALIZACION_IT26.md; prompts .github/prompts/ERPEC26-IT26-00.md a ERPEC26-IT26-G.md; orden secuencial estricto 00 → A → B → C → D → E → F → G; estado y avance registrados en el bloque integrationTropicalizationIT26 del AuditLock. Fase IT26-00 cerrada con evidencia en docs/evidencias/IT26/IT26-00-cierre.json. Sellado de gobierno con scripts/seal-auditlock.cjs y comprobación con node scripts/verify-governance.cjs. Esta sección prevalece sobre los estados históricos siguientes.
+
+---
+
+# Estado histórico: pronunciamiento observado y controles automáticos
 
 El pronunciamiento técnico recibido devuelve DI25-03 para corrección; no existe homologación. Ver [DI25-03_CONTROLES_AUTOMATICOS.md](../docs/DI25-03_CONTROLES_AUTOMATICOS.md) para las correcciones, bloqueos ejecutables y límites. La autenticidad de certificados, la importación versionada de otro empleador, la reliquidación mensual acumulada y la conciliación anual completa permanecen pendientes. Sustitutos y 100 canastas no se habilitan en nómina mediante una referencia aislada; los ensayos sintéticos siguen disponibles. Esta sección prevalece sobre los estados históricos siguientes.
 
