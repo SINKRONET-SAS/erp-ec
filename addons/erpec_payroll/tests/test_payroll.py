@@ -189,3 +189,15 @@ class PayrollCase(TransactionCase):
         self.assertAlmostEqual(galapagos['salary'], baseline['salary']*1.803, places=2)
         explicit_zero = calculate({'start_date': '2025-01-01', 'wage': 4000, 'personal_expenses': 6500, 'dependents_count': 0, 'galapagos': 'NO'}, official, 2026, 9)
         self.assertEqual(explicit_zero['tax'], baseline['tax'])
+
+    def test_it26_employee_smart_buttons(self):
+        self.assertEqual(self.employee.ec_payroll_line_count, 0)
+        self.assertEqual(self.employee.ec_benefit_summary_count, 0)
+        self.assertEqual(self.employee.ec_advance_count, 0)
+        lines_action = self.employee.action_view_payroll_lines()
+        self.assertEqual(lines_action['res_model'], 'erpec.payroll.line')
+        self.assertEqual(lines_action['domain'], [('employee_id', '=', self.employee.id)])
+        benefits_action = self.employee.action_view_benefits()
+        self.assertEqual(benefits_action['res_model'], 'erpec.payroll.benefit.summary.line')
+        advances_action = self.employee.action_view_advances()
+        self.assertEqual(advances_action['res_model'], 'erpec.payroll.advance')

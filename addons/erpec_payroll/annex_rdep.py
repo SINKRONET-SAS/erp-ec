@@ -160,6 +160,56 @@ class Company(models.Model):
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
+
+    ec_payroll_line_count = fields.Integer(string='Roles de Pago', compute='_compute_payroll_counts')
+    ec_benefit_summary_count = fields.Integer(string='Décimos y Beneficios', compute='_compute_payroll_counts')
+    ec_advance_count = fields.Integer(string='Anticipos / Préstamos', compute='_compute_payroll_counts')
+
+    def _compute_payroll_counts(self):
+        line_data = self.env['erpec.payroll.line'].read_group([('employee_id', 'in', self.ids)], ['employee_id'], ['employee_id'])
+        line_map = {d['employee_id'][0]: d['employee_id_count'] for d in line_data}
+        benefit_data = self.env['erpec.payroll.benefit.summary.line'].read_group([('employee_id', 'in', self.ids)], ['employee_id'], ['employee_id'])
+        benefit_map = {d['employee_id'][0]: d['employee_id_count'] for d in benefit_data}
+        advance_data = self.env['erpec.payroll.advance'].read_group([('employee_id', 'in', self.ids)], ['employee_id'], ['employee_id'])
+        advance_map = {d['employee_id'][0]: d['employee_id_count'] for d in advance_data}
+        for emp in self:
+            emp.ec_payroll_line_count = line_map.get(emp.id, 0)
+            emp.ec_benefit_summary_count = benefit_map.get(emp.id, 0)
+            emp.ec_advance_count = advance_map.get(emp.id, 0)
+
+    def action_view_payroll_lines(self):
+        self.ensure_one()
+        return {
+            'name': 'Roles de Pago',
+            'type': 'ir.actions.act_window',
+            'res_model': 'erpec.payroll.line',
+            'view_mode': 'list,form',
+            'domain': [('employee_id', '=', self.id)],
+            'context': {'default_employee_id': self.id},
+        }
+
+    def action_view_benefits(self):
+        self.ensure_one()
+        return {
+            'name': 'Décimos y Beneficios',
+            'type': 'ir.actions.act_window',
+            'res_model': 'erpec.payroll.benefit.summary.line',
+            'view_mode': 'list',
+            'domain': [('employee_id', '=', self.id)],
+            'context': {'default_employee_id': self.id},
+        }
+
+    def action_view_advances(self):
+        self.ensure_one()
+        return {
+            'name': 'Anticipos y Préstamos',
+            'type': 'ir.actions.act_window',
+            'res_model': 'erpec.payroll.advance',
+            'view_mode': 'list,form',
+            'domain': [('employee_id', '=', self.id)],
+            'context': {'default_employee_id': self.id},
+        }
+
     ec_rdep_disability_type = fields.Selection(
         DISABILITY_TYPES, string='Discapacidad (RDEP)',
         help='Campo discapTyp; códigos y descripciones tomados de la hoja TABLAS del catálogo RDEP vigente '
