@@ -6,21 +6,6 @@
     <xpath expr="//t[@t-call='web.NavBar.SectionsMenu']" position="attributes"><attribute name="t-if">currentAppSections.length and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
     <xpath expr="//t[@t-call='web.NavBar.AppsMenu']" position="before">
       <button t-if="erpecHomeMenu" class="erpec_brand" title="Volver al inicio de ERP EC" aria-label="ERP EC · Inicio" t-on-click="erpecOpenHome"><strong>ERP EC</strong><span>SINKRONET</span></button>
-      <Dropdown t-if="erpecSections.length" menuClass="'erpec_areas_menu'">
-        <button class="erpec_areas">Áreas <i class="fa fa-angle-down ms-1" aria-hidden="true"/></button>
-        <t t-set-slot="content">
-          <t t-foreach="erpecSections" t-as="section" t-key="section.id">
-            <DropdownItem t-if="!section.childrenTree.length" onSelected="() => this.onNavBarDropdownItemSelection(section)"
-              attrs="{ href: getMenuItemHref(section), 'data-menu-xmlid': section.xmlid }"><t t-esc="section.name"/></DropdownItem>
-            <Dropdown t-else="" menuClass="'erpec_areas_menu'">
-              <button class="erpec_area_group"><t t-esc="section.name"/></button>
-              <t t-set-slot="content"><t t-call="web.NavBar.SectionsMenu.Dropdown.MenuSlot">
-                <t t-set="items" t-value="section.childrenTree"/><t t-set="decalage" t-value="16"/>
-              </t></t>
-            </Dropdown>
-          </t>
-        </t>
-      </Dropdown>
     </xpath>
   </t>
   <t t-name="erpec_workspace.AccessibleAppsMenu" t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension">

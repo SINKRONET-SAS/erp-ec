@@ -5,7 +5,7 @@
       <form create="false" edit="false" delete="false" duplicate="false" class="erpec_home">
         <sheet>
           <div class="erpec_home_intro"><span class="erpec_eyebrow">ERP EC · Gestión empresarial</span><h1>Tu espacio de trabajo</h1>
-          <p class="text-muted">Continúa con las tareas de tu equipo. Usa Áreas para cambiar de proceso en cualquier momento.</p></div>
+          <p class="text-muted">Continúa con las tareas de tu equipo. Usa el menú de aplicaciones para cambiar de proceso en cualquier momento.</p></div>
           <group><field name="company_id" readonly="1" options="{'no_open': True}"/></group>
           <div class="row g-3 mb-4">
             <div class="col-12 col-sm-6" groups="sales_team.group_sale_salesman,account.group_account_invoice"><div class="border rounded p-3 h-100">
@@ -48,13 +48,13 @@
   </record>
   <record id="home_window" model="ir.actions.act_window"><field name="name">Inicio · ERP EC</field><field name="res_model">erpec.workspace</field><field name="view_mode">form</field><field name="view_id" ref="home_form"/></record>
   <record id="home_action" model="ir.actions.server"><field name="name">Inicio · ERP EC</field><field name="model_id" ref="erpec_base.model_erpec_workspace"/><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/><field name="state">code</field><field name="code">action = model.action_home()</field></record>
-  <record id="erpec_base.suite_root" model="ir.ui.menu"><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/></record>
-  <record id="erpec_operations.operation_menu" model="ir.ui.menu"><field name="name">Inicio</field><field name="action" ref="home_action"/><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/></record>
-  <menuitem id="sales_menu" name="Ventas" parent="erpec_base.suite_root" action="sale.action_quotations" sequence="5" groups="sales_team.group_sale_salesman"/>
-  <menuitem id="purchases_menu" name="Compras" parent="erpec_base.suite_root" action="purchase.purchase_rfq" sequence="10" groups="purchase.group_purchase_user"/>
-  <menuitem id="inventory_menu" name="Inventario" parent="erpec_base.suite_root" action="stock.stock_picking_type_action" sequence="12" groups="stock.group_stock_user"/>
-  <record id="erpec_imports.import_menu" model="ir.ui.menu"><field name="parent_id" ref="erpec_base.suite_root"/><field name="sequence">13</field></record>
-  <record id="erpec_payroll.payroll_menu" model="ir.ui.menu"><field name="parent_id" ref="erpec_base.suite_root"/><field name="name">Nómina</field><field name="sequence">20</field></record>
+  <record id="erpec_base.suite_root" model="ir.ui.menu"><field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/></record>
+  <record id="erpec_operations.operation_menu" model="ir.ui.menu"><field name="name">Inicio</field><field name="parent_id" eval="False"/><field name="sequence">0</field><field name="action" ref="home_action"/><field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/></record>
+  <menuitem id="sales_menu" name="Ventas" parent="erpec_base.suite_root" action="sale.action_quotations" sequence="5" active="False"/>
+  <menuitem id="purchases_menu" name="Compras" parent="erpec_base.suite_root" action="purchase.purchase_rfq" sequence="10" active="False"/>
+  <menuitem id="inventory_menu" name="Inventario" parent="erpec_base.suite_root" action="stock.stock_picking_type_action" sequence="12" active="False"/>
+  <record id="erpec_imports.import_menu" model="ir.ui.menu"><field name="parent_id" eval="False"/><field name="sequence">15</field></record>
+  <record id="erpec_payroll.payroll_menu" model="ir.ui.menu"><field name="parent_id" eval="False"/><field name="name">Nómina</field><field name="sequence">16</field></record>
   <record id="erpec_fiscal_connector.fiscal_root" model="ir.ui.menu"><field name="parent_id" ref="erpec_base.suite_root"/><field name="name">Fiscal · Pruebas</field></record>
   <record id="erpec_fiscal_connector.fiscal_connections" model="ir.ui.menu"><field name="name">Conexión externa de pruebas</field></record>
   <record id="erpec_base.suite_status" model="ir.ui.menu"><field name="name">Estado técnico</field><field name="sequence">99</field><field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/></record>

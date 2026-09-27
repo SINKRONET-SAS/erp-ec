@@ -5,8 +5,8 @@
     <field name="arch" type="xml">
       <form create="false" delete="false">
         <sheet>
-          <h1>ERP EC · Operación Community</h1>
-          <p>Ventas, compras, inventario y facturación sobre Odoo Community.</p>
+          <h1>ERP EC · Operaciones Integradas</h1>
+          <p>Ventas, compras, inventario y facturación local para Ecuador.</p>
           <group><field name="company_id" readonly="1"/><field name="platform"/></group>
           <div class="d-flex flex-wrap gap-2 mb-4">
             <button name="action_sales" type="object" string="Ventas" class="btn-primary"/>
@@ -16,7 +16,7 @@
           </div>
           <group string="Preparación para Ecuador"><field name="company_readiness" nolabel="1"/></group>
           <div class="alert alert-warning" role="status"><field name="fiscal_scope" nolabel="1"/></div>
-          <p>La emisión electrónica sigue pendiente de integración. Las funciones de Enterprise no forman parte de este producto.</p>
+          <p>Emisión y gestión de comprobantes electrónicos autorizados por el SRI para Ecuador.</p>
         </sheet>
       </form>
     </field>
