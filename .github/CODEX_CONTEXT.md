@@ -1,3 +1,11 @@
+# Estado vigente: Plan Haiky CM28 completado, fases 00–G cerradas (28-09-2026)
+
+Catálogo y planes versionados con módulos, complementos y usuarios incluidos/adicionales mensuales/anuales; identidad de cliente separada, cobro/renovación PayPhone, derechos y cuotas en servidor, aprovisionamiento por contratación y activación personal. Landing y portal nativos; activos fijos propios integrados con contabilidad. Fundador y demo actualizados con respaldo y restauración ensayada; acceso existente verificado en 8199/8369. Tarifas comerciales sin publicar.
+
+Implementación publicada: 5b61ec16475847223e19ff9229726622ee86e656. CI verde: https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36498343655 (702 pruebas Linux sin fallos/errores y cinco trabajos aprobados). Local: 701 pruebas integradas, 50 del ajuste final y 25 sobre copia sembrada. Evidencias: docs/evidencias/CM28/CM28-F-cierre.json, CM28-G-cierre.json y ci.json. Sin cobros reales, envíos fiscales/correo, producción ni modificaciones en repositorios fuente. Continúan los límites y pendientes históricos ajenos a CM28.
+
+---
+
 # Estado vigente: CM28-F cerrada; CM28-G habilitada (28-09-2026)
 
 Regresión integral: 701 pruebas sin fallos/errores; tres omisiones cubiertas en copia de demo (25 pruebas, cero omisiones). Último ajuste de combinaciones: 50 pruebas aprobadas. Fundador, demo, a y b actualizados con respaldo completo y desfase cero; restauración ensayada antes y credenciales originales verificadas. Landing y activos disponibles en fundador 8199 y demo 8369. Tarifas reales sin publicar. Evidencia: docs/evidencias/CM28/CM28-F-cierre.json. Continúa G para commit/push y CI autorizado; aún no se declara publicación ni CI aprobado.

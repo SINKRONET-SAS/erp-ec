@@ -36,3 +36,7 @@ Archivar bytes anteriores del AuditLock y sellar con scripts/seal-auditlock.cjs;
 ## Interfaces
 
 Conservar rutas de autoservicio y PayPhone. Extender contratos con cliente y detalle comercial; ampliar mensajes del trabajador con cliente, revisión, capacidades y cuotas. Versionar cambios y preservar clientes previos mediante migración explícita. Reutilizar account.move para activos, sin motor contable paralelo. Información de alta y derechos siempre derivada del contrato/pago/instancia autoritativos.
+
+## Resultado ejecutado — 28-09-2026
+
+Fases CM28-00 a CM28-G completadas en orden y selladas. La respuesta a cada hallazgo está al final del diagnóstico; los cierres y evidencias se conservan en docs/evidencias/CM28. Fundador y demo actualizados tras restauración ensayada. Implementación publicada en 5b61ec16475847223e19ff9229726622ee86e656; cinco trabajos de CI aprobados, con 702 pruebas integradas en Linux sin fallos/errores. Las tarifas reales permanecen sin publicar y no se realizaron pagos, envíos fiscales, correos reales ni despliegue de producción.

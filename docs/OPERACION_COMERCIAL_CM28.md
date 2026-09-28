@@ -25,3 +25,5 @@ Cada actualización escribe `docs/evidencias/CM28/update-<instancia>.json`, que 
 Los precios comerciales permanecen sin publicar. El fundador debe configurar tarifas base, usuarios incluidos, usuarios adicionales mensuales/anuales, complementos e impuestos revisados antes de publicar la oferta. Sin oferta publicada, la portada informa disponibilidad pendiente y no inicia cobros.
 
 Fabricación requiere Inventario contratado (incluido en el plan o seleccionado como complemento). El servidor rechaza una combinación incompleta antes de crear el pago; el trabajador vuelve a comprobarla. Las dependencias técnicas instaladas no conceden derechos comerciales por sí solas.
+
+El menú Aplicaciones es el inventario técnico de Odoo y puede mostrar promociones de módulos externos. Para comercializar ERP EC utiliza ERP EC → Planes y versiones; el cliente elige desde /autoservicio y administra su contratación en /mi-servicio.

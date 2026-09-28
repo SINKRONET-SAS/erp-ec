@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-09-28T23:41:30.483Z",
+  "updatedAt": "2026-09-28T23:28:34.085Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -287,7 +287,6 @@
     "docs/evidencias/AuditLock.before-CM28-D-20260928T181654Z.json",
     "docs/evidencias/AuditLock.before-CM28-E-20260928T185222Z.json",
     "docs/evidencias/AuditLock.before-CM28-F-20260928T232725Z.json",
-    "docs/evidencias/AuditLock.before-CM28-G-20260928T234130Z.json",
     "docs/evidencias/AuditLock.before-CM28-G-PREP-20260928T232834Z.json",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json",
     "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json",
@@ -380,10 +379,8 @@
     "docs/evidencias/CM28/CM28-D-cierre.json",
     "docs/evidencias/CM28/CM28-E-cierre.json",
     "docs/evidencias/CM28/CM28-F-cierre.json",
-    "docs/evidencias/CM28/CM28-G-cierre.json",
     "docs/evidencias/CM28/CRITERIO_TRIBUTARIO.md",
     "docs/evidencias/CM28/MIGRACION_IDENTIDAD.md",
-    "docs/evidencias/CM28/ci.json",
     "docs/evidencias/CM28/hallazgos.json",
     "docs/evidencias/CM28/local-verification.json",
     "docs/evidencias/CM28/regression.json",
@@ -602,10 +599,7 @@
     "Restauración ensayada, actualización local respaldada y cuatro instancias sin desfase",
     "Acceso y pantallas de fundador/demo verificados; asientos preservados",
     "CM28-G: evidencias normalizadas a LF para que los hashes coincidan en Windows y Linux",
-    "Regresión funcional cerrada en F; publicación y CI aún pendientes",
-    "CM28-G: implementación publicada en 5b61ec1; cinco trabajos CI aprobados",
-    "Suite Linux: 702 pruebas, cero fallos y errores; perfiles cliente/controlador verificados",
-    "Diagnóstico respondido, evidencias y contexto preservados; alcance y límites explícitos"
+    "Regresión funcional cerrada en F; publicación y CI aún pendientes"
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -633,7 +627,7 @@
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "d11534a80358201c34d9da8e1826312df0e40e0cf0924e9a8e8ff469d72a2df3",
+    ".github/CODEX_CONTEXT.md": "fc9e8bf10546315bd50ecd165dbed9939fbd2b63f479027a3ed8b676341f4025",
     ".github/prompts/ERPEC26-CM28-00.md": "22026ef94ee92d6cbd3306513c1f86f517862838a658a69b6d9a873dfb6535eb",
     ".github/prompts/ERPEC26-CM28-A.md": "72db6c0389e4ffd864dc16d72dd79796ec7894ac28b865edb203f47068fc24f1",
     ".github/prompts/ERPEC26-CM28-B.md": "8cd1b691fd940304c9b5cf4290ae828a29b3d2be71e0fda0605143d5d150ea0f",
@@ -894,13 +888,13 @@
     "docs/DI25-03_VERIFICACION_BOLETIN_SRI.md": "dbc2be82cd96020c5c2b50028574938b27648984492de9e66b30c6959bd0f21b",
     "docs/DI25-07_ACEPTACION.md": "5575f4857016b520de7e7f5de976e324bfab1340fdc4045dc307cf7b72f14a67",
     "docs/DI25-17_MAPA_FISCAL.md": "ef37afec7e7b2dbb1c5d1d8f053c6c879d504d7cf735bfdcd63ebc52fb6ea4e2",
-    "docs/DIAGNOSTICO_COMERCIAL_MODULOS_ACTIVOS_CM28.md": "231affd3c00aa61337bdc83f3f57a1092e9a2f480930ed600417d7b6e54cfdcb",
+    "docs/DIAGNOSTICO_COMERCIAL_MODULOS_ACTIVOS_CM28.md": "f994713faa3e50199c183cd7905470390eaae977a1c1912bfb542955f595bc41",
     "docs/DIAGNOSTICO_INTEGRACION_TROPICALIZACION_IT26.md": "2d60e5a5eb2824715efc09e30464fb3e3c551ddc20cc7f2d29d7a60620c53d55",
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md": "faf1e2712d152b517d8cf06a9cb3ee90b6c9018ba25a4a8cfa46c864fbeb74a3",
     "docs/DIAGNOSTICO_INTEGRAL_DI26.md": "1ae2eea8fba3f0bc8a3ed28606e078cd46cadacbac65ddeb63c0ef558d39e10c",
     "docs/MONETIZACION_USUARIOS_CM28.md": "88472d096fa5014640e4c3ab1639758a8060be55e2b5c286096dec1f8781d816",
-    "docs/OPERACION_COMERCIAL_CM28.md": "3d4933bc012eae195541ca56209e1ee439197e71daa892462f8a83d065fdaf9b",
-    "docs/PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md": "625a41af705389c719fa87e7b4ddeeef20d171c9bc1303a02e33a5c64a5a738a",
+    "docs/OPERACION_COMERCIAL_CM28.md": "2082cabcaa5f1df97e7a9488393e69c305c174f6a986ce1202b7815f6f5eca65",
+    "docs/PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md": "e21c31e0fa1842a3b2ec8cf4d14084cc7b90be18c51a758853aa23a5eb29fce9",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "1337eecd21e1b3139b8f8a5c88737888da4b09667c29882888adb559292ee259",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md": "b46d6cf2c28958762256824b855999ecbccfc78c3db60054980413b6f4bd11fc",
     "docs/PLAN_HAIKY_ERPEC26.md": "755ac5c13222d34f6ab255eefe933ede5ce19d7b90a7775ff5874d510e748466",
@@ -913,7 +907,6 @@
     "docs/evidencias/AuditLock.before-CM28-D-20260928T181654Z.json": "d756775e3dc28b5fe16d7bc7ec8223056118319dc41bdbdccf8273cf7565841f",
     "docs/evidencias/AuditLock.before-CM28-E-20260928T185222Z.json": "2a9292f21e7d2921db6e33a55a9a22f7dbc70918c77683e385da78328503e533",
     "docs/evidencias/AuditLock.before-CM28-F-20260928T232725Z.json": "8b3a488f3ce03f5d29c3012c99b14a691eff9337b001e79ee2125bb93cd70e43",
-    "docs/evidencias/AuditLock.before-CM28-G-20260928T234130Z.json": "2ed3cfd631fb2c8bbfb63515b78cef8350df5f766b7c49468154a405e62293d3",
     "docs/evidencias/AuditLock.before-CM28-G-PREP-20260928T232834Z.json": "d07890942683041ae5127aee86077597a98b08621a13d1f3be40fb6848bd6e10",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json": "de67ecc73c15639c66edaf57a5599b49d61200ca3c537f8c88bed2081a877e14",
     "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json": "2330a8ef7ad03b29fcbbbf5f2b37a40eb12caf6927597c90cdcaa67680cfd167",
@@ -1006,11 +999,9 @@
     "docs/evidencias/CM28/CM28-D-cierre.json": "cbed3925f65759eead7b7053b4867e5951737bb97672c285fe20d5658e626e6d",
     "docs/evidencias/CM28/CM28-E-cierre.json": "e9e19e98b414bc8a53e0a58da7245ba5eebeee874f55aba4476804097c41e468",
     "docs/evidencias/CM28/CM28-F-cierre.json": "bee0484a6b16846b2cc8b9ffa0d42c6ac4f1f6863b22cc19ccd1b8ef91698c69",
-    "docs/evidencias/CM28/CM28-G-cierre.json": "155d12f12225c8b50db064ec47e20474b85776bf9a667b44a0ab8fe2d107b14c",
     "docs/evidencias/CM28/CRITERIO_TRIBUTARIO.md": "ed126d9fcf0884ad2d0fc41ad1eaae937cf8996dd4e54cd2dd8b58b85c79a2b4",
     "docs/evidencias/CM28/MIGRACION_IDENTIDAD.md": "676dc676271b6eff6a550dd3d24de27992d9aa9ed1da324e0327ed63c8ef39f0",
-    "docs/evidencias/CM28/ci.json": "e441de443557dfbaa00b603761630fa2b68326186221a98abe555b9be2dad028",
-    "docs/evidencias/CM28/hallazgos.json": "c6b30b0ceb67c48597c26a6ea5471ccbdd9613cf0a8d22d9a1cc7d4cc1b09cfc",
+    "docs/evidencias/CM28/hallazgos.json": "84e1cf85e33dd6231ea4d0e1b9cac391a8349b609e6f1bc1b8a95eb603bced5a",
     "docs/evidencias/CM28/local-verification.json": "7bac110613ab9e9c0ca786b0402d54e46abf117dd7696a74a1a29b427dd6f451",
     "docs/evidencias/CM28/regression.json": "cd06aeccbc83a774bab85518c7364b1c7787d6aa7c235c2d6e6fbf2e670d8005",
     "docs/evidencias/CM28/restore-demo.json": "777b6458f9ba14cc37600967f1e4f7a1075ebfac02d99e74369b575af7a137a6",
@@ -1121,9 +1112,9 @@
     "scripts/verify-linux.py": "1e84b914c22ac853cc7c79b8bb69f139f2c46ec85301cf2cc22f15c738c18f2d",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-CM28-G-20260928T234130Z.json",
-  "previousAuditLockHash": "2ed3cfd631fb2c8bbfb63515b78cef8350df5f766b7c49468154a405e62293d3",
-  "signature": "22c533e59c4141b828e6162fe68b2755094a43b7b7e0ffcb507570f36409b77c",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-CM28-G-PREP-20260928T232834Z.json",
+  "previousAuditLockHash": "d07890942683041ae5127aee86077597a98b08621a13d1f3be40fb6848bd6e10",
+  "signature": "95e8fd417a554ee292117cba921f2601ef35097d85e659d4b6de072bbeac1e7b",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -1201,9 +1192,9 @@
     "evidence": "docs/evidencias/IT26/IT26-G-cierre.json"
   },
   "commercialModulesAssetsCM28": {
-    "phaseCompleted": "CM28-G",
-    "phaseInProgress": null,
-    "status": "completed",
+    "phaseCompleted": "CM28-F",
+    "phaseInProgress": "CM28-G",
+    "status": "in-progress",
     "authorization": "Mandato del titular 28-09-2026; incluye monetización por usuarios",
     "phases": {
       "CM28-00": "completed",
@@ -1212,10 +1203,7 @@
       "CM28-C": "completed",
       "CM28-D": "completed",
       "CM28-E": "completed",
-      "CM28-F": "completed",
-      "CM28-G": "completed"
-    },
-    "evidence": "docs/evidencias/CM28/CM28-G-cierre.json",
-    "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36498343655"
+      "CM28-F": "completed"
+    }
   }
 }

@@ -4,55 +4,79 @@
     "severity": "P1",
     "finding": "Dos clientes comparten compañía operadora y colisionan al activar contratos",
     "source": "addons/erpec_selfservice/models.py; addons/erpec_suite/models/commercial.py",
-    "status": "reproducido en base aislada; pago simulado, sin contacto externo"
+    "status": "reproducido en base aislada; pago simulado, sin contacto externo",
+    "response": "Identidad persistente erpec.customer y contratos por cliente, independiente del operador.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "CM28-A-cierre.json; regression.json"
   },
   {
     "id": "CM28-02",
     "severity": "P1",
     "finding": "Aprovisionamiento único por compañía operadora",
     "source": "addons/erpec_provision/models/provision.py",
-    "status": "confirmado en código"
+    "status": "confirmado en código",
+    "response": "Instancia única por cliente; compatibilidad con registros históricos sin cliente.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "MIGRACION_IDENTIDAD.md; worker-isolation.json"
   },
   {
     "id": "CM28-03",
     "severity": "P1",
     "finding": "Instalación fija sin módulos contratados ni aplicación de cuota de usuarios",
     "source": "scripts/provision-worker.py",
-    "status": "confirmado en código"
+    "status": "confirmado en código",
+    "response": "Lista técnica única, instalación por contratación y derechos/cuotas comprobados en servidor y RPC.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "CM28-D-cierre.json; worker-isolation.json; regression.json"
   },
   {
     "id": "CM28-04",
     "severity": "P1",
     "finding": "Solicitud no deriva estados de pago e instancia",
     "source": "addons/erpec_selfservice/models.py",
-    "status": "reproducido en base aislada; pago simulado, sin contacto externo"
+    "status": "reproducido en base aislada; pago simulado, sin contacto externo",
+    "response": "Estado calculado desde pago y aprovisionamiento; reintentos en las colas existentes.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "CM28-D-cierre.json; regression.json"
   },
   {
     "id": "CM28-05",
     "severity": "P2",
     "finding": "Portada sin instalar y SS-DEMO publicado en fundador",
     "source": "consulta de solo lectura en erpec_fundador del diagnóstico previo",
-    "status": "confirmado en instancia"
+    "status": "confirmado en instancia",
+    "response": "Landing instalada en fundador y demo; SS-DEMO retirado sin borrar contratos; tarifas reales sin publicar.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "ui-results.json; local-verification.json"
   },
   {
     "id": "CM28-06",
     "severity": "P1",
     "finding": "Sin capacidades internas, complementos, anualidad ni precio por usuario",
     "source": "addons/erpec_suite/models/commercial.py",
-    "status": "confirmado en código"
+    "status": "confirmado en código",
+    "response": "Planes/versiones con incluidos, complementos y usuarios adicionales mensuales/anuales; importes en servidor.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "CM28-B-cierre.json; regression.json"
   },
   {
     "id": "CM28-07",
     "severity": "P1",
     "finding": "Sin activos fijos propios ni en Community local",
     "source": "inventario de addons propios y upstream",
-    "status": "confirmado por inventario"
+    "status": "confirmado por inventario",
+    "response": "erpec_assets propio con compra parcial, depreciación, asientos, reversión y cambios futuros de estimación.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "CM28-C-cierre.json; regression.json"
   },
   {
     "id": "CM28-08",
     "severity": "P1",
     "finding": "Sin ciclo completo de renovación y entrega de acceso personal",
     "source": "addons/erpec_selfservice; scripts/provision-worker.py",
-    "status": "confirmado en código"
+    "status": "confirmado en código",
+    "response": "Renovación por nuevo pago y misma instancia; activación personal de un uso con caducidad.",
+    "validation": "Implementado y validado localmente en CM28; sin operación productiva ni pagos reales.",
+    "evidence": "CM28-D-cierre.json; worker-isolation.json; regression.json"
   }
 ]

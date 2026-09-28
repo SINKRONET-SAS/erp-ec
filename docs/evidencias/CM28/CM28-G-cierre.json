@@ -1,0 +1,30 @@
+{
+  "phase": "CM28-G",
+  "status": "completed",
+  "implementation_commit": "5b61ec16475847223e19ff9229726622ee86e656",
+  "branch": "codex/erpec26-implementacion",
+  "push": "confirmado en origin",
+  "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36498343655",
+  "ci_conclusion": "success",
+  "integrated_linux": {
+    "tests": 702,
+    "failed": 0,
+    "errors": 0
+  },
+  "checks": [
+    "Cinco trabajos de CI aprobados: gobierno, suite Linux, cliente, controlador y dependencias",
+    "Respuesta documentada a los ocho hallazgos preservando el diagnóstico inicial",
+    "Monetización por usuarios incluida en catálogo, instantáneas, portal y límites del servidor",
+    "Corrección de tres pruebas históricas desactualizadas sin relajar protecciones funcionales",
+    "Evidencias normalizadas a LF para conservar hashes entre Windows y Linux",
+    "Sin cambios en repositorios fuente ni secretos publicados"
+  ],
+  "local_evidence": "CM28-F-cierre.json",
+  "limits": [
+    "Alcance local; sin despliegue productivo",
+    "PayPhone probado con respuestas simuladas; sin cobros reales",
+    "Sin comprobantes fiscales reales ni envío de correo",
+    "Tarifas comerciales configurables y sin publicar; el responsable revisa los impuestos antes de publicar",
+    "Activos: sin revaluación, deterioro, métodos acelerados ni gestión de custodios; depreciación contable no equivale a deducibilidad fiscal"
+  ]
+}

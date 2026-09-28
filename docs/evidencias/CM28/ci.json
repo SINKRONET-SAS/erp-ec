@@ -1,0 +1,34 @@
+{
+  "run": 36498343655,
+  "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36498343655",
+  "commit": "5b61ec16475847223e19ff9229726622ee86e656",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "gobierno",
+      "conclusion": "success"
+    },
+    {
+      "name": "Suite integrada (imagen sin fuentes montadas)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Arranque real de imagen customer",
+      "conclusion": "success"
+    },
+    {
+      "name": "Auditoría de dependencias",
+      "conclusion": "success"
+    },
+    {
+      "name": "Arranque real de imagen controller",
+      "conclusion": "success"
+    }
+  ],
+  "odoo_summary": [
+    "0",
+    "0",
+    "702"
+  ]
+}
