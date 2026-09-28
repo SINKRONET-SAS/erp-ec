@@ -1,4 +1,5 @@
 <odoo>
+<record id="request_company_rule" model="ir.rule"><field name="name">Solicitudes por operador</field><field name="model_id" ref="model_erpec_selfservice_request"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="request_list" model="ir.ui.view"><field name="name">erpec.selfservice.request.list</field><field name="model">erpec.selfservice.request</field><field name="arch" type="xml"><list><field name="reference"/><field name="company_name"/><field name="company_vat"/><field name="plan_id"/><field name="state"/></list></field></record>
 <record id="request_form" model="ir.ui.view"><field name="name">erpec.selfservice.request.form</field><field name="model">erpec.selfservice.request</field><field name="arch" type="xml"><form>
 <header><field name="state" widget="statusbar"/></header>
@@ -7,8 +8,14 @@
 <group><field name="reference" readonly="1"/><field name="plan_id" readonly="1"/></group>
 <group string="Empresa"><field name="company_name" readonly="1"/><field name="company_vat" readonly="1"/><field name="company_regime" readonly="1"/><field name="street" readonly="1"/></group>
 <group string="Contacto"><field name="contact_name" readonly="1"/><field name="contact_email" readonly="1"/><field name="contact_phone" readonly="1"/></group>
-<group string="Contrato y pago"><field name="subscription_id"/><field name="payment_id"/></group>
+<group string="Contrato y pago"><field name="subscription_id"/><field name="customer_id"/><field name="payment_id"/></group>
 </sheet><chatter/></form></field></record>
 <record id="request_action" model="ir.actions.act_window"><field name="name">Solicitudes de autoservicio</field><field name="res_model">erpec.selfservice.request</field><field name="view_mode">list,form</field></record>
 <menuitem id="request_menu" name="Solicitudes de autoservicio" parent="erpec_base.suite_root" action="request_action" sequence="47" groups="base.group_system"/>
+
+<record id="customer_commercial_form" model="ir.ui.view"><field name="name">Clientes y contratación</field><field name="model">erpec.customer</field><field name="inherit_id" ref="erpec_suite.customer_form"/><field name="arch" type="xml"><xpath expr="//field[@name='contact_name']" position="before"><field name="portal_user_id" readonly="1"/></xpath><xpath expr="//sheet" position="inside"><notebook><page string="Contratos y renovaciones"><field name="subscription_ids" readonly="1"><list><field name="name"/><field name="plan_id"/><field name="period"/><field name="user_quantity"/><field name="quoted_total"/><field name="starts_on"/><field name="ends_on"/><field name="state"/></list></field></page><page string="Instancia"><field name="provision_ids" readonly="1"><list><field name="state"/><field name="endpoint"/><field name="observed_users"/><field name="last_error"/></list></field></page></notebook></xpath></field></record>
+<record id="renewals_action" model="ir.actions.act_window"><field name="name">Renovaciones programadas</field><field name="res_model">erpec.subscription</field><field name="view_mode">list,form</field><field name="domain">[('renewal_of_id','!=',False)]</field></record>
+<menuitem id="renewals_menu" name="Renovaciones" parent="erpec_base.suite_root" action="renewals_action" sequence="22" groups="base.group_system"/>
+<record id="incidents_action" model="ir.actions.act_window"><field name="name">Incidencias de aprovisionamiento</field><field name="res_model">erpec.provision</field><field name="view_mode">list,form</field><field name="domain">[('state','=','failed')]</field></record>
+<menuitem id="incidents_menu" name="Incidencias de altas y renovaciones" parent="erpec_base.suite_root" action="incidents_action" sequence="49" groups="base.group_system"/>
 </odoo>

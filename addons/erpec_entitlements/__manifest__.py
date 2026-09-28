@@ -1,0 +1,1 @@
+{'name':'ERP EC — Derechos de la instancia','version':'18.0.1.0.0','author':'SINKRONET S.A.S.','license':'Other proprietary','depends':['erpec_base','auth_signup'],'data':['ir.model.access.csv','views.xml'],'installable':True}

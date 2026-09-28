@@ -1,0 +1,56 @@
+{
+  "phase": "CM28-F",
+  "status": "completed",
+  "regression": "regression.json",
+  "tests": {
+    "integrated": {
+      "total": 701,
+      "failed": 0,
+      "errors": 0,
+      "omitted": 3
+    },
+    "final_catalog": {
+      "total": 50,
+      "failed": 0,
+      "errors": 0
+    },
+    "seeded_treasury": {
+      "total": 25,
+      "failed": 0,
+      "errors": 0,
+      "omitted": 0
+    }
+  },
+  "checks": [
+    "Las tres omisiones de la base limpia ejecutadas sobre copia de demo sin omisiones",
+    "Concurrencia real de cupos, identidad de clientes y asientos de depreciación",
+    "Dos bases cliente simultáneas con credenciales y derechos aislados",
+    "UTF-8 sin BOM, sintaxis, mojibake y ausencia de credenciales locales en entregables",
+    "27 módulos con versiones y huellas coherentes",
+    "Fundador y demo respaldados y restaurados en copias con filas y adjuntos íntegros, certificado descifrable y clave separada",
+    "Actualización con respaldo completo en demo, fundador, a y b; desfase cero y acceso disponible",
+    "Login de fundador y demo con credenciales existentes; vistas de planes y activos accesibles",
+    "Asientos y líneas preservados: fundador 4/12, demo 30/137",
+    "Capturas de las landing reales inspeccionadas; sin cobro al no existir oferta publicada",
+    "Reversión documentada; validación de respaldos actualizados sin aplicar una reversión innecesaria"
+  ],
+  "evidence": [
+    "worker-isolation.json",
+    "restore-founder.json",
+    "restore-demo.json",
+    "update-demo.json",
+    "update-fundador.json",
+    "update-a.json",
+    "update-b.json",
+    "local-verification.json",
+    "static-review.json",
+    "seeded-treasury.json"
+  ],
+  "limits": [
+    "Sin pagos reales PayPhone, envíos fiscales ni correos reales",
+    "Sin despliegue productivo ni homologación tributaria",
+    "Tarifas reales pendientes de configuración y publicación por el fundador",
+    "No se certifica accesibilidad universal; alcance visual y axe en CM28-E",
+    "CI y publicación pendientes de CM28-G"
+  ]
+}

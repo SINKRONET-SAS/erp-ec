@@ -1,0 +1,11 @@
+<odoo noupdate="1">
+<record id="capability_sales" model="erpec.capability"><field name="name">Ventas</field><field name="code">sales</field></record>
+<record id="capability_purchases" model="erpec.capability"><field name="name">Compras</field><field name="code">purchases</field></record>
+<record id="capability_inventory" model="erpec.capability"><field name="name">Inventario</field><field name="code">inventory</field></record>
+<record id="capability_payroll" model="erpec.capability"><field name="name">Nómina ERP EC</field><field name="code">payroll</field></record>
+<record id="capability_fiscal" model="erpec.capability"><field name="name">Facturación electrónica ERP EC</field><field name="code">fiscal</field></record>
+<record id="capability_manufacturing" model="erpec.capability"><field name="name">Fabricación</field><field name="code">manufacturing</field></record>
+<record id="capability_treasury" model="erpec.capability"><field name="name">Tesorería</field><field name="code">treasury</field></record>
+<record id="capability_routes" model="erpec.capability"><field name="name">Rutas de campo</field><field name="code">routes</field></record>
+<record id="capability_assets" model="erpec.capability"><field name="name">Activos fijos</field><field name="code">assets</field></record>
+</odoo>

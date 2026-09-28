@@ -44,7 +44,7 @@ class TestSelfserviceRequest(TransactionCase):
         self.assertEqual(signup_request.subscription_id.plan_id, self.plan)
         self.assertEqual(signup_request.subscription_id.billing_owner, 'payphone_test')
         self.assertFalse(signup_request.subscription_id.activated_at)
-        self.assertEqual(signup_request.payment_id.state, 'prepared')
+        self.assertEqual(signup_request.payment_id.state, 'queued')
         self.assertEqual(signup_request.payment_id.amount, self.plan.price)
 
     def test_unpublished_plan_is_rejected(self):
@@ -83,6 +83,7 @@ class TestSelfserviceRequest(TransactionCase):
                 patch.object(self.env.cr, 'commit', return_value=None):
             signup_request = self.env['erpec.selfservice.request'].create_from_signup(
                 dict(SIGNUP_VALUES, plan_id=self.plan.id))
+            self.env['erpec.payphone.payment']._cron_process()
         payment = signup_request.payment_id
         confirmation = {'transactionId': 999, 'clientTransactionId': payment.reference,
                         'amount': int(round(self.plan.price * 100)), 'currency': 'USD', 'statusCode': 3}
@@ -100,7 +101,8 @@ class TestSelfserviceHttp(HttpCase):
     def test_landing_lists_only_published_plans(self):
         published = self.env['erpec.plan'].sudo().create({
             'name': 'Plan público HTTP', 'code': 'SS-HTTP-PUB', 'erp': True,
-            'terms': 'Sintético', 'price': 25.0, 'published': True,
+            'terms': 'Sintético', 'price': 25.0, 'published': True, 'fiscal_reviewed': True,
+            'option_ids': [(0,0,{'capability_id':self.env.ref('erpec_suite.capability_assets').id})],
         })
         hidden = self.env['erpec.plan'].sudo().create({
             'name': 'Plan oculto HTTP', 'code': 'SS-HTTP-HIDDEN', 'erp': True,
@@ -113,5 +115,6 @@ class TestSelfserviceHttp(HttpCase):
 
     def test_signup_without_csrf_token_is_rejected(self):
         # Odoo rechaza un POST sin csrf_token con 400 (no 403); confirma que la protección está activa.
+        self.authenticate('admin','admin')
         response = self.url_open('/autoservicio/solicitar', data={'company_vat': '1793235327001'})
         self.assertEqual(response.status_code, 400)

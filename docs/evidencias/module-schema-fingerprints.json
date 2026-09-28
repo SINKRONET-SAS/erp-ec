@@ -3,6 +3,10 @@
   "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
   "version": "18.0.1.0.0"
  },
+ "erpec_assets": {
+  "schema": "8ad2bc671d2621b2867b3ebca20340c2ccddeb78150ebb9c9d7415eb0739e60f",
+  "version": "18.0.1.0.0"
+ },
  "erpec_base": {
   "schema": "f12368d2ea249e7f235a7f819970c9dc48455a43205fb5abdcb1d8164dd61d26",
   "version": "18.0.1.0.2"
@@ -10,6 +14,10 @@
  "erpec_data_protection": {
   "schema": "c239235e00088536967c2d333d4b537fa4505c8a3b9ecf1afc85aca240cb600e",
   "version": "18.0.1.0.2"
+ },
+ "erpec_entitlements": {
+  "schema": "00511a73586dc796b68c9107c01a1f71b48a44c07ffe59bb92ce3a6bc688eeaa",
+  "version": "18.0.1.0.0"
  },
  "erpec_field_routes": {
   "schema": "8b874891c8a08d557a67ede0731a506a9d7520bee7d5ad2be779559a33e32dc9",
@@ -57,15 +65,15 @@
  },
  "erpec_payphone": {
   "schema": "8e5831d3ffba6615ff7d226eccf4131ce5cd3a18a18c1473e241f7b97abcf8df",
-  "version": "18.0.1.1.1"
+  "version": "18.0.1.3.0"
  },
  "erpec_payroll": {
   "schema": "ce43f8c741e517451bcdb1fb8b55e294a75789de45a2059367bde1b6a9c2e3e4",
   "version": "18.0.1.14.16"
  },
  "erpec_provision": {
-  "schema": "733dc3de173ed17d7f5be828c3a99bda3f6d27368d304497c56f1a3471ba8864",
-  "version": "18.0.1.0.1"
+  "schema": "8ccb1d1cf7dd09188c1e41ded378c699d1f4869f454fef3bf92ab1265fd180be",
+  "version": "18.0.2.1.0"
  },
  "erpec_runtime": {
   "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -76,12 +84,12 @@
   "version": "18.0.2.0.0"
  },
  "erpec_selfservice": {
-  "schema": "e58b295e732dda6067ac87ae10f5de66310e4e064292ea516ac1926864f5d093",
-  "version": "18.0.1.0.0"
+  "schema": "825faf7b877ffd38c54c054901b51c194ba329ced56720d51b21685ad6bec346",
+  "version": "18.0.2.1.0"
  },
  "erpec_suite": {
-  "schema": "93ace775ed7e106ee727c4188db0e871120c7a6f6b46be81ba1da4714897b107",
-  "version": "18.0.1.0.1"
+  "schema": "8cb751735edb99ee83a02c052d22a1540f5338b4898c5864c2d407f48c229575",
+  "version": "18.0.2.2.0"
  },
  "erpec_treasury": {
   "schema": "c1e36b441fbdc6449aa108bb17e98a70956d3dcc7e7593c162306f84111be069",
@@ -89,7 +97,7 @@
  },
  "erpec_website_entry": {
   "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-  "version": "18.0.1.0.2"
+  "version": "18.0.1.1.0"
  },
  "erpec_withholding_accounting": {
   "schema": "9a6a97ffdd25ad593b4a5343399571a8beb84d8cb446fac5d6d33cf97df02caf",

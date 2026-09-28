@@ -11,7 +11,7 @@ class EntryCase(TransactionCase):
         self.assertNotEqual(self.env['website'].search([], limit=1).name, 'My Website')
         for view in self.View.search([('key', '=', 'website.homepage')]):
             self.assertNotIn('oe_empty', view.arch_db)
-            self.assertIn('/web/login', view.arch_db)
+            self.assertIn('erpec_selfservice.home_content', view.arch_db)
         for view in self.View.search([('key', '=', 'website.footer_custom')]):
             self.assertNotIn('href="#"', view.arch_db)
             self.assertNotIn('YourCompany', view.arch_db)
@@ -39,3 +39,10 @@ class EntryCase(TransactionCase):
         self.env['website']._erpec_apply_entry_language()
         self.assertEqual(website.default_lang_id.code, 'es_EC')
         self.assertIn('es_EC', website.language_ids.mapped('code'))
+
+    def test_custom_home_is_preserved(self):
+        home=self.View.search([('key','=','website.homepage')],limit=1)
+        home.arch_db='<t name="Inicio" t-name="website.homepage"><t t-call="website.layout"><div id="wrap" class="oe_structure"><h1>Portada propia de mi empresa</h1></div></t></t>'
+        before=home.arch_db
+        self.env['website']._erpec_apply_entry_branding()
+        self.assertEqual(home.arch_db,before)

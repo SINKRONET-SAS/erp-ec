@@ -1,0 +1,20 @@
+{
+  "phase": "CM28-00",
+  "status": "completed",
+  "checks": [
+    "2026-09-28 15:39:13,940 30604 INFO ec_integrated_test_cm28_diagnosis odoo.addons.erpec_selfservice.tests.test_cm28: Starting TestCM28Diagnosis.test_two_customers_collide_before_cm28 ... ",
+    "2026-09-28 15:42:29,843 30604 INFO ec_integrated_test_cm28_diagnosis odoo.tests.stats: erpec_selfservice: 17 tests 3.90s 1049 queries ",
+    "2026-09-28 15:42:29,843 30604 INFO ec_integrated_test_cm28_diagnosis odoo.tests.result: 0 failed, 0 error(s) of 11 tests when loading database 'ec_integrated_test_cm28_diagnosis' "
+  ],
+  "command": ".venv/Scripts/python.exe scripts/test-integrated.py erpec_selfservice --name ec_integrated_test_cm28_diagnosis",
+  "logSha256": "7272636471b48c0def057301fc3ce1bf01ea716898843a5c1be0b8e2eca93542",
+  "confirmed": [
+    "Dos clientes distintos colisionan al activar el segundo contrato",
+    "Solicitud del primer cliente conserva awaiting_payment tras pago confirmado y conciliado"
+  ],
+  "limits": [
+    "PayPhone simulado",
+    "No acredita corrección",
+    "Sin inspección visual completada"
+  ]
+}

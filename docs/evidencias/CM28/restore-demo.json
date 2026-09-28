@@ -1,0 +1,79 @@
+{
+  "instance": "cm28_backup_demo",
+  "database": "erpec_demo",
+  "stamp": "20260928T190118Z",
+  "backup": {
+    "seconds": 9.56,
+    "manifest": {
+      "db_dump_sha256": "5c0287f9235d85fbba5f0ef4125b9a7e99e9bed792f274232b3c1e530f1b5b98",
+      "db_dump_bytes": 9898998,
+      "filestore": {
+        "files": 1506,
+        "bytes": 182979278,
+        "tree_sha256": "aba2730c6717e7b592de4be8e17b3f7f8bef01e3ec44d8f86f1661a465a53ceb"
+      },
+      "snapshot_at_utc": "2026-09-28 14:01:18.748244-05:00"
+    },
+    "key_in_separate_dir": "C:\\proyectos web\\ERP\\_EC\\.cache\\windows\\backups-keys\\drill-cm28_backup_demo-20260928T190118Z",
+    "key_found_in_dump": false,
+    "key_found_in_filestore_copy": false
+  },
+  "restore": {
+    "database": "ec_restore_drill_8c826c90",
+    "restore_seconds": 42.44,
+    "odoo_start_seconds": 14.48,
+    "login_ready": true,
+    "rto_seconds_backup_restored_and_serving": 56.92
+  },
+  "integrity": {
+    "row_counts_source": {
+      "res_partner": 51,
+      "res_users": 15,
+      "account_move": 30,
+      "account_move_line": 137,
+      "account_account": 1043,
+      "ir_attachment": 1076,
+      "ir_module_module": 701,
+      "ir_model_data": 30620,
+      "erpec_fiscal_certificate": 1,
+      "erpec_fiscal_tax_matrix": 1
+    },
+    "row_counts_restored": {
+      "res_partner": 51,
+      "res_users": 15,
+      "account_move": 30,
+      "account_move_line": 137,
+      "account_account": 1043,
+      "ir_attachment": 1076,
+      "ir_module_module": 701,
+      "ir_model_data": 30620,
+      "erpec_fiscal_certificate": 1,
+      "erpec_fiscal_tax_matrix": 1
+    },
+    "source_minus_restored": {
+      "res_partner": 0,
+      "res_users": 0,
+      "account_move": 0,
+      "account_move_line": 0,
+      "account_account": 0,
+      "ir_attachment": 0,
+      "ir_module_module": 0,
+      "ir_model_data": 0,
+      "erpec_fiscal_certificate": 0,
+      "erpec_fiscal_tax_matrix": 0
+    },
+    "probe": {
+      "cert_present": true,
+      "decrypt_with_restored_key": true,
+      "wrong_key_rejected": "ValidationError",
+      "attachments_checked": 177,
+      "attachments_missing_file": 0
+    }
+  },
+  "rpo": {
+    "snapshot_at_utc": "2026-09-28 14:01:18.748244-05:00",
+    "newest_data_write_before_snapshot_utc": "2026-09-27 20:36:58.454464",
+    "exposure_if_failure_right_after_backup_seconds": 9.56,
+    "nota": "El RPO real depende de la frecuencia de respaldo que se programe; este simulacro mide la ventana propia del respaldo. La edad del último respaldo previo se informa en el cierre de la fase."
+  }
+}

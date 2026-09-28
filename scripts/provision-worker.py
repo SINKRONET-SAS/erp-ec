@@ -66,7 +66,7 @@ def set_allow_connections(cluster, database, allowed):
     finally:
         connection.close()
 
-def operate(job):
+def _operate_legacy(job):
     instance = job['instance']
     if not re.fullmatch('[a-f0-9]{32}', instance) or not isinstance(job['id'], int) or not 1 <= job['id'] <= 119:
         raise ValueError('Identificador fuera del rango del piloto')
@@ -153,6 +153,14 @@ def operate(job):
             print('Esperando salud de instancia correlationId='+instance+' intento='+str(attempt+1))
             time.sleep(1)
 
+def operate(job):
+    if job.get('customer'):
+        import sys
+        from cm28_provision import operate_commercial
+        return operate_commercial(job,sys.modules[__name__])
+    _operate_legacy(job)
+    return {}
+
 # Dos operadores válidos: la instancia operadora real (empresa del Fundador, OP07) y el
 # piloto sintético erpec_a, usado solo por scripts/verify-provision.py para ensayos
 # repetibles sin tocar datos reales. Ambos comparten el mismo servidor compartido de
@@ -182,13 +190,13 @@ def main(operator='fundador'):
             print('No hay trabajos pendientes')
             return
         try:
-            operate(job)
+            details = operate(job)
         except Exception as error:
             # No devolver contraseñas, comandos ni respuestas de proveedores al frontend.
             print(json.dumps({'code':'PROVISION_FAILED','statusCode':500,'correlationId':job['instance'],'userId':'operador-local','errorType':type(error).__name__}))
             call('erpec.provision','finish',[[job['id']],job['token'],False])
             raise RuntimeError('Falló el aprovisionamiento; revisar los logs locales de la instancia') from None
-        call('erpec.provision','finish',[[job['id']],job['token'],True])
+        call('erpec.provision','finish',[[job['id']],job['token'],True,details])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

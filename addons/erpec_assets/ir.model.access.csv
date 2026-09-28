@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+erpec_asset_manager,Responsable erpec_asset,model_erpec_asset,account.group_account_manager,1,1,1,1
+erpec_asset_reader,Consulta erpec_asset,model_erpec_asset,account.group_account_readonly,1,0,0,0
+erpec_asset_category_manager,Responsable erpec_asset_category,model_erpec_asset_category,account.group_account_manager,1,1,1,1
+erpec_asset_category_reader,Consulta erpec_asset_category,model_erpec_asset_category,account.group_account_readonly,1,0,0,0
+erpec_asset_line_manager,Responsable erpec_asset_line,model_erpec_asset_line,account.group_account_manager,1,1,1,1
+erpec_asset_line_reader,Consulta erpec_asset_line,model_erpec_asset_line,account.group_account_readonly,1,0,0,0
+erpec_asset_revision_manager,Responsable erpec_asset_revision,model_erpec_asset_revision,account.group_account_manager,1,1,1,1
+erpec_asset_revision_reader,Consulta erpec_asset_revision,model_erpec_asset_revision,account.group_account_readonly,1,0,0,0
+erpec_asset_adjustment_manager,Asistente erpec_asset_adjustment,model_erpec_asset_adjustment,account.group_account_manager,1,1,1,1
+erpec_asset_disposal_manager,Asistente erpec_asset_disposal,model_erpec_asset_disposal,account.group_account_manager,1,1,1,1
+erpec_asset_reversal_manager,Asistente erpec_asset_reversal,model_erpec_asset_reversal,account.group_account_manager,1,1,1,1

@@ -1,3 +1,27 @@
+# Estado vigente: CM28-F cerrada; CM28-G habilitada (28-09-2026)
+
+Regresión integral: 701 pruebas sin fallos/errores; tres omisiones cubiertas en copia de demo (25 pruebas, cero omisiones). Último ajuste de combinaciones: 50 pruebas aprobadas. Fundador, demo, a y b actualizados con respaldo completo y desfase cero; restauración ensayada antes y credenciales originales verificadas. Landing y activos disponibles en fundador 8199 y demo 8369. Tarifas reales sin publicar. Evidencia: docs/evidencias/CM28/CM28-F-cierre.json. Continúa G para commit/push y CI autorizado; aún no se declara publicación ni CI aprobado.
+
+---
+
+# Estado vigente: CM28-E cerrada; CM28-F habilitada (28-09-2026)
+
+Landing y portal nativos conectados al catálogo y a usuarios contratados. Suites de 29 y 21 pruebas sin fallos; revisión visual en 1440/390 píxeles y cinco comprobaciones axe sin incidencias detectadas. Evidencia: docs/evidencias/CM28/CM28-E-cierre.json y ui-results.json. La copia aislada del fundador pasó restauración/actualización y recorrido; las instancias originales aún no se migraron. Continúa CM28-F: regresión integral, seguridad/concurrencia, versiones, respaldo y despliegue local; luego G con commit/push autorizado.
+
+---
+
+# Estado vigente: CM28-D cerrada; CM28-E habilitada (28-09-2026)
+
+CM28-D verificada con 70 pruebas integradas, 17 de cupos/activos y la suite PayPhone indicada en docs/evidencias/CM28/CM28-D-cierre.json. Ensayo real de instancia desechable: alta, activación nativa, RPC y renovación que retira un módulo conservando lectura. Monetización por usuarios internos activos, con tarifas y límites por periodo. Sin pagos reales ni migración de fundador/demo todavía. Continúa la autorización del titular para E, F, G, commit y push.
+
+---
+
+# Estado vigente: CM28-C cerrada; CM28-D habilitada (28-09-2026)
+
+Plan: docs/PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md. Secuencia 00 → A → B → C → D → E → F → G. Incluye monetización por usuarios internos activos. CM28-00 reprodujo la colisión de clientes y el estado desactualizado en base aislada, con pagos simulados. CM28-A: cliente explícito por alta, contratos e instancias separados; compatibilidad histórica y vistas; 20 pruebas sin fallos. CM28-B: catálogo, tarifas mensuales/anuales, complementos y usuarios adicionales; instantáneas e impuestos nativos; 9 pruebas sin fallos tras corregir un fixture. CM28-C: activos contables, compras parciales, depreciación, venta/baja, reversión y estimaciones; 20 pruebas conjuntas con catálogo aprobadas. Despliegue real pendiente de CM28-F. El titular autorizó todas las fases, revisión, corrección, commit y push; no se amplía a producción ni cobros reales.
+
+---
+
 # Estado vigente: Plan Haiky IT26 ejecutado, fases IT26-A a IT26-G cerradas (27-09-2026)
 
 Plan Haiky IT26 ejecutado en su totalidad (27-09-2026, por mandato del titular: "Ejecutar todos los prompts según el plan desplegado y su CODEX_CONTEXT.md; a continuación verificar que no se haya incluido errores, duplicaciones, regresiones; si existen, corregir. Finalmente Commit y pushh"; cierres en docs/evidencias/IT26/IT26-00-cierre.json a IT26-G-cierre.json):

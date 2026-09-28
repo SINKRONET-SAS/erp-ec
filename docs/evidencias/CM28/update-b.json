@@ -1,0 +1,11 @@
+{
+  "instancia": "b",
+  "modulos": [
+    "erpec_base",
+    "erpec_suite"
+  ],
+  "respaldo": ".cache/windows/backups/update-b-20260928T232328Z",
+  "copiaSincronizada": false,
+  "desfase": "sin desfase",
+  "login_ready": true
+}

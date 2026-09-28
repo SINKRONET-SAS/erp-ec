@@ -1,0 +1,48 @@
+{
+  "phase": "CM28-D",
+  "status": "completed",
+  "runs": [
+    {
+      "name": "ec_integrated_test_cm28_d3",
+      "tests": 70,
+      "failed": 0,
+      "errors": 0,
+      "sha256": "badda2c343290a055452195cea6b0e992243d39cb6c10ba2405a2c91dadebd30"
+    },
+    {
+      "name": "ec_integrated_test_cm28_d_quota2",
+      "tests": 17,
+      "failed": 0,
+      "errors": 0,
+      "sha256": "49813054f1e6023b565e572cae2e92f259ed1bfc46b976a65ff8983c80064246"
+    },
+    {
+      "name": "ec_integrated_test_cm28_d_queue",
+      "tests": 26,
+      "failed": 0,
+      "errors": 0,
+      "sha256": "959dc6863b7a126dd6f351f6b94f5c386a90f182944c2d67fe5118a51cef16b7"
+    }
+  ],
+  "worker": "worker-functional.json",
+  "checks": [
+    "Cotización y cupos por usuario interno, creación/reactivación/promoción y grupos protegidos",
+    "Renovación futura y confirmación tardía; estados derivados e idempotencia",
+    "Activación nativa de un uso y caducidad, entrega cifrada",
+    "Instancia real creada y renovada; historial de activo legible y alta RPC bloqueada al retirar módulo",
+    "Ruta de pago muestra preparación asíncrona; vistas de administración cargadas",
+    "34 archivos Python y 8 XML analizados; 71 textos UTF-8 sin BOM; git diff --check sin errores"
+  ],
+  "repairs": [
+    "Nombre del CSV de ACL",
+    "Contexto interno retirado al devolver derechos sincronizados",
+    "No reinstalar base/traducciones al renovar",
+    "Rol compartido ausente reconstruido sin rotar credenciales",
+    "Aserción de ensayo de grupos compatible con Odoo"
+  ],
+  "limits": [
+    "Pagos simulados; sin cargos ni correos reales",
+    "Interfaz completa y validación visual en CM28-E",
+    "Concurrencia entre conexiones y despliegue fundador/demo en CM28-F"
+  ]
+}

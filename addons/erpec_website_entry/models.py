@@ -2,12 +2,13 @@
 ejemplo). Se reemplaza solo el contenido que todavía es plantilla, de forma idempotente, sin pisar ediciones
 propias del cliente y sin inventar textos legales: no se muestra un enlace "Legal" sin destino real."""
 import base64
+from lxml import etree
 
 from odoo import api, models, tools
 
 BRAND = 'ERP EC · SINKRONET'
 
-HOME_WRAP = (
+LEGACY_HOME_WRAP = (
     '<div id="wrap" class="oe_structure">'
     '<section class="s_text_block pt80 pb80 erpec_entry"><div class="container text-center">'
     '<p class="text-uppercase small mb-2">SINKRONET</p>'
@@ -17,6 +18,8 @@ HOME_WRAP = (
     '<p class="text-muted">Usa el acceso asignado por el administrador de tu empresa.</p>'
     '</div></section></div>'
 )
+
+HOME_WRAP = '<div id="wrap" class="oe_structure"><t t-call="erpec_selfservice.home_content"/></div>'
 
 FOOTER_ARCH = (
     '<data inherit_id="website.layout" name="Default" active="True">'
@@ -57,6 +60,24 @@ class Website(models.Model):
             arch = view.arch_db or ''
             if 'Company name' in arch:
                 view.arch_db = arch.replace('Copyright &amp;copy; Company name', '&amp;copy; SINKRONET S.A.S. · ERP EC')
+        for view in View.search([('key','=','website.homepage')]):
+            # Solo sustituir el bloque generado originalmente, nunca una portada personalizada.
+            if LEGACY_HOME_WRAP in (view.arch_db or ''):
+                view.arch_db=view.arch_db.replace(LEGACY_HOME_WRAP,HOME_WRAP)
+        for website in self.search([]):
+            for name,url,sequence in [('Planes','/autoservicio',20),('Mi servicio','/mi-servicio',30)]:
+                if not self.env['website.menu'].search_count([('website_id','=',website.id),('url','=',url)]):
+                    self.env['website.menu'].create({'name':name,'url':url,'website_id':website.id,'parent_id':website.menu_id.id,'sequence':sequence})
+        # Retirar únicamente enlaces de contacto de ejemplo, conservando números personalizados.
+        for view in View.search([('key','like','website.%'),('arch_db','ilike','555-555-5556')]):
+            root=etree.fromstring(view.arch_db.encode('utf-8'))
+            changed=False
+            for link in root.xpath('.//a[@href="tel:+1 555-555-5556"]'):
+                if '+1 555-555-5556' in ''.join(link.itertext()):
+                    link.getparent().remove(link)
+                    changed=True
+            if changed:
+                view.arch_db=etree.tostring(root,encoding='unicode')
         self._erpec_apply_entry_language()
         return True
 

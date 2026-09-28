@@ -1,0 +1,63 @@
+{
+  "environment": "Copia aislada del fundador; tarifas y cuentas sintéticas",
+  "checks": [
+    "Otro titular recibe 404 al abrir el alta ajena",
+    "Landing y contratación sin desbordamiento en 1440 y 390 píxeles",
+    "Foco de teclado disponible",
+    "Desglose anual de 5 usuarios y complemento calculado: USD 760 sintéticos",
+    "Alta en cola sin cobro real",
+    "Oferta editable por fundador y lista de activos accesibles"
+  ],
+  "axe": {
+    "landing-desktop": {
+      "violations": [],
+      "passes": 30
+    },
+    "landing-mobile": {
+      "violations": [],
+      "passes": 31
+    },
+    "contratacion-mobile": {
+      "violations": [],
+      "passes": 34
+    },
+    "contratacion-desktop": {
+      "violations": [],
+      "passes": 34
+    },
+    "seguimiento": {
+      "violations": [],
+      "passes": 28
+    }
+  },
+  "screenshots": [
+    {
+      "file": "docs/evidencias/CM28/ui/landing-desktop.png",
+      "sha256": "9ea3bff58c84e4d83a169a426dc6a9d1a93f87e1fb2f05e69046b8e988ab5ca1"
+    },
+    {
+      "file": "docs/evidencias/CM28/ui/landing-mobile.png",
+      "sha256": "dacdaf4527344be0f098403014d73ea7b140583f8136ec64c732eb090f57e275"
+    },
+    {
+      "file": "docs/evidencias/CM28/ui/contratacion-mobile.png",
+      "sha256": "a5ee9dbc86adbd331c02ab4d60445012331f6bf02a58f51b950cf8f38eaeccdc"
+    },
+    {
+      "file": "docs/evidencias/CM28/ui/contratacion-desktop.png",
+      "sha256": "929f87387b22aa0f73a315848f6b2b54ad0dee423096ed21e6aefe4ed3c63c0a"
+    },
+    {
+      "file": "docs/evidencias/CM28/ui/seguimiento.png",
+      "sha256": "11cebbd699d616d9b5e991e89d03384aad611b19e02d96ae07baad33bc8c488d"
+    },
+    {
+      "file": "docs/evidencias/CM28/ui/fundador-oferta.png",
+      "sha256": "569d4f198d7b19759c38b3ec6ba58de34665b05e19faa4f77c2f31599de3163c"
+    },
+    {
+      "file": "docs/evidencias/CM28/ui/fundador-activos.png",
+      "sha256": "2fb612613f6342a81016bdcd9177aaf09d06a1eed0bf8e981ea6b23b84c095e4"
+    }
+  ]
+}

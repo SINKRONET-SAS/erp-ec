@@ -3,6 +3,8 @@ import hashlib
 import json
 import logging
 import uuid
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from urllib.parse import urlsplit
 
@@ -188,6 +190,9 @@ class Payment(models.Model):
             total = sum(cents(value) for value in (record.amount_without_tax, record.amount_with_tax, record.tax))
             if total <= 0 or total > MAX_AMOUNT_CENTS or record.currency_id.name != 'USD':
                 raise ValidationError('Usa un importe en USD mayor que cero y hasta USD %s.' % (MAX_AMOUNT_CENTS // 100))
+            snapshot=record.subscription_id.commercial_snapshot or {}
+            if record.subscription_id.customer_id and (cents(record.amount)!=cents(snapshot.get('total',0)) or cents(record.tax)!=cents(snapshot.get('tax',0))):
+                raise ValidationError('El pago debe coincidir con la cotización de usuarios y módulos contratados.')
             if record.tax and not record.amount_with_tax:
                 raise ValidationError('El impuesto requiere una base gravada.')
 
@@ -237,9 +242,13 @@ class Payment(models.Model):
     def _contract_digest(self):
         contract = self.subscription_id
         contract.invalidate_recordset()
+        if contract.customer_id and contract.starts_on_activation:
+            data = [contract.company_id.id, contract.customer_id.reference, contract.plan_id.id, contract.commercial_snapshot,
+                    contract.billing_owner, contract.billing_reference, contract.authorization, contract.renewal_of_id.id]
+            return hashlib.sha256(json.dumps(data, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         data = [contract.company_id.id, contract.plan_id.id, str(contract.starts_on), str(contract.ends_on),
-                contract.billing_owner, contract.billing_reference, contract.authorization]
-        return hashlib.sha256(json.dumps(data, ensure_ascii=False).encode()).hexdigest()
+                contract.billing_owner, contract.billing_reference, contract.authorization, contract.commercial_snapshot, contract.customer_id.id]
+        return hashlib.sha256(json.dumps(data, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
     def action_prepare(self):
         self.ensure_one()
@@ -326,8 +335,14 @@ class Payment(models.Model):
             return
         if self._contract_digest() != self.contract_digest:
             raise ValidationError('PAYPHONE_CONTRACT_CHANGED: las condiciones cambiaron. Revisar manualmente; no se activó el servicio.')
+        contract=self.subscription_id
+        if contract.customer_id and contract.starts_on_activation:
+            today=fields.Date.today()
+            start=max(today, contract.renewal_of_id.ends_on+timedelta(days=1)) if contract.renewal_of_id else today
+            # El inicio relativo forma parte de las condiciones; se fija al conciliar el pago confirmado.
+            models.Model.write(contract, {'starts_on':start,'ends_on':start+relativedelta(months=contract.commercial_snapshot['months'])-timedelta(days=1)})
         self.subscription_id.action_activate()
-        if self.subscription_id.plan_id.erp:
+        if self.subscription_id.plan_id.erp and self.subscription_id.state == 'active':
             self.env['erpec.provision']._request(self.subscription_id)
         self._update({'reconciled': True, 'last_error': False})
 

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+rights_reader,Condiciones de la instancia,model_erpec_tenant_entitlement,base.group_system,1,0,0,0

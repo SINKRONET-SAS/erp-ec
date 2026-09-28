@@ -221,7 +221,10 @@ class EmissionCase(TransactionCase):
         self.assertEqual(action_after['res_model'], 'erpec.fiscal.emission')
         self.assertEqual(action_after['view_mode'], 'form')
         emission = self.move.ec_fiscal_emission_ids[0]
-        emission.state = 'authorized'
+        with self.assertRaises(ValidationError):
+            emission.state = 'authorized'
+        # El estado del indicador se prepara por la autoridad privada de la emisión.
+        emission._save(state='authorized')
         self.assertEqual(self.move.ec_sri_status, 'Autorizado')
-        emission.state = 'rejected'
+        emission._save(state='rejected')
         self.assertEqual(self.move.ec_sri_status, 'Rechazado')

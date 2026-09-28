@@ -1,0 +1,26 @@
+{
+  "phase": "CM28-B",
+  "status": "completed",
+  "exitCode": 0,
+  "tests": 9,
+  "failed": 0,
+  "errors": 0,
+  "command": ".venv/Scripts/python.exe scripts/test-integrated.py erpec_suite --name ec_integrated_test_cm28_b2",
+  "logSha256": "9fd6504075abcd3a6d14559be0c62e7e98981019a5ed0a77c5ea876d38ad2b9c",
+  "checks": [
+    "Precios mensuales/anuales con usuarios incluidos y adicionales",
+    "Complementos validados y sin cobro duplicado de incluidos",
+    "Condiciones congeladas y retirada de publicación sin modificar contratos",
+    "Nueva versión sin publicar; líneas de plan contratado protegidas",
+    "Impuestos mediante motor nativo; fixture 7% sintético",
+    "Sintaxis Python/XML y UTF-8 sin BOM"
+  ],
+  "repairs": [
+    "Primera ejecución: fixture tributario sin tax_group_id; corregido y repetido con éxito"
+  ],
+  "limits": [
+    "Tarifas sin publicar; flujo de pago se conecta en CM28-D",
+    "No prueba tributaria legal; tasa de ensayo sintética",
+    "Validación visual y despliegue en CM28-E/F"
+  ]
+}

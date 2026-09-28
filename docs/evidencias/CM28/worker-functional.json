@@ -1,0 +1,12 @@
+{
+  "phase": "CM28-D",
+  "environment": "base desechable local",
+  "checks": [
+    "Instancia real con activos y un usuario humano; sin contraseña expuesta",
+    "Activación nativa consumida y derechos no editables por ORM",
+    "Autenticación y lectura de activos mediante RPC real",
+    "Retirada de módulo aplicada; historial consultable y alta RPC bloqueada"
+  ],
+  "payments": "ninguno",
+  "emails": "ninguno"
+}

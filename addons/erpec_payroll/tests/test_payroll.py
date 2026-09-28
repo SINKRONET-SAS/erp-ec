@@ -191,7 +191,10 @@ class PayrollCase(TransactionCase):
         self.assertEqual(explicit_zero['tax'], baseline['tax'])
 
     def test_it26_employee_smart_buttons(self):
-        self.assertEqual(self.employee.ec_payroll_line_count, 0)
+        # El fixture ya contiene una línea; un empleado nuevo debe comenzar en cero.
+        empty_employee = self.env['hr.employee'].create({'name': 'Persona sin nómina', 'company_id': self.company.id})
+        self.assertEqual(empty_employee.ec_payroll_line_count, 0)
+        self.assertEqual(self.employee.ec_payroll_line_count, 1)
         self.assertEqual(self.employee.ec_benefit_summary_count, 0)
         self.assertEqual(self.employee.ec_advance_count, 0)
         lines_action = self.employee.action_view_payroll_lines()

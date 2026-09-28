@@ -107,6 +107,9 @@ def check(repair):
     for name, port in INSTANCES.items():
         if not (STATE / name / 'odoo.conf').exists():
             continue
+        if (STATE / name / 'maintenance.json').exists():
+            report[name] = 'mantenimiento autorizado'
+            continue
         if not report['postgres']:
             report[name] = 'sin base de datos'
             continue

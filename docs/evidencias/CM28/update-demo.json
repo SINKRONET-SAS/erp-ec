@@ -1,0 +1,28 @@
+{
+  "instancia": "demo",
+  "modulos": [
+    "erpec_base",
+    "erpec_data_protection",
+    "erpec_field_routes",
+    "erpec_fiscal_ats",
+    "erpec_fiscal_connector",
+    "erpec_fiscal_documents",
+    "erpec_fiscal_guide_sri",
+    "erpec_fiscal_native",
+    "erpec_fiscal_sri",
+    "erpec_fiscal_withholding_sri",
+    "erpec_imports",
+    "erpec_manufacturing",
+    "erpec_operations",
+    "erpec_payroll",
+    "erpec_secrets",
+    "erpec_treasury",
+    "erpec_website_entry",
+    "erpec_withholding_accounting",
+    "erpec_workspace"
+  ],
+  "respaldo": ".cache/windows/backups/update-demo-20260928T231906Z",
+  "copiaSincronizada": true,
+  "desfase": "sin desfase",
+  "login_ready": true
+}

@@ -1,0 +1,29 @@
+{
+  "instancia": "fundador",
+  "modulos": [
+    "erpec_base",
+    "erpec_data_protection",
+    "erpec_fiscal_connector",
+    "erpec_fiscal_documents",
+    "erpec_fiscal_guide_sri",
+    "erpec_fiscal_native",
+    "erpec_fiscal_sri",
+    "erpec_fiscal_withholding_sri",
+    "erpec_imports",
+    "erpec_manufacturing",
+    "erpec_operations",
+    "erpec_payphone",
+    "erpec_payroll",
+    "erpec_provision",
+    "erpec_secrets",
+    "erpec_selfservice",
+    "erpec_suite",
+    "erpec_treasury",
+    "erpec_withholding_accounting",
+    "erpec_workspace"
+  ],
+  "respaldo": ".cache/windows/backups/update-fundador-20260928T232050Z",
+  "copiaSincronizada": false,
+  "desfase": "sin desfase",
+  "login_ready": true
+}

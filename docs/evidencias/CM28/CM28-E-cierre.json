@@ -1,0 +1,39 @@
+{
+  "phase": "CM28-E",
+  "status": "completed",
+  "runs": [
+    {
+      "name": "ec_integrated_test_cm28_e",
+      "tests": 29,
+      "failed": 0,
+      "errors": 0,
+      "sha256": "f9a68361971a81ff6f3cdfdbff364062ff0e57d745670c5aa2b460ece16acd6a"
+    },
+    {
+      "name": "ec_integrated_test_cm28_e_portal",
+      "tests": 21,
+      "failed": 0,
+      "errors": 0,
+      "sha256": "687e29d43924b10a9431bad8403094a7a3cfc91bc1d4d7a869adfbabaf034157"
+    }
+  ],
+  "visual": "ui-results.json",
+  "checks": [
+    "Catálogo único, comparación, usuarios y complementos con desglose en servidor",
+    "Portal autenticado, alta idempotente, referencia ajena denegada y renovación futura",
+    "SS-DEMO retirado explícitamente; contratos preservados; ofertas sin publicar no cobran",
+    "Portada y pie propios conservados; siete capturas verificadas; escritorio 1440 y móvil 390",
+    "Sin desbordamiento; cinco recorridos axe sin incidencias detectadas; foco de teclado disponible",
+    "Copia aislada del fundador restaurada y actualizada sin modificar el origen; sin cron/correo"
+  ],
+  "repairs": [
+    "Sintaxis compatible con el compilador SCSS de Odoo",
+    "Un único landmark principal en las páginas",
+    "Teléfono genérico retirado de las plantillas sin eliminar números personalizados"
+  ],
+  "limits": [
+    "No es una certificación universal de accesibilidad",
+    "Tarifas publicadas solo en copia de ensayo; fundador/demo aún pendientes de CM28-F",
+    "Sin cobros reales ni envío de correo"
+  ]
+}

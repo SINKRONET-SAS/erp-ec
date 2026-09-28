@@ -1,0 +1,21 @@
+{
+  "phase": "CM28-A",
+  "status": "completed",
+  "exitCode": 0,
+  "tests": 20,
+  "failed": 0,
+  "errors": 0,
+  "command": ".venv/Scripts/python.exe scripts/test-integrated.py erpec_suite erpec_provision erpec_selfservice --name ec_integrated_test_cm28_a",
+  "logSha256": "4a9d00e9a4b5fe9123d5859db3177305e456e49f468f542947bce31c46d00390",
+  "checks": [
+    "Dos clientes crean contratos activos e instancias diferentes",
+    "Identidad y operador inmutables",
+    "Instancia histórica sin cliente mantiene identidad",
+    "Vistas XML y módulos cargados sin errores"
+  ],
+  "limits": [
+    "No se han migrado instancias reales",
+    "Ensayo concurrente y aislamiento entre bases se completan en CM28-F",
+    "PayPhone simulado; estado de solicitud se corrige en CM28-D"
+  ]
+}

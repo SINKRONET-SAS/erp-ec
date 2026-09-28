@@ -1,0 +1,26 @@
+{
+  "phase": "CM28-C",
+  "status": "completed",
+  "exitCode": 0,
+  "tests": 20,
+  "failed": 0,
+  "errors": 0,
+  "command": ".venv/Scripts/python.exe scripts/test-integrated.py erpec_assets erpec_suite --name ec_integrated_test_cm28_c_catalog",
+  "logSha256": "94946df52e5dc4190095bf3dbb1e33570cb2f1e8eff4fa3e8f43fe1a8258efdd",
+  "checks": [
+    "Alta manual, compras parciales y capitalización excesiva bloqueada",
+    "Calendario parcial, residual y redondeos; asientos idempotentes",
+    "Venta/baja, ganancia y reversión conciliadas con mayor",
+    "Estimaciones futuras sin modificar asientos anteriores",
+    "Cierres contables y empresa ajena bloqueados; copia de factura ordinaria preservada",
+    "Vistas y asistentes cargados; capacidad activos registrada después de validar el módulo"
+  ],
+  "repairs": [
+    "Vínculo de reversión corregido a reversal_move_ids; segundo ensayo 10 pruebas aprobado; ensayo conjunto 20 aprobado"
+  ],
+  "limits": [
+    "Sin depreciación fiscal automática ni deducibilidad acreditada",
+    "Sin despliegue en bases reales todavía",
+    "Validación visual y concurrencia entre conexiones en CM28-F"
+  ]
+}

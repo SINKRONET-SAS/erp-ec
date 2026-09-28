@@ -15,12 +15,14 @@ class UiUxCase(TransactionCase):
             'partner_id': partner.id, 'user_id': seller.id,
             'order_line': [(0, 0, {'product_id': product.id, 'product_uom_qty': 1, 'price_unit': 100, 'tax_id': [(5, 0, 0)]})]})
         arch = etree.fromstring(order.get_view(view_id=self.env.ref('sale.view_order_form').id, view_type='form')['arch'].encode())
-        buttons = arch.xpath("//sheet//button[@name='action_confirm']")
-        self.assertEqual(len(buttons), 1)
-        self.assertEqual(safe_eval(buttons[0].get('context')), {'validate_analytic': True})
-        condition = buttons[0].get('invisible')
+        buttons = arch.xpath("//header/button[@name='action_confirm']")
+        self.assertEqual(len(buttons), 2)
+        self.assertFalse(arch.xpath("//sheet//button[@name='action_confirm']"))
+        for button in buttons:
+            self.assertEqual(safe_eval(button.get('context')), {'validate_analytic': True})
         for state in ['draft', 'sent', 'sale', 'cancel']:
-            self.assertEqual(safe_eval(condition, {'state': state}), state in ['sale', 'cancel'])
+            visible = [button for button in buttons if not safe_eval(button.get('invisible'), {'state': state})]
+            self.assertEqual(len(visible), 1 if state in ['draft', 'sent'] else 0)
         for state in ['draft', 'sent']:
             candidate = order.copy()
             candidate.write({'state': state})

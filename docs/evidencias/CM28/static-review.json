@@ -1,0 +1,13 @@
+{
+  "text_files_checked": 105,
+  "checks": [
+    "UTF-8 sin BOM",
+    "AST Python",
+    "XML",
+    "JSON",
+    "sin carácter de reemplazo",
+    "sin coincidencias de credenciales locales en entregables"
+  ],
+  "mojibake_candidates": 0,
+  "errors": []
+}

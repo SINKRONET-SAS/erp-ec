@@ -44,9 +44,32 @@ def write(path, text):
     path.write_text(text, encoding='utf-8', newline='\n')
 
 
+
+def ensure_saved_role():
+    """Reconstruye solo el rol local ausente, conservando la credencial privada guardada."""
+    saved=json.loads((DIRECTORY/'credentials.json').read_text(encoding='utf-8'))
+    if saved['db_user']!=TENANTS_ROLE:
+        raise ValueError('El rol guardado no coincide con el servidor compartido.')
+    cluster=json.loads((STATE/'credentials.json').read_text(encoding='utf-8'))
+    connection=psycopg2.connect(host='127.0.0.1',port=55487,dbname='postgres',user='postgres',password=cluster['postgres'])
+    connection.autocommit=True
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT rolsuper,rolcreatedb,rolcreaterole FROM pg_roles WHERE rolname=%s',[TENANTS_ROLE])
+            role=cursor.fetchone()
+            if role is None:
+                cursor.execute(sql.SQL('CREATE ROLE {} LOGIN PASSWORD %s NOSUPERUSER NOCREATEDB NOCREATEROLE').format(sql.Identifier(TENANTS_ROLE)),[saved['db_password']])
+                print('Rol local restaurado con la credencial guardada correlationId=shared-bootstrap')
+            elif any(role):
+                raise ValueError('El rol compartido tiene privilegios excesivos; revisar configuración.')
+    finally:
+        connection.close()
+
+
 def bootstrap():
     conf_path = DIRECTORY / 'odoo.conf'
     if conf_path.exists():
+        ensure_saved_role()
         print('El servidor compartido ya está inicializado:', conf_path)
         return
     DIRECTORY.mkdir(parents=True, exist_ok=True)
@@ -102,6 +125,7 @@ def start():
     conf_path = DIRECTORY / 'odoo.conf'
     if not conf_path.exists():
         raise RuntimeError('Ejecuta primero: shared-tenant-server.py bootstrap')
+    ensure_saved_role()
     if matching_process():
         print('El servidor compartido ya está en ejecución')
         return

@@ -10,6 +10,42 @@ def administrator(env):
     if not env.user.has_group('base.group_system'):
         raise AccessError('Solo administración puede cambiar contratos de la suite.')
 
+class Customer(models.Model):
+    _name = 'erpec.customer'
+    _description = 'Cliente comercial del operador'
+    name = fields.Char('Razón social', required=True)
+    reference = fields.Char('Identidad de cliente', required=True, readonly=True, copy=False,
+                            default=lambda self: uuid.uuid4().hex, index=True)
+    company_id = fields.Many2one('res.company', string='Operador', required=True,
+                                 default=lambda self: self.env.company, ondelete='restrict')
+    portal_user_id = fields.Many2one('res.users', string='Titular del portal', readonly=True, ondelete='restrict')
+    vat = fields.Char('RUC declarado')
+    street = fields.Char('Dirección')
+    contact_name = fields.Char('Contacto')
+    email = fields.Char('Correo de contacto')
+    phone = fields.Char('Teléfono')
+    regime = fields.Char('Régimen declarado')
+    _sql_constraints = [('reference_unique', 'unique(reference)', 'La identidad de cliente ya existe.')]
+
+    @api.model_create_multi
+    def create(self, values_list):
+        administrator(self.env)
+        if any('reference' in values for values in values_list):
+            raise AccessError('La identidad del cliente se genera en el servidor.')
+        return super().create(values_list)
+
+    def write(self, values):
+        administrator(self.env)
+        if set(values) & {'reference', 'company_id', 'portal_user_id'}:
+            raise AccessError('La identidad y el operador del cliente son inmutables.')
+        return super().write(values)
+
+    @api.constrains('company_id')
+    def _check_company_access(self):
+        for record in self:
+            if record.company_id not in self.env.companies:
+                raise AccessError('El operador no está autorizado en esta sesión.')
+
 class Plan(models.Model):
     _name = 'erpec.plan'
     _description = 'Versión de plan comercial'
@@ -60,7 +96,7 @@ class Plan(models.Model):
     def write(self, values):
         administrator(self.env)
         self.env.cr.execute('SELECT id FROM erpec_plan WHERE id IN %s ORDER BY id FOR UPDATE', [tuple(self.ids)])
-        if self.env['erpec.subscription'].sudo().search_count([('plan_id', 'in', self.ids)]):
+        if set(values) - {'published'} and self.env['erpec.subscription'].sudo().search_count([('plan_id', 'in', self.ids)]):
             raise ValidationError('El plan ya tiene contratos. Crea una nueva versión; los contratos existentes se conservan.')
         return super().write(values)
 
@@ -68,7 +104,7 @@ class Plan(models.Model):
         administrator(self.env)
         self.ensure_one()
         latest = self.search([('code', '=', self.code)], order='version desc', limit=1)
-        new = self.copy({'version': latest.version + 1})
+        new = self.copy({'version': latest.version + 1, 'published': False})
         return {'type': 'ir.actions.act_window', 'res_model': self._name, 'res_id': new.id, 'view_mode': 'form'}
 
 class Subscription(models.Model):
@@ -76,6 +112,7 @@ class Subscription(models.Model):
     _description = 'Contrato de productos de la suite'
     name = fields.Char('Referencia del contrato', required=True)
     company_id = fields.Many2one('res.company', string='Organización Odoo', required=True, default=lambda self: self.env.company, index=True)
+    customer_id = fields.Many2one('erpec.customer', string='Cliente', ondelete='restrict', check_company=True, index=True)
     plan_id = fields.Many2one('erpec.plan', string='Versión contratada', required=True, ondelete='restrict')
     starts_on = fields.Date('Inicio', required=True, default=fields.Date.today)
     ends_on = fields.Date('Fin', required=True)
@@ -103,9 +140,11 @@ class Subscription(models.Model):
                 api_text = f'{plan.max_connections} conexiones; {plan.requests_per_minute} solicitudes/min por conexión' if plan.api_access else 'API no incluida'
                 record.rights = ', '.join(products) + '. ' + api_text + '. Conexiones externas pendientes de verificación; este contrato no modifica otros productos.'
 
-    @api.constrains('starts_on', 'ends_on', 'company_id')
+    @api.constrains('starts_on', 'ends_on', 'company_id', 'customer_id')
     def _validate_contract(self):
         for record in self:
+            if record.customer_id and record.customer_id.company_id != record.company_id:
+                raise ValidationError('El cliente debe pertenecer al operador del contrato.')
             if record.ends_on < record.starts_on:
                 raise ValidationError('La fecha final debe ser igual o posterior al inicio.')
             if record.company_id not in self.env.companies:
@@ -137,12 +176,12 @@ class Subscription(models.Model):
         self.ensure_one()
         administrator(self.env)
         self.check_access('write')
-        self.env.cr.execute('SELECT id FROM res_company WHERE id = %s FOR UPDATE', [self.company_id.id])
+        self.env.cr.execute('UPDATE res_company SET write_date=write_date WHERE id = %s RETURNING id', [self.company_id.id])
         self.env.cr.execute('SELECT id FROM erpec_subscription WHERE id = %s FOR UPDATE', [self.id])
         self.invalidate_recordset()
 
     def _check_overlap(self):
-        if self.search_count([('company_id', '=', self.company_id.id), ('id', '!=', self.id), ('activated_at', '!=', False), ('suspended', '=', False), ('starts_on', '<=', self.ends_on), ('ends_on', '>=', self.starts_on)]):
+        if self.search_count([('company_id', '=', self.company_id.id), ('customer_id', '=', self.customer_id.id or False), ('id', '!=', self.id), ('activated_at', '!=', False), ('suspended', '=', False), ('starts_on', '<=', self.ends_on), ('ends_on', '>=', self.starts_on)]):
             raise ValidationError('Existe otro contrato autorizado para estas fechas. Revisa la migración para evitar doble contratación.')
 
     def action_activate(self):

@@ -1,0 +1,6 @@
+<odoo>
+<record id="erpec_asset_company_rule" model="ir.rule"><field name="name">Activos por empresa: erpec_asset</field><field name="model_id" ref="model_erpec_asset"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="erpec_asset_category_company_rule" model="ir.rule"><field name="name">Activos por empresa: erpec_asset_category</field><field name="model_id" ref="model_erpec_asset_category"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="erpec_asset_line_company_rule" model="ir.rule"><field name="name">Activos por empresa: erpec_asset_line</field><field name="model_id" ref="model_erpec_asset_line"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="erpec_asset_revision_company_rule" model="ir.rule"><field name="name">Activos por empresa: erpec_asset_revision</field><field name="model_id" ref="model_erpec_asset_revision"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+</odoo>

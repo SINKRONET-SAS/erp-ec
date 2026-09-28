@@ -1,0 +1,14 @@
+{
+  "instancia": "a",
+  "modulos": [
+    "erpec_base",
+    "erpec_payphone",
+    "erpec_provision",
+    "erpec_secrets",
+    "erpec_suite"
+  ],
+  "respaldo": ".cache/windows/backups/update-a-20260928T232241Z",
+  "copiaSincronizada": false,
+  "desfase": "sin desfase",
+  "login_ready": true
+}

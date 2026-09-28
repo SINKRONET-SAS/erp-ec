@@ -1,0 +1,32 @@
+[
+  {
+    "instance": "fundador",
+    "login": "validado con credencial existente, sin reset",
+    "counts": {
+      "account.move": 4,
+      "account.move.line": 12
+    },
+    "historical_accounting_preserved": true,
+    "ss_demo_unpublished": true,
+    "new_modules_installed": true,
+    "landing_and_admin_views": true,
+    "public_checkout_disabled_without_offers": true,
+    "screenshot": "docs/evidencias/CM28/ui/fundador-local.png",
+    "sha256": "1942538dd378e9716fb36d803078c91e26d7034cea40e551d3be7b3625cdab22"
+  },
+  {
+    "instance": "demo",
+    "login": "validado con credencial existente, sin reset",
+    "counts": {
+      "account.move": 30,
+      "account.move.line": 137
+    },
+    "historical_accounting_preserved": true,
+    "ss_demo_unpublished": true,
+    "new_modules_installed": true,
+    "landing_and_admin_views": true,
+    "public_checkout_disabled_without_offers": true,
+    "screenshot": "docs/evidencias/CM28/ui/demo-local.png",
+    "sha256": "fe6a67ba7b91523a528611c8c24ed7023bd2801fae8adcd6b79f53b1740a34d0"
+  }
+]

@@ -228,3 +228,14 @@ class TestPayphoneHttp(HttpCase):
         self.assertEqual(response.status_code, 400)
         self.assertNotIn('<script>', response.text)
         self.assertEqual(response.headers['Cache-Control'], 'no-store')
+
+    def test_queued_checkout_has_waiting_state(self):
+        plan=self.env['erpec.plan'].sudo().create({'name':'Cola HTTP','code':'CM28-QUEUE-HTTP','erp':True,'terms':'Ensayo'})
+        contract=self.env['erpec.subscription'].sudo().create({'name':'Cola HTTP','plan_id':plan.id,'ends_on':'2099-01-01','billing_owner':'payphone_test','billing_reference':'Ensayo','authorization':'Ensayo'})
+        provider=self.env['erpec.payphone.provider'].sudo().create({'company_id':self.env.company.id,'public_url':'https://example.invalid'})
+        payment=self.env['erpec.payphone.payment'].sudo().create({'subscription_id':contract.id,'provider_id':provider.id,'amount_without_tax':1})
+        payment._update({'state':'queued'})
+        response=self.url_open('/payment/payphone/checkout/'+payment.reference)
+        self.assertEqual(response.status_code,202)
+        self.assertIn('Preparando el pago',response.text)
+        self.assertNotIn('Contraseña',response.text)

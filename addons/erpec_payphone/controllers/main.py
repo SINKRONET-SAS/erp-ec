@@ -6,8 +6,8 @@ from odoo.http import request
 from odoo.exceptions import ValidationError
 
 
-def page(title, message, status=200, link=None):
-    action = ('<p><a href="%s" rel="noopener">Continuar en PayPhone</a></p>' % escape(link)) if link else ''
+def page(title, message, status=200, link=None, link_label="Continuar en PayPhone"):
+    action = ('<p><a href="%s" rel="noopener">%s</a></p>' % (escape(link), escape(link_label))) if link else ''
     body = ('<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
             '<title>SK ERP · PayPhone</title><style>body{font:18px system-ui;background:#f3f6fa;color:#182738;padding:8vh 6vw}'
             'main{max-width:650px;margin:auto;background:white;padding:36px;border-radius:16px}a{color:#065bc4}</style>'
@@ -22,6 +22,8 @@ class PayphoneController(http.Controller):
         # Público a propósito: la referencia es un UUID no adivinable y la página solo
         # muestra el enlace de checkout ya generado por PayPhone, nunca datos privados.
         payment = request.env['erpec.payphone.payment'].sudo().search([('reference', '=', reference)], limit=1)
+        if payment and payment.state=='queued':
+            return page('Preparando el pago', 'Tu solicitud está guardada. Actualiza el estado en unos instantes; no envíes otra solicitud.',202,link='/payment/payphone/checkout/'+payment.reference,link_label='Actualizar estado')
         if not payment or payment.state != 'prepared':
             return page('Enlace no disponible', 'Consulta el estado del pago en SK ERP.', 404)
         return page('Pago preparado', 'Confirma los datos antes de continuar. El pago se abrirá en la página de PayPhone.', link=payment.checkout_url)

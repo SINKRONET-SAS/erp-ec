@@ -1,0 +1,63 @@
+{
+  "runs": [
+    {
+      "name": "ec_integrated_test_cm28_full2",
+      "failed": 2,
+      "errors": 1,
+      "tests": 701,
+      "omissions": [
+        "TreasuryCase.test_sanitize_demo_and_repeat : Requiere la demo sembrada: erpec_demo_seed.bill ",
+        "TreasuryCase.test_sanitize_refuses_changed_source : Requiere la demo sembrada: erpec_demo_seed.bill ",
+        "TreasuryCase.test_sanitize_refuses_unrelated_commercial_link : Requiere la demo sembrada: erpec_demo_seed.bill "
+      ],
+      "sha256": "5fae1021026dce533a26a21b0f9046b12ca0e7adcb278d8f3fc3f20eba95f549"
+    },
+    {
+      "name": "ec_integrated_test_cm28_full3",
+      "failed": 0,
+      "errors": 0,
+      "tests": 701,
+      "omissions": [
+        "TreasuryCase.test_sanitize_demo_and_repeat : Requiere la demo sembrada: erpec_demo_seed.bill ",
+        "TreasuryCase.test_sanitize_refuses_changed_source : Requiere la demo sembrada: erpec_demo_seed.bill ",
+        "TreasuryCase.test_sanitize_refuses_unrelated_commercial_link : Requiere la demo sembrada: erpec_demo_seed.bill "
+      ],
+      "sha256": "a49cfaa8dfee88979d9ff05a823bdacdf214445f592ef5eee8818c7621230620"
+    },
+    {
+      "name": "ec_integrated_test_cm28_final_catalog",
+      "failed": 0,
+      "errors": 0,
+      "tests": 50,
+      "omissions": [],
+      "sha256": "3c0324d263e85e24094822d5cb81951edd17e7b8af01ed8f10ce9f01aabc83de"
+    },
+    {
+      "name": "ec_integrated_test_cm28_dependencies",
+      "failed": 0,
+      "errors": 0,
+      "tests": 29,
+      "omissions": [],
+      "sha256": "0e251a9d9a55d22d3a879fc5c2071106ea3478620b882377f2d4910a08994c3d"
+    }
+  ],
+  "repairs": [
+    "Comprobación nativa de compañías conserva acceso interno a referencias técnicas sin ampliar derechos RPC",
+    "Fixture de nómina verifica una línea existente y cero para un empleado nuevo",
+    "Prueba de estado SRI respeta la autoridad privada y comprueba rechazo de escritura directa",
+    "Prueba de ventas verifica botones nativos en encabezado y visibilidad por estado",
+    "Combinación Fabricación/Inventario validada antes de publicar, cotizar y aprovisionar"
+  ],
+  "concurrency": [
+    "Dos altas de usuario disputan un solo cupo; solo una se confirma",
+    "Dos clientes simultáneos conservan contratos e instancias distintos",
+    "Dos depreciaciones simultáneas producen un único asiento de cuota"
+  ],
+  "runner_tests": {
+    "governance": 6,
+    "safety": 8,
+    "linux_runner": 1,
+    "demo_runner": 7,
+    "matrix_rows": 19
+  }
+}

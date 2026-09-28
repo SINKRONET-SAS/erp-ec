@@ -5,3 +5,8 @@ subscription_admin,Contratos administración,model_erpec_subscription,base.group
 subscription_reader,Contratos consulta,model_erpec_subscription,base.group_user,1,0,0,0
 link_admin,Vínculos administración,model_erpec_product_link,base.group_system,1,1,1,0
 link_reader,Vínculos consulta,model_erpec_product_link,base.group_user,1,0,0,0
+customer_admin,Clientes administración,model_erpec_customer,base.group_system,1,1,1,0
+capability_admin,Capacidades administración,model_erpec_capability,base.group_system,1,1,1,0
+capability_reader,Capacidades consulta,model_erpec_capability,base.group_user,1,0,0,0
+option_admin,Módulos del plan administración,model_erpec_plan_option,base.group_system,1,1,1,1
+option_reader,Módulos del plan consulta,model_erpec_plan_option,base.group_user,1,0,0,0
