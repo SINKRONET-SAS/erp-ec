@@ -40,3 +40,7 @@ Conservar rutas de autoservicio y PayPhone. Extender contratos con cliente y det
 ## Resultado ejecutado — 28-09-2026
 
 Fases CM28-00 a CM28-G completadas en orden y selladas. La respuesta a cada hallazgo está al final del diagnóstico; los cierres y evidencias se conservan en docs/evidencias/CM28. Fundador y demo actualizados tras restauración ensayada. Implementación publicada en 5b61ec16475847223e19ff9229726622ee86e656; cinco trabajos de CI aprobados, con 702 pruebas integradas en Linux sin fallos/errores. Las tarifas reales permanecen sin publicar y no se realizaron pagos, envíos fiscales, correos reales ni despliegue de producción.
+
+## Seguimiento autorizado CM28-G-EC — fundador con localización Ecuador
+
+Se incorpora ATS en el fundador y se verifican las nueve pantallas de Ecuador y activos, conservando los datos contables y acceso. Prompt: `.github/prompts/ERPEC26-CM28-G-EC.md`; resultados y límites en `docs/FUNDADOR_LOCALIZACION_ECUADOR.md` y `docs/evidencias/CM28/fundador-ecuador*.json`. El control XSD impide descargas ATS inválidas; no resuelve por sí solo los pendientes tributarios de los datos existentes.

@@ -1,0 +1,245 @@
+{
+  "url": "http://127.0.0.1:8199",
+  "login": "fundador; credencial existente conservada",
+  "company": {
+    "id": 1,
+    "name": "SINKRONET S.A.S.",
+    "country_id": [
+      63,
+      "Ecuador"
+    ],
+    "currency_id": [
+      1,
+      "USD"
+    ],
+    "chart_template": "ec"
+  },
+  "user": {
+    "id": 2,
+    "lang": "es_EC",
+    "tz": "America/Guayaquil"
+  },
+  "modules": [
+    {
+      "id": 70,
+      "name": "erpec_fiscal_native",
+      "state": "installed"
+    },
+    {
+      "id": 80,
+      "name": "erpec_withholding_accounting",
+      "state": "installed"
+    },
+    {
+      "id": 702,
+      "name": "erpec_assets",
+      "state": "installed"
+    },
+    {
+      "id": 699,
+      "name": "erpec_fiscal_ats",
+      "state": "installed"
+    },
+    {
+      "id": 69,
+      "name": "erpec_fiscal_documents",
+      "state": "installed"
+    },
+    {
+      "id": 695,
+      "name": "erpec_fiscal_guide_sri",
+      "state": "installed"
+    },
+    {
+      "id": 696,
+      "name": "erpec_fiscal_sri",
+      "state": "installed"
+    },
+    {
+      "id": 697,
+      "name": "erpec_fiscal_withholding_sri",
+      "state": "installed"
+    },
+    {
+      "id": 75,
+      "name": "erpec_payroll",
+      "state": "installed"
+    },
+    {
+      "id": 189,
+      "name": "l10n_ec",
+      "state": "installed"
+    },
+    {
+      "id": 190,
+      "name": "l10n_ec_stock",
+      "state": "installed"
+    }
+  ],
+  "accounting_counts_preserved": {
+    "account.move": 4,
+    "account.move.line": 12,
+    "account.account": 505
+  },
+  "views": [
+    {
+      "action": "Facturas — preparación local",
+      "model": "account.move",
+      "url": "http://127.0.0.1:8199/odoo/action-585",
+      "menus": [
+        {
+          "id": 377,
+          "name": "Facturas — preparación local",
+          "parent_id": [
+            374,
+            "ERP EC/Fiscal · Pruebas"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Emisiones nativas (firma + SRI)",
+      "model": "erpec.fiscal.emission",
+      "url": "http://127.0.0.1:8199/odoo/action-610",
+      "menus": [
+        {
+          "id": 404,
+          "name": "Emisiones nativas (firma + SRI)",
+          "parent_id": [
+            374,
+            "ERP EC/Fiscal · Pruebas"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Establecimientos y puntos de emisión",
+      "model": "erpec.fiscal.point",
+      "url": "http://127.0.0.1:8199/odoo/action-611",
+      "menus": [
+        {
+          "id": 405,
+          "name": "Establecimientos y puntos de emisión",
+          "parent_id": [
+            374,
+            "ERP EC/Fiscal · Pruebas"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Anexo ATS",
+      "model": "erpec.ats.report",
+      "url": "http://127.0.0.1:8199/odoo/action-668",
+      "menus": [
+        {
+          "id": 460,
+          "name": "Anexo ATS (agregador)",
+          "parent_id": [
+            374,
+            "ERP EC/Fiscal · Pruebas"
+          ]
+        }
+      ],
+      "visible": true,
+      "screenshot": "docs/evidencias/CM28/ui/fundador-ecuador-ats.png",
+      "sha256": "abe7bdc0beefcc7c06d54a7fb994ee9e3af011a992fc7f2d596fa88ed7a7d29e"
+    },
+    {
+      "action": "Retenciones contables",
+      "model": "erpec.withholding",
+      "url": "http://127.0.0.1:8199/odoo/action-580",
+      "menus": [
+        {
+          "id": 373,
+          "name": "Retenciones contables",
+          "parent_id": [
+            146,
+            "Invoicing/Vendors"
+          ]
+        },
+        {
+          "id": 426,
+          "name": "Retenciones contables",
+          "parent_id": [
+            153,
+            "Invoicing/Accounting"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Guías de remisión SRI",
+      "model": "erpec.fiscal.guide",
+      "url": "http://127.0.0.1:8199/odoo/action-614",
+      "menus": [
+        {
+          "id": 407,
+          "name": "Guías de remisión SRI",
+          "parent_id": [
+            214,
+            "Inventory/Operations"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Nómina local",
+      "model": "erpec.payroll.period",
+      "url": "http://127.0.0.1:8199/odoo/action-578",
+      "menus": [
+        {
+          "id": 367,
+          "name": "Períodos y novedades",
+          "parent_id": [
+            366,
+            "Nómina"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Agregador RDEP",
+      "model": "erpec.payroll.rdep",
+      "url": "http://127.0.0.1:8199/odoo/action-577",
+      "menus": [
+        {
+          "id": 369,
+          "name": "Agregador RDEP",
+          "parent_id": [
+            366,
+            "Nómina"
+          ]
+        }
+      ],
+      "visible": true
+    },
+    {
+      "action": "Activos fijos",
+      "model": "erpec.asset",
+      "url": "http://127.0.0.1:8199/odoo/action-659",
+      "menus": [
+        {
+          "id": 452,
+          "name": "Activos y depreciación",
+          "parent_id": [
+            451,
+            "Invoicing/Activos fijos"
+          ]
+        }
+      ],
+      "visible": true
+    }
+  ],
+  "limits": [
+    "No se envían documentos al SRI ni correos.",
+    "ATS y RDEP son agregadores; disponibilidad no acredita homologación ni presentación tributaria.",
+    "No se modifican tasas, certificado, ambiente SRI ni movimientos contables."
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "instancia": "fundador",
+  "modulos": [
+    "erpec_assets",
+    "erpec_base",
+    "erpec_data_protection",
+    "erpec_entitlements",
+    "erpec_fiscal_connector",
+    "erpec_fiscal_documents",
+    "erpec_fiscal_guide_sri",
+    "erpec_fiscal_native",
+    "erpec_fiscal_sri",
+    "erpec_fiscal_withholding_sri",
+    "erpec_imports",
+    "erpec_manufacturing",
+    "erpec_operations",
+    "erpec_payphone",
+    "erpec_payroll",
+    "erpec_provision",
+    "erpec_secrets",
+    "erpec_selfservice",
+    "erpec_suite",
+    "erpec_treasury",
+    "erpec_website_entry",
+    "erpec_withholding_accounting",
+    "erpec_workspace"
+  ],
+  "respaldo": ".cache/windows/backups/update-fundador-20260929T030957Z",
+  "copiaSincronizada": false,
+  "desfase": "sin desfase",
+  "accounting_before": {
+    "account_move": "f94728084ded5f7059f91b6a5ded9c3e3d7864936e8ed364902db2dad05b68f0",
+    "account_move_line": "ac7cd5c44c206ffaf4142943671a79dc5328d5f83972482a8d384eef97a42c73"
+  },
+  "accounting_after": {
+    "account_move": "5c0f109cae64ec63265a619d4e1e53f72938fa20264c1b9966cc50b5c6daf3b2",
+    "account_move_line": "ac7cd5c44c206ffaf4142943671a79dc5328d5f83972482a8d384eef97a42c73"
+  },
+  "accounting_comparison": {
+    "all_existing_columns_unchanged": true,
+    "rows": {
+      "account_move": 4,
+      "account_move_line": 12
+    },
+    "added_columns_null": {
+      "account_move": [
+        "ec_purchase_sri_authorization"
+      ],
+      "account_move_line": []
+    },
+    "note": "La huella del JSON completo cambia al añadir la columna ATS; comparación campo por campo contra pg_dump confirma todos los valores preexistentes idénticos."
+  }
+}

@@ -1,3 +1,11 @@
+# Seguimiento CM28-G-EC — localización Ecuador del fundador (28-09-2026)
+
+Solicitud expresa del titular atendida localmente en fundador, puerto 8199. La base Ecuador, fiscal, retenciones, guías y nómina ya estaban instaladas; se incorpora el agregador ATS faltante. Respaldo y restauración aislada verificados, 15 pruebas ATS aprobadas y nueve pantallas accesibles con usuario fundador. Todos los valores preexistentes de 4 asientos y 12 líneas se conservan; ATS añade una columna vacía. Esquema sin desfase y credencial existente conservada.
+
+El ensayo detectó XML ATS incompatible con el esquema incorporado y pruebas que mezclaban documentos históricos. Se aísla la compañía de pruebas y se valida el XML antes de descargar, limpiando descargas antiguas al reconstruir. No se modifican importes ni razón social para forzar un XML válido. Permanece pendiente la resolución fiscal del formato de razón social y notas de crédito de los datos existentes antes de declarar; disponibilidad no acredita homologación. Guía: docs/FUNDADOR_LOCALIZACION_ECUADOR.md. Evidencias: docs/evidencias/CM28/fundador-ecuador*.json. Continúa commit/push y verificación de todas las ejecuciones CI del SHA; aún no se atribuye resultado a esa ejecución futura.
+
+---
+
 # Corrección de CI posterior a CM28 — arranque PostgreSQL
 
 La captura del titular mostró un fallo real en ba436de. Hubo dos ejecuciones push del mismo SHA: 36499337744 falló al preparar PostgreSQL del controlador; 36499338970 pasó. El cierre anterior comprobó solo la segunda. Se corrige la sonda de disponibilidad en ambos ejecutores para exigir TCP y no confundir el servidor temporal por socket con el definitivo. Tres pruebas de regresión locales aprobadas; evidencia en docs/evidencias/CM28/ci-startup-correction.json. Las ejecuciones remotas del commit correctivo deben revisarse todas por SHA antes de informar éxito. No se modifica el ERP operativo.

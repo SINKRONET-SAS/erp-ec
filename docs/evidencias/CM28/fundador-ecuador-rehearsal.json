@@ -1,0 +1,24 @@
+{
+  "copy": "ec_restore_drill_cm28e0e96809",
+  "exit": 1,
+  "summary": [
+    [
+      "5",
+      "0",
+      "13"
+    ]
+  ],
+  "log": ".cache\\windows\\restore-drill\\ec_restore_drill_cm28e0e96809\\ecuador-install.log",
+  "corrected_summary": [
+    "0",
+    "0",
+    "15"
+  ],
+  "corrected_log_sha256": "2b6b2148455a8ebe574e6347d2ffbd6b387f4b54ee80ce3904f031042f41a237",
+  "findings": [
+    "Las pruebas anteriores mezclaban documentos históricos de la compañía con los de ensayo.",
+    "El agregador no validaba el XML contra el esquema incorporado; se bloquea la descarga inválida y se muestra el motivo, sin cambiar importes ni razón social."
+  ],
+  "omissions": [],
+  "corrected_exit": 0
+}

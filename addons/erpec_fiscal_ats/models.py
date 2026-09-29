@@ -30,6 +30,8 @@ Brechas conocidas y registradas explícitamente (no fabricadas):
 """
 import base64
 from datetime import date
+from pathlib import Path
+from lxml import etree
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
@@ -462,6 +464,7 @@ class AtsReport(models.Model):
             len(compra_rows), len(venta_rows), len(anulado_rows),
             len(compra_missing) + len(venta_missing) + len(anulado_missing))]
         xml_bytes = None
+        self.write({'xml_preview': False, 'xml_filename': False})
         if compra_rows or venta_rows or anulado_rows:
             header = {
                 'tipo_id_informante': 'R', 'id_informante': self.company_id.vat, 'razon_social': self.company_id.name,
@@ -474,7 +477,13 @@ class AtsReport(models.Model):
                     ventas=venta_rows,
                     anulados=[payload for _move, payload in anulado_rows],
                 )
-            except ValueError as error:
+                # Validar contra el esquema incorporado antes de habilitar la descarga.
+                schema_path = Path(ats_export.__file__).parent / 'xsd' / 'at.xsd'
+                schema = etree.XMLSchema(etree.parse(str(schema_path)))
+                document = etree.fromstring(xml_bytes, etree.XMLParser(resolve_entities=False, no_network=True))
+                schema.assertValid(document)
+            except (ValueError, etree.XMLSyntaxError, etree.DocumentInvalid) as error:
+                xml_bytes = None
                 notice_parts.append('El XML de ensayo no se generó: %s' % error)
         else:
             notice_parts.append('Sin datos suficientes para generar un XML de ensayo este período.')

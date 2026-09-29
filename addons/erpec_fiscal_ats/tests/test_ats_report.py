@@ -13,7 +13,12 @@ class AtsReportCase(TransactionCase):
     def setUp(self):
         super().setUp()
         self.env.user.write({'groups_id': [(4, self.env.ref('account.group_account_manager').id)]})
-        self.env.company.write({'country_id': self.env.ref('base.ec').id})
+        # Cada prueba usa una compañía propia: nunca agrega los documentos de la copia restaurada.
+        company = self.env['res.company'].create({
+            'name': 'Empresa ATS de ensayo', 'country_id': self.env.ref('base.ec').id,
+            'currency_id': self.env.ref('base.USD').id})
+        self.env = self.env(context=dict(self.env.context, allowed_company_ids=[company.id]))
+        self.env['account.chart.template'].try_loading('ec', company, install_demo=False)
         self.env.company.with_context(no_vat_validation=True).write({'vat': '1790012345001', 'street': 'Matriz de ensayo'})
         self.supplier = self.env['res.partner'].with_context(no_vat_validation=True).create({
             'name': 'Proveedor & ensayo', 'vat': '0992222222001', 'street': 'Dir. proveedor',
@@ -203,3 +208,29 @@ class AtsReportCase(TransactionCase):
         move = self.sale()
         with self.assertRaises(ValidationError):
             move.write({'ec_purchase_sri_authorization': '123'})
+
+    def test_invalid_header_removes_previous_download_and_reports_reason(self):
+        self.purchase()
+        report = self.report()
+        report.action_build()
+        self.assertTrue(report.xml_preview)
+        self.env.company.name = 'Empresa & datos no admitidos'
+        report.action_build()
+        self.assertFalse(report.xml_preview)
+        self.assertFalse(report.xml_filename)
+        self.assertIn('El XML de ensayo no se generó', report.build_notice)
+        self.assertEqual(report.compra_count, 1)
+
+    def test_negative_sale_does_not_offer_schema_invalid_xml(self):
+        from unittest.mock import patch
+        move = self.sale()
+        self.authorize_native(move)
+        report = self.report()
+        first, following = __import__('datetime').date(2026, 9, 1), __import__('datetime').date(2026, 10, 1)
+        rows, missing = report._gather_ventas(first, following)
+        rows[0]['base_imp_grav'] = -10.0
+        with patch.object(type(report), '_gather_ventas', return_value=(rows, missing)):
+            report.action_build()
+        self.assertFalse(report.xml_preview)
+        self.assertIn('El XML de ensayo no se generó', report.build_notice)
+        self.assertEqual(report.venta_ids.base_imp_grav, -10.0)

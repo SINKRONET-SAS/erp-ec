@@ -25,7 +25,7 @@
  },
  "erpec_fiscal_ats": {
   "schema": "109d91f028edda37fc89e91d802d71b372ce85a81059a1ba8829c4375de0496a",
-  "version": "18.0.1.0.2"
+  "version": "18.0.1.0.3"
  },
  "erpec_fiscal_connector": {
   "schema": "6f2754dc3a2ea12caad663178335fd066dfe7f70e7d9012c8f332dfda787f64a",
