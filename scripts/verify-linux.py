@@ -64,6 +64,17 @@ def wait_health(url, container):
     raise RuntimeError('La instancia no alcanzó salud verificable')
 
 
+def wait_postgres(container):
+    # El servidor temporal del entrypoint solo abre socket; TCP identifica el arranque definitivo.
+    for attempt in range(30):
+        if docker('exec', container, 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres', check=False).returncode == 0:
+            return
+        if attempt % 10 == 0:
+            print('Esperando PostgreSQL TCP correlationId='+container+' intento='+str(attempt+1), flush=True)
+        time.sleep(1)
+    raise RuntimeError('PostgreSQL de ensayo no inició su servidor TCP definitivo')
+
+
 def main(profile):
     stamp = uuid.uuid4().hex[:10]
     prefix = 'erpec-linux-'+stamp
@@ -81,12 +92,7 @@ def main(profile):
     docker('run', '-d', '--name', pg, '--label', 'erpec.test='+stamp, '--network', prefix, '--env-file', str(envfile), '-v', prefix+'-pg:/var/lib/postgresql/data', POSTGRES)
     containers.append(pg)
     try:
-        for attempt in range(30):
-            if docker('exec', pg, 'pg_isready', '-U', 'postgres', check=False).returncode == 0:
-                break
-            time.sleep(1)
-        else:
-            raise RuntimeError('PostgreSQL de ensayo no inició')
+        wait_postgres(pg)
         docker('exec', '-i', pg, 'psql', '-U', 'postgres', '-v', 'ON_ERROR_STOP=1', input="CREATE ROLE erpec_app LOGIN PASSWORD '"+private['db']+"' NOSUPERUSER NOCREATEDB NOCREATEROLE; CREATE DATABASE erpec_app OWNER erpec_app TEMPLATE template0; REVOKE ALL ON DATABASE erpec_app FROM PUBLIC; CREATE ROLE foreign_app LOGIN PASSWORD '"+private['pg']+"'; CREATE DATABASE foreign_app OWNER foreign_app TEMPLATE template0; REVOKE ALL ON DATABASE foreign_app FROM PUBLIC;")
         instance = uuid.uuid4().hex
         values = {'DATABASE_URL':'postgresql://erpec_app:'+private['db']+'@'+pg+':5432/erpec_app',

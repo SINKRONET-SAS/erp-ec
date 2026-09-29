@@ -1,3 +1,9 @@
+# Corrección de CI posterior a CM28 — arranque PostgreSQL
+
+La captura del titular mostró un fallo real en ba436de. Hubo dos ejecuciones push del mismo SHA: 36499337744 falló al preparar PostgreSQL del controlador; 36499338970 pasó. El cierre anterior comprobó solo la segunda. Se corrige la sonda de disponibilidad en ambos ejecutores para exigir TCP y no confundir el servidor temporal por socket con el definitivo. Tres pruebas de regresión locales aprobadas; evidencia en docs/evidencias/CM28/ci-startup-correction.json. Las ejecuciones remotas del commit correctivo deben revisarse todas por SHA antes de informar éxito. No se modifica el ERP operativo.
+
+---
+
 # Estado vigente: Plan Haiky CM28 completado, fases 00–G cerradas (28-09-2026)
 
 Catálogo y planes versionados con módulos, complementos y usuarios incluidos/adicionales mensuales/anuales; identidad de cliente separada, cobro/renovación PayPhone, derechos y cuotas en servidor, aprovisionamiento por contratación y activación personal. Landing y portal nativos; activos fijos propios integrados con contabilidad. Fundador y demo actualizados con respaldo y restauración ensayada; acceso existente verificado en 8199/8369. Tarifas comerciales sin publicar.

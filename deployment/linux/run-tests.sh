@@ -24,7 +24,7 @@ docker network create "$NET" >/dev/null
 docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=test -e POSTGRES_USER=odoo postgres:17 >/dev/null
 READY=0
 for _ in $(seq 1 30); do
-  if docker exec "$PG" pg_isready -U odoo >/dev/null 2>&1; then READY=1; break; fi
+  if docker exec "$PG" pg_isready -h 127.0.0.1 -U odoo >/dev/null 2>&1; then READY=1; break; fi
   sleep 2
 done
 [ "$READY" -eq 1 ] || { echo "PostgreSQL no inició"; exit 1; }

@@ -1,0 +1,32 @@
+{
+  "incident": "CM28-G-CI",
+  "commit_observed": "ba436dea15bac692a131de6ee41937f6ef93868c",
+  "runs": [
+    {
+      "id": 36499337744,
+      "conclusion": "failure",
+      "failed_job": "Arranque real de imagen controller",
+      "error": "FATAL: terminating connection due to administrator command al crear bases de ensayo"
+    },
+    {
+      "id": 36499338970,
+      "conclusion": "success"
+    }
+  ],
+  "duplicate_observation": "Mismo SHA, evento push, workflow tests.yml y marca de creación; números de ejecución 66 y 67. Origen de la doble entrega no determinado; no hay dos definiciones locales.",
+  "report_correction": "El informe anterior revisó únicamente la ejecución aprobada y omitió la fallida. El fallo fue real.",
+  "cause": "La sonda sin host podía aceptar el servidor temporal por socket del entrypoint. Su parada interrumpió la preparación de las bases. La sonda ahora exige TCP 127.0.0.1 tanto en verify-linux.py como en run-tests.sh.",
+  "primary_reference": "https://github.com/docker-library/postgres/blob/master/docker-entrypoint.sh",
+  "validation": {
+    "command": "python scripts/test-linux-runner.py",
+    "tests": 3,
+    "failed": 0,
+    "cases": [
+      "Espera TCP aunque el socket temporal responda",
+      "Falla tras espera acotada si TCP nunca responde",
+      "Contrato real del ejecutor Bash: salida, resumen y cobertura; sonda TCP exigida"
+    ]
+  },
+  "scope": "Solo ejecutores de pruebas; sin cambios en bases operativas, módulos ERP ni cuotas comerciales.",
+  "remote_validation": "Comprobar todas las ejecuciones asociadas al SHA publicado, no solo el último resultado de la lista."
+}
