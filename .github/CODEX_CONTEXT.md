@@ -2,7 +2,7 @@
 
 Plan docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md ejecutado en orden 00 → A → B. Informe docs/DIAGNOSTICO_CONTRASTADO_DC02.md: siete falsos positivos actuales, dos falsos negativos documentales corregidos, dos inconsistencias/inferencias delimitadas y pendientes externos conservados. README, matriz, arquitectura y guía fiscal actualizados; verificador de enlaces/pin integrado en CI.
 
-Pruebas nuevas: 704 reportadas, cero fallos/errores; tres omisiones cubiertas por 25 pruebas sobre copia de demo sin omisiones. Treinta pruebas de control, 30 enlaces, 46 módulos Community auditados. Evidencia docs/evidencias/DC02/validacion.json. Sin cambios en módulos funcionales, datos originales o repositorios fuente. .claude/ preexistente excluida. Fases maestras 04–08 y gates externos intactos. Cierre local completo; commit/push autorizados como siguiente acción, sin atribuir resultado al CI futuro.
+Pruebas nuevas: 704 reportadas, cero fallos/errores; tres omisiones cubiertas por 25 pruebas sobre copia de demo sin omisiones. Treinta pruebas de control, 30 enlaces, 46 módulos Community auditados. Evidencia docs/evidencias/DC02/validacion.json. Sin cambios en módulos funcionales, datos originales o repositorios fuente. .claude/ preexistente excluida. Fases maestras 04–08 y gates externos intactos. Cierre completo y publicación de implementación confirmada: 007fdd2db65397225cbbab4ac5c0c612b32992eb en origin/codex/erpec26-implementacion. Ejecución remota: https://github.com/SINKRONET-SAS/erp-ec/actions/runs/37088985221. Consultar CI por SHA; no confundir el cierre local con su resultado remoto.
 
 ---
 

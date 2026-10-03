@@ -12,7 +12,7 @@ Informe: [DIAGNOSTICO_CONTRASTADO_DC02.md](DIAGNOSTICO_CONTRASTADO_DC02.md). Evi
 |---|---|---|---|
 | DC02-00 | Gobierno existente válido | Contrastar afirmaciones, identificar límites, desplegar plan y prompts; sellar diagnóstico | Cerrada: contraste |
 | DC02-A | DC02-00 sellada | Corregir README, matriz, arquitectura y guía fiscal; controlar enlaces y coherencia del pin en CI | Cerrada: correcciones verificadas |
-| DC02-B | DC02-A sellada | Pruebas negativas, suite integrada, revisión de diferencias, cierre trazable, commit/push | Cerrada localmente; publicación autorizada |
+| DC02-B | DC02-A sellada | Pruebas negativas, suite integrada, revisión de diferencias, cierre trazable, commit/push | Cerrada; implementación publicada |
 
 ## Ejecución y reversión
 
@@ -26,4 +26,4 @@ Render y operación productiva (cuenta, dimensionamiento, región y secretos en 
 
 ## Cierre local DC02
 
-Fases 00, A y B ejecutadas. Validación: 704 pruebas integradas (0 fallos/errores, 3 omisiones cubiertas por 25 pruebas de Tesorería en copia de demo sin omisiones), 30 pruebas de control aprobadas, 30 enlaces y 46 módulos Community auditados. Evidencia: [validacion.json](evidencias/DC02/validacion.json). No se encontraron regresiones en lo ejecutado. Los pendientes externos de D09 se conservan; no son cerrados por DC02. Commit/push es el paso de publicación; CI del nuevo SHA no se declara aprobado anticipadamente.
+Fases 00, A y B ejecutadas. Validación: 704 pruebas integradas (0 fallos/errores, 3 omisiones cubiertas por 25 pruebas de Tesorería en copia de demo sin omisiones), 30 pruebas de control aprobadas, 30 enlaces y 46 módulos Community auditados. Evidencia: [validacion.json](evidencias/DC02/validacion.json). No se encontraron regresiones en lo ejecutado. Los pendientes externos de D09 se conservan; no son cerrados por DC02. Implementación publicada en 007fdd2db65397225cbbab4ac5c0c612b32992eb. El resultado remoto se consulta por SHA en GitHub; no se atribuye anticipadamente aprobación a un commit posterior de cierre.

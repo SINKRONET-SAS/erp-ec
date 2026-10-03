@@ -1,9 +1,14 @@
 {
   "phase": "DC02-B",
-  "status": "completed-local",
+  "status": "completed",
   "evidence": "docs/evidencias/DC02/validacion.json",
   "regressionsObserved": 0,
   "masterPhasesClosed": false,
-  "publication": "Commit y push autorizados; confirmar SHA remoto tras publicación",
-  "ci": "No atribuir al nuevo SHA el resultado del commit base"
+  "publication": {
+    "implementationCommit": "007fdd2db65397225cbbab4ac5c0c612b32992eb",
+    "branch": "codex/erpec26-implementacion",
+    "push": "confirmado",
+    "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/37088985221"
+  },
+  "ci": "Consultar ejecución por SHA; el cierre local no sustituye el resultado remoto"
 }

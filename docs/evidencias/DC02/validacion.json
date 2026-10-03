@@ -55,7 +55,7 @@
     "No ejecución fiscal o bancaria productiva",
     "No nueva aceptación visual: interfaz operativa sin cambios",
     "Pruebas aisladas no equivalen a homologación",
-    "CI del nuevo commit todavía no ejecutado"
+    "Resultados remotos por SHA en GitHub; las pruebas locales no certifican CI"
   ],
   "seededTreasury": {
     "reported": 25,
@@ -66,7 +66,7 @@
     "passed": true
   },
   "governance": {
-    "expectedLinksAfterClosure": 186,
+    "expectedLinksAfterClosure": 187,
     "requiredPrompts": 44
   }
 }
