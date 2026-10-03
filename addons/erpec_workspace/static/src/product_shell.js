@@ -2,6 +2,8 @@
 import { patch } from "@web/core/utils/patch";
 import { WebClient } from "@web/webclient/webclient";
 import { NavBar } from "@web/webclient/navbar/navbar";
+import "@web/webclient/user_menu/user_menu_items";
+import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 
 patch(WebClient.prototype, {
@@ -29,3 +31,8 @@ patch(NavBar.prototype, {
         await this.menuService.selectMenu(this.erpecHomeMenu);
     },
 });
+
+// El menú del producto conserva preferencias, atajos y cierre de sesión.
+for (const key of ["documentation", "support", "odoo_account"]) {
+    registry.category("user_menuitems").remove(key);
+}

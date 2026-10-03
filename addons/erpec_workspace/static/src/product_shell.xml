@@ -3,7 +3,7 @@
     <xpath expr="//nav" position="attributes"><attribute name="class" add="erpec_navbar" separator=" "/></xpath>
     <xpath expr="//div[hasclass('o_menu_systray')]" position="attributes"><attribute name="role">toolbar</attribute><attribute name="aria-label">Herramientas del usuario</attribute></xpath>
     <xpath expr="//DropdownItem[contains(@class, 'o_menu_brand')]" position="attributes"><attribute name="t-if">!this.ui.isSmall and currentApp and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
-    <xpath expr="//t[@t-call='web.NavBar.SectionsMenu']" position="attributes"><attribute name="t-if">currentAppSections.length and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
+    <xpath expr="//t[@t-call='web.NavBar.SectionsMenu']" position="attributes"><attribute name="t-if">currentAppSections.length</attribute></xpath>
     <xpath expr="//t[@t-call='web.NavBar.AppsMenu']" position="before">
       <button t-if="erpecHomeMenu" class="erpec_brand" title="Volver al inicio de ERP EC" aria-label="ERP EC · Inicio" t-on-click="erpecOpenHome"><strong>ERP EC</strong><span>SINKRONET</span></button>
     </xpath>

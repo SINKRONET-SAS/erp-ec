@@ -1,0 +1,59 @@
+<odoo>
+  <!-- La configuración tributaria es una aplicación accesible al responsable contable. -->
+  <record id="tax_configuration_root" model="ir.ui.menu">
+    <field name="parent_id" eval="False"/>
+    <field name="name">Impuestos</field>
+    <field name="sequence">24</field>
+  </record>
+  <record id="tax_partner_class_action" model="ir.actions.act_window">
+    <field name="name">Clases de proveedores y clientes</field>
+    <field name="res_model">erpec.tax.classification</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('kind', '=', 'partner')]</field>
+    <field name="context">{'default_kind': 'partner'}</field>
+  </record>
+  <record id="tax_item_class_action" model="ir.actions.act_window">
+    <field name="name">Clases de ítems</field>
+    <field name="res_model">erpec.tax.classification</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('kind', '=', 'product')]</field>
+    <field name="context">{'default_kind': 'product'}</field>
+  </record>
+  <menuitem id="tax_partner_class_menu" name="Clases de proveedores" parent="tax_configuration_root" action="tax_partner_class_action" sequence="3" groups="account.group_account_manager"/>
+  <menuitem id="tax_item_class_menu" name="Clases de ítems" parent="tax_configuration_root" action="tax_item_class_action" sequence="4" groups="account.group_account_manager"/>
+  <record id="settings_product_identity" model="ir.ui.view">
+    <field name="name">erpec.settings.product.identity</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@id='about']" position="replace">
+        <div id="about">
+          <block title="Acerca de ERP EC" name="about_setting_container">
+            <div class="p-3 erpec_product_about">
+              <h3>ERP EC · SINKRONET</h3>
+              <p>Gestión empresarial para Ecuador.</p>
+              <details><summary>Créditos y licencias del software</summary>
+                <p>Basado en Odoo Community 18. Copyright © Odoo S.A. y colaboradores.
+                  Núcleo distribuido bajo GNU LGPL v3. Los módulos conservan sus respectivas licencias.</p>
+                <a href="https://www.gnu.org/licenses/lgpl-3.0.html" target="_blank" rel="noopener noreferrer">Licencia GNU LGPL v3</a>
+              </details>
+            </div>
+          </block>
+        </div>
+      </xpath>
+    </field>
+  </record>
+  <template id="product_favicon" inherit_id="web.layout">
+    <xpath expr="//link[@rel='shortcut icon']" position="attributes">
+      <attribute name="type">image/svg+xml</attribute>
+      <attribute name="t-att-href">'/erpec_workspace/static/img/favicon.svg'</attribute>
+    </xpath>
+  </template>
+  <record id="tax_policy_menu" model="ir.ui.menu"><field name="name">Planes de impuestos</field><field name="sequence">1</field></record>
+  <record id="tax_detail_menu" model="ir.ui.menu"><field name="name">Detalles de impuestos</field><field name="sequence">2</field></record>
+  <record id="tax_classification_menu" model="ir.ui.menu"><field name="active" eval="False"/></record>
+  <record id="tax_policy_action" model="ir.actions.act_window"><field name="name">Planes de impuestos</field></record>
+  <template id="product_footer_identity" inherit_id="web.brand_promotion_message" priority="90">
+    <xpath expr="//t[@t-out]" position="replace"><span class="erpec_footer_identity">ERP EC · SINKRONET</span></xpath>
+  </template>
+</odoo>

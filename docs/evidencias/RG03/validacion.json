@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-03",
+  "scope": "RG03: navegación tributaria y marca; Fundador y demo",
+  "tests": {
+    "module": "erpec_workspace",
+    "passed": 44,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".cache/windows/ec_integrated_test_3567a6cdc267.log",
+    "governanceTests": 12
+  },
+  "runtime": "docs/evidencias/RG03/runtime.json",
+  "updates": [
+    "docs/evidencias/RG03/update-fundador.json",
+    "docs/evidencias/RG03/update-demo.json"
+  ],
+  "limits": [
+    "Bases independientes, sin mezcla de datos ni acreditación de igualdad integral.",
+    "Sin envíos fiscales, cobros ni correos; no acredita homologación fiscal.",
+    "Verificación local; CI remoto debe comprobarse por SHA tras publicar."
+  ]
+}

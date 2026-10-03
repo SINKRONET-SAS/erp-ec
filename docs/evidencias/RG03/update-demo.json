@@ -1,0 +1,70 @@
+{
+  "instancia": "demo",
+  "modulos": [
+    "erpec_assets",
+    "erpec_base",
+    "erpec_data_protection",
+    "erpec_entitlements",
+    "erpec_field_routes",
+    "erpec_fiscal_ats",
+    "erpec_fiscal_connector",
+    "erpec_fiscal_documents",
+    "erpec_fiscal_guide_sri",
+    "erpec_fiscal_native",
+    "erpec_fiscal_sri",
+    "erpec_fiscal_withholding_sri",
+    "erpec_imports",
+    "erpec_manufacturing",
+    "erpec_operations",
+    "erpec_payphone",
+    "erpec_payroll",
+    "erpec_provision",
+    "erpec_secrets",
+    "erpec_selfservice",
+    "erpec_suite",
+    "erpec_treasury",
+    "erpec_website_entry",
+    "erpec_withholding_accounting",
+    "erpec_workspace"
+  ],
+  "respaldo": ".cache/windows/backups/update-demo-20261003T190419Z",
+  "copiaSincronizada": true,
+  "desfase": "sin desfase",
+  "before": {
+    "account_move": {
+      "count": 30,
+      "sha256": "d2bf19cf9c094fbe291ae020a801ce18dfd2ef7e3291a87a909f3d78ba9dccbe"
+    },
+    "account_move_line": {
+      "count": 137,
+      "sha256": "ecef510d326f80b2142c130248c47d101270288be85babb6c23751a6427185ed"
+    },
+    "erpec_tax_policy": {
+      "count": 2,
+      "sha256": "67f2b0713b8fa69fe2feada68ccf4d777d605d21f9b75285ffa86e7409d77734"
+    },
+    "erpec_tax_classification": {
+      "count": 2,
+      "sha256": "6773f206480719df37ba7a64901e6834f44e5892556ebd8cc72a8bfcb5eea5ea"
+    }
+  },
+  "after": {
+    "account_move": {
+      "count": 30,
+      "sha256": "d2bf19cf9c094fbe291ae020a801ce18dfd2ef7e3291a87a909f3d78ba9dccbe"
+    },
+    "account_move_line": {
+      "count": 137,
+      "sha256": "ecef510d326f80b2142c130248c47d101270288be85babb6c23751a6427185ed"
+    },
+    "erpec_tax_policy": {
+      "count": 2,
+      "sha256": "67f2b0713b8fa69fe2feada68ccf4d777d605d21f9b75285ffa86e7409d77734"
+    },
+    "erpec_tax_classification": {
+      "count": 2,
+      "sha256": "6773f206480719df37ba7a64901e6834f44e5892556ebd8cc72a8bfcb5eea5ea"
+    }
+  },
+  "business_data_preserved": true
+}

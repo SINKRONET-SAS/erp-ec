@@ -6,3 +6,5 @@ from . import test_tax_plan
 
 from . import test_tax_configuration
 from . import test_ats_sustento
+
+from . import test_navigation_settings

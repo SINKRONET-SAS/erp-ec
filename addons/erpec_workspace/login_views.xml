@@ -14,7 +14,7 @@
     <xpath expr="//t[@t-set='no_header']" position="before"><t t-set="title">ERP EC · Acceso</t></xpath>
     <xpath expr="//div[contains(@t-attf-class, 'o_database_list')]" position="attributes"><attribute name="t-attf-class">card border-0 mx-auto erpec_login_card {{login_card_classes}} o_database_list</attribute><attribute name="style">max-width: 440px;</attribute></xpath>
     <xpath expr="//div[hasclass('card-body')]/div[1]" position="replace"><div class="erpec_login_identity"><p class="erpec_login_publisher">SINKRONET</p><h1>ERP EC</h1><p>Un espacio para coordinar tu empresa.</p></div></xpath>
-    <xpath expr="//a[@target='_blank']" position="replace"><span class="erpec_login_technology">Tecnología Odoo Community</span></xpath>
+    <xpath expr="//a[@target='_blank']" position="replace"><span class="erpec_login_technology">ERP EC · SINKRONET</span></xpath>
   </template>
   <template id="product_login" inherit_id="web.login" priority="90">
     <xpath expr="//owl-component[@name='web.user_switch']" position="replace"/>

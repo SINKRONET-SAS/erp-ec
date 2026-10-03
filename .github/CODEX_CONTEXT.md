@@ -1,3 +1,11 @@
+# RG03 — regresión de navegación y marca corregida (03-10-2026)
+
+La revisión del titular reprodujo menús tributarios presentes en servidor pero ocultos por ProductShell. Se expone la aplicación Impuestos para responsables contables, con planes, detalles, clases de proveedores y clases de ítems prioritarios. Se restaura navegación de ERP EC y se retira promoción del proveedor en Ajustes, pie del acceso, menú de usuario e icono; créditos y licencias permanecen disponibles.
+
+Fundador 8199 y demo 8369 actualizados a erpec_workspace 18.0.1.3.2, con respaldo validado y datos contables/planes/clases conservados exactamente. Recorrido real por menús y formularios nuevos sin guardar, verificado en ambos; 44 pruebas del módulo y 12 de gobierno aprobadas. Evidencias: docs/evidencias/RG03; guía: docs/REGRESION_NAVEGACION_RG03.md. Bases separadas deliberadamente; se verifica paridad de esta corrección, no igualdad integral de datos. Publicación/CI posteriores deben comprobarse por SHA; no se atribuyen resultados remotos todavía.
+
+---
+
 # DC02 — cierre verificado (02-10-2026)
 
 Plan docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md ejecutado en orden 00 → A → B. Informe docs/DIAGNOSTICO_CONTRASTADO_DC02.md: siete falsos positivos actuales, dos falsos negativos documentales corregidos, dos inconsistencias/inferencias delimitadas y pendientes externos conservados. README, matriz, arquitectura y guía fiscal actualizados; verificador de enlaces/pin integrado en CI.
