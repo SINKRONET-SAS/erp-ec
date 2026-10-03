@@ -15,6 +15,8 @@ jobs:
           node-version: '24'
       - run: node scripts/verify-governance.cjs --git
       - run: node --test scripts/test-governance.cjs
+      - run: node scripts/verify-project-state.cjs
+      - run: node --test scripts/test-project-state.cjs
       - run: python scripts/test-di25-demo-runner.py
       - run: python scripts/render-di25-matrix.py --check
       - run: python scripts/check-module-versions.py --check

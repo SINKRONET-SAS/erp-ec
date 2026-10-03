@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-02",
+  "baseCommit": "fcbd30bdc6a566465f508120735123466ecc6704",
+  "attachmentSha256": "e7d33fb839754ace44544782cf46224b679960659b2eae6fd0b4e1c208f790cb",
+  "governanceBaselineLinks": 183,
+  "communityRevision": "b1fd3a9eee5d575848ac649d2f5103537d8de7a4",
+  "communityWorkingTree": "limpio",
+  "localSourceRootsExist": true,
+  "requestedAlternateRootExists": false,
+  "findings": "docs/DIAGNOSTICO_CONTRASTADO_DC02.md",
+  "limits": [
+    "Sin verificación de acceso remoto a fuentes privadas",
+    "Sin actualización al SHA no fijado del adjunto",
+    "Suite nueva en ejecución; no se atribuye resultado"
+  ],
+  "recheckedCommunityModules": 46,
+  "localApiRoutesRead": [
+    "sinkroniq-mobile/backend/src/routes/integrations/v1.js",
+    "nuevo_nomina/backend/src/routes/externalApiRoutes.js"
+  ],
+  "baselineCI": {
+    "sha": "fcbd30bdc6a566465f508120735123466ecc6704",
+    "conclusion": "success",
+    "url": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/36517867004"
+  }
+}

@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-10-03T02:11:36.402Z",
+  "updatedAt": "2026-10-03T01:59:32.736Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -304,7 +304,6 @@
     "docs/evidencias/AuditLock.before-CM28-G-PREP-20260928T232834Z.json",
     "docs/evidencias/AuditLock.before-DC02-00-20261003T015314363Z.json",
     "docs/evidencias/AuditLock.before-DC02-A-20261003T015932736Z.json",
-    "docs/evidencias/AuditLock.before-DC02-B-20261003T021136402Z.json",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json",
     "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json",
     "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json",
@@ -420,10 +419,7 @@
     "docs/evidencias/CM28/worker-functional.json",
     "docs/evidencias/CM28/worker-isolation.json",
     "docs/evidencias/DC02/DC02-A-cierre.json",
-    "docs/evidencias/DC02/DC02-B-cierre.json",
     "docs/evidencias/DC02/contraste.json",
-    "docs/evidencias/DC02/tesoreria.json",
-    "docs/evidencias/DC02/validacion.json",
     "docs/evidencias/DI25/DI25-00-cierre.json",
     "docs/evidencias/DI25/DI25-01-cierre.json",
     "docs/evidencias/DI25/DI25-01-progreso.json",
@@ -643,9 +639,7 @@
     "CM28-G-EC: ATS instalado en fundador; nueve pantallas y menús comprobados con usuario fundador; valores previos de 4 asientos y 12 líneas idénticos.",
     "CM28-G-EC: esquema sin desfase, versiones coherentes en 27 módulos, reversión validada y seis pruebas de gobierno aprobadas.",
     "DC02-00: gobierno previo válido (183 enlaces); pin y caché limpia contrastados; fuentes locales presentes; doce afirmaciones/brechas clasificadas",
-    "DC02-A: 30 enlaces y pin auditado verificados; seis pruebas del control documental aprobadas",
-    "DC02-B: 704 pruebas integradas, cero fallos/errores; tres omisiones cubiertas por 25 pruebas en copia de demo sin omisiones",
-    "DC02-B: 30 pruebas de control aprobadas; 46 módulos LGPL-3 auditados; 27 versiones y matriz de 19 filas coherentes; diff sin errores"
+    "DC02-A: 30 enlaces y pin auditado verificados; seis pruebas del control documental aprobadas"
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -673,7 +667,7 @@
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "c55ab85b19fce832599f2b8224cfb4303b34ef1a90769c5ef59b434a42f1caa1",
+    ".github/CODEX_CONTEXT.md": "410bd84e76abaf0b48664a8dafbf676dd1e9dbe9d92415c9684f785c6d06d200",
     ".github/prompts/ERPEC26-CM28-00.md": "22026ef94ee92d6cbd3306513c1f86f517862838a658a69b6d9a873dfb6535eb",
     ".github/prompts/ERPEC26-CM28-A.md": "72db6c0389e4ffd864dc16d72dd79796ec7894ac28b865edb203f47068fc24f1",
     ".github/prompts/ERPEC26-CM28-B.md": "8cd1b691fd940304c9b5cf4290ae828a29b3d2be71e0fda0605143d5d150ea0f",
@@ -1173,26 +1167,22 @@
     ".github/prompts/ERPEC26-DC02-00.md": "06b6088da90ea85acde9131ee8c5558c706eec11b5c126e37e825d48b8963adf",
     ".github/prompts/ERPEC26-DC02-A.md": "0b232822231269ff7dde4b3368372151d7ea5fde0482886819015eb35a724182",
     ".github/prompts/ERPEC26-DC02-B.md": "1cbb621e4c0e6256605003446132481465e824e3a1a6400d682230061ceb387d",
-    "docs/DIAGNOSTICO_CONTRASTADO_DC02.md": "ce57f73f9e11b559865c65108e238cdf8eea7c90d3c585da16df806b41c6afbf",
-    "docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md": "df2b9eac7c1bbeadc90d7e4a77a1957afc69275a5ef840a11a1f9e716b5f6375",
+    "docs/DIAGNOSTICO_CONTRASTADO_DC02.md": "e42d6cbefebf3e5daa7836bc373e2843203d1ece2093b0b0856328a105ee69b3",
+    "docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md": "ca45afb91da600abdfc97b7b703408ba9cfab04b14072cf7d870238a945ce7f1",
     "docs/evidencias/AuditLock.before-DC02-00-20261003T015314363Z.json": "982533a84d0043e1504bc4ef980f10c61870d4423e34430e0b178e511f3770b3",
-    "docs/evidencias/DC02/contraste.json": "d470d2ad5bc083b8adec56470fd973e67e90cd5daf9a90cb739d4374a60ec243",
+    "docs/evidencias/DC02/contraste.json": "3345baec36830679b7598850eac5a18ed90127c448b096d2b306b5d946fb2b35",
     "README.md": "ea8a0694a1becd8c53e78796dce4473cc58d41523ada674ec1d595dfd9375e2d",
     "docs/ARQUITECTURA_Y_CONTRATOS.md": "e07a5069c90cbba5147d30c497f56fb3f5789d1f1a2e7a79774e0f33e6d5d397",
     "docs/FACTURACION_LOCAL.md": "4cddaf55f1e374c7e47d44c04744aa19e4a6cb9840b887665aae57df0f0ad0dc",
-    "docs/MATRIZ_CAPACIDADES.md": "1d75444a5fab8fb343b846de89f3da55371742794f4f393239f3d5341f00f8b7",
+    "docs/MATRIZ_CAPACIDADES.md": "f96448144cb726e7ea3166c22ef21e2ac177555f6f3585a99eb25cdb78bca8f8",
     "docs/evidencias/AuditLock.before-DC02-A-20261003T015932736Z.json": "50ce6d5bb14d7fb1ffc7cb9c98a659c4c871735af9e73a12b798d901c7a45331",
     "docs/evidencias/DC02/DC02-A-cierre.json": "b689396596577105c086844beaa47080b3cf599cabd3416d35c201b8873d8edc",
     "scripts/test-project-state.cjs": "54d931b56fe0200d1c20c3fdfe0d564d56fd531db849938c77f9a196762fdb05",
-    "scripts/verify-project-state.cjs": "4671c3dbe483e52241dd83e840c6e0ed2901891d46ea61b9043f877af1027c73",
-    "docs/evidencias/AuditLock.before-DC02-B-20261003T021136402Z.json": "7d841d2986c81cba083ef1e5eaccb4036f00ed2287bd888cf33a924b35452489",
-    "docs/evidencias/DC02/DC02-B-cierre.json": "7e9b3fb1cb669fd288155871234a79773230df90f4f8b955606e0ccc8dd01846",
-    "docs/evidencias/DC02/tesoreria.json": "c3c6abe4be2e5650d643819e70ab82ddd1f305865a8be7ce14dbb25460d539cc",
-    "docs/evidencias/DC02/validacion.json": "cf230d8b7334df3c53c9bfdb73d174172b3d794b358d0dc892947ea95bf36965"
+    "scripts/verify-project-state.cjs": "4671c3dbe483e52241dd83e840c6e0ed2901891d46ea61b9043f877af1027c73"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DC02-B-20261003T021136402Z.json",
-  "previousAuditLockHash": "7d841d2986c81cba083ef1e5eaccb4036f00ed2287bd888cf33a924b35452489",
-  "signature": "69b7445eeb4628a09996e7ff5ed40a0b7887ac5a17753efb5da8ea8459ea7331",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DC02-A-20261003T015932736Z.json",
+  "previousAuditLockHash": "50ce6d5bb14d7fb1ffc7cb9c98a659c4c871735af9e73a12b798d901c7a45331",
+  "signature": "0915096365497ac10db652b8cbbfaa3c3d1307a94f10b317696d9224f59995c3",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -1294,8 +1284,8 @@
   },
   "diagnosticContrastDC02": {
     "plan": "docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md",
-    "phaseCompleted": "DC02-B",
-    "status": "completed-local",
+    "phaseCompleted": "DC02-A",
+    "status": "en ejecución",
     "scope": "Contraste y coherencia documental; no cierra fases maestras ni gates externos"
   }
 }

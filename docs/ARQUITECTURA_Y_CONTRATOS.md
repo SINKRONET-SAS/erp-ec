@@ -1,4 +1,12 @@
-# Arquitectura propuesta y contratos por cerrar
+# Arquitectura y contratos
+
+## Estado vigente — contraste DC02, 02-10-2026
+
+La implementación actual admite motores propios de nómina y emisión fiscal, además del conector externo opcional. Odoo conserva ventas, compras, inventario y asientos; erpec_payroll calcula la nómina local; los módulos fiscales propios preparan, firman y consultan al SRI. La autoridad de autorización sigue siendo el SRI. La selección local/externa debe conservar una autoridad por comprobante, sin duplicar secuenciales ni asientos.
+
+Community está fijado en [upstream.json](../upstream.json). Firma, transporte, RIDE, notas, retenciones, guías y liquidaciones tienen implementación y evidencia histórica en [OP13/14](PLAN_HAIKY_COMPROBANTES_FIRMADOS.md); secretos y rotación en [Cifrado](CIFRADO_CERTIFICADOS.md). Contratación y provisión local evolucionaron en [CM28](PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md). Producción/Render y aceptaciones externas permanecen separadas.
+
+Lo que sigue documenta el diseño inicial y contratos externos observados; no es una lista actual de funciones ausentes. Para el alcance vigente usar la [matriz](MATRIZ_CAPACIDADES.md).
 
 ## Decisiones iniciales
 Odoo Community 18 oficial, módulos propios separados del núcleo y instalación Windows nativa reproducible para desarrollo local. Producción en Render con contenedores Linux, PostgreSQL y servicios separados; Cloudflare para DNS/proxy del dominio futuro. PAYPHONE es el proveedor de cobro seleccionado. Véase PRODUCCION_RENDER_CLOUDFLARE.md. La referencia Enterprise local no será distribuida. Mantener inicialmente los motores de SKNOMINA y Facturador por API. Portar lógica propia solo con una decisión documentada de costo, licencia, equivalencia, migración y autoridad única.
@@ -37,4 +45,4 @@ Antes de producción: pruebas de aislamiento y permisos, recuperación tras caí
 
 ## Decisiones posteriores autorizadas — 11-09-2026
 
-El titular autorizó lógica nativa tanto para nómina como para facturación, conservando las API existentes como alternativas. Para nómina, ver OPERACIONES_LOCALES_DEMO.md. Para facturación, ver FACTURACION_LOCAL.md: la preparación XML ya es local; la firma, transporte SRI, RIDE y migración de autoridad siguen pendientes. La tabla anterior registra el diseño inicial y no obliga a desplegar otros productos para la preparación local. La autoridad de autorización fiscal pertenece al SRI; ni el ERP ni Facturador pueden simularla.
+El titular autorizó lógica nativa tanto para nómina como para facturación, conservando las API existentes como alternativas. Para nómina, ver OPERACIONES_LOCALES_DEMO.md. Para facturación, FACTURACION_LOCAL.md conserva el primer incremento histórico. Firma, transporte SRI y RIDE se implementaron después; ver el estado vigente al inicio de este documento. El corte de autoridad de cada emisor requiere su propia validación. La tabla anterior registra el diseño inicial y no obliga a desplegar otros productos para la preparación local. La autoridad de autorización fiscal pertenece al SRI; ni el ERP ni Facturador pueden simularla.

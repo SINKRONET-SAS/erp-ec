@@ -1,3 +1,17 @@
+# DC02 — cierre verificado (02-10-2026)
+
+Plan docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md ejecutado en orden 00 → A → B. Informe docs/DIAGNOSTICO_CONTRASTADO_DC02.md: siete falsos positivos actuales, dos falsos negativos documentales corregidos, dos inconsistencias/inferencias delimitadas y pendientes externos conservados. README, matriz, arquitectura y guía fiscal actualizados; verificador de enlaces/pin integrado en CI.
+
+Pruebas nuevas: 704 reportadas, cero fallos/errores; tres omisiones cubiertas por 25 pruebas sobre copia de demo sin omisiones. Treinta pruebas de control, 30 enlaces, 46 módulos Community auditados. Evidencia docs/evidencias/DC02/validacion.json. Sin cambios en módulos funcionales, datos originales o repositorios fuente. .claude/ preexistente excluida. Fases maestras 04–08 y gates externos intactos. Cierre local completo; commit/push autorizados como siguiente acción, sin atribuir resultado al CI futuro.
+
+---
+
+# DC02 — contraste del diagnóstico (02-10-2026)
+
+Solicitud vigente: contrastar adjunto, implementar hallazgos verificados, probar, cerrar gobierno, commit y push. Plan: docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md; informe: docs/DIAGNOSTICO_CONTRASTADO_DC02.md. DC02-00 y DC02-A cerradas. Continúa DC02-B: regresión y publicación. Correcciones de README, matriz, arquitectura y guía fiscal implementadas; 30 enlaces verificados y seis pruebas del control documental aprobadas. Raíz real ERP/_EC. Se preservan .claude/ y fuentes externas. El adjunto no refleja el estado actual: Community está fijado, existen runtime, firma y nómina nativas. Se corrigen contradicciones documentales, sin cerrar gates externos ni fases maestras.
+
+---
+
 # Seguimiento CM28-G-EC — localización Ecuador del fundador (28-09-2026)
 
 Solicitud expresa del titular atendida localmente en fundador, puerto 8199. La base Ecuador, fiscal, retenciones, guías y nómina ya estaban instaladas; se incorpora el agregador ATS faltante. Respaldo y restauración aislada verificados, 15 pruebas ATS aprobadas y nueve pantallas accesibles con usuario fundador. Todos los valores preexistentes de 4 asientos y 12 líneas se conservan; ATS añade una columna vacía. Esquema sin desfase y credencial existente conservada.

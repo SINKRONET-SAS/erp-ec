@@ -1,22 +1,22 @@
 # Matriz de capacidades y dependencias
 
-Evidencia: manifiestos locales y servicios de los dos productos. No equivale a validación funcional. Dependencias transitivas declaradas en evidencias/localizacion-ecuador.json; completar auditoría de bibliotecas en fase 01.
+Corte documental: 02-10-2026. Sustituye las decisiones iniciales como descripción del estado actual; la historia permanece en Git. Base Community fijada en [upstream.json](../upstream.json), auditada en [community-audit.json](evidencias/community-audit.json). El inventario de [referencia Enterprise](evidencias/localizacion-ecuador.json) no es el origen de distribución.
 
-| ID | Capacidad y referencia | Licencia/dependencias observadas | Decisión inicial y falta por cubrir |
+| ID | Capacidad | Implementación y evidencia | Límite vigente |
 |---|---|---|---|
-| EC01 | l10n_ec: cuentas, impuestos, documentos, bancos, identificaciones, pagos SRI | LGPL-3; account, base_iban, account_debit_note, l10n_latam_invoice_document, l10n_latam_base, base | Obtener del Community oficial; validar vigencia de catálogos, configuración por compañía y migración |
-| EC02 | l10n_ec_stock | LGPL-3; l10n_ec, stock | Reutilizar versión oficial compatible y probar inventario por compañía |
-| EC03 | l10n_ec_website_sale | LGPL-3; website_sale, l10n_ec | Reutilizar cuando comercio electrónico forme parte del alcance |
-| EC04 | l10n_ec_edi: XML, firma, RIDE, autorización y retenciones | OPL-1; account_edi, certificate, l10n_ec | Cubrir con Facturador y módulo propio; auditar dependencias de certificate; no copiar fuentes |
-| EC05 | l10n_ec_edi_stock: guías de remisión | OPL-1; stock_account, l10n_ec_edi | Conectar entregas con Facturador; API externa de guías aún no acreditada |
-| EC06 | l10n_ec_edi_pos | OEEL-1; point_of_sale, l10n_ec_edi | Diseñar integración propia POS después del piloto de facturas |
-| EC07 | l10n_ec_reports: balance/resultados | OPL-1; account_reports, l10n_ec | Evaluar reportes Community/OCA con licencias y cobertura verificadas, o desarrollo propio |
-| EC08 | l10n_ec_reports_ats | OPL-1; l10n_ec_edi, l10n_ec_reports | Reutilizar motor ATS del Facturador si cubre todos los datos Odoo; comprobar API y compras externas |
-| EC09 | SKNOMINA: empleados, marcas, novedades, nómina | API propia con permisos y plan; no equivale a API de asientos | Conector propio; definir cierre/reversión y mapeo contable, sin copiar hr_payroll Enterprise |
-| EC10 | Facturador: solicitud/consulta factura externa | /api/integrations/v1; clave por empresa, referencia externa e idempotencia | Contratos, pruebas SRI y recuperación; registrar origen Odoo o decidir CUSTOM explícitamente |
-| EC11 | SKNOMINA factura suscripciones mediante Facturador | facturadorClient.js, fiscalInvoiceService.js; ruta especializada /api/integrations/sknomina/invoices | Conservar separado de facturas comerciales emitidas por cada cliente |
-| EC12 | Planes, usuarios y empresas en ambos productos | Modelos e identificadores diferentes; ver fuentes locales | Crear correspondencia y contrato de derechos por producto, sin mezclar credenciales ni cuotas |
+| EC01 | Localización contable Ecuador | Community l10n_ec; [fase 01](evidencias/ERPEC26-01.md) y [fundador](FUNDADOR_LOCALIZACION_ECUADOR.md) | Configuración por empresa y revisión fiscal; no homologación global |
+| EC02 | Inventario Ecuador | l10n_ec_stock Community en auditoría del pin | Aceptación de cada operación/empresa |
+| EC03 | Comercio electrónico Ecuador | l10n_ec_website_sale presente en auditoría | Disponibilidad del módulo no acredita un comercio publicado |
+| EC04 | XML, firma, RIDE, notas y retenciones | Motores propios erpec_fiscal_native, erpec_fiscal_sri y erpec_fiscal_withholding_sri; [OP13/14](PLAN_HAIKY_COMPROBANTES_FIRMADOS.md) | Evidencia SRI histórica en pruebas; primer envío productivo supervisado pendiente |
+| EC05 | Guía de remisión | erpec_fiscal_guide_sri enlazado a inventario; OP13-E | No depende de una API externa de guías; aceptación productiva separada |
+| EC06 | POS electrónico | No se acredita integración fiscal POS en este contraste | Diseñar/validar su contrato antes de ofrecerlo |
+| EC07 | Reportes contables | erpec_withholding_accounting/accounting.py y vistas propias | Cobertura propia, no equivalencia total con reportes Enterprise |
+| EC08 | ATS | erpec_fiscal_ats, validación XSD antes de descarga; [fundador](FUNDADOR_LOCALIZACION_ECUADOR.md) | Datos fiscales y aceptación del anexo pendientes; XSD no equivale a declaración aceptada |
+| EC09 | Nómina y contabilidad | erpec_payroll: cálculo, cierre/asiento, reversión, RDEP y beneficios; [matriz](DI25-03_MATRIZ_ACEPTACION.md) | No equivalencia integral certificada con SKNOMINA ni aceptación legal global |
+| EC10 | API Facturador | erpec_fiscal_connector con CUSTOM, contrato 1.0 e idempotencia | No asumir otros documentos admitidos; autoridad única por comprobante |
+| EC11 | Facturación de suscripciones SKNOMINA | Contrato fuente separado de documentos de clientes; fase 01 | No se modifica ni se acredita ejecución actual de ese producto |
+| EC12 | Planes, derechos, usuarios y provisión | erpec_entitlements, erpec_selfservice y worker; [CM28](PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md) | Tarifas/operación productiva y correspondencias externas requieren validación |
 
-Pruebas de referencia identificadas: retenciones básicas, múltiples facturas, pagos parciales y bases imponibles; ATS de ventas, compras, anulados y reembolsos. Usar estas categorías para diseñar pruebas propias con datos sintéticos y especificaciones vigentes; no incorporar fixtures propietarios.
+Los módulos Enterprise OPL-1/OEEL-1 del diagnóstico solo son referencias de capacidad, no dependencias autorizadas del producto propio. No atribuir a una auditoría de manifiestos la validación de bibliotecas, normas o servicios externos.
 
-Faltan: comparación contra commit oficial, licencias de dependencias y titularidad de código propio, validación normativa vigente, capacidades reales por API de cada comprobante, conector Odoo, administración SaaS y evidencia extremo a extremo. La existencia de un módulo o test no acredita su ejecución ni cumplimiento actual.
+[Contraste DC02](DIAGNOSTICO_CONTRASTADO_DC02.md): separa falsos positivos, brechas de documentación y pendientes conservados. Las pruebas nuevas se registran al cierre de DC02; las referencias anteriores son evidencia histórica.

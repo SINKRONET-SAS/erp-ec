@@ -1,4 +1,12 @@
-# Facturación electrónica local — primer incremento
+# Facturación electrónica local
+
+## Estado vigente — 02-10-2026
+
+La preparación XML inicial fue ampliada con firma XAdES, emisión/consulta SRI, RIDE y documentos adicionales. Consultar [comprobantes firmados OP13/14](PLAN_HAIKY_COMPROBANTES_FIRMADOS.md), [localización del fundador](FUNDADOR_LOCALIZACION_ECUADOR.md) y [arquitectura](ARQUITECTURA_Y_CONTRATOS.md). En la interfaz nativa de factura existe la acción «Firmar y transmitir al SRI» y el acceso de estado SRI; su disponibilidad depende del documento, permisos y configuración.
+
+La evidencia histórica corresponde a pruebas; no se acredita aquí un primer envío productivo ni homologación. El [runbook productivo](RUNBOOK_PRIMER_ENVIO_PRODUCCION_SRI.md) conserva los requisitos de esa operación. El texto siguiente describe exclusivamente el incremento del 11-09-2026, incluidas sus limitaciones y accesos de entonces; no usarlo como guía operativa vigente ni como lista de capacidades faltantes.
+
+## Registro histórico — primer incremento
 
 El titular autorizó aplicar a facturación el mismo criterio de trasladar lógica propia al ERP utilizado en nómina. Se conserva el producto Facturador y su API; no se modifica su repositorio ni se migra un emisor existente. La generación local evita arrancar el servicio Facturador para preparar un XML. La autorización tributaria sigue correspondiendo al SRI.
 

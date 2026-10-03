@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-02",
+  "scope": "Corrección documental y controles de continuidad; módulos funcionales sin cambios",
+  "checks": {
+    "projectState": {
+      "links": 30,
+      "tests": 6,
+      "passed": true
+    },
+    "governanceTests": {
+      "tests": 6,
+      "passed": true
+    },
+    "runnerSafety": {
+      "tests": 8,
+      "passed": true
+    },
+    "linuxRunner": {
+      "tests": 3,
+      "passed": true
+    },
+    "demoRunner": {
+      "tests": 7,
+      "passed": true
+    },
+    "schemaVersions": {
+      "modules": 27,
+      "passed": true
+    },
+    "acceptanceMatrix": {
+      "rows": 19,
+      "passed": true
+    },
+    "communityAudit": {
+      "modules": 46,
+      "license": "LGPL-3",
+      "passed": true
+    },
+    "diffWhitespace": {
+      "passed": true
+    }
+  },
+  "integratedSuite": {
+    "status": "passed",
+    "reported": 704,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 3,
+    "exitCode": 0,
+    "log": "ec_integrated_test_f48fed697709.log",
+    "logSha256": "2e1bd055092b96e1ef972023f1d86b66ec948a6ef2c3f7ef340aea5c1d7f6fc3",
+    "skipReason": "Tres casos de saneamiento requieren demo sembrada; cubiertos en la ejecución complementaria"
+  },
+  "limitations": [
+    "No ejecución fiscal o bancaria productiva",
+    "No nueva aceptación visual: interfaz operativa sin cambios",
+    "Pruebas aisladas no equivalen a homologación",
+    "CI del nuevo commit todavía no ejecutado"
+  ],
+  "seededTreasury": {
+    "reported": 25,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "evidence": "docs/evidencias/DC02/tesoreria.json",
+    "passed": true
+  },
+  "governance": {
+    "expectedLinksAfterClosure": 186,
+    "requiredPrompts": 44
+  }
+}

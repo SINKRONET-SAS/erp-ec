@@ -1,0 +1,11 @@
+{
+  "phase": "DC02-A",
+  "status": "completed",
+  "checks": [
+    "30 enlaces locales válidos",
+    "Seis pruebas: entradas reales, contexto ausente, escape de ruta, pin divergente, licencia restringida y BOM",
+    "Control agregado al trabajo gobierno de CI"
+  ],
+  "functionalChange": false,
+  "externalGatesClosed": false
+}

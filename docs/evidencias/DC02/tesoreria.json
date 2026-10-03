@@ -1,0 +1,15 @@
+{
+  "instance": "demo",
+  "module": "erpec_treasury",
+  "copy": "ec_restore_drill_3bd3574e",
+  "exit": 0,
+  "summary": [
+    "0",
+    "0",
+    "25"
+  ],
+  "module_tests": "33",
+  "skip_mentions_in_log": 0,
+  "passed": true,
+  "skipped_lines": []
+}

@@ -1,0 +1,9 @@
+{
+  "phase": "DC02-B",
+  "status": "completed-local",
+  "evidence": "docs/evidencias/DC02/validacion.json",
+  "regressionsObserved": 0,
+  "masterPhasesClosed": false,
+  "publication": "Commit y push autorizados; confirmar SHA remoto tras publicación",
+  "ci": "No atribuir al nuevo SHA el resultado del commit base"
+}

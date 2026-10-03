@@ -1,12 +1,18 @@
 # ERP EC — suite empresarial Community
 
-Repositorio de implementación planificada de Odoo Community, SKNOMINA y SINKRONET FACTURADOR. Estado actual: análisis estático y gobierno documental; no contiene un ERP desplegado.
+ERP sobre Odoo Community 18 con módulos propios de fiscalidad Ecuador, nómina, operaciones, contratación y aprovisionamiento. Existe implementación y evidencia de ejecución local; producción y aceptación externa siguen pendientes. El estado del plan maestro es 00–03 completadas y 04 parcial; los complementos locales no cierran automáticamente 05–08.
 
-- Plan: [docs/PLAN_HAIKY_ERPEC26.md](docs/PLAN_HAIKY_ERPEC26.md).
-- Capacidades: [docs/MATRIZ_CAPACIDADES.md](docs/MATRIZ_CAPACIDADES.md).
-- Arquitectura: [docs/ARQUITECTURA_Y_CONTRATOS.md](docs/ARQUITECTURA_Y_CONTRATOS.md).
-- Reglas: [RULES.md](RULES.md).
-- Contexto: [.github/CODEX/_CONTEXT.md](.github/CODEX/_CONTEXT.md).
-- Validación: `node scripts/verify-governance.cjs`.
+- [Plan maestro](docs/PLAN_HAIKY_ERPEC26.md).
+- [Capacidades y límites vigentes](docs/MATRIZ_CAPACIDADES.md).
+- [Arquitectura y autoridades](docs/ARQUITECTURA_Y_CONTRATOS.md).
+- [Contexto de continuidad](.github/CODEX_CONTEXT.md).
+- [Reglas](RULES.md).
+- [Contraste del diagnóstico recibido](docs/DIAGNOSTICO_CONTRASTADO_DC02.md) y [Plan Haiky DC02](docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md).
+- [Localización del fundador y accesos](docs/FUNDADOR_LOCALIZACION_ECUADOR.md).
+- [Evidencia histórica CM28](docs/evidencias/CM28/CM28-G-cierre.json).
 
-Repositorio privado: https://github.com/SINKRONET-SAS/erp-ec. Base: main. Rama de trabajo: codex/erpec26-implementacion. No se han copiado fuentes Enterprise. Licencia de módulos propios pendiente de decisión del titular.
+La revisión Community aprobada consta en [upstream.json](upstream.json); su inventario está en [community-audit.json](docs/evidencias/community-audit.json). No se incorporan fuentes Enterprise. La licencia propia requiere decisión del titular; los manifiestos no autorizan redistribución de terceros.
+
+Validación: node scripts/verify-governance.cjs y node scripts/verify-project-state.cjs. La integridad y coherencia documental no sustituyen pruebas funcionales ni acreditan homologación.
+
+Repositorio privado: https://github.com/SINKRONET-SAS/erp-ec. Rama de trabajo: codex/erpec26-implementacion; base main.
