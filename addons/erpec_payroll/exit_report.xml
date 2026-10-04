@@ -1,0 +1,50 @@
+<odoo>
+<template id="report_exit_settlement_document">
+  <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="exit">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Acta de finiquito <span t-esc="exit.name"/></h2>
+        <div class="row mb-3">
+          <div class="col-6"><strong>Empleador:</strong> <span t-esc="exit.company_id.name"/><br/><strong>Trabajador:</strong> <span t-esc="exit.employee_id.name"/></div>
+          <div class="col-6"><strong>Ingreso:</strong> <span t-esc="exit.start_date"/><br/><strong>Salida:</strong> <span t-esc="exit.end_date"/><br/><strong>Último sueldo mensual:</strong> <span t-esc="'%.2f' % exit.wage"/></div>
+        </div>
+        <p><strong>Causal:</strong> <span t-esc="dict(exit._fields['cause'].selection)[exit.cause]"/>.
+           <strong>Último mes:</strong> <span t-esc="dict(exit._fields['modality'].selection)[exit.modality]"/>.</p>
+        <table class="table table-sm">
+          <thead><tr><th>Haberes</th><th class="text-end">Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Sueldo pendiente del mes de salida</td><td class="text-end" t-esc="'%.2f' % exit.amount_pending_salary"/></tr>
+            <tr><td>Décimo tercero proporcional</td><td class="text-end" t-esc="'%.2f' % exit.amount_thirteenth"/></tr>
+            <tr><td>Décimo cuarto proporcional</td><td class="text-end" t-esc="'%.2f' % exit.amount_fourteenth"/></tr>
+            <tr><td>Vacaciones no gozadas</td><td class="text-end" t-esc="'%.2f' % exit.amount_vacation"/></tr>
+            <tr><td>Fondo de reserva pendiente</td><td class="text-end" t-esc="'%.2f' % exit.amount_reserve"/></tr>
+            <tr><td>Indemnización por despido intempestivo</td><td class="text-end" t-esc="'%.2f' % exit.amount_dismissal"/></tr>
+            <tr><td>Bonificación por desahucio</td><td class="text-end" t-esc="'%.2f' % exit.amount_desahucio"/></tr>
+            <tr><td><strong>Total de haberes</strong></td><td class="text-end"><strong t-esc="'%.2f' % exit.amount_gross"/></td></tr>
+          </tbody>
+          <thead><tr><th>Descuentos</th><th class="text-end">Valor</th></tr></thead>
+          <tbody>
+            <tr><td>Aporte personal IESS sobre el sueldo pendiente</td><td class="text-end" t-esc="'%.2f' % exit.amount_personal_iess"/></tr>
+            <tr><td>Otros descuentos</td><td class="text-end" t-esc="'%.2f' % exit.amount_other_deductions"/></tr>
+          </tbody>
+          <thead><tr><th>Neto a pagar</th><th class="text-end" t-esc="'%.2f' % exit.amount_net"/></tr></thead>
+        </table>
+        <p t-if="exit.modality == 'rol_primero'" class="text-muted">El sueldo del último mes se pagó mediante el rol de pagos proporcional hasta la fecha de salida y no se repite en esta acta.</p>
+        <p class="text-muted">Documento interno generado por el cálculo local; no sustituye la revisión laboral ni la legalización del acta conforme a la normativa vigente. No incluye retención de impuesto a la renta.</p>
+        <div class="row mt-5"><div class="col-6 text-center">______________________<br/>Empleador</div><div class="col-6 text-center">______________________<br/>Trabajador</div></div>
+      </div>
+    </t>
+    </t>
+  </t>
+</template>
+<record id="report_exit_settlement" model="ir.actions.report">
+  <field name="name">Acta de finiquito</field>
+  <field name="model">erpec.payroll.exit</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="report_name">erpec_payroll.report_exit_settlement_document</field>
+  <field name="print_report_name">'Acta de finiquito - %s' % (object.employee_id.name)</field>
+  <field name="binding_model_id" ref="model_erpec_payroll_exit"/>
+  <field name="binding_type">report</field>
+</record>
+</odoo>

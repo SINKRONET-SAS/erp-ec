@@ -1,0 +1,3 @@
+# NM27 — salida, rol proporcional y acta de finiquito
+
+Leer RULES.md, .github/CODEX_CONTEXT.md y docs/NOMINA_SALIDA_FINIQUITO_NM27.md. Contrastar con C:\proyectos web\nuevo_nomina (solo lectura; planes RSF26 y RCF26). Implementar en erpec_payroll el rol proporcional hasta la fecha de salida y el acta de finiquito con modalidades rol primero y con finiquito, sin doble pago del último mes, con exposición en Nómina → Salidas y finiquitos. Probar en base aislada, registrar límites (sin contabilización, renta ni nómina real), sellar el AuditLock y verificar gobierno. No modificar repositorios fuente ni incorporar .claude/. Commit solo si el titular lo solicita.

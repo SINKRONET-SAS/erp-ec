@@ -1,0 +1,27 @@
+<odoo>
+<record id="exit_list" model="ir.ui.view"><field name="name">erpec.payroll.exit.list</field><field name="model">erpec.payroll.exit</field><field name="arch" type="xml">
+<list decoration-muted="state == 'cancelled'" decoration-success="state == 'paid'"><field name="name"/><field name="employee_id"/><field name="end_date"/><field name="cause"/><field name="modality"/><field name="amount_net"/><field name="state"/></list></field></record>
+<record id="exit_search" model="ir.ui.view"><field name="name">erpec.payroll.exit.search</field><field name="model">erpec.payroll.exit</field><field name="arch" type="xml">
+<search><field name="employee_id"/><field name="name"/><filter name="open" string="En curso" domain="[('state','in',('draft','calculated','approved'))]"/><filter name="paid" string="Pagados" domain="[('state','=','paid')]"/><group expand="0"><filter name="by_state" string="Estado" context="{'group_by':'state'}"/><filter name="by_modality" string="Pago del último mes" context="{'group_by':'modality'}"/></group></search></field></record>
+<record id="exit_form" model="ir.ui.view"><field name="name">erpec.payroll.exit.form</field><field name="model">erpec.payroll.exit</field><field name="arch" type="xml">
+<form><header>
+<button name="action_calculate" type="object" string="Calcular finiquito" class="btn-primary" invisible="state not in ('draft','calculated')"/>
+<button name="action_approve" type="object" string="Emitir acta" class="btn-primary" invisible="state != 'calculated'" confirm="Se emite el acta con el cálculo vigente. ¿Continuar?"/>
+<button name="%(report_exit_settlement)d" type="action" string="Imprimir acta" invisible="state not in ('approved','paid')"/>
+<button name="action_mark_paid" type="object" string="Registrar pago" invisible="state != 'approved'"/>
+<button name="action_cancel" type="object" string="Anular salida" invisible="state in ('paid','cancelled')" confirm="La salida quedará anulada y el empleado podrá volver a incluirse en roles posteriores. ¿Continuar?"/>
+<field name="state" widget="statusbar"/></header>
+<sheet>
+<div class="alert alert-info" role="status" invisible="not next_step"><field name="next_step" nolabel="1"/></div>
+<div class="alert alert-warning" role="status">Cálculo local de ensayo para empresas DEMO: no contabiliza el finiquito, no retiene impuesto a la renta, no archiva al empleado ni transmite pagos. Las vacaciones se calculan con los días gozados que se informen; la bonificación por desahucio usa años completos de servicio. Requiere revisión laboral antes de usarse con personal real.</div>
+<group><group string="Salida"><field name="name"/><field name="company_id"/><field name="policy_id" readonly="state not in ('draft','calculated')"/><field name="employee_id" readonly="state not in ('draft','calculated')"/><field name="start_date" readonly="state not in ('draft','calculated')"/><field name="end_date" readonly="state not in ('draft','calculated')"/><field name="wage" readonly="state not in ('draft','calculated')"/></group>
+<group string="Causal y pago del último mes"><field name="cause" readonly="state not in ('draft','calculated')"/><field name="modality" readonly="state not in ('draft','calculated')"/><field name="fourteenth_regime"/><field name="vacation_days_taken" readonly="state not in ('draft','calculated')"/><field name="other_deductions" readonly="state not in ('draft','calculated')"/><field name="payroll_line_id"/></group></group>
+<group string="Liquidación" invisible="state == 'draft'"><group><field name="amount_pending_salary"/><field name="amount_thirteenth"/><field name="amount_fourteenth"/><field name="amount_vacation"/><field name="amount_reserve"/><field name="amount_dismissal"/><field name="amount_desahucio"/></group>
+<group><field name="amount_gross"/><field name="amount_personal_iess"/><field name="amount_other_deductions"/><field name="amount_net"/><field name="approved_by"/><field name="approved_date"/></group></group>
+<group string="Pago" invisible="state not in ('approved','paid')"><field name="paid_date" readonly="state == 'paid'"/><field name="payment_reference" readonly="state == 'paid'"/></group>
+<group string="Bases del cálculo" invisible="state == 'draft'"><field name="detail_text" nolabel="1"/></group>
+<group><field name="notes"/></group></sheet>
+<chatter/></form></field></record>
+<record id="exit_action" model="ir.actions.act_window"><field name="name">Salidas y finiquitos</field><field name="res_model">erpec.payroll.exit</field><field name="view_mode">list,form</field><field name="context">{'search_default_open': 1}</field></record>
+<menuitem id="exit_menu" name="Salidas y finiquitos" parent="payroll_menu" action="exit_action" sequence="12"/>
+</odoo>

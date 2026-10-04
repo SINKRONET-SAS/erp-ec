@@ -395,6 +395,7 @@ class Line(models.Model):
     partner_id=fields.Many2one('res.partner','Tercero para pago',required=True)
     analytic_id=fields.Many2one('account.analytic.account','Centro de costo')
     start_date=fields.Date('Ingreso',required=True)
+    end_date=fields.Date('Fecha de salida (rol proporcional)',help='Si el empleado sale este mes y se paga primero el rol, el sueldo se prorratea hasta esta fecha (base 30 días). Debe coincidir con la fecha de la salida registrada en Salidas y finiquitos.')
     wage=fields.Float('Salario mensual',required=True)
     bonus=fields.Float('Bonificación')
     commission=fields.Float('Comisión')
@@ -428,6 +429,25 @@ class Line(models.Model):
         help='0 % de pago; reduce la base de aportación al IESS y la base gravable de impuesto a '
              'la renta, igual que un permiso no pagado. Se mantiene como campo separado por su '
              'distinto efecto disciplinario/laboral, no por un cálculo distinto.')
+    # LE26 (referencia SKNOMINA): evidencia de la licencia por enfermedad. Sin ella el cálculo se rechaza
+    # (la ausencia de evidencia es "pendiente de revisión", nunca un descuento del 100 %). Los textos son
+    # referencias a un expediente de acceso restringido: no se copian diagnósticos en este registro.
+    sick_eligibility=fields.Selection([('eligible','Con derecho al subsidio del IESS'),('ineligible','Sin derecho al subsidio del IESS')],'Calificación del derecho (enfermedad)',
+        help='Decisión de RR. HH. con su respaldo. La antigüedad en la empresa no acredita las aportaciones exigidas por el IESS.')
+    sick_eligibility_ref=fields.Char('Respaldo de la calificación')
+    sick_certificate_ref=fields.Char('Referencia del certificado médico',help='Referencia al expediente de acceso restringido; no escribas el diagnóstico.')
+    sick_certificate_origin=fields.Selection([('iess','Certificado del IESS'),('private','Médico particular')],'Origen del certificado')
+    sick_validation_ref=fields.Char('Constancia de validación del IESS',help='Obligatoria para días subsidiados con certificado de médico particular.')
+    sick_prior_days=fields.Float('Días previos certificados del mismo episodio',help='Días de reposo anteriores al primer día de este período (incluye recaídas y certificados previos). Con ellos los 3 primeros días no se reinician cada mes.')
+    sick_continuity_ref=fields.Char('Referencia de continuidad o nuevo episodio')
+    sick_annual_days_outside=fields.Float('Días del año pagados al 50 % fuera de este sistema',help='Solo para quien no tiene derecho al subsidio: saldo del límite anual de 60 días registrado en otro sistema.')
+    sick_annual_ref=fields.Char('Respaldo del saldo anual')
+    sick_iess_rate=fields.Selection([('75','75 %'),('66','66 %')],'Porcentaje del subsidio IESS (informativo)')
+    sick_iess_base=fields.Float('Base mensual promedio del IESS (informativo)')
+    sick_iess_ref=fields.Char('Calificación o liquidación del IESS')
+    sick_complement_pct=fields.Float('Complemento patronal sobre días subsidiados (%)',help='Opcional y documentado; sin él el empleador no completa el salario desde el día 4.')
+    sick_complement_ref=fields.Char('Respaldo del complemento patronal')
+    result_sick_iess=fields.Float(compute='_compute_totals',string='Subsidio IESS estimado (no incluido en el neto)')
     advances=fields.Float('Anticipos')
     loans=fields.Float('Préstamos')
     other_deductions=fields.Float('Otros descuentos')
@@ -472,7 +492,7 @@ class Line(models.Model):
         'tax': 'result_tax', 'thirteenth': 'result_thirteenth', 'fourteenth': 'result_fourteenth',
         'vacation': 'result_vacation', 'reserve_iess': 'result_reserve_iess',
         'employer_iess': 'result_employer_iess', 'employer_other': 'result_employer_other',
-        'advances': 'result_advances', 'loans': 'result_loans',
+        'advances': 'result_advances', 'loans': 'result_loans', 'sick_iess_estimate': 'result_sick_iess',
     }
 
     @api.depends('result')
@@ -488,9 +508,56 @@ class Line(models.Model):
             if line.employee_id.company_id!=line.company_id or (line.partner_id.company_id and line.partner_id.company_id!=line.company_id) or (line.analytic_id.company_id and line.analytic_id.company_id!=line.company_id):
                 raise ValidationError('Empleado, tercero y centro de costo deben pertenecer a la empresa del cierre.')
 
+    @api.constrains('period_id','employee_id','end_date')
+    def _check_exit_rules(self):
+        """Un rol no puede contradecir la salida registrada del empleado (doble pago del último mes)."""
+        exits=self.env['erpec.payroll.exit'].sudo()
+        for line in self:
+            if line.end_date and line.end_date<line.start_date:
+                raise ValidationError('La fecha de salida no puede ser anterior al ingreso.')
+            if line.end_date and (line.end_date.year,line.end_date.month)!=(line.period_id.year,line.period_id.month):
+                raise ValidationError('La fecha de salida de la línea debe caer en el mes del período.')
+            for item in exits.search([('employee_id','=',line.employee_id.id),('company_id','=',line.company_id.id),('state','in',('calculated','approved','paid'))]):
+                reason=item._line_conflict(line)
+                if reason:
+                    raise ValidationError(reason)
+
+    def _sick_annual_prior_days(self):
+        """Días del año pagados al 50 % en cierres anteriores del mismo ejercicio (sin derecho al subsidio)."""
+        self.ensure_one()
+        if not self.employee_id or not self.period_id:
+            return 0.0
+        earlier=self.search([('employee_id','=',self.employee_id.id),('company_id','=',self.company_id.id),('id','!=',self.id),
+            ('period_id.year','=',self.period_id.year),('period_id.month','<',self.period_id.month),('period_id.state','in',('closed','posted'))])
+        return sum(json.loads(line.result or '{}').get('sick_days_employer50',0) for line in earlier)
+
+    def _sick_evidence_errors(self):
+        """Evidencia mínima de la licencia por enfermedad; vacío si no hay días de enfermedad."""
+        self.ensure_one()
+        if not self.sick_days:
+            return []
+        ok=lambda value:len((value or '').strip())>=3
+        errors=[]
+        if not ok(self.sick_certificate_ref) or not self.sick_certificate_origin:
+            errors.append('Registra la referencia y el origen del certificado médico.')
+        if not self.sick_eligibility or not ok(self.sick_eligibility_ref):
+            errors.append('Registra la calificación del derecho al subsidio del IESS y su respaldo; la antigüedad no acredita aportaciones.')
+        if self.sick_prior_days<0 or not ok(self.sick_continuity_ref):
+            errors.append('Confirma los días previos del episodio y la referencia de continuidad o nuevo episodio, incluidas las recaídas.')
+        if self.sick_eligibility=='eligible' and self.sick_prior_days+self.sick_days>3:
+            if self.sick_certificate_origin=='private' and not ok(self.sick_validation_ref):
+                errors.append('Registra la constancia de validación del IESS del certificado particular.')
+            if not self.sick_iess_rate or self.sick_iess_base<=0 or not ok(self.sick_iess_ref):
+                errors.append('Registra el tramo del IESS: porcentaje, base mensual promedio y referencia de la calificación.')
+            if self.sick_complement_pct and not ok(self.sick_complement_ref):
+                errors.append('El complemento patronal requiere respaldo contractual.')
+        if self.sick_eligibility=='ineligible' and not ok(self.sick_annual_ref):
+            errors.append('Registra el respaldo del saldo anual de días pagados al 50 %.')
+        return errors
+
     def _copy_inputs(self):
         self.ensure_one()
-        keys=('start_date','wage','bonus','commission','non_taxable_income','vacation_payout','sick_days','maternity_days','paternity_days','unpaid_leave_days','unexcused_absence_days','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
+        keys=('start_date','end_date','wage','bonus','commission','non_taxable_income','vacation_payout','sick_days','sick_eligibility','sick_eligibility_ref','sick_certificate_ref','sick_certificate_origin','sick_validation_ref','sick_prior_days','sick_continuity_ref','sick_annual_days_outside','sick_annual_ref','sick_iess_rate','sick_iess_base','sick_iess_ref','sick_complement_pct','sick_complement_ref','maternity_days','paternity_days','unpaid_leave_days','unexcused_absence_days','advances','loans','other_deductions','personal_expenses','hours_50','hours_100','night_hours','monthly_thirteenth','monthly_fourteenth','reserve_paid')
         return {key:self[key] for key in keys}
 
     def _non_taxable_benefits_total(self):
@@ -503,8 +570,13 @@ class Line(models.Model):
         return sum(self.benefit_line_ids.filtered(lambda item: not item.benefit_type_id.taxable).mapped('amount'))
 
     def _inputs(self):
+        errors=self._sick_evidence_errors()
+        if errors:
+            raise ValueError(' '.join(errors))
         data=self._copy_inputs()
         data['start_date']=fields.Date.to_string(data['start_date'])
+        data['end_date']=fields.Date.to_string(data['end_date']) if data.get('end_date') else False
+        data['sick_annual_prior_days']=self._sick_annual_prior_days()+(data.get('sick_annual_days_outside') or 0)
         _entries,totals=self._resolve_advance_entries()
         data['advances']=data.get('advances',0)+totals['advances']
         data['loans']=data.get('loans',0)+totals['loans']

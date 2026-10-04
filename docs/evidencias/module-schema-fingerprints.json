@@ -68,8 +68,8 @@
   "version": "18.0.1.3.0"
  },
  "erpec_payroll": {
-  "schema": "ce43f8c741e517451bcdb1fb8b55e294a75789de45a2059367bde1b6a9c2e3e4",
-  "version": "18.0.1.14.16"
+  "schema": "ba16439d0f602e439834df4e0f9108e94f2f194512f5c2f52f561245345db550",
+  "version": "18.0.1.15.0"
  },
  "erpec_provision": {
   "schema": "8ccb1d1cf7dd09188c1e41ded378c699d1f4869f454fef3bf92ab1265fd180be",

@@ -1,3 +1,13 @@
+# NM27 — salida, rol proporcional y acta de finiquito (04-10-2026)
+
+Solicitud del titular: nueva pasada de nómina contrastada con C:/proyectos web/nuevo_nomina (RSF26/RCF26) en acta de finiquito y pago del rol proporcional. erpec_payroll 18.0.1.15.0 incorpora fecha de salida en la línea del rol (prorrateo base 30), modelo erpec.payroll.exit con modalidades rol primero / con finiquito, guarda única contra doble pago del último mes, cálculo de finiquito (sueldo pendiente, décimos, vacaciones netas de días gozados, reserva, despido, desahucio), acta PDF y menú Nómina → Salidas y finiquitos. Guía: docs/NOMINA_SALIDA_FINIQUITO_NM27.md; prompt: .github/prompts/ERPEC26-NM27.md.
+
+Ampliación NM27 (licencia por enfermedad, contraste con LE26): evidencia obligatoria, derecho al subsidio calificado por RR. HH., días 1-3 por episodio con continuidad entre meses, 50 % hasta 60 días anuales sin derecho, subsidio IESS informativo fuera del neto.
+
+Límites: solo DEMO, sin contabilización, sin retención de renta, sin archivar empleado ni pagos reales; revisión laboral pendiente. Fuente nuevo_nomina no modificada. Sin commit hasta que el titular lo pida.
+
+---
+
 # UX04 — continuidad visual y acceso al ambiente SRI
 
 Se corrigen dos recorridos de Ventas mediante acción común, incluido el enlace histórico /odoo/sales, y sincronización del área activa. Paleta común, Administración explícita, Tesorería dentro de Contabilidad, Manufactura y Facturación electrónica integradas. Pie público, título inicial y aviso de sesión con identidad ERP EC; créditos conservados.

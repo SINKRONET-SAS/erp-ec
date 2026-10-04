@@ -17,3 +17,4 @@ from . import test_acceptance_matrix
 from . import test_tax_completion
 from . import test_rdep_catalog
 from . import test_absences
+from . import test_exit_settlement

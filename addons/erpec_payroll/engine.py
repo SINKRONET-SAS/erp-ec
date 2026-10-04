@@ -20,14 +20,16 @@ def money(value):
     return number(value).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
 
-def days_worked(start, year, month):
+def days_worked(start, year, month, end=None):
+    """Días del período sobre base 30. Con `end` (fecha de salida) el rol se prorratea hasta ese día;
+    una salida en el último día del mes paga el mes completo (también en febrero)."""
     begin = date(year, month, 1)
-    end = date(year, month, monthrange(year, month)[1])
-    if start > end:
+    last = date(year, month, monthrange(year, month)[1])
+    if start > last or (end is not None and end < begin):
         return 0
-    if start <= begin:
-        return 30
-    return 31-min(30, start.day)
+    first_day = 1 if start <= begin else min(30, start.day)
+    last_day = 30 if end is None or end >= last else min(30, end.day)
+    return max(0, last_day-first_day+1)
 
 
 # Boletín NAC-COM-26-006 (SRI, 06-02-2026): desde la reforma tributaria de 2023
@@ -259,10 +261,48 @@ def gross_up_assumed_tax(net_target, base_annual_base, personal_expenses, parame
     return money(hi-net_target)
 
 
+# Licencia por enfermedad (LE26 de la referencia SKNOMINA; Oficio PGE 10097 de 2025, Ley de Seguridad Social
+# arts. 106 y 107, Código del Trabajo arts. 42.19 y 54). La antigüedad no acredita el derecho al subsidio del
+# IESS: la calificación la registra RR. HH. con su respaldo y, sin ella, el cálculo se rechaza (nunca se
+# descuenta el 100 % por falta de evidencia). Con derecho: días 1 a 3 del episodio al 100 % a cargo del empleador
+# (la numeración continúa entre meses con los días previos certificados) y desde el día 4 el subsidio lo paga
+# el IESS, con complemento patronal opcional documentado. Sin derecho: el empleador paga el 50 % hasta 60 días
+# por año; el subsidio estimado del IESS es informativo y nunca se suma al neto del empleador.
+SICK_EMPLOYER_DAYS = 3
+SICK_ANNUAL_EMPLOYER_DAYS = 60
+
+
+def sick_leave_pay(data, wage, sick_days):
+    """Devuelve (pago patronal, días pagados al 50 %, subsidio IESS estimado informativo)."""
+    if sick_days <= 0:
+        return Decimal(0), Decimal(0), Decimal(0)
+    eligibility = data.get('sick_eligibility')
+    daily = wage/30
+    if eligibility == 'eligible':
+        full = max(Decimal(0), min(sick_days, SICK_EMPLOYER_DAYS-number(data.get('sick_prior_days', 0))))
+        subsidized = sick_days-full
+        complement = number(data.get('sick_complement_pct', 0))
+        if not 0 <= complement <= 100:
+            raise ValueError('El complemento patronal debe estar entre 0 y 100 %.')
+        pay = money(daily*full+daily*subsidized*complement/100)
+        rate = number(data.get('sick_iess_rate', 0) or 0)
+        base = number(data.get('sick_iess_base', 0))
+        estimate = money(base/30*rate/100*subsidized) if rate and base else Decimal(0)
+        return pay, Decimal(0), estimate
+    if eligibility == 'ineligible':
+        if number(data.get('sick_annual_prior_days', 0))+sick_days > SICK_ANNUAL_EMPLOYER_DAYS:
+            raise ValueError('Se alcanzó el límite anual de %s días a cargo del empleador sin derecho al subsidio del IESS: registra la resolución de RR. HH. y paga la parte restante como novedad documentada.' % SICK_ANNUAL_EMPLOYER_DAYS)
+        return money(daily*sick_days/2), sick_days, Decimal(0)
+    raise ValueError('La licencia por enfermedad está pendiente de revisión: registra la calificación del derecho al subsidio del IESS con su respaldo, el certificado y la continuidad del episodio.')
+
+
 def calculate(data, parameters, year, month):
     validate_parameters(parameters)
     start = date.fromisoformat(data['start_date'])
-    days = days_worked(start, year, month)
+    end_date = date.fromisoformat(data['end_date']) if data.get('end_date') else None
+    if end_date is not None and end_date < start:
+        raise ValueError('La fecha de salida no puede ser anterior al ingreso.')
+    days = days_worked(start, year, month, end_date)
     wage = number(data['wage'])
     if days <= 0 or wage < number(parameters['minimum_salary']) or number(parameters['monthly_hours']) <= 0:
         raise ValueError('Revisa vigencia laboral, salario mínimo y jornada mensual.')
@@ -280,7 +320,7 @@ def calculate(data, parameters, year, month):
     for key, value in data.items():
         if key in ('bonus', 'commission', 'non_taxable_income', 'advances', 'loans', 'other_deductions', 'personal_expenses', 'hours_50', 'hours_100', 'night_hours', 'vacation_payout',
                    'sick_days', 'maternity_days', 'unpaid_leave_days', 'unexcused_absence_days', 'paternity_days',
-                   'net_income_target', 'employer_assumed_tax') and number(value) < 0:
+                   'net_income_target', 'employer_assumed_tax', 'sick_prior_days', 'sick_annual_prior_days', 'sick_iess_base', 'sick_complement_pct') and number(value) < 0:
             raise ValueError('Las novedades y descuentos deben ser no negativos.')
     # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (17-02-2025, art. 54
     # Código del Trabajo y art. 16 Reglamento General sobre Prestación de Subsidios en Dinero) y
@@ -293,7 +333,7 @@ def calculate(data, parameters, year, month):
     # IR. Paternidad: el empleador paga el 100 % y es materia gravada de IESS, igual que un día
     # trabajado normal — no cambia ningún cálculo, solo se registra para control de asistencia.
     sick_days = number(data.get('sick_days', 0))
-    sick_days_paid = min(sick_days, Decimal(3))
+    sick_pay, sick_days_employer50, sick_iess_estimate = sick_leave_pay(data, wage, sick_days)
     maternity_days = number(data.get('maternity_days', 0))
     unpaid_leave_days = number(data.get('unpaid_leave_days', 0))
     unexcused_absence_days = number(data.get('unexcused_absence_days', 0))
@@ -303,7 +343,6 @@ def calculate(data, parameters, year, month):
     normal_days = days-absence_days
     salary = money(wage*normal_days/30)
     maternity_pay = money(wage*maternity_days/30*Decimal('0.25'))
-    sick_pay = money(wage*sick_days_paid/30)
     hourly = wage/number(parameters['monthly_hours'])
     overtime = sum(money(hourly*number(data.get(key, 0))*number(parameters[factor])) for key, factor in [('hours_50','overtime_50'), ('hours_100','overtime_100'), ('night_hours','night_rate')])
     base = money(salary+maternity_pay+overtime+number(data.get('bonus', 0))+number(data.get('commission', 0)))
@@ -375,10 +414,11 @@ def calculate(data, parameters, year, month):
     if net < 0:
         raise ValueError('El neto a recibir no puede ser negativo.')
     accrued13, accrued14, reserve_iess = thirteenth-monthly13, fourteenth-monthly14, reserve-reserve_paid
+    # Importes ya pagados con el rol por mensualización: el finiquito los descuenta para no pagarlos dos veces.
     cost = money(gross+employer+employer_other+accrued13+accrued14+vacation+reserve_iess+employer_assumed_tax)
     # Estas magnitudes son proyecciones mensuales; el RDEP aplica la misma tarifa
     # a los acumulados efectivos, sin copiar una proyección de un mes aislado.
-    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'vacation_payout':vacation_payout, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption, 'employer_assumed_tax':employer_assumed_tax}.items()}
+    return {key: float(value) for key, value in {'days':days, 'salary':salary, 'overtime':overtime, 'base':base, 'gross':gross, 'personal_iess':iess, 'tax':tax, 'advances':advances, 'loans':loans, 'other_deductions':other, 'deductions':deductions, 'net':net, 'employer_iess':employer, 'employer_other':employer_other, 'thirteenth':accrued13, 'fourteenth':accrued14, 'vacation':vacation, 'vacation_payout':vacation_payout, 'reserve_iess':reserve_iess, 'cost':cost, 'annual_tax_caused':annual_tax, 'personal_expense_rebate':rebate, 'personal_expense_rebate_applied':min(annual_tax,rebate), 'annual_tax_after_rebate':tax_after_rebate, 'personal_exemption':exemption, 'employer_assumed_tax':employer_assumed_tax, 'sick_days_employer50':sick_days_employer50, 'sick_iess_estimate':sick_iess_estimate, 'thirteenth_paid':monthly13, 'fourteenth_paid':monthly14, 'reserve_paid':reserve_paid}.items()}
 
 
 def validate_parameters(parameters):

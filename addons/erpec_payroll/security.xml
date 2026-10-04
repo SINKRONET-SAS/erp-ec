@@ -4,4 +4,5 @@
 <record id="mapping_company_rule" model="ir.rule"><field name="name">Nómina mapping por empresa</field><field name="model_id" ref="model_erpec_payroll_mapping"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="period_company_rule" model="ir.rule"><field name="name">Nómina period por empresa</field><field name="model_id" ref="model_erpec_payroll_period"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 <record id="line_company_rule" model="ir.rule"><field name="name">Nómina line por empresa</field><field name="model_id" ref="model_erpec_payroll_line"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
+<record id="exit_company_rule" model="ir.rule"><field name="name">Nómina salidas por empresa</field><field name="model_id" ref="model_erpec_payroll_exit"/><field name="domain_force">[('company_id','in',company_ids)]</field></record>
 </odoo>

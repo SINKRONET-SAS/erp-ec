@@ -40,11 +40,21 @@ class AbsencesCase(TransactionCase):
             'line_ids': [(0, 0, dict({'employee_id': self.employee.id, 'partner_id': self.partner.id,
                                       'start_date': '2025-01-01', 'wage': 1200, 'approved': True}, **novelties))]})
 
+    ELIGIBLE = {'sick_eligibility': 'eligible', 'sick_eligibility_ref': 'IESS-CAL-1', 'sick_certificate_ref': 'EXP-001',
+                'sick_certificate_origin': 'iess', 'sick_prior_days': 0, 'sick_continuity_ref': 'Nuevo episodio',
+                'sick_iess_rate': '75', 'sick_iess_base': 1200, 'sick_iess_ref': 'LIQ-1'}
+    INELIGIBLE = {'sick_eligibility': 'ineligible', 'sick_eligibility_ref': 'IESS-CAL-2', 'sick_certificate_ref': 'EXP-002',
+                  'sick_certificate_origin': 'iess', 'sick_prior_days': 0, 'sick_continuity_ref': 'Nuevo episodio',
+                  'sick_annual_ref': 'Saldo anual 0'}
+
+    def _gross(self, period):
+        return json.loads(period.line_ids.result)['gross']
+
     def test_sick_leave_first_three_days_full_pay_no_iess(self):
         # Días 1-3: 100 % del sueldo, sin aporte a IESS (grava IR).
         plain = self._period(1)
         plain.action_calculate()
-        sick = self._period(2, sick_days=3)
+        sick = self._period(2, sick_days=3, **self.ELIGIBLE)
         sick.action_calculate()
         # El bruto no cambia (se pagó el 100 % igual), pero al no aportar IESS esos días se
         # retiene menos y el neto es mayor.
@@ -56,11 +66,70 @@ class AbsencesCase(TransactionCase):
         # 10 días de enfermedad: 3 pagados al 100 %, 7 sin pago alguno (subsidio directo del IESS).
         plain = self._period(1)
         plain.action_calculate()
-        sick = self._period(2, sick_days=10)
+        sick = self._period(2, sick_days=10, **self.ELIGIBLE)
         sick.action_calculate()
         plain_gross = json.loads(plain.line_ids.result)['gross']
         sick_gross = json.loads(sick.line_ids.result)['gross']
         self.assertAlmostEqual(plain_gross - sick_gross, 1200 / 30 * 7, places=2)
+
+    def test_sick_leave_without_evidence_is_pending_review_not_a_full_deduction(self):
+        period = self._period(1, sick_days=5)
+        with self.assertRaises(ValidationError) as caught:
+            period.action_calculate()
+        self.assertIn('calificación del derecho', str(caught.exception))
+        incomplete = self._period(2, sick_days=5, **dict(self.ELIGIBLE, sick_eligibility_ref=False))
+        with self.assertRaises(ValidationError):
+            incomplete.action_calculate()
+
+    def test_sick_leave_continuity_does_not_restart_the_three_days_each_month(self):
+        plain = self._period(1)
+        plain.action_calculate()
+        later = self._period(2, sick_days=5, **dict(self.ELIGIBLE, sick_prior_days=3))
+        later.action_calculate()
+        self.assertAlmostEqual(self._gross(plain) - self._gross(later), 1200 / 30 * 5, places=2)
+        partial = self._period(3, sick_days=4, **dict(self.ELIGIBLE, sick_prior_days=1))
+        partial.action_calculate()
+        self.assertAlmostEqual(self._gross(plain) - self._gross(partial), 1200 / 30 * 2, places=2)
+
+    def test_sick_leave_without_iess_right_pays_half_and_counts_the_annual_limit(self):
+        plain = self._period(1)
+        plain.action_calculate()
+        half = self._period(2, sick_days=4, **self.INELIGIBLE)
+        half.action_calculate()
+        self.assertAlmostEqual(self._gross(plain) - self._gross(half), 1200 / 30 * 4 * 0.5, places=2)
+        self.assertEqual(json.loads(half.line_ids.result)['sick_days_employer50'], 4)
+        limit = self._period(3, sick_days=3, sick_annual_days_outside=58, **self.INELIGIBLE)
+        with self.assertRaises(ValidationError) as caught:
+            limit.action_calculate()
+        self.assertIn('límite anual', str(caught.exception))
+
+    def test_annual_balance_accumulates_from_closed_periods(self):
+        first = self._period(4, sick_days=10, **self.INELIGIBLE)
+        first.action_calculate()
+        first.action_close()
+        second = self._period(5, sick_days=2, **self.INELIGIBLE)
+        self.assertEqual(second.line_ids._inputs()['sick_annual_prior_days'], 10)
+
+    def test_sick_leave_tranche_private_certificate_and_complement_need_support(self):
+        private = self._period(1, sick_days=10, **dict(self.ELIGIBLE, sick_certificate_origin='private'))
+        with self.assertRaises(ValidationError):
+            private.action_calculate()
+        no_tranche = self._period(2, sick_days=10, **dict(self.ELIGIBLE, sick_iess_rate=False))
+        with self.assertRaises(ValidationError):
+            no_tranche.action_calculate()
+        complement = self._period(3, sick_days=10, **dict(self.ELIGIBLE, sick_complement_pct=50))
+        with self.assertRaises(ValidationError):
+            complement.action_calculate()
+
+    def test_employer_complement_and_iess_estimate_are_separate(self):
+        plain = self._period(1)
+        plain.action_calculate()
+        sick = self._period(2, sick_days=10, sick_complement_pct=50, sick_complement_ref='Contrato art. 5', **self.ELIGIBLE)
+        sick.action_calculate()
+        self.assertAlmostEqual(self._gross(plain) - self._gross(sick), 1200 / 30 * 7 * 0.5, places=2)
+        # 7 días subsidiados x (1200 / 30) x 75 %: lo paga el IESS, no forma parte del neto.
+        self.assertAlmostEqual(sick.line_ids.result_sick_iess, 1200 / 30 * 0.75 * 7, places=2)
+        self.assertAlmostEqual(sick.line_ids.gross, self._gross(sick), places=2)
 
     def test_maternity_pays_25_percent_and_contributes_to_iess(self):
         full_month = self._period(1, maternity_days=30)

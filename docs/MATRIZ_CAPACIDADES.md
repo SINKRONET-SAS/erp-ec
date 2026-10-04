@@ -12,7 +12,7 @@ Corte documental: 02-10-2026. Sustituye las decisiones iniciales como descripci�
 | EC06 | POS electrónico | No se acredita integración fiscal POS en este contraste | Diseñar/validar su contrato antes de ofrecerlo |
 | EC07 | Reportes contables | erpec_withholding_accounting/accounting.py y vistas propias | Cobertura propia, no equivalencia total con reportes Enterprise |
 | EC08 | ATS | erpec_fiscal_ats, validación XSD antes de descarga; [fundador](FUNDADOR_LOCALIZACION_ECUADOR.md) | Datos fiscales y aceptación del anexo pendientes; XSD no equivale a declaración aceptada |
-| EC09 | Nómina y contabilidad | erpec_payroll: cálculo, cierre/asiento, reversión, RDEP y beneficios; [matriz](DI25-03_MATRIZ_ACEPTACION.md) | No equivalencia integral certificada con SKNOMINA ni aceptación legal global |
+| EC09 | Nómina y contabilidad | erpec_payroll: cálculo, cierre/asiento, reversión, RDEP y beneficios; salida, rol proporcional y acta de finiquito ([NM27](NOMINA_SALIDA_FINIQUITO_NM27.md)); [matriz](DI25-03_MATRIZ_ACEPTACION.md) | No equivalencia integral certificada con SKNOMINA ni aceptación legal global |
 | EC10 | API Facturador | erpec_fiscal_connector con CUSTOM, contrato 1.0 e idempotencia | No asumir otros documentos admitidos; autoridad única por comprobante |
 | EC11 | Facturación de suscripciones SKNOMINA | Contrato fuente separado de documentos de clientes; fase 01 | No se modifica ni se acredita ejecución actual de ese producto |
 | EC12 | Planes, derechos, usuarios y provisión | erpec_entitlements, erpec_selfservice y worker; [CM28](PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md) | Tarifas/operación productiva y correspondencias externas requieren validación |

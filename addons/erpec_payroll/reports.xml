@@ -38,6 +38,7 @@
             <tr><td>Décimo cuarto</td><td class="text-end" t-esc="'%.2f' % line.result_fourteenth"/></tr>
             <tr><td>Vacaciones</td><td class="text-end" t-esc="'%.2f' % line.result_vacation"/></tr>
             <tr><td>Fondo de reserva</td><td class="text-end" t-esc="'%.2f' % line.result_reserve_iess"/></tr>
+            <tr t-if="line.result_sick_iess"><td>Subsidio IESS estimado por enfermedad (informativo; lo paga el IESS y no forma parte del neto)</td><td class="text-end" t-esc="'%.2f' % line.result_sick_iess"/></tr>
             <tr><td>Aporte patronal IESS</td><td class="text-end" t-esc="'%.2f' % line.result_employer_iess"/></tr>
             <tr><td>Contribución IECE/SECAP</td><td class="text-end" t-esc="'%.2f' % line.result_employer_other"/></tr>
             <tr><td><strong>Costo total de empresa</strong></td><td class="text-end"><strong t-esc="'%.2f' % line.cost"/></td></tr>
