@@ -1,1 +1,1 @@
-{'name':'ERP EC — Tesorería y cierre operativo','version':'18.0.1.0.2','license':'Other proprietary','author':'SINKRONET S.A.S.','depends':['erpec_workspace'],'data':['security.xml','ir.model.access.csv','views.xml'],'installable':True}
+{'name':'ERP EC — Tesorería y cierre operativo','version':'18.0.1.0.3','license':'Other proprietary','author':'SINKRONET S.A.S.','depends':['erpec_workspace'],'data':['security.xml','ir.model.access.csv','views.xml'],'installable':True}

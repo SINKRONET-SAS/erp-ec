@@ -1,0 +1,85 @@
+{
+  "instancia": "fundador",
+  "modulos": [
+    "erpec_assets",
+    "erpec_base",
+    "erpec_data_protection",
+    "erpec_entitlements",
+    "erpec_fiscal_ats",
+    "erpec_fiscal_connector",
+    "erpec_fiscal_documents",
+    "erpec_fiscal_guide_sri",
+    "erpec_fiscal_native",
+    "erpec_fiscal_sri",
+    "erpec_fiscal_withholding_sri",
+    "erpec_imports",
+    "erpec_manufacturing",
+    "erpec_operations",
+    "erpec_payphone",
+    "erpec_payroll",
+    "erpec_provision",
+    "erpec_secrets",
+    "erpec_selfservice",
+    "erpec_suite",
+    "erpec_treasury",
+    "erpec_website_entry",
+    "erpec_withholding_accounting",
+    "erpec_workspace"
+  ],
+  "respaldo": ".cache/windows/backups/update-fundador-20261004T112057Z",
+  "copiaSincronizada": false,
+  "desfase": "sin desfase",
+  "before": {
+    "account_move": {
+      "count": 4,
+      "sha256": "1ba1dac3dce060138ec29a96fd8dcfed007051aeb9d8730f6807fea193300ade"
+    },
+    "account_move_line": {
+      "count": 12,
+      "sha256": "cdedfbbd2fbfac24b2197105db540aed3fa1ce1cffce3937db3ec4a14adf8e6d"
+    },
+    "erpec_tax_policy": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "erpec_tax_classification": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "erpec_fiscal_point": {
+      "count": 1,
+      "sha256": "205287e4c064e776b6765fb41d6a8eb84923ad7dfe1ec7bda3f86c2bbf5c16b6"
+    },
+    "account_journal": {
+      "count": 10,
+      "sha256": "b0c02b7332af847e80310d36dbd6930a4172cf60ea9d59bd014563b7203de4f4"
+    }
+  },
+  "after": {
+    "account_move": {
+      "count": 4,
+      "sha256": "1ba1dac3dce060138ec29a96fd8dcfed007051aeb9d8730f6807fea193300ade"
+    },
+    "account_move_line": {
+      "count": 12,
+      "sha256": "cdedfbbd2fbfac24b2197105db540aed3fa1ce1cffce3937db3ec4a14adf8e6d"
+    },
+    "erpec_tax_policy": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "erpec_tax_classification": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "erpec_fiscal_point": {
+      "count": 1,
+      "sha256": "205287e4c064e776b6765fb41d6a8eb84923ad7dfe1ec7bda3f86c2bbf5c16b6"
+    },
+    "account_journal": {
+      "count": 10,
+      "sha256": "b0c02b7332af847e80310d36dbd6930a4172cf60ea9d59bd014563b7203de4f4"
+    }
+  },
+  "business_data_preserved": true
+}

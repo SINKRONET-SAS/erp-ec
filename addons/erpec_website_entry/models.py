@@ -26,7 +26,7 @@ FOOTER_ARCH = (
     '<xpath expr="//div[@id=\'footer\']" position="replace">'
     '<div id="footer" class="oe_structure oe_structure_solo" t-ignore="true" t-if="not no_footer">'
     '<section class="s_text_block pt16 pb16 erpec_entry_footer"><div class="container text-center">'
-    '<p class="mb-1"><strong>ERP EC</strong> · SINKRONET · Tecnología Odoo Community</p>'
+    '<p class="mb-1"><strong>ERP EC</strong> · SINKRONET</p>'
     '<p class="mb-0"><a href="/web/login">Ingresar</a> · <a href="/derechos-datos">Derechos sobre tus datos</a></p>'
     '</div></section></div></xpath></data>'
 )
@@ -54,6 +54,9 @@ class Website(models.Model):
                 view.arch_db = FOOTER_ARCH
         for view in View.search([('key', '=', 'website.footer_custom')]):
             arch = view.arch_db or ''
+            if 'erpec_entry_footer' in arch and ' · Tecnología Odoo Community' in arch:
+                arch = arch.replace(' · Tecnología Odoo Community', '')
+                view.arch_db = arch
             if 'erpec_entry_footer' in arch and '/derechos-datos' not in arch:
                 view.arch_db = arch.replace('<a href="/web/login">Ingresar</a>', '<a href="/web/login">Ingresar</a> · <a href="/derechos-datos">Derechos sobre tus datos</a>')
         for view in View.search([('key', '=', 'website.footer_copyright_company_name')]):

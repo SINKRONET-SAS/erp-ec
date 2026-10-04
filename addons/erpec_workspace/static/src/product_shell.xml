@@ -2,7 +2,7 @@
   <t t-name="erpec_workspace.ProductShell" t-inherit="web.NavBar" t-inherit-mode="extension">
     <xpath expr="//nav" position="attributes"><attribute name="class" add="erpec_navbar" separator=" "/></xpath>
     <xpath expr="//div[hasclass('o_menu_systray')]" position="attributes"><attribute name="role">toolbar</attribute><attribute name="aria-label">Herramientas del usuario</attribute></xpath>
-    <xpath expr="//DropdownItem[contains(@class, 'o_menu_brand')]" position="attributes"><attribute name="t-if">!this.ui.isSmall and currentApp and currentApp.xmlid !== 'erpec_base.suite_root'</attribute></xpath>
+    <xpath expr="//DropdownItem[contains(@class, 'o_menu_brand')]" position="attributes"><attribute name="t-if">!this.ui.isSmall and currentApp</attribute></xpath>
     <xpath expr="//t[@t-call='web.NavBar.SectionsMenu']" position="attributes"><attribute name="t-if">currentAppSections.length</attribute></xpath>
     <xpath expr="//t[@t-call='web.NavBar.AppsMenu']" position="before">
       <button t-if="erpecHomeMenu" class="erpec_brand" title="Volver al inicio de ERP EC" aria-label="ERP EC · Inicio" t-on-click="erpecOpenHome"><strong>ERP EC</strong><span>SINKRONET</span></button>
@@ -22,5 +22,9 @@
   </t>
   <t t-name="erpec_workspace.AccessibleListActions" t-inherit="web.ListCogMenu" t-inherit-mode="extension">
     <xpath expr="//button[@data-hotkey='u']" position="attributes"><attribute name="aria-label">Acciones del listado</attribute><attribute name="title">Acciones del listado</attribute></xpath>
+  </t>
+  <t t-name="erpec_workspace.SessionIdentity" t-inherit="web.SessionExpiredDialog" t-inherit-mode="extension">
+    <xpath expr="//Dialog" position="attributes"><attribute name="title.translate">Sesión de ERP EC finalizada</attribute></xpath>
+    <xpath expr="//p" position="replace"><p class="text-prewrap">Tu sesión de ERP EC ha finalizado. La página se actualizará para que puedas volver a ingresar.</p></xpath>
   </t>
 </templates>

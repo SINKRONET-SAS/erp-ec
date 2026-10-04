@@ -1,0 +1,69 @@
+{
+  "fecha": "2026-10-04",
+  "alcance": "Continuidad de navegación, identidad y descubrimiento de ambientes SRI",
+  "versiones": {
+    "erpec_workspace": "18.0.1.4.0",
+    "erpec_website_entry": "18.0.1.1.1",
+    "erpec_treasury": "18.0.1.0.3",
+    "erpec_fiscal_sri": "18.0.1.5.5"
+  },
+  "navegador": {
+    "fundador": [
+      "Inicio y menú Ventas abren el mismo listado; /odoo/sales resuelve la acción propia",
+      "Área Ventas activa y sin promoción ni filas de muestra",
+      "Contabilidad y Administración identificadas",
+      "Planes, detalles y clases de proveedores e ítems visibles; detalles abiertos con 75 registros",
+      "Ambiente SRI visible como primera entrada fiscal; punto 001-004 en pruebas y botón Habilitar producción visible",
+      "Pie de acceso y aviso de sesión con identidad ERP EC"
+    ],
+    "demo": [
+      "Inicio y menú Ventas abren el mismo listado con sus dos pedidos existentes",
+      "Ambiente SRI visible; punto 001-001 permanece en pruebas y Habilitar producción visible",
+      "Pie de acceso ERP EC; sin errores de consola en la revisión final"
+    ]
+  },
+  "preservacion": {
+    "fundador": {
+      "datos_identicos": true,
+      "esquema": "sin desfase",
+      "tablas": [
+        "account_move",
+        "account_move_line",
+        "erpec_tax_policy",
+        "erpec_tax_classification",
+        "erpec_fiscal_point",
+        "account_journal"
+      ]
+    },
+    "demo": {
+      "datos_identicos": true,
+      "esquema": "sin desfase",
+      "tablas": [
+        "account_move",
+        "account_move_line",
+        "erpec_tax_policy",
+        "erpec_tax_classification",
+        "erpec_fiscal_point",
+        "account_journal"
+      ]
+    }
+  },
+  "produccion_habilitada_durante_revision": false,
+  "envios_sri_durante_revision": false,
+  "pruebas": "pruebas.json; resultado Odoo 163 sin fallos/errores/omisiones; ejecutor con TimeoutExpired tras interrupción larga del reloj",
+  "capturas": {
+    "ux04-ambiente-antes.png": "e38998dffc493bca12ec15a724009b896fa4f56435dce54258445626f504c9f1",
+    "ux04-ambiente-demo.png": "a77c14426a87dd9d89f7caade6da63a6fd7a77ded59fd7662a5dd64360a3a0dd",
+    "ux04-ambiente-fundador.png": "b5a69778495343ef3cdd8de6e32b7ec2053e0c1f88826e4d177f22804a2a0751",
+    "ux04-impuestos-fundador.png": "d112d5209650d99ccd09fc5c6b72d1bcdfbf75bc65bc4f9bb741d3a749944b20",
+    "ux04-inicio-antes.png": "fd0717f9b9a8356064e50ae0b4090fedbe963263ebf73e6b7031d6b03639db7b",
+    "ux04-ventas-antes.png": "65546a28fb8819044a5e157ecf4fb15d1b5b9b48b1242cc689db10f2a3447edf",
+    "ux04-ventas-despues.png": "b037bb07d2a91ca53d06ef9e9981fd8f5220cc8568aff037b881edd0868d30f9",
+    "ux04-ventas-menu-antes.png": "cc0c7bbbec04335fbe2575050f39f1c96a2d4b2943e4470147fb8641d4c43938"
+  },
+  "limites": [
+    "No acredita homologación integral de datos entre bases ni conformidad total de todos los requisitos SRI 2026",
+    "Créditos y licencias conservados",
+    "CI remoto pendiente de ejecución por SHA tras publicar"
+  ]
+}

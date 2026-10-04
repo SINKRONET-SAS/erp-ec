@@ -56,4 +56,17 @@
   <template id="product_footer_identity" inherit_id="web.brand_promotion_message" priority="90">
     <xpath expr="//t[@t-out]" position="replace"><span class="erpec_footer_identity">ERP EC · SINKRONET</span></xpath>
   </template>
+  <record id="erpec_base.suite_root" model="ir.ui.menu"><field name="name">Administración</field><field name="sequence">95</field></record>
+  <record id="erpec_manufacturing.manufacturing_root" model="ir.ui.menu"><field name="parent_id" ref="mrp.menu_mrp_root"/></record>
+  <record id="erpec_fiscal_connector.fiscal_root" model="ir.ui.menu"><field name="parent_id" eval="False"/><field name="name">Facturación electrónica</field><field name="sequence">26</field></record>
+  <record id="account.menu_finance" model="ir.ui.menu"><field name="name">Contabilidad</field></record>
+  <record id="sale.menu_sale_quotations" model="ir.ui.menu"><field name="action" ref="sale_action"/><field name="name">Cotizaciones y pedidos</field></record>
+  <template id="product_initial_title" inherit_id="web.layout">
+    <xpath expr="//title" position="attributes"><attribute name="t-esc">title or 'ERP EC'</attribute></xpath>
+  </template>
+  <function model="erpec.workspace" name="_apply_navigation_labels"/>
+  <!-- Conserva el enlace histórico /odoo/sales apuntando al mismo listado. -->
+  <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window"><field name="path" eval="False"/></record>
+  <function model="ir.actions.act_window" name="flush_model"><value eval="['path']"/></function>
+  <record id="sale_action" model="ir.actions.act_window"><field name="path">sales</field></record>
 </odoo>

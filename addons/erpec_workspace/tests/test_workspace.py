@@ -49,3 +49,13 @@ class WorkspaceCase(TransactionCase):
             self.env['erpec.workspace'].with_user(user).action_home()
         with self.assertRaises(AccessError):
             self.env.ref('erpec_workspace.home_action').with_user(user).run()
+
+    def test_home_uses_same_actions_as_business_menus(self):
+        home = self.env['erpec.workspace'].action_home()
+        workspace = self.env['erpec.workspace'].browse(home['res_id'])
+        for area, menu in [('sales', 'sale.menu_sale_quotations'),
+                           ('invoices', 'account.menu_action_move_out_invoice_type'),
+                           ('bills', 'account.menu_action_move_in_invoice_type')]:
+            action = workspace.with_context(erpec_area=area).action_area()
+            self.assertEqual(action['id'], self.env.ref(menu).action.id)
+            self.assertEqual(action['target'], 'main')

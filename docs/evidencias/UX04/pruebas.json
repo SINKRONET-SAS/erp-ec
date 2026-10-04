@@ -1,0 +1,12 @@
+{
+  "suite": "erpec_workspace, erpec_website_entry, erpec_fiscal_sri",
+  "tests_reported": 163,
+  "failed": 0,
+  "errors": 0,
+  "omissions": 0,
+  "log": "ec_integrated_test_cf0ad0d4d46e.log",
+  "sha256": "e4348e09af80882bdc9ece94e5907b422116429f5b6a10e770dcd8bf1a446244",
+  "runner_exit": 1,
+  "runner_note": "TimeoutExpired al esperar proceso tras interrupción larga del reloj: resumen final Odoo completo, 163 pruebas sin fallos ni errores y cierre normal registrado. No se presenta el ejecutor como salida 0.",
+  "governance_tests": 6
+}

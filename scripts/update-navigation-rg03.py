@@ -1,4 +1,6 @@
 """Actualiza Fundador y demo con respaldo, mantenimiento y comparación contable."""
+import argparse
+import re
 import hashlib
 import importlib.util
 import io
@@ -24,7 +26,7 @@ def snapshot(opts, password):
     result = {}
     with psycopg2.connect(host=opts['db_host'], port=opts['db_port'], user='postgres', password=password, dbname=opts['db_name']) as conn:
         with conn.cursor() as cursor:
-            for table in ['account_move', 'account_move_line', 'erpec_tax_policy', 'erpec_tax_classification']:
+            for table in ['account_move', 'account_move_line', 'erpec_tax_policy', 'erpec_tax_classification', 'erpec_fiscal_point', 'account_journal']:
                 cursor.execute(sql.SQL('SELECT row_to_json(t)::text FROM {} t ORDER BY id').format(sql.Identifier(table)))
                 rows = cursor.fetchall()
                 result[table] = {'count': len(rows), 'sha256': hashlib.sha256('\n'.join(row[0] for row in rows).encode()).hexdigest()}
@@ -32,11 +34,17 @@ def snapshot(opts, password):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--label', default='RG03')
+    label = parser.parse_args().label
+    if not re.fullmatch(r'[A-Z][A-Z0-9-]{1,30}', label):
+        raise ValueError('Etiqueta de evidencia inválida.')
+    OUT = ROOT / 'docs/evidencias' / label
     OUT.mkdir(parents=True, exist_ok=True)
     updater = load('rg03_updater', 'update-instance.py')
     supervisor = load('rg03_supervisor', 'supervisor-windows.py')
     stamp = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())
-    baseline = ROOT / '.cache' / ('rg03-baseline-' + stamp)
+    baseline = ROOT / '.cache' / (label.lower() + '-baseline-' + stamp)
     archive = subprocess.run(['git', 'archive', '--format=zip', 'HEAD', 'addons'], check=True, capture_output=True).stdout
     with zipfile.ZipFile(io.BytesIO(archive)) as content:
         for item in content.namelist():
@@ -48,7 +56,7 @@ def main():
         marker = updater.STATE / name / 'maintenance.json'
         if marker.exists():
             raise RuntimeError('Existe otro mantenimiento activo: ' + name)
-        marker.write_text('{"reason":"RG03: navegación y marca"}', encoding='utf-8')
+        marker.write_text(json.dumps({'reason': label + ': navegación y marca'}), encoding='utf-8')
         supervisor.stop(name)
         conf, opts = updater.options(name)
         before = snapshot(opts, password)

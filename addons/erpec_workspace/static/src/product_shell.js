@@ -4,6 +4,7 @@ import { WebClient } from "@web/webclient/webclient";
 import { NavBar } from "@web/webclient/navbar/navbar";
 import "@web/webclient/user_menu/user_menu_items";
 import { registry } from "@web/core/registry";
+import { useBus } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 
 patch(WebClient.prototype, {
@@ -16,6 +17,18 @@ patch(WebClient.prototype, {
 });
 
 patch(NavBar.prototype, {
+    setup() {
+        super.setup(...arguments);
+        // Los accesos del inicio y los menús mantienen la misma área activa.
+        useBus(this.env.bus, "ACTION_MANAGER:UI-UPDATED", () => {
+            const actionId = this.actionService.currentController?.action?.id;
+            const menus = this.menuService.getAll().filter((menu) => actionId && Number(menu.actionID) === Number(actionId));
+            const selected = menus.find((menu) => menu.appID === this.currentApp?.id) || menus[0];
+            if (selected) {
+                this.menuService.setCurrentMenu(selected);
+            }
+        });
+    },
     // El menú recibido del servidor ya respeta los permisos del usuario.
     get erpecHomeMenu() {
         return this.menuService.getAll().find((menu) => menu.xmlid === "erpec_operations.operation_menu");

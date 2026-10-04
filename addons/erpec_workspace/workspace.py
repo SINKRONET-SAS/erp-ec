@@ -7,6 +7,13 @@ class Workspace(models.Model):
     _inherit = 'erpec.workspace'
 
     @api.model
+    def _apply_navigation_labels(self):
+        # Actualiza solo idiomas instalados; no exige una localización en bases nuevas.
+        menu = self.env.ref('account.menu_finance')
+        for language in self.env['res.lang'].search([]):
+            menu.with_context(lang=language.code).write({'name': 'Contabilidad'})
+
+    @api.model
     def action_home(self):
         if not self.env.user.has_group('base.group_user'):
             raise AccessError('El centro de trabajo requiere un usuario interno.')
@@ -41,4 +48,18 @@ class Workspace(models.Model):
         area = areas.get(self.env.context.get('erpec_area'))
         if not area or not any(self.env.user.has_group(group) for group in area[0].split(',')):
             raise AccessError('Tu perfil no tiene acceso a esta área de trabajo.')
-        return self.env['ir.actions.actions']._for_xml_id(area[1])
+        canonical_menus = {
+            'sales': 'sale.menu_sale_quotations',
+            'invoices': 'account.menu_action_move_out_invoice_type',
+            'bills': 'account.menu_action_move_in_invoice_type',
+        }
+        menu_xmlid = canonical_menus.get(self.env.context.get('erpec_area'))
+        action_xmlid = area[1]
+        if menu_xmlid:
+            menu = self.env.ref(menu_xmlid)
+            if menu.id not in self.env['ir.ui.menu']._visible_menu_ids():
+                raise AccessError('Tu perfil no tiene acceso al menú de esta área.')
+            action_xmlid = menu.action.get_external_id()[menu.action.id]
+        action = self.env['ir.actions.actions']._for_xml_id(action_xmlid)
+        action['target'] = 'main'
+        return action

@@ -46,3 +46,10 @@ class EntryCase(TransactionCase):
         before=home.arch_db
         self.env['website']._erpec_apply_entry_branding()
         self.assertEqual(home.arch_db,before)
+
+    def test_legacy_footer_brand_is_migrated_without_replacing_content(self):
+        footer = self.View.search([('key', '=', 'website.footer_custom')], limit=1)
+        footer.arch_db = footer.arch_db.replace('SINKRONET</p>', 'SINKRONET · Tecnología Odoo Community</p>')
+        self.env['website']._erpec_apply_entry_branding()
+        self.assertNotIn('Tecnología Odoo Community', footer.arch_db)
+        self.assertIn('/derechos-datos', footer.arch_db)

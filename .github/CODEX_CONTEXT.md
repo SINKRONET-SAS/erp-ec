@@ -1,3 +1,11 @@
+# UX04 — continuidad visual y acceso al ambiente SRI
+
+Se corrigen dos recorridos de Ventas mediante acción común, incluido el enlace histórico /odoo/sales, y sincronización del área activa. Paleta común, Administración explícita, Tesorería dentro de Contabilidad, Manufactura y Facturación electrónica integradas. Pie público, título inicial y aviso de sesión con identidad ERP EC; créditos conservados.
+
+Ambiente SRI existía por punto pero quedaba oculto en Más. Se hace primera entrada de Facturación electrónica y se aclaran ambiente actual y acciones de habilitación, preservando controles y numeración. Fuente oficial contrastada: ficha 2.34 de julio 2026, tabla 4 y apartados 7.2.1/7.2.2; alcance limitado a ambientes/destinos, no certificación integral ni autorización real. No se cambia ningún punto a producción. Informe: docs/CONTINUIDAD_PRODUCTO_UX04.md; resultados: docs/evidencias/UX04. Verificar CI por SHA tras publicación.
+
+---
+
 # RG03 — regresión de navegación y marca corregida (03-10-2026)
 
 La revisión del titular reprodujo menús tributarios presentes en servidor pero ocultos por ProductShell. Se expone la aplicación Impuestos para responsables contables, con planes, detalles, clases de proveedores y clases de ítems prioritarios. Se restaura navegación de ERP EC y se retira promoción del proveedor en Ajustes, pie del acceso, menú de usuario e icono; créditos y licencias permanecen disponibles.
