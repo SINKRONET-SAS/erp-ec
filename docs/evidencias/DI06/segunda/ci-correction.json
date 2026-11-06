@@ -1,0 +1,45 @@
+{
+  "phase": "DI06-CI",
+  "status": "candidate-awaiting-ci",
+  "publishedCommit": "d982ec96d517332128cdd5b1233b161c65bace68",
+  "run": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/42297718320",
+  "findings": [
+    "Hash static.json CRLF distinto del blob LF publicado",
+    "pip-audit reporta 64 entradas en cinco paquetes; no implica 64 vulnerabilidades unicas"
+  ],
+  "pins": {
+    "certifi": "2026.10.18",
+    "pillow": "13.0.0",
+    "pyasn1": "0.6.5",
+    "pypdf": "6.21.4",
+    "Werkzeug": "3.1.9"
+  },
+  "sources": [
+    "https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html",
+    "https://pypi.org/project/certifi/2026.10.18/",
+    "https://pypi.org/project/pillow/13.0.0/",
+    "https://pypi.org/project/pyasn1/0.6.5/",
+    "https://pypi.org/project/pypdf/6.21.4/",
+    "https://pypi.org/project/Werkzeug/3.1.9/"
+  ],
+  "checks": [
+    "11 pruebas puras DI06 aprobadas",
+    "12 pruebas gobierno/estado aprobadas",
+    "Coherencia documental: 31 enlaces",
+    "Cinco pins correctores y tres requisitos directos verificados; transitivos restringidos por -c",
+    "git diff --check sin errores"
+  ],
+  "pendingAdd": [
+    "DI06-CI: publicar correccion y ejecutar auditoria, construccion y suite Linux con nuevos pins; pruebas 738 anteriores no cubren estos pins"
+  ],
+  "requiredPromptsAdd": [
+    ".github/prompts/ERPEC26-DI06-CI.md"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "status": "published-with-ci-failures-correction-local",
+      "publication": "d982ec9 publicado; correccion CI local pendiente de commit/push",
+      "functionalAcceptance": false
+    }
+  }
+}

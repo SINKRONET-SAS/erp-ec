@@ -38,3 +38,7 @@ Se retoman A (revision de omisiones), B (regresion) y C (publicacion). Hallazgo 
 ## Avance de regresion confirmado
 
 06-11-2026: 738 pruebas reportadas en la suite integral, cero fallos/errores y tres omisiones de saneamiento. Estas condiciones se cubren mediante copia sembrada de tesoreria con 25 pruebas y cero omisiones, segun salida del ejecutor aportada por el titular. Los casos ORM de las correcciones ya se ejecutaron. Quedan recorrido visual, despliegue y ampliaciones; esta evidencia no cierra cumplimiento integral. Ver evidencias/DI06/segunda/regresion-integral.json.
+
+## Correccion posterior a publicacion DI06-CI
+
+Commit d982ec9 publicado. CI 42297718320 detecta hash de static.json distinto tras conversion de saltos y alertas en cinco dependencias. Normalizar static.json a LF y resellar; actualizar pins correctores, repetir auditoria, construir ambos perfiles y ejecutar suite Linux. No cerrar hasta CI verde. Pillow cambia de version mayor: Python 3.12 de la imagen cumple su minimo, pero se requiere ensayo de imagenes y PDF. Mantener abiertos recorrido visual, despliegue y ampliaciones. Reversion: restaurar pins anteriores solo en ensayo aislado, conservando constancia de alertas; no promover una imagen vulnerable.

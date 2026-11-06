@@ -1,3 +1,9 @@
+# DI06 - publicacion confirmada y correccion de CI (06-11-2026)
+
+Commit d982ec96d517332128cdd5b1233b161c65bace68 publicado por el titular en codex/erpec26-implementacion. CI 42297718320 falla en gobierno (static.json normalizado CRLF a LF) y dependencias. Se normaliza la evidencia local y se sella un nuevo eslabon sin alterar snapshots historicos. Lock Linux actualizado para certifi, pillow, pyasn1, pypdf y Werkzeug segun versiones correctoras de pip-audit. Son cambios candidatos: requieren nueva auditoria, construccion y suite Linux; las 738 pruebas anteriores no validan estas dependencias. La publicacion de esta correccion sigue pendiente por restriccion de escritura .git. Estados anteriores se conservan como historial, no como estado vigente.
+
+---
+
 # DI06 - regresion automatizada verificada (06-11-2026)
 
 Suite integral ejecutada por el titular: 738 pruebas, 0 fallos y errores, 3 omisiones de saneamiento; log ec_integrated_test_1f2b2f54c70e.log contrastado, 27 modulos con estadisticas. Copia sembrada ec_restore_drill_72d0c231: salida aportada por el titular confirma 25 pruebas, exit 0 y ninguna omision. Evidencia docs/evidencias/DI06/segunda/regresion-integral.json. Esto actualiza el bloqueo historico de las pruebas ORM: las correcciones SI tienen ejecucion integrada. Sigue pendiente recorrido visual, despliegue, ampliaciones DI06-04 a DI06-11, aceptaciones externas y commit/push. No sumar conteos como casos unicos.
