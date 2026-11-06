@@ -69,7 +69,7 @@
  },
  "erpec_payroll": {
   "schema": "ba16439d0f602e439834df4e0f9108e94f2f194512f5c2f52f561245345db550",
-  "version": "18.0.1.15.0"
+  "version": "18.0.1.15.2"
  },
  "erpec_provision": {
   "schema": "8ccb1d1cf7dd09188c1e41ded378c699d1f4869f454fef3bf92ab1265fd180be",
@@ -93,7 +93,7 @@
  },
  "erpec_treasury": {
   "schema": "c1e36b441fbdc6449aa108bb17e98a70956d3dcc7e7593c162306f84111be069",
-  "version": "18.0.1.0.3"
+  "version": "18.0.1.0.4"
  },
  "erpec_website_entry": {
   "schema": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",

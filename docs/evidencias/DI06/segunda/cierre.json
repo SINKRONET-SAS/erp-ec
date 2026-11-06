@@ -1,0 +1,31 @@
+{
+  "phase": "DI06-SEGUNDA",
+  "status": "implemented-runtime-blocked",
+  "checks": [
+    "38 pruebas locales aprobadas: 12 gobierno/coherencia, 11 motor, 8 seguridad ejecutor y 7 ejecutor DI25",
+    "276 archivos Python y 74 XML con sintaxis valida",
+    "27 versiones coherentes, matriz 19 filas sincronizada",
+    "UTF8 sin BOM; sin candidatos de mojibake en archivos cambiados; git diff --check aprobado"
+  ],
+  "runtime": {
+    "command": ".venv/Scripts/python.exe scripts/test-integrated.py erpec_payroll erpec_treasury --name ec_integrated_test_di06_second --timeout 5400",
+    "exitCode": 1,
+    "error": "PostgreSQL 127.0.0.1:55487 Permission denied Windows 10013; no se ejecutaron casos ORM"
+  },
+  "changes": [
+    "DI06-13: huella incluye resultado y se recalcula antes de aprobar",
+    "Comparacion del resultado almacenado y politica DEMO revalidada",
+    "Version payroll 18.0.1.15.2; actas emitidas conservadas"
+  ],
+  "requiredPromptsAdd": [
+    ".github/prompts/ERPEC26-DI06-SEGUNDA.md"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseAttempted": "DI06-SEGUNDA",
+      "status": "implemented-runtime-blocked",
+      "functionalAcceptance": false,
+      "publication": "Pendiente de reintento Git de segunda pasada"
+    }
+  }
+}

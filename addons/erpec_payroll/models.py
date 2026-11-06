@@ -406,7 +406,7 @@ class Line(models.Model):
         help='Caso 3 (DI25-03): pago en dinero de vacaciones acumuladas y no tomadas. Grava impuesto '
              'a la renta pero no IESS (catálogo RDEP vigente, campo sobSuelComRemu); distinto del '
              'devengo mensual de vacaciones tomadas, que ya está incluido en el salario.')
-    # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (17-02-2025) y el
+    # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (16-01-2025) y el
     # art. 152 del Código del Trabajo (reforma 2023). Días de calendario, no laborables; el motor
     # los descuenta de los días normales del período (engine.calculate).
     sick_days=fields.Float('Días de enfermedad (con certificado IESS)',

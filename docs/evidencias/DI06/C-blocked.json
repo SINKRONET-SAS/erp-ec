@@ -1,0 +1,21 @@
+{
+  "phase": "DI06-C",
+  "status": "blocked-publication",
+  "checks": [
+    "Gobierno previo al intento valido: 196 eslabones",
+    "Resultado de git add registrado sin afirmar commit ni push"
+  ],
+  "failure": "git add: Unable to create .git/index.lock: Permission denied",
+  "pendingAdd": [
+    "DI06: commit/push bloqueados por permiso denegado al crear .git/index.lock; no se publico esta pasada"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseCompleted": "DI06-A",
+      "phaseAttempted": "DI06-C",
+      "status": "blocked-runtime-and-publication",
+      "functionalAcceptance": false,
+      "publication": "No commit, no push: escritura .git/index.lock denegada"
+    }
+  }
+}

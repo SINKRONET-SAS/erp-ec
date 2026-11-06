@@ -1,0 +1,10 @@
+{
+  "checks": {
+    "python": 276,
+    "xml": 74,
+    "json_changed": 8,
+    "utf8_changed": 29
+  },
+  "mojibake_candidates": [],
+  "scope": "Sintaxis y codificacion; no ejecuta ORM, vistas Odoo ni navegador"
+}

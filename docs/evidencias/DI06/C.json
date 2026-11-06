@@ -1,0 +1,18 @@
+{
+  "phase": "DI06-C",
+  "status": "publication-prepared",
+  "checks": [
+    "Diff revisado: cambios acotados al ERP, sin credenciales nuevas",
+    "git diff --check aprobado",
+    "Gobierno B valido: 195 eslabones"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseCompleted": "DI06-A",
+      "phaseAttempted": "DI06-C",
+      "status": "publication-prepared-functional-blocked",
+      "functionalAcceptance": false,
+      "publication": "Pendiente de resultado de git commit y push"
+    }
+  }
+}

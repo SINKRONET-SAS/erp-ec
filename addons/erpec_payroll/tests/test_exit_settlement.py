@@ -20,6 +20,13 @@ def base_data(**extra):
 
 @tagged('post_install', '-at_install')
 class SettlementPureCase(TransactionCase):
+    def test_calendar_years_do_not_overpay_leap_year(self):
+        result = settle(base_data(cause='despido_intempestivo', start_date=date(2024, 1, 1),
+                                  end_date=date(2026, 12, 31)), PARAMS)
+        self.assertEqual(result['dismissal'], 3600)
+        early = settle(base_data(start_date=date(2024, 1, 1), end_date=date(2024, 12, 30)), PARAMS)
+        self.assertEqual(early['desahucio'], 0)
+
     def test_days_worked_prorates_to_exit(self):
         self.assertEqual(days_worked(date(2025, 1, 1), 2099, 9, date(2099, 9, 15)), 15)
         self.assertEqual(days_worked(date(2025, 1, 1), 2099, 2, date(2099, 2, 28)), 30)
@@ -198,6 +205,35 @@ class ExitFlowCase(TransactionCase):
         html = self.env['ir.actions.report']._render_qweb_html('erpec_payroll.report_exit_settlement', exit_.ids)[0]
         self.assertIn(b'Acta de finiquito', html)
         self.assertIn(b'680.00', html)
+
+    def test_legacy_calculation_requires_recalculation(self):
+        import hashlib
+        exit_ = self.make_exit('con_finiquito')
+        exit_.action_calculate()
+        legacy = hashlib.sha256((json.dumps(exit_._inputs(), sort_keys=True, default=str)
+                                 + exit_.policy_id.parameters).encode()).hexdigest()
+        exit_._update({'input_hash': legacy})
+        with self.assertRaisesRegex(ValidationError, 'recalcula'):
+            exit_.action_approve()
+        exit_.action_calculate()
+        exit_.action_approve()
+        self.assertEqual(exit_.state, 'approved')
+
+    def test_modified_result_cannot_be_approved(self):
+        exit_ = self.make_exit('con_finiquito')
+        exit_.action_calculate()
+        result = json.loads(exit_.result)
+        result['net'] += 1
+        exit_._update({'result': json.dumps(result, sort_keys=True)})
+        with self.assertRaisesRegex(ValidationError, 'recalcula'):
+            exit_.action_approve()
+
+    def test_demo_restriction_checked_again_at_approval(self):
+        exit_ = self.make_exit('con_finiquito')
+        exit_.action_calculate()
+        self.company.name = 'Empresa operativa'
+        with self.assertRaisesRegex(ValidationError, 'DEMO'):
+            exit_.action_approve()
 
     def test_line_end_date_validation(self):
         with self.assertRaises(ValidationError):

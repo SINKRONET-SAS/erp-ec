@@ -1,3 +1,53 @@
+# DI06 - regresion automatizada verificada (06-11-2026)
+
+Suite integral ejecutada por el titular: 738 pruebas, 0 fallos y errores, 3 omisiones de saneamiento; log ec_integrated_test_1f2b2f54c70e.log contrastado, 27 modulos con estadisticas. Copia sembrada ec_restore_drill_72d0c231: salida aportada por el titular confirma 25 pruebas, exit 0 y ninguna omision. Evidencia docs/evidencias/DI06/segunda/regresion-integral.json. Esto actualiza el bloqueo historico de las pruebas ORM: las correcciones SI tienen ejecucion integrada. Sigue pendiente recorrido visual, despliegue, ampliaciones DI06-04 a DI06-11, aceptaciones externas y commit/push. No sumar conteos como casos unicos.
+
+---
+
+# DI06 - prueba Odoo de nomina y tesoreria verificada (06-11-2026)
+
+El titular ejecuto test-integrated.py desde PowerShell con acceso a PostgreSQL. Registro ec_integrated_test_3f794a9b8efb.log: resumen final 262 pruebas, 0 fallos, 0 errores, 3 omisiones de saneamiento que requieren demo sembrada. Incluye pruebas nuevas de finiquitos y lotes bancarios. Evidencia docs/evidencias/DI06/segunda/odoo-targeted.json. No se observo aun codigo de salida del ejecutor ni limpieza. Siguiente: test-seeded-copy.py --instance demo --module erpec_treasury y test-integrated.py sin lista de modulos. No cerrar DI06-B, UI o cumplimiento integral; Git sigue bloqueado en esta sesion.
+
+---
+
+# DI06 - resultado de publicacion de segunda pasada
+
+El reintento de git add volvio a fallar al crear .git/index.lock: Permission denied. No se ejecuto commit ni push. Las correcciones, 38 pruebas locales y evidencia de esta pasada quedan en el workspace. Reanudar DI06-B/DI06-C cuando el entorno permita PostgreSQL y escritura Git; no forzar procesos ni eludir permisos.
+
+---
+
+# DI06 - segunda pasada (06-11-2026)
+
+Hallazgo DI06-13 corregido: la huella del finiquito incluye entradas, parametros y resultado; al aprobar se verifica el motor vigente, el resultado almacenado y la condicion DEMO. Version payroll 18.0.1.15.2. Actas emitidas intactas; calculadas antiguas exigen recalculo explicito. 38 pruebas locales aprobadas, sintaxis de 276 Python y 74 XML valida. Tres pruebas ORM agregadas, no ejecutadas: PostgreSQL vuelve a denegar TCP con Windows 10013. DI06-B y ampliaciones anteriores siguen abiertas. Evidencia: docs/evidencias/DI06/segunda. Sigue reintento Git autorizado; no declarar publicacion sin resultado.
+
+---
+
+# DI06 - estado final de esta ejecucion: bloqueado parcialmente
+
+06-11-2026: diagnostico, plan, cuatro prompts y correcciones guardados. 36 pruebas locales aprobadas; DI06-B sin aceptacion funcional por PostgreSQL 10013 y fallo de inicio Bash. Intento autorizado de iniciar PostgreSQL fallo por permiso de postgres.log; SCM inaccesible. DI06-C no publicada: git add fallo al crear .git/index.lock (Permission denied). No hay commit/push de esta pasada. Continuar desde estos archivos; no repetir diagnostico ni considerar cerradas las ampliaciones. Evidencias: docs/evidencias/DI06. Al habilitar permisos, validar gobierno, ejecutar suite aislada/UI, revisar diff, incluir todos los snapshots DI06 y publicar.
+
+---
+
+# DI06-B - validacion parcial y bloqueo confirmado (06-11-2026)
+
+36 pruebas locales aprobadas; sintaxis de 276 Python y 74 XML, 27 versiones y matriz DI25 verificados. Prueba Bash falla por inicio del ejecutable (3221225794); suite Odoo bloqueada por Windows 10013. Solicitud de subir PostgreSQL atendida con intento: SCM denegado y pg_ctl no puede abrir postgres.log. El registro ya mostraba instancia lista; no se elimina PID ni se fuerza reinicio. DI06-B NO cerrada funcionalmente. Sigue DI06-C para publicar trabajo parcial autorizado; fuentes externas intactas, sin despliegue ni operaciones reales.
+
+Evidencias: docs/evidencias/DI06/B.json, local-checks.json, temp-retry.json y static.json. Al habilitar el entorno: ejecutar suite completa, revisar UI y pruebas bancarias; despues abordar DI06-04 a DI06-11. Antes de desplegar, revisar y recalcular finiquitos borradores/calculados; conservar actas emitidas y tramitar diferencias mediante ajuste autorizado.
+
+---
+
+# DI06-A - correcciones locales (06-11-2026)
+
+DI06-01 reproducido con dos fallos y corregido: nueve pruebas puras aprobadas. Creacion de lotes bancarios protegida y fecha PGE corregida; versiones payroll 18.0.1.15.1 y treasury 18.0.1.0.4. Interfaz de finiquito aclara el conteo calendario. Sin despliegue: ORM, persistencia y UI pendientes por denegacion TCP. Continua DI06-B; no cerrar ampliaciones DI06-04 a DI06-12. Evidencia docs/evidencias/DI06/A.json.
+
+---
+
+# DI06 - diagnostico integral autorizado (06-11-2026)
+
+Plan: docs/PLAN_HAIKY_DIAGNOSTICO_INTEGRAL_DI06.md. Diagnostico: docs/DIAGNOSTICO_INTEGRAL_DI06.md. Secuencia 00 -> A -> B -> C autorizada, incluido commit/push. Gobierno inicial valido (192 eslabones), arbol limpio. DI06-00 documental; fase A siguiente. Prueba integrada inicial bloqueada por permiso TCP Windows 10013 a PostgreSQL 127.0.0.1:55487. No se cierran fases maestras, cumplimiento legal ni aceptacion funcional por documentos. Fuentes externas intactas.
+
+---
+
 # NM27 — salida, rol proporcional y acta de finiquito (04-10-2026)
 
 Solicitud del titular: nueva pasada de nómina contrastada con C:/proyectos web/nuevo_nomina (RSF26/RCF26) en acta de finiquito y pago del rol proporcional. erpec_payroll 18.0.1.15.0 incorpora fecha de salida en la línea del rol (prorrateo base 30), modelo erpec.payroll.exit con modalidades rol primero / con finiquito, guarda única contra doble pago del último mes, cálculo de finiquito (sueldo pendiente, décimos, vacaciones netas de días gozados, reserva, despido, desahucio), acta PDF y menú Nómina → Salidas y finiquitos. Guía: docs/NOMINA_SALIDA_FINIQUITO_NM27.md; prompt: .github/prompts/ERPEC26-NM27.md.

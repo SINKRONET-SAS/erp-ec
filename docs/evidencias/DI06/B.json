@@ -1,0 +1,35 @@
+{
+  "phase": "DI06-B",
+  "status": "blocked-functional-acceptance",
+  "checks": [
+    "36 pruebas locales aprobadas: 12 gobierno/coherencia, 9 calculos, 8 seguridad ejecutor, 7 ejecutor DI25 con TEMP local",
+    "Sintaxis: 276 Python y 74 XML propios analizados",
+    "27 versiones/esquemas coherentes",
+    "Matriz DI25 regenerada y verificada: 19 filas",
+    "UTF8 sin BOM y sin candidatos de mojibake en 29 archivos cambiados; git diff --check aprobado"
+  ],
+  "failuresRetained": [
+    "test-linux-runner.py: Bash devuelve 3221225794; 4 subcasos fallan, no se marca PASS",
+    "Intento inicial test-di25-demo-runner.py falla por TEMP del sandbox; reintento con TEMP dentro del workspace pasa 7 pruebas",
+    "Suite integrada bloqueada por Windows 10013 al conectar PostgreSQL"
+  ],
+  "postgresAttempt": {
+    "authorization": "El titular solicita subir PostgreSQL",
+    "serviceManager": "Acceso denegado al consultar servicios",
+    "pgCtlStatus": "No server running, pero el registro muestra instancia lista y checkpoints recientes; visibilidad insuficiente",
+    "pgCtlStart": "Fallo: permiso denegado al abrir postgres.log; no se borra PID ni se fuerza reinicio",
+    "tcp": 10013
+  },
+  "pendingAdd": [
+    "DI06: aceptacion funcional bloqueada por PostgreSQL 10013; ORM, UI, concurrencia y despliegue sin validar",
+    "DI06: ampliar DI06-04 a DI06-11 con escenarios contables, laborales, fiscales y bancarios; ver plan"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseCompleted": "DI06-A",
+      "phaseAttempted": "DI06-B",
+      "status": "blocked-functional-acceptance",
+      "functionalAcceptance": false
+    }
+  }
+}

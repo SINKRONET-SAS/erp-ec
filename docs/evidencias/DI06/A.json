@@ -1,0 +1,27 @@
+{
+  "phase": "DI06-A",
+  "status": "implemented-runtime-pending",
+  "checks": [
+    "Defecto reproducido antes del cambio: 2 fallos de 8 pruebas puras (4800 vs 3600; 300 vs 0)",
+    "Despues del cambio: 9 pruebas puras del motor real aprobadas sin PostgreSQL",
+    "Versiones payroll 18.0.1.15.1 y treasury 18.0.1.0.4 registradas"
+  ],
+  "changes": [
+    "Aniversarios calendario para despido y desahucio; aviso actualizado en formulario existente",
+    "Fecha original del oficio PGE corregida sin modificar porcentaje de enfermedad",
+    "Creacion de lotes y lineas bancarias exige token interno; asistente legitimo ya lo utiliza",
+    "Regresiones puras en CI y casos ORM agregados"
+  ],
+  "limits": [
+    "Pruebas ORM nuevas no ejecutadas por bloqueo TCP",
+    "No despliegue ni migracion de datos",
+    "DI06-04 a DI06-12 abiertos"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseCompleted": "DI06-A",
+      "status": "implemented-runtime-pending",
+      "functionalAcceptance": false
+    }
+  }
+}

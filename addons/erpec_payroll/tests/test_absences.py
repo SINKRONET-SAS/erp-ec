@@ -1,5 +1,5 @@
 """Caso 8 (DI25-03): ausencias del trabajador. Reglas verificadas contra el Oficio PGE No. 10097
-(17-02-2025, art. 54 Código del Trabajo y art. 16 Reglamento General sobre Prestación de
+(16-01-2025, art. 54 Código del Trabajo y art. 16 Reglamento General sobre Prestación de
 Subsidios en Dinero) y el art. 152 del Código del Trabajo (reforma 2023), aportadas y corregidas
 por el titular del proyecto el 22-09-2026: enfermedad, días 1-3 al 100 % sin aporte a IESS, desde
 el día 4 el empleador no paga nada (subsidio directo del IESS); maternidad, 25 % del empleador y

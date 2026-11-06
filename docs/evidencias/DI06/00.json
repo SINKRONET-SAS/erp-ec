@@ -1,0 +1,25 @@
+{
+  "phase": "DI06-00",
+  "status": "diagnostic-recorded",
+  "checks": [
+    "Gobierno inicial valido: 192 eslabones",
+    "Arbol Git inicialmente limpio",
+    "Revision de codigo y fuentes oficiales documentada"
+  ],
+  "blocked": [
+    "Suite Odoo: conexion TCP 127.0.0.1:55487 denegada Windows 10013"
+  ],
+  "requiredPromptsAdd": [
+    ".github/prompts/ERPEC26-DI06-00.md",
+    ".github/prompts/ERPEC26-DI06-A.md",
+    ".github/prompts/ERPEC26-DI06-B.md",
+    ".github/prompts/ERPEC26-DI06-C.md"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseCompleted": "DI06-00",
+      "status": "diagnostic-recorded",
+      "functionalAcceptance": false
+    }
+  }
+}

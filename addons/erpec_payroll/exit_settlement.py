@@ -7,7 +7,6 @@ Dos modalidades explícitas, tomadas de la referencia SKNOMINA (RSF26):
 Un solo pago del último mes: cualquier rol que contradiga la modalidad bloquea el cálculo y la emisión.
 No contabiliza el finiquito ni retiene impuesto a la renta; no archiva al empleado ni transmite pagos.
 """
-import hashlib
 import json
 
 from odoo import api, fields, models
@@ -15,7 +14,7 @@ from odoo.exceptions import ValidationError
 
 from .fourteenth_regime import FOURTEENTH_REGIMES
 from .models import _INTERNAL, manager
-from .settlement import CAUSE_CHOICES, MODALITIES, settle
+from .settlement import CAUSE_CHOICES, MODALITIES, calculation_snapshot
 
 RESULT_FIELDS = {
     'pending_salary': 'amount_pending_salary', 'thirteenth': 'amount_thirteenth', 'fourteenth': 'amount_fourteenth',
@@ -181,18 +180,20 @@ class PayrollExit(models.Model):
             item.check_access('write')
             if item.state not in ('draft', 'calculated'):
                 raise ValidationError('El acta ya fue emitida, pagada o anulada; no se recalcula.')
-            policy, company = item.policy_id, item.company_id
-            if policy.state != 'active' or not policy.synthetic or company.vat or 'DEMO' not in company.name:
-                raise ValidationError('Este incremento admite únicamente una empresa DEMO sin RUC y una versión activa de demostración.')
             item._check_payroll_lines()
-            data = item._inputs()
-            try:
-                result = settle(data, json.loads(policy.parameters))
-            except (ValueError, KeyError, TypeError) as error:
-                raise ValidationError('Revisa los datos de la salida: ' + str(error)) from None
-            digest = hashlib.sha256((json.dumps(data, sort_keys=True, default=str) + policy.parameters).encode()).hexdigest()
+            result, digest = item._calculation_snapshot()
             item._update({'result': json.dumps(result, sort_keys=True), 'input_hash': digest, 'state': 'calculated'})
         return True
+
+    def _calculation_snapshot(self):
+        self.ensure_one()
+        policy, company = self.policy_id, self.company_id
+        if policy.state != 'active' or not policy.synthetic or company.vat or 'DEMO' not in company.name:
+            raise ValidationError('Este incremento admite únicamente una empresa DEMO sin RUC y una versión activa de demostración.')
+        try:
+            return calculation_snapshot(self._inputs(), json.loads(policy.parameters))
+        except (ValueError, KeyError, TypeError) as error:
+            raise ValidationError('Revisa los datos de la salida: ' + str(error)) from None
 
     def action_approve(self):
         for item in self:
@@ -201,9 +202,9 @@ class PayrollExit(models.Model):
             if item.state != 'calculated':
                 raise ValidationError('Calcula el finiquito antes de emitir el acta.')
             item._check_payroll_lines(require_settled=True)
-            digest = hashlib.sha256((json.dumps(item._inputs(), sort_keys=True, default=str) + item.policy_id.parameters).encode()).hexdigest()
-            if digest != item.input_hash:
-                raise ValidationError('Los roles o datos cambiaron desde el cálculo; recalcula el finiquito antes de emitir el acta.')
+            result, digest = item._calculation_snapshot()
+            if digest != item.input_hash or json.dumps(result, sort_keys=True) != item.result:
+                raise ValidationError('Los datos o el cálculo vigente cambiaron; recalcula el finiquito antes de emitir el acta.')
             number = self.env['ir.sequence'].with_company(item.company_id).next_by_code('erpec.payroll.exit') or 'FIN-%s' % item.id
             item._update({'state': 'approved', 'name': number, 'approved_by': self.env.user.id, 'approved_date': fields.Datetime.now()})
         return True

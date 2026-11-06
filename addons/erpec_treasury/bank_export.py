@@ -148,6 +148,12 @@ class BankExportBatch(models.Model):
     checksum = fields.Char('SHA-256', readonly=True)
     create_uid_name = fields.Char(related='create_uid.name', string='Generado por')
 
+    @api.model_create_multi
+    def create(self, values_list):
+        if self.env.context.get('_erpec_bank_export_token') is not _TOKEN:
+            raise AccessError('Genera el lote desde el asistente de archivo bancario.')
+        return super().create(values_list)
+
     @api.depends('line_ids.amount')
     def _compute_total(self):
         for record in self:
@@ -180,6 +186,12 @@ class BankExportLine(models.Model):
     reference = fields.Char('Referencia')
     _sql_constraints = [('disbursement_unique', 'unique(disbursement_id)',
         'Este pago de nómina ya está incluido en otro lote de exportación bancaria.')]
+
+    @api.model_create_multi
+    def create(self, values_list):
+        if self.env.context.get('_erpec_bank_export_token') is not _TOKEN:
+            raise AccessError('Genera los registros desde el asistente de archivo bancario.')
+        return super().create(values_list)
 
     def unlink(self):
         raise ValidationError('El registro es inmutable una vez generado.')

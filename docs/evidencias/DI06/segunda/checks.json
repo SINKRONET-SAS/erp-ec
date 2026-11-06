@@ -1,0 +1,45 @@
+{
+  "executedAt": "2026-11-06T19:48:04.876Z",
+  "results": [
+    {
+      "command": "node --test scripts/test-governance.cjs scripts/test-project-state.cjs",
+      "exitCode": 0,
+      "output": "✔ recorre todos los enlaces y exige prompts DI25 (11.336ms)\n✔ rechaza alteración de un ancestro (1.3551ms)\n✔ rechaza entregable alterado (0.757ms)\n✔ rechaza prompt faltante (0.9812ms)\n✔ rechaza rutas externas y separadores alternativos (0.3878ms)\n✔ rechaza enlace circular incluso sin firma válida (0.6199ms)\n✔ comprueba las entradas reales y el pin auditado (34.1624ms)\n✔ rechaza el enlace histórico roto al contexto (2.0829ms)\n✔ rechaza enlaces que salen del repositorio (0.4117ms)\n✔ rechaza divergencia entre revisión y evidencia (15.2428ms)\n✔ rechaza licencia restringida en localización auditada (16.3181ms)\n✔ rechaza BOM en documentación vigente (0.4146ms)\nℹ tests 12\nℹ suites 0\nℹ pass 12\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 287.4198\n"
+    },
+    {
+      "command": "node scripts/verify-project-state.cjs",
+      "exitCode": 0,
+      "output": "Coherencia documental válida: 31 enlaces, pin b1fd3a9eee5d575848ac649d2f5103537d8de7a4. No valida funcionamiento.\n"
+    },
+    {
+      "command": ".venv/Scripts/python.exe scripts/test-di06-calculations.py",
+      "exitCode": 0,
+      "output": "test_desahucio_before_first_anniversary (__main__.CalendarRegression.test_desahucio_before_first_anniversary) ... ok\r\ntest_desahucio_full_year_inclusive (__main__.CalendarRegression.test_desahucio_full_year_inclusive) ... ok\r\ntest_dismissal_cap (__main__.CalendarRegression.test_dismissal_cap) ... ok\r\ntest_february_anniversary (__main__.CalendarRegression.test_february_anniversary) ... ok\r\ntest_fraction_after_three_years (__main__.CalendarRegression.test_fraction_after_three_years) ... ok\r\ntest_no_double_last_salary (__main__.CalendarRegression.test_no_double_last_salary) ... ok\r\ntest_same_day_and_invalid_order (__main__.CalendarRegression.test_same_day_and_invalid_order) ... ok\r\ntest_sickness_keeps_episode_continuity (__main__.CalendarRegression.test_sickness_keeps_episode_continuity) ... ok\r\ntest_snapshot_changes_when_calculation_changes (__main__.CalendarRegression.test_snapshot_changes_when_calculation_changes) ... ok\r\ntest_snapshot_changes_when_inputs_change (__main__.CalendarRegression.test_snapshot_changes_when_inputs_change) ... ok\r\ntest_three_calendar_years_include_leap_day (__main__.CalendarRegression.test_three_calendar_years_include_leap_day) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 11 tests in 0.413s\r\n\r\nOK\r\n"
+    },
+    {
+      "command": ".venv/Scripts/python.exe scripts/check-module-versions.py --check",
+      "exitCode": 0,
+      "output": "Versiones coherentes con el esquema declarado en 27 módulos.\r\n"
+    },
+    {
+      "command": ".venv/Scripts/python.exe scripts/test-runner-safety.py",
+      "exitCode": 0,
+      "output": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.006s\r\n\r\nOK\r\n"
+    },
+    {
+      "command": ".venv/Scripts/python.exe scripts/test-di25-demo-runner.py",
+      "exitCode": 0,
+      "output": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.052s\r\n\r\nOK\r\n"
+    },
+    {
+      "command": ".venv/Scripts/python.exe scripts/render-di25-matrix.py --check",
+      "exitCode": 0,
+      "output": "Matriz del documento al día (19 filas).\r\n"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "output": ""
+    }
+  ]
+}

@@ -322,7 +322,7 @@ def calculate(data, parameters, year, month):
                    'sick_days', 'maternity_days', 'unpaid_leave_days', 'unexcused_absence_days', 'paternity_days',
                    'net_income_target', 'employer_assumed_tax', 'sick_prior_days', 'sick_annual_prior_days', 'sick_iess_base', 'sick_complement_pct') and number(value) < 0:
             raise ValueError('Las novedades y descuentos deben ser no negativos.')
-    # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (17-02-2025, art. 54
+    # Caso 8 (DI25-03): ausencias, verificadas contra el Oficio PGE No. 10097 (16-01-2025, art. 54
     # Código del Trabajo y art. 16 Reglamento General sobre Prestación de Subsidios en Dinero) y
     # contra el art. 152 del Código del Trabajo (reforma 2023). Días 1-3 de enfermedad: el
     # empleador paga el 100 %, pero esos días no son materia gravada de IESS (sí de IR); desde el

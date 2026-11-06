@@ -1,0 +1,52 @@
+{
+  "phase": "DI06-B-REGRESION",
+  "status": "automated-regression-verified",
+  "observedAt": "2026-11-06T20:34:30.190Z",
+  "integrated": {
+    "log": ".cache/windows/ec_integrated_test_1f2b2f54c70e.log",
+    "sha256": "57bedbe178e35d62a4717e8434202832b8fef16bb1f6d1fd630d1767a3affd08",
+    "summary": "2026-11-06 20:24:56,332 27360 INFO ec_integrated_test_1f2b2f54c70e odoo.tests.result: 0 failed, 0 error(s) of 738 tests when loading database 'ec_integrated_test_1f2b2f54c70e' ",
+    "modules": 27,
+    "skipped": [
+      "2026-11-06 20:22:42,657 27360 INFO ec_integrated_test_1f2b2f54c70e odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_demo_and_repeat : Requiere la demo sembrada: erpec_demo_seed.bill ",
+      "2026-11-06 20:22:42,986 27360 INFO ec_integrated_test_1f2b2f54c70e odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_refuses_changed_source : Requiere la demo sembrada: erpec_demo_seed.bill ",
+      "2026-11-06 20:22:43,311 27360 INFO ec_integrated_test_1f2b2f54c70e odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_refuses_unrelated_commercial_link : Requiere la demo sembrada: erpec_demo_seed.bill "
+    ],
+    "runnerResult": "Resumen final confirmado por el titular"
+  },
+  "seeded": {
+    "provenance": "Salida JSON del ejecutor aportada por el titular; el script elimina el directorio y log temporal al terminar",
+    "instance": "demo",
+    "module": "erpec_treasury",
+    "copy": "ec_restore_drill_72d0c231",
+    "exit": 0,
+    "summary": [
+      "0",
+      "0",
+      "25"
+    ],
+    "module_tests": "33",
+    "skip_mentions_in_log": 0,
+    "passed": true,
+    "skipped_lines": []
+  },
+  "checks": [
+    "Suite integral: 738 pruebas reportadas, cero fallos y errores, cobertura en 27 modulos",
+    "Tres omisiones corresponden a saneamiento de tesoreria; copia sembrada reporta 25 pruebas sin fallos, errores ni omisiones",
+    "Versiones de 27 modulos coherentes; git diff --check aprobado"
+  ],
+  "limits": [
+    "No sumar estadisticas por modulo y resumen como pruebas unicas",
+    "No constituye recorrido visual ni despliegue en demo/fundador",
+    "DI06-04 a DI06-11 y aceptacion externa siguen abiertos",
+    "Git de esta sesion sigue restringido"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseAttempted": "DI06-B",
+      "status": "automated-regression-verified-ui-and-publication-pending",
+      "functionalAcceptance": false,
+      "ormValidation": "Suite integral 738; copia sembrada 25 sin omisiones segun salida del titular"
+    }
+  }
+}

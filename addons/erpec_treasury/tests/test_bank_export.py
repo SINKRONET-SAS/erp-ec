@@ -49,6 +49,19 @@ class BankExportCase(TreasuryCase):
         with self.assertRaisesRegex(ValidationError, 'delimitador'):
             wizard.action_generate()
 
+    def test_direct_creation_and_forged_context_blocked(self):
+        for model in ('erpec.bank.export.batch', 'erpec.bank.export.line'):
+            for context in ({}, {'_erpec_bank_export_token': True}, {'_erpec_bank_export_token': 'token'}):
+                with self.subTest(model=model, context=context), self.assertRaises(AccessError):
+                    self.env[model].with_user(self.accountant).with_context(**context).create({})
+
+    def test_generated_batch_cannot_be_copied(self):
+        period = self.prepared_period('pichincha')
+        batch, rows = self.generate(period, 'pichincha')
+        self.assertTrue(rows)
+        with self.assertRaises(AccessError):
+            batch.with_user(self.accountant).copy()
+
     def test_blocked_without_company_account_on_the_payroll_journal(self):
         period = self.period(); period.action_prepare_payments()
         for disbursement in period.disbursement_ids:

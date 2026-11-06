@@ -1,0 +1,33 @@
+{
+  "phase": "DI06-B-PARCIAL",
+  "status": "targeted-odoo-log-verified",
+  "observedAt": "2026-11-06T20:00:38.934Z",
+  "execution": "Iniciada por el titular desde PowerShell; registro local leido por el asistente",
+  "logPath": ".cache/windows/ec_integrated_test_3f794a9b8efb.log",
+  "logSha256": "e928df25e057fcdcaf87b952fdc67fdb8504fc078de7fe57d6aa0ac889cafdb6",
+  "summary": "2026-11-06 20:00:05,881 452 INFO ec_integrated_test_3f794a9b8efb odoo.tests.result: 0 failed, 0 error(s) of 262 tests when loading database 'ec_integrated_test_3f794a9b8efb' ",
+  "skipped": [
+    "2026-11-06 19:59:52,990 452 INFO ec_integrated_test_3f794a9b8efb odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_demo_and_repeat : Requiere la demo sembrada: erpec_demo_seed.bill ",
+    "2026-11-06 19:59:53,247 452 INFO ec_integrated_test_3f794a9b8efb odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_refuses_changed_source : Requiere la demo sembrada: erpec_demo_seed.bill ",
+    "2026-11-06 19:59:53,496 452 INFO ec_integrated_test_3f794a9b8efb odoo.addons.erpec_treasury.tests.test_treasury: skipped TreasuryCase.test_sanitize_refuses_unrelated_commercial_link : Requiere la demo sembrada: erpec_demo_seed.bill "
+  ],
+  "runnerExitCode": null,
+  "limits": [
+    "Codigo de salida del ejecutor y limpieza de su base no observados en la terminal",
+    "Tres casos omitidos requieren copia sembrada",
+    "Falta suite de todos los modulos y recorrido UI",
+    "Permisos de esta sesion y publicacion Git siguen pendientes"
+  ],
+  "checks": [
+    "Registro final Odoo: 262 pruebas reportadas, 0 fallos y 0 errores; 3 omisiones identificadas",
+    "Casos nuevos de huella, condicion DEMO y lotes bancarios incluidos en la ejecucion"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseAttempted": "DI06-B",
+      "status": "targeted-odoo-verified-full-suite-pending",
+      "functionalAcceptance": false,
+      "ormValidation": "Registro de nomina y tesoreria verificado; tres casos omitidos, suite integral pendiente"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "phase": "DI06-SEGUNDA",
+  "status": "blocked-publication",
+  "checks": [
+    "Gobierno verificado tras segunda pasada: 198 eslabones y 50 prompts",
+    "Resultado de reintento git add registrado"
+  ],
+  "error": "Unable to create .git/index.lock: Permission denied",
+  "commitCreated": false,
+  "pushed": false,
+  "set": {
+    "integralDiagnosticDI06": {
+      "phaseAttempted": "DI06-SEGUNDA",
+      "status": "blocked-runtime-and-publication",
+      "functionalAcceptance": false,
+      "publication": "Segundo intento bloqueado por escritura .git/index.lock; sin commit ni push"
+    }
+  }
+}

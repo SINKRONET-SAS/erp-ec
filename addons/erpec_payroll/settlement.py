@@ -6,10 +6,12 @@ las vacaciones se calculan sobre los días devengados menos los gozados, y déci
 solo por la parte que el rol no cubrió. No incluye contabilización ni retención de impuesto a la renta.
 
 Bases de tiempo: los décimos y el fondo de reserva usan año comercial de 360 días (meses de 30 días); las
-vacaciones y las indemnizaciones usan años de 365 días de servicio.
+vacaciones conservan la base de 365 días; las indemnizaciones cuentan aniversarios calendario.
 """
 from calendar import monthrange
-from datetime import date
+import hashlib
+import json
+from datetime import date, timedelta
 from decimal import Decimal
 
 from .engine import days_worked, money, number
@@ -34,6 +36,15 @@ VACATION_EXTRA_MAX = 15
 DISMISSAL_MAX_MONTHS = 25
 DESAHUCIO_RATE = Decimal('0.25')
 CONCEPTS = ('pending_salary', 'thirteenth', 'fourteenth', 'vacation', 'reserve', 'dismissal', 'desahucio')
+
+
+def calculation_snapshot(data, parameters):
+    """Sella entradas, parámetros y resultado para detectar cálculos anteriores al motor vigente."""
+    result = settle(data, parameters)
+    payload = json.dumps({'inputs': data, 'parameters': parameters, 'result': result},
+                         sort_keys=True, default=str, allow_nan=False)
+    digest = hashlib.sha256(payload.encode('utf-8')).hexdigest()
+    return result, digest
 
 
 def is_last_day(day):
@@ -85,6 +96,21 @@ def vacation_entitlement_days(service_days):
     return total
 
 
+def service_years(start, end):
+    """Años completos y fracción con fechas inclusivas, sin convertir bisiestos en otro año.
+
+    El aniversario de un ingreso el 29 de febrero se ajusta al último día de febrero
+    cuando el año de destino no es bisiesto, igual que add_months.
+    """
+    if end < start:
+        raise ValueError('La fecha de salida no puede ser anterior al ingreso.')
+    boundary = end + timedelta(days=1)
+    complete = boundary.year - start.year
+    if add_months(start, complete * 12) > boundary:
+        complete -= 1
+    return complete, boundary > add_months(start, complete * 12)
+
+
 def validate_inputs(data):
     cause = TERMINATION_CAUSES.get(data.get('cause'))
     if not cause:
@@ -125,9 +151,10 @@ def settle(data, parameters):
     first_reserve_day = add_months(start, int(parameters['reserve_months']))
     reserve_days = days360(max(first_reserve_day, date(end.year, 1, 1)), end) if end >= first_reserve_day else 0
     reserve = max(Decimal(0), money(wage*number(parameters['reserve_rate'])*reserve_days/30)-money(data.get('reserve_paid', 0))-money(data.get('reserve_covered', 0)))
-    years = -(-service_days//365)
+    complete_years, has_fraction = service_years(start, end)
+    years = complete_years + int(has_fraction)
     dismissal = money(wage*(3 if years <= 3 else min(DISMISSAL_MAX_MONTHS, years))) if cause['dismissal'] else Decimal(0)
-    desahucio = money(wage*DESAHUCIO_RATE*(service_days//365)) if cause['desahucio'] else Decimal(0)
+    desahucio = money(wage*DESAHUCIO_RATE*complete_years) if cause['desahucio'] else Decimal(0)
     amounts = {'pending_salary': pending_salary, 'thirteenth': thirteenth, 'fourteenth': fourteenth, 'vacation': vacation, 'reserve': reserve, 'dismissal': dismissal, 'desahucio': desahucio}
     gross = money(sum(amounts.values()))
     iess = money(pending_salary*number(parameters['personal_rate']))

@@ -1,0 +1,5 @@
+{
+  "command": "test-di25-demo-runner.py con TEMP/TMP dentro del workspace",
+  "exitCode": 0,
+  "output": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.049s\r\n\r\nOK\r\n"
+}
