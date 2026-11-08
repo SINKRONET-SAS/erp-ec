@@ -1,0 +1,106 @@
+{
+  "phase": "DI06-SEGUNDA-REVISION",
+  "date": "2026-11-07",
+  "status": "correction-tested-integral-blocked-by-temp-permissions",
+  "baseline": {
+    "commit": "7ea9a11145860cb8d9f227e5937712b651cace5f",
+    "ci": "https://github.com/SINKRONET-SAS/erp-ec/actions/runs/42299693024",
+    "jobs": "5/5 success"
+  },
+  "finding": "DI06-15: empresa de propiedades de valoracion en importaciones",
+  "version": "18.0.1.0.2",
+  "runs": [
+    {
+      "path": ".cache/windows/ec_integrated_test_d0495f761b69.log",
+      "sha256": "1948c6341a69a73dc993a40be0ed7b3157f90ce7a987c5c9e8eb2bf08c875c6b",
+      "failures": 0,
+      "errors": 1,
+      "reported": 10,
+      "skips": 0,
+      "errorCases": [
+        "ImportCase.test_other_company_settings_cannot_authorize_invalid_valuation"
+      ],
+      "moduleStats": [
+        "2026-11-07 22:22:17,063 10144 INFO ec_integrated_test_d0495f761b69 odoo.tests.stats: erpec_imports: 12 tests 30.17s 10401 queries"
+      ]
+    },
+    {
+      "path": ".cache/windows/ec_integrated_test_f226ec7fc33f.log",
+      "sha256": "377a5006e965f86db0e423cd2eb9f1495abb6008af16806e8197629286b79947",
+      "failures": 0,
+      "errors": 1,
+      "reported": 10,
+      "skips": 0,
+      "errorCases": [
+        "ImportCase.test_other_company_settings_cannot_authorize_invalid_valuation"
+      ],
+      "moduleStats": [
+        "2026-11-07 22:26:17,575 15584 INFO ec_integrated_test_f226ec7fc33f odoo.tests.stats: erpec_imports: 12 tests 30.08s 10645 queries"
+      ]
+    },
+    {
+      "path": ".cache/windows/ec_integrated_test_113acf45dcdf.log",
+      "sha256": "3a86bedbd1c44521ae3aa59ecb0a0fd686aad4e27b6082d48dd834a7e51aacac",
+      "failures": 0,
+      "errors": 6,
+      "reported": 740,
+      "skips": 3,
+      "errorCases": [
+        "RotationCase.test_key_file_rotation_keeps_the_old_key_only_for_decrypting",
+        "EntitlementConcurrencyCase.test_both_orders_with_real_independent_transactions",
+        "ImportCase.test_other_company_settings_cannot_authorize_invalid_valuation",
+        "FiscalConcurrencyCase.test_both_orders_with_real_independent_transactions",
+        "SecretRotationCase.test_generate_and_reencrypt_rotates_the_key_file_end_to_end",
+        "SecretStoreCase.test_key_file_is_generated_once_in_the_data_directory"
+      ],
+      "moduleStats": [
+        "2026-11-07 22:43:10,376 5836 INFO ec_integrated_test_113acf45dcdf odoo.tests.stats: erpec_imports: 12 tests 33.18s 17656 queries"
+      ]
+    },
+    {
+      "path": ".cache/windows/ec_integrated_test_d8f03e004046.log",
+      "sha256": "f759d22f3873671819d937b03eef3d60c2619e602ae35444289d0e1515d483fd",
+      "failures": 0,
+      "errors": 5,
+      "reported": 740,
+      "skips": 3,
+      "errorCases": [
+        "RotationCase.test_key_file_rotation_keeps_the_old_key_only_for_decrypting",
+        "EntitlementConcurrencyCase.test_both_orders_with_real_independent_transactions",
+        "FiscalConcurrencyCase.test_both_orders_with_real_independent_transactions",
+        "SecretRotationCase.test_generate_and_reencrypt_rotates_the_key_file_end_to_end",
+        "SecretStoreCase.test_key_file_is_generated_once_in_the_data_directory"
+      ],
+      "moduleStats": [
+        "2026-11-07 22:48:13,362 18128 INFO ec_integrated_test_d8f03e004046 odoo.tests.stats: erpec_imports: 12 tests 38.36s 17703 queries"
+      ]
+    }
+  ],
+  "initialTestCorrections": [
+    "Cuentas y diario propios para valorar automaticamente en la empresa de prueba",
+    "Fecha explicita en factura copiada"
+  ],
+  "checks": [
+    "23 pruebas locales aprobadas (12 gobierno/estado, 11 calculos DI06)",
+    "350 archivos Python/XML: sintaxis y UTF-8 validos",
+    "27 versiones coherentes; matriz DI25 de 19 filas vigente",
+    "Coherencia documental: 31 enlaces",
+    "Diff sin errores de formato; archivos modificados sin BOM ni candidatos de mojibake",
+    "Casos ORM nuevos de importaciones ejecutados sin error en suite de 740 pruebas"
+  ],
+  "pendingAdd": [
+    "DI06-SEGUNDA-REVISION: repetir regresion integral fuera del bloqueo de temporales; 0 fallos/5 errores de permisos, no PASS",
+    "DI06-SEGUNDA-REVISION: commit/push y CI del cambio de importaciones pendientes; .git es de solo lectura en esta sesion"
+  ],
+  "requiredPromptsAdd": [
+    ".github/prompts/ERPEC26-DI06-SEGUNDA-REVISION.md"
+  ],
+  "set": {
+    "integralDiagnosticDI06": {
+      "status": "second-review-local-runtime-partial",
+      "functionalAcceptance": false,
+      "publication": "Base 7ea9a11 publicada con CI verde; DI06-15 local sin publicar",
+      "latestEvidence": "docs/evidencias/DI06/segunda/revision-20261107.json"
+    }
+  }
+}

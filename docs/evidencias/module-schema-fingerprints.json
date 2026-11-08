@@ -53,7 +53,7 @@
  },
  "erpec_imports": {
   "schema": "cf3d590448254f032392c63b126cd9abb9ac552b9d80381da101fd913cd65b1f",
-  "version": "18.0.1.0.1"
+  "version": "18.0.1.0.2"
  },
  "erpec_manufacturing": {
   "schema": "846ad40686d46635ec022a9891e8ad5ec7f3396394c6d8a7ff85c8dcfb7868b4",

@@ -62,7 +62,7 @@ class Importation(models.Model):
         receipts = self.picking_ids.filtered(lambda picking: picking.state == 'done')
         if not receipts:
             raise ValidationError('Completa al menos una recepción antes de distribuir costos.')
-        products=receipts.move_ids.filtered(lambda move:move.state=='done' and move.product_id.is_storable).product_id
+        products=receipts.move_ids.filtered(lambda move:move.state=='done' and move.product_id.is_storable).product_id.with_company(self.company_id)
         if not products or any(product.cost_method not in ('fifo','average') or product.valuation!='real_time' for product in products):
             raise ValidationError('La importación requiere productos FIFO/AVCO con valoración contable automática.')
         for charge in charges:
@@ -153,7 +153,7 @@ class LandedCost(models.Model):
             cost.erpec_import_id._check_documents()
             if cost.company_id != cost.erpec_import_id.company_id or not cost.picking_ids or any(picking not in cost.erpec_import_id.picking_ids or picking.state != 'done' or picking.company_id != cost.company_id for picking in cost.picking_ids):
                 raise ValidationError('Selecciona únicamente recepciones terminadas de las compras de este expediente.')
-            products = cost.picking_ids.move_ids.filtered(lambda move: move.state == 'done' and move.product_id.is_storable).product_id
+            products = cost.picking_ids.move_ids.filtered(lambda move: move.state == 'done' and move.product_id.is_storable).product_id.with_company(cost.company_id)
             if not products or any(product.cost_method not in ('fifo', 'average') or product.valuation != 'real_time' for product in products):
                 raise ValidationError('La importación requiere productos FIFO/AVCO con valoración contable automática.')
             charges = cost.erpec_import_id.charge_ids.filtered(lambda charge: charge.cost_id == cost)

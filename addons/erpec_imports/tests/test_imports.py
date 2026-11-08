@@ -183,3 +183,47 @@ class ImportCase(TransactionCase):
         self.assertTrue(result[0]["picking_ids"])
         with self.assertRaises(AccessError):
             record.cost_ids.read(["amount_total"])
+
+    def test_cost_uses_dossier_company_with_another_active_company(self):
+        other = self.env['res.company'].create({'name': 'Otra empresa activa DI06'})
+        self.category.with_company(other).write({
+            'property_cost_method': 'standard', 'property_valuation': 'manual_periodic',
+        })
+        context = {'allowed_company_ids': [other.id, self.dossier.company_id.id]}
+        dossier = self.dossier.with_context(**context)
+        self.assertEqual(dossier.env.company, other)
+        cost = self.env['stock.landed.cost'].browse(dossier.action_prepare_cost()['res_id'])
+        self.assertEqual(cost.company_id, self.dossier.company_id)
+        cost.with_context(**context)._check_can_validate()
+
+    def test_other_company_settings_cannot_authorize_invalid_valuation(self):
+        other = self.env['res.company'].create({'name': 'Otra empresa AVCO DI06'})
+        accounts = self.env['account.account'].with_company(other).create([
+            {'name': 'Stock DI06 ' + code, 'code': code, 'account_type': 'asset_current',
+             'company_ids': [(6, 0, other.ids)]}
+            for code in ('DI061', 'DI062', 'DI063')
+        ])
+        journal = self.env['account.journal'].with_company(other).create({
+            'name': 'Stock DI06', 'code': 'DI06', 'type': 'general', 'company_id': other.id,
+        })
+        self.category.with_company(other).write({
+            'property_cost_method': 'average', 'property_valuation': 'real_time',
+            'property_stock_journal': journal.id,
+            'property_stock_valuation_account_id': accounts[0].id,
+            'property_stock_account_input_categ_id': accounts[1].id,
+            'property_stock_account_output_categ_id': accounts[2].id,
+        })
+        cost = self.prepare()
+        self.category.with_company(self.dossier.company_id).property_cost_method = 'standard'
+        context = {'allowed_company_ids': [other.id, self.dossier.company_id.id]}
+        with self.assertRaisesRegex(ValidationError, 'FIFO/AVCO'):
+            cost.with_context(**context)._check_can_validate()
+        # Liberar el gasto no es necesario: un segundo concepto permite probar preparacion.
+        bill = self.bill.copy({'invoice_date': fields.Date.today(), 'l10n_latam_document_number': '001-001-000000099'})
+        bill.action_post()
+        self.env['erpec.import.charge'].create({
+            'import_id': self.dossier.id, 'name': 'Otro flete DI06', 'kind': 'capital',
+            'bill_line_id': bill.invoice_line_ids.id,
+        })
+        with self.assertRaisesRegex(ValidationError, 'FIFO/AVCO'):
+            self.dossier.with_context(**context).action_prepare_cost()

@@ -1,3 +1,9 @@
+# DI06 - segunda pasada renovada, 07-11-2026
+
+Estado vigente: CI 7ea9a11 aprobado en sus cinco trabajos. Nueva correccion DI06-15 en importaciones 18.0.1.0.2: leer valoracion/metodo de costo en la empresa del documento. Dos casos ORM nuevos ejecutados sin error. Suite completa actual: 740 pruebas, 0 fallos, 5 errores de permisos en temporales y 3 omisiones; no aprobada. Fallos de preparacion inicial de pruebas corregidos y conservados. 23 pruebas locales aprobadas; sintaxis/UTF-8 en 350 archivos, 27 versiones y matriz de 19 filas coherentes. Evidencia revision-20261107.json. Siguiente: repetir suite desde PowerShell del titular o CI con permisos normales, publicar correccion y validar nuevo CI. Git de solo lectura en esta sesion. DI06-04 a DI06-11 y aceptaciones externas siguen abiertas; no hay despliegue.
+
+---
+
 # DI06 - publicacion confirmada y correccion de CI (06-11-2026)
 
 Commit d982ec96d517332128cdd5b1233b161c65bace68 publicado por el titular en codex/erpec26-implementacion. CI 42297718320 falla en gobierno (static.json normalizado CRLF a LF) y dependencias. Se normaliza la evidencia local y se sella un nuevo eslabon sin alterar snapshots historicos. Lock Linux actualizado para certifi, pillow, pyasn1, pypdf y Werkzeug segun versiones correctoras de pip-audit. Son cambios candidatos: requieren nueva auditoria, construccion y suite Linux; las 738 pruebas anteriores no validan estas dependencias. La publicacion de esta correccion sigue pendiente por restriccion de escritura .git. Estados anteriores se conservan como historial, no como estado vigente.

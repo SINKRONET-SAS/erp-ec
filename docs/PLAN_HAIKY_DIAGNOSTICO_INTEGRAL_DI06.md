@@ -42,3 +42,11 @@ Se retoman A (revision de omisiones), B (regresion) y C (publicacion). Hallazgo 
 ## Correccion posterior a publicacion DI06-CI
 
 Commit d982ec9 publicado. CI 42297718320 detecta hash de static.json distinto tras conversion de saltos y alertas en cinco dependencias. Normalizar static.json a LF y resellar; actualizar pins correctores, repetir auditoria, construir ambos perfiles y ejecutar suite Linux. No cerrar hasta CI verde. Pillow cambia de version mayor: Python 3.12 de la imagen cumple su minimo, pero se requiere ensayo de imagenes y PDF. Mantener abiertos recorrido visual, despliegue y ampliaciones. Reversion: restaurar pins anteriores solo en ensayo aislado, conservando constancia de alertas; no promover una imagen vulnerable.
+
+## Segunda pasada renovada autorizada - 07-11-2026
+
+A: contrastar CI publicado y revisar controles de finiquito, tesoreria, activos e importaciones. Corregir DI06-15 (empresa de las propiedades de valoracion), conservando los hallazgos abiertos. B: ejecutar suite aislada de importaciones con dos casos multiempresa nuevos, controles locales y regresion integral si el entorno lo permite; distinguir CI previo de validacion del cambio. C: actualizar contexto/evidencias/AuditLock y revisar publicacion segun permisos. Reversion del cambio: restaurar los dos accesos a propiedades y version previa solo en ensayo, registrar nuevo eslabon; no hay migracion de datos.
+
+Bloqueo observado en esta ejecucion: PostgreSQL accesible, pero los temporales asignados por el sandbox rechazan escritura de claves y configuraciones en cinco casos de secrets/entitlements/fiscal_sri. No debilitar controles ni omitir casos para declarar aprobacion. Repetir suite completa desde PowerShell del titular o CI despues de publicar. El fallo inicial de cuentas de la empresa de prueba y el de fecha de factura se conservaran en evidencia junto con sus correcciones.
+
+Resultado final de la pasada: 740 pruebas reportadas, 0 fallos, 5 errores de permisos en temporales y 3 omisiones. Casos nuevos de importaciones sin error; regresion integral no aprobada. Evidencia: evidencias/DI06/segunda/revision-20261107.json. Publicacion local pendiente; ejecutar test-integrated.py --timeout 5400 desde PowerShell del titular antes de confirmar cierre.

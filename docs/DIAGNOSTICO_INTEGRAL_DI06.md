@@ -54,3 +54,9 @@ El titular autorizo iniciar PostgreSQL: consulta SCM denegada, conexion TCP 1001
 ## DI06-13 — segunda pasada: aprobacion de calculos anteriores
 
 Prioridad alta. En exit_settlement.py, la aprobacion anterior comparaba exclusivamente la huella de entradas y parametros. Un cambio del motor sin cambio de entradas no obligaba a recalcular un finiquito pendiente. Ademas, el limite DEMO se verificaba al calcular pero no otra vez al aprobar. Correccion 18.0.1.15.2: huella compartida de entradas/parametros/resultado, comparacion del resultado almacenado y revalidacion de politica/empresa antes de aprobar. No recalcula ni modifica actas emitidas. Se agregan tres pruebas ORM y dos puras; estas ultimas ejecutadas, ORM bloqueado por PostgreSQL.
+
+## Segunda pasada renovada - 07-11-2026
+
+CI 42299693024 del commit 7ea9a11145860cb8d9f227e5937712b651cace5f termino con cinco trabajos aprobados: gobierno, auditoria de dependencias, suite Linux y arranque customer/controller. Sustituye los bloqueos historicos de CI; no acredita aceptacion fiscal/bancaria ni implementacion de DI06-04 a DI06-11.
+
+DI06-15 (alta, concreta DI06-09): las dos validaciones propias de importaciones leian cost_method y valuation del producto con la empresa activa, no la del expediente/costo. En una sesion con varias empresas podia rechazarse AVCO valido o admitirse configuracion no soportada. Correccion: with_company de la empresa del documento en ambos controles, manteniendo ACL y motor Community; version 18.0.1.0.2. Dos pruebas ORM verifican ambos sentidos al preparar y validar. La interfaz afectada ya existe: Preparar distribucion de costos y validacion del costo. No cambia formularios, datos historicos ni reglas fiscales.

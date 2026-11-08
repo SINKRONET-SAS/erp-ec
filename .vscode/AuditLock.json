@@ -4,7 +4,7 @@
   "phaseCompleted": "ERPEC26-03",
   "phaseInProgress": "ERPEC26-04",
   "status": "partial-awaiting-external-validation",
-  "updatedAt": "2026-11-06T21:38:11.088Z",
+  "updatedAt": "2026-11-07T22:48:50.367Z",
   "filesModified": [
     ".dockerignore",
     ".github/CODEX_CONTEXT.md",
@@ -25,6 +25,7 @@
     ".github/prompts/ERPEC26-DI06-B.md",
     ".github/prompts/ERPEC26-DI06-C.md",
     ".github/prompts/ERPEC26-DI06-CI.md",
+    ".github/prompts/ERPEC26-DI06-SEGUNDA-REVISION.md",
     ".github/prompts/ERPEC26-DI06-SEGUNDA.md",
     ".github/prompts/ERPEC26-DI25-00.md",
     ".github/prompts/ERPEC26-DI25-01.md",
@@ -151,6 +152,7 @@
     "addons/erpec_fiscal_withholding_sri/models.py",
     "addons/erpec_imports/__manifest__.py",
     "addons/erpec_imports/models.py",
+    "addons/erpec_imports/tests/test_imports.py",
     "addons/erpec_manufacturing/__manifest__.py",
     "addons/erpec_payphone/__manifest__.py",
     "addons/erpec_payphone/controllers/main.py",
@@ -343,6 +345,7 @@
     "docs/evidencias/AuditLock.before-DI06-REGRESION-20261106T203430Z.json",
     "docs/evidencias/AuditLock.before-DI06-SEGUNDA-20261106T194829Z.json",
     "docs/evidencias/AuditLock.before-DI06-SEGUNDA-BLOCKED-20261106T194845Z.json",
+    "docs/evidencias/AuditLock.before-DI06-SEGUNDA-REVISION-20261107T224850Z.json",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json",
     "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json",
     "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json",
@@ -479,6 +482,7 @@
     "docs/evidencias/DI06/segunda/odoo-targeted.json",
     "docs/evidencias/DI06/segunda/publicacion.json",
     "docs/evidencias/DI06/segunda/regresion-integral.json",
+    "docs/evidencias/DI06/segunda/revision-20261107.json",
     "docs/evidencias/DI06/static.json",
     "docs/evidencias/DI06/temp-retry.json",
     "docs/evidencias/DI25/DI25-00-cierre.json",
@@ -762,7 +766,13 @@
     "12 pruebas gobierno/estado aprobadas",
     "Coherencia documental: 31 enlaces",
     "Cinco pins correctores y tres requisitos directos verificados; transitivos restringidos por -c",
-    "git diff --check sin errores"
+    "git diff --check sin errores",
+    "23 pruebas locales aprobadas (12 gobierno/estado, 11 calculos DI06)",
+    "350 archivos Python/XML: sintaxis y UTF-8 validos",
+    "27 versiones coherentes; matriz DI25 de 19 filas vigente",
+    "Coherencia documental: 31 enlaces",
+    "Diff sin errores de formato; archivos modificados sin BOM ni candidatos de mojibake",
+    "Casos ORM nuevos de importaciones ejecutados sin error en suite de 740 pruebas"
   ],
   "pendingChecks": [
     "OP24: eliminar 6 carpetas .cache/windows/recoveries/*/data con permisos de Windows (takeown/icacls como administrador)",
@@ -791,11 +801,13 @@
     "DI06: aceptacion funcional bloqueada por PostgreSQL 10013; ORM, UI, concurrencia y despliegue sin validar",
     "DI06: ampliar DI06-04 a DI06-11 con escenarios contables, laborales, fiscales y bancarios; ver plan",
     "DI06: commit/push bloqueados por permiso denegado al crear .git/index.lock; no se publico esta pasada",
-    "DI06-CI: publicar correccion y ejecutar auditoria, construccion y suite Linux con nuevos pins; pruebas 738 anteriores no cubren estos pins"
+    "DI06-CI: publicar correccion y ejecutar auditoria, construccion y suite Linux con nuevos pins; pruebas 738 anteriores no cubren estos pins",
+    "DI06-SEGUNDA-REVISION: repetir regresion integral fuera del bloqueo de temporales; 0 fallos/5 errores de permisos, no PASS",
+    "DI06-SEGUNDA-REVISION: commit/push y CI del cambio de importaciones pendientes; .git es de solo lectura en esta sesion"
   ],
   "fileHashes": {
     ".dockerignore": "4c0b680af42a8153b876fff7bd76491ae9b48690cd682bd3bdd6ec57f2ab01e1",
-    ".github/CODEX_CONTEXT.md": "81f29580eddf87d0f414e8720be6a497052c02a8600ea4449c0c379bd3578a7d",
+    ".github/CODEX_CONTEXT.md": "dc7d4ee99b48deffa0debd819abed4d9ca4b6470b98e63ff3939362f77db63eb",
     ".github/prompts/ERPEC26-CM28-00.md": "22026ef94ee92d6cbd3306513c1f86f517862838a658a69b6d9a873dfb6535eb",
     ".github/prompts/ERPEC26-CM28-A.md": "72db6c0389e4ffd864dc16d72dd79796ec7894ac28b865edb203f47068fc24f1",
     ".github/prompts/ERPEC26-CM28-B.md": "8cd1b691fd940304c9b5cf4290ae828a29b3d2be71e0fda0605143d5d150ea0f",
@@ -813,6 +825,7 @@
     ".github/prompts/ERPEC26-DI06-B.md": "611b05db7cdbd31d3094a2bd1785544c7dcd2e1a516c07596bf970848c2451f9",
     ".github/prompts/ERPEC26-DI06-C.md": "68acac9a7d9c3a60b7dd9feb5758ff578c4d47bbfe07c7a782b066d546fe2240",
     ".github/prompts/ERPEC26-DI06-CI.md": "c5a7e8aef483dabf2679533436e09c6fc7cf6073856069435aa241ab12fb2368",
+    ".github/prompts/ERPEC26-DI06-SEGUNDA-REVISION.md": "95314b9a4b3a6515b8eebab17e8e4af58131bda8019b366d631a30061520752c",
     ".github/prompts/ERPEC26-DI06-SEGUNDA.md": "5552485f2129c699bf5e5a67d7bc5cb1aa4a990de036f864897768390d37a6e5",
     ".github/prompts/ERPEC26-DI25-00.md": "6dedd464202df5529d7b477d00a194decf23aa63d00987baed84c8448cea0c31",
     ".github/prompts/ERPEC26-DI25-01.md": "4e54396b755f8223202c151c1d5c1a577521aa07fe0299c3275797cba190acb1",
@@ -937,8 +950,9 @@
     "addons/erpec_fiscal_sri/views.xml": "244a9b01c2e55632636d0f8485d420378d5ac72600348834609d54b40d4644a8",
     "addons/erpec_fiscal_sri/workspace.py": "80aa177d04123267177ef0f470690321e5943f33eafb9b7d2ec00fc8cf213cfe",
     "addons/erpec_fiscal_withholding_sri/models.py": "3213c6c1e9bcd81924b2431ff86ba6f1a41115894e12a4d54f3471941592b3c7",
-    "addons/erpec_imports/__manifest__.py": "b160520f2fe8363a52d0ceb429e4aa6fb59344f380a9a37454ebec15ad7ac8a3",
-    "addons/erpec_imports/models.py": "8210c786fbc8aab03089ef6add1462b11b1118d7a93cb051e994c3760ffb5864",
+    "addons/erpec_imports/__manifest__.py": "68a63b9df96d2f518d4cc5a0ea2c35d385d1b1eb46ae89778237f66992c200e6",
+    "addons/erpec_imports/models.py": "88c60f147efe682553d10882b553e7889771d40f0d6e42baeb75e2e2abc48516",
+    "addons/erpec_imports/tests/test_imports.py": "69ba1ff980230311eea8b3b5913d3464bfe935e1bf908b98e3318ed0b970de34",
     "addons/erpec_manufacturing/__manifest__.py": "19a0191c43db62b092af33029e4c7b3817bffc14fd1a7c269bc5cbea32811fd3",
     "addons/erpec_payphone/__manifest__.py": "c4616d1480ccaf37c8ed011e18f9838158b26173136bfe437400917309783f2a",
     "addons/erpec_payphone/controllers/main.py": "ad2d76eb191acd2f7d573d8ed4bb2492455991eb1a3214da1212402190776261",
@@ -1088,7 +1102,7 @@
     "docs/DIAGNOSTICO_COMERCIAL_MODULOS_ACTIVOS_CM28.md": "231affd3c00aa61337bdc83f3f57a1092e9a2f480930ed600417d7b6e54cfdcb",
     "docs/DIAGNOSTICO_CONTRASTADO_DC02.md": "ce57f73f9e11b559865c65108e238cdf8eea7c90d3c585da16df806b41c6afbf",
     "docs/DIAGNOSTICO_INTEGRACION_TROPICALIZACION_IT26.md": "2d60e5a5eb2824715efc09e30464fb3e3c551ddc20cc7f2d29d7a60620c53d55",
-    "docs/DIAGNOSTICO_INTEGRAL_DI06.md": "9d5d6564d3aa3b78de51a1eea74adb0b33281c4b1a9a0b37552d2f08b7b2c742",
+    "docs/DIAGNOSTICO_INTEGRAL_DI06.md": "87b0bc4cddf874579a67468010c50182306eb24bf79aa83602073bc5eaaa0f38",
     "docs/DIAGNOSTICO_INTEGRAL_DI25.md": "faf1e2712d152b517d8cf06a9cb3ee90b6c9018ba25a4a8cfa46c864fbeb74a3",
     "docs/DIAGNOSTICO_INTEGRAL_DI26.md": "1ae2eea8fba3f0bc8a3ed28606e078cd46cadacbac65ddeb63c0ef558d39e10c",
     "docs/FACTURACION_LOCAL.md": "4cddaf55f1e374c7e47d44c04744aa19e4a6cb9840b887665aae57df0f0ad0dc",
@@ -1099,7 +1113,7 @@
     "docs/OPERACION_COMERCIAL_CM28.md": "3d4933bc012eae195541ca56209e1ee439197e71daa892462f8a83d065fdaf9b",
     "docs/PLAN_HAIKY_COMERCIAL_MODULOS_ACTIVOS_CM28.md": "9a81bc9baf0135eb399aa680e5ab01ff08edc4fa4a2113842efa8bcfc774b897",
     "docs/PLAN_HAIKY_CONTRASTE_DIAGNOSTICO_DC02.md": "3191e128c87c8a60809b8a6be22000dfdbc864baa55d82ec1c38df746acde588",
-    "docs/PLAN_HAIKY_DIAGNOSTICO_INTEGRAL_DI06.md": "1ad22b4b9fe29af9b5f00542691900b6ac997c64c43ff5e1ea78123589f25419",
+    "docs/PLAN_HAIKY_DIAGNOSTICO_INTEGRAL_DI06.md": "0b88287a8bc2b6ef0a761e17e5747373bcc57020f9e6d628bd7b0c5fa651f75d",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI25.md": "1337eecd21e1b3139b8f8a5c88737888da4b09667c29882888adb559292ee259",
     "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md": "b46d6cf2c28958762256824b855999ecbccfc78c3db60054980413b6f4bd11fc",
     "docs/PLAN_HAIKY_ERPEC26.md": "755ac5c13222d34f6ab255eefe933ede5ce19d7b90a7775ff5874d510e748466",
@@ -1131,6 +1145,7 @@
     "docs/evidencias/AuditLock.before-DI06-REGRESION-20261106T203430Z.json": "cc05958c301e4c61d2323823a8d51aadbb8ee53ffdadcd72bb9f0ea9267dd5f3",
     "docs/evidencias/AuditLock.before-DI06-SEGUNDA-20261106T194829Z.json": "46ab90490bffa3a03c1af8a4378d459fa066fe248481cfddc36d8b7107422150",
     "docs/evidencias/AuditLock.before-DI06-SEGUNDA-BLOCKED-20261106T194845Z.json": "e2569fac4640bec931349c3704e519031332724d080691a4a31a14e336051435",
+    "docs/evidencias/AuditLock.before-DI06-SEGUNDA-REVISION-20261107T224850Z.json": "64670850a7ef627f49881579cff9709e09cd0b62264d5e428570f154f69c2e5d",
     "docs/evidencias/AuditLock.before-DI25-00-20260921T021219399Z.json": "de67ecc73c15639c66edaf57a5599b49d61200ca3c537f8c88bed2081a877e14",
     "docs/evidencias/AuditLock.before-DI25-01-CIERRE-20260921T024301117Z.json": "2330a8ef7ad03b29fcbbbf5f2b37a40eb12caf6927597c90cdcaa67680cfd167",
     "docs/evidencias/AuditLock.before-DI25-01-PARCIAL-20260921T022210059Z.json": "66157af679f0e849a63a6249941aef99a8a8d789faa359fcdc6162e41466de01",
@@ -1267,6 +1282,7 @@
     "docs/evidencias/DI06/segunda/odoo-targeted.json": "6deafedac9faefa0406c11fcdf7d6c98e1b8d944823c2748545f0d4407ff558f",
     "docs/evidencias/DI06/segunda/publicacion.json": "666e76a695db7cd152d51c74598af94f6935ba2b52153930b3b5db5f3efb7a0f",
     "docs/evidencias/DI06/segunda/regresion-integral.json": "e467d3776bfbc9c616c7ccf2f7c7dd31de4bb8a508ece36a7cf7fc158ea607c1",
+    "docs/evidencias/DI06/segunda/revision-20261107.json": "046e1b42c13ebfd05b3b35cedffe5f50887f45ad756fe8601b0a337756c1eecd",
     "docs/evidencias/DI06/static.json": "24c1c6af435480405bb8e4164f413f56a9c78850474684ef9f6e785dfee85c8e",
     "docs/evidencias/DI06/temp-retry.json": "cd8529f3c778fc7f5e78f9a593a6681a7a72283eee5408fb37d35cd8950cd974",
     "docs/evidencias/DI25/DI25-00-cierre.json": "b799db9f762677acfd1d630c035f8072b8134e6ff3a4be0432b2ebf986a93b81",
@@ -1336,7 +1352,7 @@
     "docs/evidencias/UX04/update-demo.json": "8a3ac844813ef7d129a764e6dad2207c8914b324faefe9688ab1d1e0490aa8fb",
     "docs/evidencias/UX04/update-fundador.json": "6b857b6fb2a13f2919f2a5320e94430335ce99646057a9b58fe55578aa3e2e9b",
     "docs/evidencias/UX04/validacion.json": "de6cd2757322de0823ebbafd7243289bbb5d48470d8e8c450419e8e1573c39e8",
-    "docs/evidencias/module-schema-fingerprints.json": "4a2404a505ca6e8c61e4ef981ea7f56725e5705edaf20bfbf5cc413f0851c5b4",
+    "docs/evidencias/module-schema-fingerprints.json": "13e4ead846d61aaf56bcdcfe8bcefa5c3147e7411717fe0956de23ccedc27d31",
     "scripts/align-demo-di26.py": "061097ece26685293a96485e8c9eb646e07ddd126ca1bc933e1e180ed4a1ca11",
     "scripts/backup-restore-drill.py": "a1153d470b67eee09dd983fdabcffedb02eeefdb570a5ea5dfa94365064cfb6c",
     "scripts/check-module-versions.py": "b16335f223ac5180f660395e6675a57cfaa0060d0bbebf485d646834f9f5a939",
@@ -1381,9 +1397,9 @@
     "scripts/verify-project-state.cjs": "4671c3dbe483e52241dd83e840c6e0ed2901891d46ea61b9043f877af1027c73",
     "scripts/verify-rdep-dimm.py": "cfac718f167e7a1ba68d703dfbb71d288e346798bad388948e2a05535fd8724e"
   },
-  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI06-CI-20261106T213811Z.json",
-  "previousAuditLockHash": "d38f9c463e7ac69c8835d4ec254345d7f22206972d88f61f347c489e64497790",
-  "signature": "af127291677966a476bc2e6ec1e83b1646c07110598f02ba7dc5760a7cb1283a",
+  "previousAuditLockSnapshot": "docs/evidencias/AuditLock.before-DI06-SEGUNDA-REVISION-20261107T224850Z.json",
+  "previousAuditLockHash": "64670850a7ef627f49881579cff9709e09cd0b62264d5e428570f154f69c2e5d",
+  "signature": "4f34a66f1bd67e95dbe37242a28538a8fccd26e45b7de802d62e99bd825841e1",
   "taxProcess": {
     "phaseCompleted": "TX08",
     "status": "conciliacion-tarifas-instalada-verificada",
@@ -1442,7 +1458,8 @@
     ".github/prompts/ERPEC26-DI06-B.md",
     ".github/prompts/ERPEC26-DI06-C.md",
     ".github/prompts/ERPEC26-DI06-SEGUNDA.md",
-    ".github/prompts/ERPEC26-DI06-CI.md"
+    ".github/prompts/ERPEC26-DI06-CI.md",
+    ".github/prompts/ERPEC26-DI06-SEGUNDA-REVISION.md"
   ],
   "diagnosticImprovementDI26": {
     "plan": "docs/PLAN_HAIKY_DIAGNOSTICO_MEJORA_DI26.md",
@@ -1502,10 +1519,11 @@
   },
   "integralDiagnosticDI06": {
     "phaseCompleted": "DI06-A",
-    "status": "published-with-ci-failures-correction-local",
+    "status": "second-review-local-runtime-partial",
     "functionalAcceptance": false,
     "phaseAttempted": "DI06-B",
-    "publication": "d982ec9 publicado; correccion CI local pendiente de commit/push",
-    "ormValidation": "Suite integral 738; copia sembrada 25 sin omisiones segun salida del titular"
+    "publication": "Base 7ea9a11 publicada con CI verde; DI06-15 local sin publicar",
+    "ormValidation": "Suite integral 738; copia sembrada 25 sin omisiones segun salida del titular",
+    "latestEvidence": "docs/evidencias/DI06/segunda/revision-20261107.json"
   }
 }
